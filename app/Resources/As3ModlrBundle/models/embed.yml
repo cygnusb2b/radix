@@ -1,0 +1,28 @@
+embed:
+    entity:
+        persistence:
+            key: mongodb
+            db: modlr-space
+    uses: [ 'keyable', 'timestampable' ]
+    attributes:
+        description:
+            type: string
+            description: The embed description. Generally short text explaining the purpose of the embed.
+    relationships:
+        workspace:
+            type: one
+            entity: workspace
+            description: The workspace that owns this embed definition.
+        mixins:
+            type: many
+            entity: mixin
+            description: Mixins that the embed uses.
+        embeds:
+            type: many
+            entity: embed
+            description: Embeds of the model.
+    embeds:
+        attributes:
+            type: many
+            entity: attribute
+            description: Attributes of the embed.

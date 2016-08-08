@@ -4,9 +4,204 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9592b0566529943642291472616bde20",
-    "content-hash": "2ba0ad34e27cb30f028a8e187e402e21",
+    "hash": "a465f19d2e50ef5ee0dfc14f50a8dd86",
+    "content-hash": "8ae6eb7a1de66a2d2194edf730733e3c",
     "packages": [
+        {
+            "name": "as3/modlr",
+            "version": "v0.3.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/modlr.git",
+                "reference": "5c87832322b585e84396d84be6e781ad372c10ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/modlr/zipball/5c87832322b585e84396d84be6e781ad372c10ad",
+                "reference": "5c87832322b585e84396d84be6e781ad372c10ad",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/http-foundation": "^2.6 || ^3.0"
+            },
+            "suggest": {
+                "as3/modlr-api-jsonapiorg": "Provides jsonapi.org REST API spec and functionality.",
+                "as3/modlr-persister-mongodb": "Provides MongoDB persistence functionality.",
+                "ext-igbinary": "Required if you'd like to use the provided igbinary metadata cache serialization.",
+                "ext-redis": "Required if you'd like to cache metadata using Redis.",
+                "symfony/yaml": "Required if you'd like load metadata from YAML format."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "As3\\Modlr\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jacob Bare",
+                    "email": "jacob.bare@gmail.com"
+                }
+            ],
+            "description": "Simplified PHP library for fast and efficient RESTful API for MongoDB. Designed for use with front end web frameworks such as EmberJS.",
+            "time": "2016-06-15 14:37:58"
+        },
+        {
+            "name": "as3/modlr-api-jsonapiorg",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/modlr-api-jsonapiorg.git",
+                "reference": "503c2afa2609bf8d2b277c41a23466cb15aef00e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/modlr-api-jsonapiorg/zipball/503c2afa2609bf8d2b277c41a23466cb15aef00e",
+                "reference": "503c2afa2609bf8d2b277c41a23466cb15aef00e",
+                "shasum": ""
+            },
+            "require": {
+                "as3/modlr": ">=0.3.4 <1.0",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "As3\\Modlr\\Api\\JsonApiOrg\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jacob Bare",
+                    "email": "jacob.bare@gmail.com"
+                }
+            ],
+            "description": "jsonapi.org API spec for the Modlr REST library.",
+            "time": "2016-05-10 17:40:01"
+        },
+        {
+            "name": "as3/modlr-bundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/As3ModlrBundle.git",
+                "reference": "c045686c78bc3bd84cf94ad50e09a4dbdbd6ff31"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/As3ModlrBundle/zipball/c045686c78bc3bd84cf94ad50e09a4dbdbd6ff31",
+                "reference": "c045686c78bc3bd84cf94ad50e09a4dbdbd6ff31",
+                "shasum": ""
+            },
+            "require": {
+                "as3/modlr": ">=0.3.4 <1.0",
+                "php": ">=5.4",
+                "symfony/framework-bundle": ">=2.0 <2.7 || ^3.0",
+                "symfony/yaml": ">=2.0 <2.7 || ^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "As3\\Bundle\\ModlrBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jacob Bare",
+                    "email": "jacob.bare@gmail.com"
+                }
+            ],
+            "description": "Symfony bundle for the Modlr REST ODM library.",
+            "time": "2016-05-04 16:07:53"
+        },
+        {
+            "name": "as3/modlr-persister-mongodb",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/modlr-persister-mongodb.git",
+                "reference": "093a736f4fed3deabbbd1e418da8c55407e628f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/modlr-persister-mongodb/zipball/093a736f4fed3deabbbd1e418da8c55407e628f4",
+                "reference": "093a736f4fed3deabbbd1e418da8c55407e628f4",
+                "shasum": ""
+            },
+            "require": {
+                "as3/modlr": ">=0.3.4 <1.0",
+                "doctrine/mongodb": "^1.2",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "As3\\Modlr\\Persister\\MongoDb\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jacob Bare",
+                    "email": "jacob.bare@gmail.com"
+                }
+            ],
+            "description": "MongoDB Persister for the Modlr REST library.",
+            "time": "2016-05-10 15:18:21"
+        },
+        {
+            "name": "as3/modlr-search-elastic",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/modlr-search-elastic.git",
+                "reference": "cc180d2e9c8223c407ea2ba3201af6a158c404f7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/modlr-search-elastic/zipball/cc180d2e9c8223c407ea2ba3201af6a158c404f7",
+                "reference": "cc180d2e9c8223c407ea2ba3201af6a158c404f7",
+                "shasum": ""
+            },
+            "require": {
+                "as3/modlr": ">=0.3.4 <1.0",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "As3\\Modlr\\Search\\Elastic\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jacob Bare",
+                    "email": "jacob.bare@gmail.com"
+                }
+            ],
+            "description": "Elastic search client for the Modlr REST library.",
+            "time": "2016-04-26 19:48:38"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.2.7",
@@ -697,6 +892,82 @@
                 "parser"
             ],
             "time": "2014-09-09 13:34:57"
+        },
+        {
+            "name": "doctrine/mongodb",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/mongodb.git",
+                "reference": "b4eb8683d66d44de4e9e4e974149bdce327dc818"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/mongodb/zipball/b4eb8683d66d44de4e9e4e974149bdce327dc818",
+                "reference": "b4eb8683d66d44de4e9e4e974149bdce327dc818",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/common": "^2.2",
+                "ext-mongo": "^1.5",
+                "php": "^5.5 || ^7.0"
+            },
+            "require-dev": {
+                "jmikola/geojson": "^1.0",
+                "phpunit/phpunit": "~4.8|~5.0"
+            },
+            "suggest": {
+                "jmikola/geojson": "Support GeoJSON geometry objects in 2dsphere queries"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Doctrine\\MongoDB": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan H. Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Jeremy Mikola",
+                    "email": "jmikola@gmail.com"
+                },
+                {
+                    "name": "Bulat Shakirzyanov",
+                    "email": "mallluhuct@gmail.com"
+                },
+                {
+                    "name": "Kris Wallsmith",
+                    "email": "kris.wallsmith@gmail.com"
+                },
+                {
+                    "name": "Maciej Malarz",
+                    "email": "malarzm@gmail.com"
+                },
+                {
+                    "name": "Andreas Braun",
+                    "email": "alcaeus@alcaeus.org"
+                }
+            ],
+            "description": "Doctrine MongoDB Abstraction Layer",
+            "homepage": "http://www.doctrine-project.org",
+            "keywords": [
+                "database",
+                "mongodb",
+                "persistence"
+            ],
+            "time": "2016-03-19 18:45:48"
         },
         {
             "name": "doctrine/orm",
@@ -2059,14 +2330,16 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "as3/modlr-bundle": 20,
+        "as3/modlr-api-jsonapiorg": 20,
+        "as3/modlr-search-elastic": 20,
+        "as3/modlr-persister-mongodb": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.5.9"
     },
-    "platform-dev": [],
-    "platform-overrides": {
-        "php": "5.5.9"
-    }
+    "platform-dev": []
 }

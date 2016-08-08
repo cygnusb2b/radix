@@ -1,0 +1,11 @@
+timestampable:
+    attributes:
+        createdDate:
+            type: date
+            description: The date this item was created.
+        updatedDate:
+            type: date
+            description: The date this item was last updated by a user.
+        touchedDate:
+            type: date
+            description: 'The date this item was last touched, either by a user or by the system.'

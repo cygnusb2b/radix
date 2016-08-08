@@ -1,0 +1,11 @@
+segment:
+    entity:
+        persistence:
+            key: mongodb
+            db: modlr-space
+    uses: [ 'keyable' ]
+    relationships:
+        workspace:
+            entity: workspace
+            type: one
+            description: The workspace that owns the segment.

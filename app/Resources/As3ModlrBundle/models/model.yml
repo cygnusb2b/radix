@@ -1,0 +1,32 @@
+model:
+    entity:
+        persistence:
+            key: mongodb
+            db: modlr-space
+    uses: [ 'keyable', 'timestampable' ]
+    attributes:
+        description:
+            type: string
+            description: The model description. Generally short text explaining the purpose of the model.
+    relationships:
+        workspace:
+            type: one
+            entity: workspace
+            description: The workspace that owns this model definition.
+        mixins:
+            type: many
+            entity: mixin
+            description: Mixins that the model uses.
+        embeds:
+            type: many
+            entity: embed
+            description: Embeds of the model.
+    embeds:
+        attributes:
+            type: many
+            entity: attribute
+            description: Attributes of the model.
+        relationships:
+            type: many
+            entity: relationship
+            description: Relationships of the model.

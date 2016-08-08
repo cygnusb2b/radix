@@ -1,0 +1,6 @@
+attribute:
+    uses: [ 'fieldable' ]
+    attributes:
+        dataType:
+            type: string
+            description: 'Defines the data type for an attribute, such as string, integer, boolean, object, etc.'

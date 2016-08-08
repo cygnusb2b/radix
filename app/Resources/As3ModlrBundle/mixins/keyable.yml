@@ -1,0 +1,8 @@
+keyable:
+    attributes:
+        key:
+            type: string
+            description: 'The unique, sluggified key of the object.'
+        name:
+            type: string
+            description: 'The user-friendly name of the object.'

@@ -1,0 +1,16 @@
+workspace:
+    entity:
+        persistence:
+            key: mongodb
+            db: modlr-space
+    uses: [ 'keyable' ]
+    relationships:
+        models:
+            entity: model
+            type: many
+            inverse: true
+            field: workspace
+        segments:
+            entity: segment
+            type: many
+            descriptions: 'Segments assigned to this workspace.'

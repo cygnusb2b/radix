@@ -8,6 +8,21 @@ imports:
 parameters:
     locale: en
 
+as3_modlr:
+    rest:
+        root_endpoint: /api
+        debug: "%kernel.debug%"
+    adapter:
+        type: jsonapiorg
+    persisters:
+        default:
+            type: mongodb
+            parameters:
+                host: mongodb://localhost:27017
+    search_clients:
+        default:
+            type: elastic
+
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }

@@ -27,7 +27,11 @@
         "symfony/polyfill-apcu": "^1.0",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
-        "incenteev/composer-parameter-handler": "^2.0"
+        "incenteev/composer-parameter-handler": "^2.0",
+        "as3/modlr-bundle": "dev-master",
+        "as3/modlr-api-jsonapiorg": "dev-master",
+        "as3/modlr-search-elastic": "dev-master",
+        "as3/modlr-persister-mongodb": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
