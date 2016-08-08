@@ -10,7 +10,7 @@ parameters:
 
 as3_modlr:
     rest:
-        root_endpoint: /api
+        root_endpoint: /api/1.0
         debug: "%kernel.debug%"
     adapter:
         type: jsonapiorg
