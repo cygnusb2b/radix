@@ -36,6 +36,7 @@ class ManageController extends Controller
                 'name'      => 'modlr',
                 'version'   => '0.0.0 a7b71d9c',
             ],
+            'baseURL'                   => '/',
             'modulePrefix'              => 'modlr',
             'environment'               =>  $prod ? 'production' : 'development',
             'LOG_TRANSITIONS'           =>  !$prod,
