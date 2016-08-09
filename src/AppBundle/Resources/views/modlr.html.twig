@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Modlr</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="modlr/config/environment" content="{{ emberConfig|raw }}">
+
+        <base href="/manage">
+
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/yeti/bootstrap.min.css">
+
+        {% stylesheets
+            '//cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.css'
+            '@AppBundle/Resources/modlr/dist/assets/vendor.css'
+            '@AppBundle/Resources/modlr/dist/assets/modlr.css'
+        filter='cssrewrite' %}
+            <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+
+    </head>
+    <body>
+        <div id="modlr"></div>
+
+        {% javascripts
+            '@AppBundle/Resources/modlr/dist/assets/vendor.js'
+            '@AppBundle/Resources/modlr/dist/assets/modlr.js'
+        %}
+            <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js"></script>
+    </body>
+</html>
