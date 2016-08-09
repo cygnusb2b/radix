@@ -15,3 +15,4 @@
 /vendor/
 /web/bundles/
 /.DS_Store
+/src/AppBundle/Resources/npm-debug.log
