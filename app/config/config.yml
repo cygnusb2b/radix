@@ -23,6 +23,12 @@ as3_modlr:
         default:
             type: elastic
 
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: false
+    filters:
+        cssrewrite: ~
+
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }

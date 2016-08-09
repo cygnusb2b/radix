@@ -31,7 +31,8 @@
         "as3/modlr-bundle": "dev-master",
         "as3/modlr-api-jsonapiorg": "dev-master",
         "as3/modlr-search-elastic": "dev-master",
-        "as3/modlr-persister-mongodb": "dev-master"
+        "as3/modlr-persister-mongodb": "dev-master",
+        "symfony/assetic-bundle": "^2.8"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
