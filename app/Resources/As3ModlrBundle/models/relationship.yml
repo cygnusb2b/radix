@@ -3,7 +3,7 @@ relationship:
         persistence:
             key: mongodb
             db: modlr-space
-    uses: [ 'fieldable' ]
+    mixins: [ 'fieldable' ]
     attributes:
         relType:
             type: string

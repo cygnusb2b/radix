@@ -8,3 +8,9 @@ services:
         class: AppBundle\EventSubscriber\KeyableSubscriber
         tags:
             - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.timestampable:
+        private: true
+        class: AppBundle\EventSubscriber\TimestampableSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }

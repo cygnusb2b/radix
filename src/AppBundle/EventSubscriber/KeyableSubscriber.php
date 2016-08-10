@@ -53,10 +53,6 @@ class KeyableSubscriber implements EventSubscriberInterface
         $model->set('name', $name);
         $key = (null === $model->get('key')) ? $name : $model->get('key');
         $model->set('key', ModelUtility::sluggifyValue($key));
-
-        if (empty($name) || empty($key)) {
-            throw new \InvalidArgumentException(sprintf('All "%s" models must have the name and key fields defined.', $model->getType()));
-        }
     }
 
     /**

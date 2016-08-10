@@ -20,6 +20,15 @@ export default Ember.Route.extend({
     },
 
     actions: {
+        error: function(error, transition) {
+
+            error = error.errors[0];
+            if (error && 404 === parseInt(error.status)) {
+                transition.abort();
+                return this.transitionTo('/not-found');
+            }
+            return true;
+        },
         willTransition: function() {
             Ember.$('body').addClass('show-loading');
             // if (this.controller.get('userHasEnteredData') &&

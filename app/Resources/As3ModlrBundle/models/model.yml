@@ -3,7 +3,7 @@ model:
         persistence:
             key: mongodb
             db: modlr-space
-    uses: [ 'keyable', 'timestampable' ]
+    mixins: [ 'keyable', 'timestampable' ]
     attributes:
         description:
             type: string

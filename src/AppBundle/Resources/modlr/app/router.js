@@ -7,6 +7,9 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
     this.route('dashboard');
+    this.route('not-found', {
+        path: '/*wildcard'
+    });
 
     this.route('model', function() {
         this.route('edit', {

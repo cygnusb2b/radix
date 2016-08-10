@@ -3,7 +3,7 @@ segment:
         persistence:
             key: mongodb
             db: modlr-space
-    uses: [ 'keyable' ]
+    mixins: [ 'keyable' ]
     relationships:
         workspace:
             entity: workspace

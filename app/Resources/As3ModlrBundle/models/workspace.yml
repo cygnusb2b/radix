@@ -3,7 +3,7 @@ workspace:
         persistence:
             key: mongodb
             db: modlr-space
-    uses: [ 'keyable' ]
+    mixins: [ 'keyable' ]
     relationships:
         models:
             entity: model

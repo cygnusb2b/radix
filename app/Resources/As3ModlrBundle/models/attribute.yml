@@ -3,7 +3,7 @@ attribute:
         persistence:
             key: mongodb
             db: modlr-spac
-    uses: [ 'fieldable' ]
+    mixins: [ 'fieldable' ]
     attributes:
         dataType:
             type: string
