@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import LoadingDisplay from 'modlr/mixins/loading-display';
 
-export default Ember.Route.extend({
+export default Ember.Route.extend(LoadingDisplay, {
     notify: Ember.inject.service('notify'),
     store: Ember.inject.service(),
 
@@ -30,7 +31,6 @@ export default Ember.Route.extend({
             return true;
         },
         willTransition: function() {
-            Ember.$('body').addClass('show-loading');
             // if (this.controller.get('userHasEnteredData') &&
             //     !confirm('Are you sure you want to abandon progress?')) {
             //     transition.abort();
@@ -43,7 +43,6 @@ export default Ember.Route.extend({
         didTransition: function() {
             Ember.$('body').removeClass('show-aside');
             Ember.$('.dropdown-toggle').removeClass('active');
-            Ember.$('body').removeClass('show-loading');
         },
         toggleNavigation: function() {
             Ember.$('body').toggleClass('hide-navigation');

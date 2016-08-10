@@ -8,7 +8,10 @@ export default ApplicationRoute.extend(ModelCrud, {
     offset: 0,
 
     model: function() {
+        let _this = this;
         let criteria = {};
+
+        this.showLoading();
 
         return this.store.query(this.get('type'), {
             page: {
@@ -22,7 +25,10 @@ export default ApplicationRoute.extend(ModelCrud, {
             },
             sort: "-createdDate,name",
         }).then(function(results) {
+            _this.hideLoading()
             return results;
+        }, function() {
+            _this.hideLoading()
         });
     },
     renderTemplate: function(controller, model) {
@@ -46,5 +52,10 @@ export default ApplicationRoute.extend(ModelCrud, {
             into: 'list',
             outlet: '_footer'
         });
+    },
+    actions: {
+        recordAdded: function() {
+            this.refresh();
+        }
     }
 });

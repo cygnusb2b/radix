@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import LoadingDisplay from 'modlr/mixins/loading-display'
 
 export default Ember.Mixin.create({
     store: Ember.inject.service(),
@@ -6,13 +7,16 @@ export default Ember.Mixin.create({
 
     actions: {
         createModel: function(type) {
+            this.showLoading();
+
             var _this = this;
             var record = _this.store.createRecord(type);
 
             record.save().then(function(record) {
                 _this.transitionTo(type + '.edit', record.get('id'));
-                // _this.send('recordAdded');
+                _this.send('recordAdded');
             }, function() {
+                _this.hideLoading();
                 _this.send('showErrors');
             });
         },

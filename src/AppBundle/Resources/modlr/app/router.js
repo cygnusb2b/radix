@@ -13,19 +13,19 @@ Router.map(function() {
 
     this.route('model', function() {
         this.route('edit', {
-            path: ':model_id'
+            path: ':id'
         });
     });
 
     this.route('mixin', function() {
         this.route('edit', {
-            path: ':mixin_id'
+            path: ':id'
         });
     });
 
     this.route('embed', function() {
         this.route('edit', {
-            path: ':embed_id'
+            path: ':id'
         });
     });
 

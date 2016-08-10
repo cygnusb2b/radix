@@ -18,3 +18,4 @@
 /src/AppBundle/Resources/npm-debug.log
 /web/css
 /web/js
+.DS_Store

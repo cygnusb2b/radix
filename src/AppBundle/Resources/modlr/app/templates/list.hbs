@@ -3,7 +3,7 @@
     <main>
         <ul>
             {{#each model as |item|}}
-                {{!-- {{partial itemTemplate item=item}} --}}
+                {{partial itemTemplate item=item}}
             {{else}}
                 <li class="placeholder"><p class="title">No Results Found</p></li>
             {{/each}}
