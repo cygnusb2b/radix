@@ -1,0 +1,8 @@
+model-owner:
+    attributes:
+        ownerType:
+            type: string
+            description: 'The owning model type, such as model or mixin.'
+        key:
+            type: string
+            description: The owning model unique key name.

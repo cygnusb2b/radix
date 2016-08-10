@@ -1,12 +1,18 @@
 relationship:
+    entity:
+        persistence:
+            key: mongodb
+            db: modlr-space
     uses: [ 'fieldable' ]
     attributes:
         relType:
             type: string
             description: The relationship type. Either one or many.
-        relatedModel:
-            type: string
-            description: The model key this relationship references.
         invserseField:
             type: string
             description: The inverse field name. A non-null value signifies that this relationship is inverse.
+    relationships:
+        relatedModel:
+            type: one
+            entity: model
+            description: The model this relationship references.

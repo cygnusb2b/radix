@@ -1,25 +1,26 @@
 import ApplicationRoute from 'modlr/routes/application';
+import ModelCrud from 'modlr/mixins/model-crud';
 
-export default ApplicationRoute.extend({
+export default ApplicationRoute.extend(ModelCrud, {
     itemTemplate: null,
 
-    model: function(params) {
-        let criteria = {};
+    limit:  25,
+    offset: 0,
 
-        console.info(this.get('type'));
-        return {};
+    model: function() {
+        let criteria = {};
 
         return this.store.query(this.get('type'), {
             page: {
-                offset: parseInt(params.offset),
-                limit:  parseInt(params.limit)
+                offset: parseInt(this.get('offset')),
+                limit:  parseInt(this.get('limit'))
             },
             filter: {
                 query: {
                     criteria: JSON.stringify(criteria)
                 }
             },
-            sort: "-created,name",
+            sort: "-createdDate,name",
         }).then(function(results) {
             return results;
         });

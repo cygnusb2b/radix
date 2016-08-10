@@ -1,4 +1,8 @@
 attribute:
+    entity:
+        persistence:
+            key: mongodb
+            db: modlr-spac
     uses: [ 'fieldable' ]
     attributes:
         dataType:

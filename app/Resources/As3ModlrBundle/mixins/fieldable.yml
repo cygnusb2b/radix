@@ -6,3 +6,7 @@ fieldable:
         description:
             type: string
             description: The field description. Generally short text explaining the purpose of the field.
+    embeds:
+        modelOwner:
+            type: one
+            entity: model-owner
