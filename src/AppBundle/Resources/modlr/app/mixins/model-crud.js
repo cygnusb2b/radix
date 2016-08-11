@@ -60,26 +60,39 @@ export default Ember.Mixin.create(LoadingDisplay, {
                 _this.send('showErrors');
             });
         },
-        undoChanges: function(record, redirect) {
-            record.rollbackAttributes();
-            if (redirect) {
-                this.transitionTo(redirect);
-            }
+        undoChanges: function(record, redirect, prompt) {
+            let rollback;
+            prompt = prompt || true;
 
+            if (prompt) {
+                rollback = confirm('All changes will be discarded. Are you sure you want to continue?');
+            } else {
+                rollback = true;
+            }
+            if (true === rollback) {
+                record.rollbackAttributes();
+                if (redirect) {
+                    this.transitionTo(redirect);
+                }
+            }
         },
-        saveModel: function(record, redirect) {
+        saveModel: function(record) {
             var _this = this;
             if (Ember.$.isEmptyObject(record.changedAttributes())) {
                 return;
             }
+
+            let isNew = record.get('isNew');
+
 
             // if (record.validate()) {
                 this.showLoading();
                 record.save().then(function() {
                     _this.hideLoading();
                     // _this.get('notify').success('Created successfully!');
-                    if (redirect) {
-                        _this.transitionToRoute(redirect, record.get('id'));
+                    if (isNew) {
+                        _this.transitionTo('model.edit', record.get('id'));
+                        _this.send('recordAdded');
                     }
                 }, function() {
                     _this.hideLoading();

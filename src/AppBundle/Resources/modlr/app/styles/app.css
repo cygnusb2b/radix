@@ -957,17 +957,9 @@ button span.text-icon {
     background: transparent;
 }
 
-button.save,
-.alert-success {
-    color: #fafafa;
-    background: #74b999;
-}
 
-span.button.save,
-button.saved {
-    color: #fafafa;
-    background: #74b999;
-}
+
+
 
 span.button {
     float: left;
@@ -984,18 +976,22 @@ span.button.edit a {
     background: transparent;
 }
 
-/*span.button.delete {
-    color: #f00239;
+button.saved {
+    color: #74b999;
     background: transparent;
-}*/
+}
+
+button.delete {
+    color: #fafafa;
+    background: #f00239;
+}
 
 button.unsaved {
     color: #fafafa;
-    background: #f49b42;
+    background: #74b999;
 }
 
-button.create,
-.alert-info {
+button.create {
     color: #fafafa;
     background: #74b999;
 }
@@ -1004,15 +1000,9 @@ button.create,
     display: none;
 }
 
-.alert-danger {
+button.undo {
     color: #fafafa;
-    background: #f00239;
-}
-
-button.undo,
-.alert-warning {
-    color: #fafafa;
-    background: #4a7491;
+    background: #f49b42;
 }
 
 section.edit main > .well {

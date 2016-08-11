@@ -1,4 +1,15 @@
-{{partial 'model/edit/_header'}}
+<header>
+    <div class="left">
+        {{#link-to 'model'}}
+            <button class="close"><i class="ion-android-arrow-back"></i></button>
+        {{/link-to}}
+    </div>
+    <div class="center">
+    </div>
+    <div class="right">
+        {{partial 'model/_actions'}}
+    </div>
+</header>
 <main>
     {{model-mixin-keyable name=model.name key=model.key linkName=false disableKey=true}}
 </main>

@@ -31,13 +31,6 @@ export default Ember.Route.extend(ModelCrud, {
         });
     },
 
-    // renderTemplate: function(controller, model) {
-    //     this.render();
-    //     this.render('placeholder', {
-    //         into: 'model'
-    //     });
-    // },
-
     actions: {
         recordAdded: function() {
             this.refresh();
