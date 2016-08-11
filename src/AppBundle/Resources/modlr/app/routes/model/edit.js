@@ -8,11 +8,11 @@ export default ApplicationRoute.extend({
     model: function(params) {
         return this.store.findRecord('model', params.id);
     },
-    renderTemplate: function() {
-        this.render();
-        this.render('model.edit', {
-            into: 'application',
-            outlet: 'edit'
-        });
-    }
+    // renderTemplate: function() {
+    //     this.render();
+    //     this.render('model.edit', {
+    //         into: 'application',
+    //         outlet: 'edit'
+    //     });
+    // }
 });

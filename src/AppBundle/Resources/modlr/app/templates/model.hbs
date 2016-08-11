@@ -1,16 +1,20 @@
+<section class="edit">
+    {{outlet}}
+</section>
+
 <section class="list">
     {{partial 'list/_header'}}
     <main>
         <ul>
             {{#each model as |item|}}
-                {{partial itemTemplate item=item}}
+                {{partial 'model/item' item=item}}
             {{else}}
                 <li class="placeholder"><p class="title">No Results Found</p></li>
             {{/each}}
         </ul>
     </main>
     <div class="actions">
-        <button class="create" {{action 'createModel' type}}><i class="ion-plus"></i></button>
+        {{#link-to 'model.create'}}<button class="create"><i class="ion-plus"></i></button>{{/link-to}}
     </div>
     {{partial 'list/_footer'}}
 </section>

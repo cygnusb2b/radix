@@ -1,7 +1,7 @@
 import Ember from 'ember';
-import LoadingDisplay from 'modlr/mixins/loading-display'
+import LoadingDisplay from 'modlr/mixins/loading-display';
 
-export default Ember.Mixin.create({
+export default Ember.Mixin.create(LoadingDisplay, {
     store: Ember.inject.service(),
     notify: Ember.inject.service('notify'),
 
@@ -32,7 +32,7 @@ export default Ember.Mixin.create({
                 _this.send('showErrors');
             });
         },
-        delete: function(record, redirect, model) {
+        deleteModel: function(record, redirect, model) {
             var _this = this;
 
             if (confirm("Are you sure you want to delete this record?")) {
@@ -60,27 +60,35 @@ export default Ember.Mixin.create({
                 _this.send('showErrors');
             });
         },
-        undo: function(record) {
+        undoChanges: function(record, redirect) {
             record.rollbackAttributes();
+            if (redirect) {
+                this.transitionTo(redirect);
+            }
+
         },
-        save: function(record, redirect) {
+        saveModel: function(record, redirect) {
             var _this = this;
             if (Ember.$.isEmptyObject(record.changedAttributes())) {
                 return;
             }
-            if (record.validate()) {
+
+            // if (record.validate()) {
+                this.showLoading();
                 record.save().then(function() {
+                    _this.hideLoading();
                     // _this.get('notify').success('Created successfully!');
                     if (redirect) {
                         _this.transitionToRoute(redirect, record.get('id'));
                     }
                 }, function() {
+                    _this.hideLoading();
                     _this.send('showErrors');
                 });
-            } else {
-                var errors = record.get('errors');
-                _this.send('showErrors', errors);
-            }
+            // } else {
+            //     var errors = record.get('errors');
+            //     _this.send('showErrors', errors);
+            // }
         },
         showErrors: function(errors) {
             var _this = this;

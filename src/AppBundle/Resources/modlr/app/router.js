@@ -12,8 +12,10 @@ Router.map(function() {
     });
 
     this.route('model', function() {
+        this.route('browse');
+        this.route('create');
         this.route('edit', {
-            path: ':id'
+            path: '/edit/:id'
         });
     });
 

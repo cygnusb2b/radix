@@ -965,8 +965,8 @@ button.save,
 
 span.button.save,
 button.saved {
-    color: #74b999;
-    background: transparent;
+    color: #fafafa;
+    background: #74b999;
 }
 
 span.button {
@@ -990,13 +990,18 @@ span.button.edit a {
 }*/
 
 button.unsaved {
-    color: #f00239;
+    color: #fafafa;
+    background: #f49b42;
 }
 
 button.create,
 .alert-info {
     color: #fafafa;
     background: #74b999;
+}
+
+.active button.create {
+    display: none;
 }
 
 .alert-danger {
@@ -1007,7 +1012,7 @@ button.create,
 button.undo,
 .alert-warning {
     color: #fafafa;
-    background: #f49b42;
+    background: #4a7491;
 }
 
 section.edit main > .well {

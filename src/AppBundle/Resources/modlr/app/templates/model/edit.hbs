@@ -1,6 +1,4 @@
-<section class="edit">
-    {{partial 'model/edit/_header'}}
-    <main>
-        <p>Model: {{model.id}}</p>
-    </main>
-</section>
+{{partial 'model/edit/_header'}}
+<main>
+    {{model-mixin-keyable name=model.name key=model.key linkName=false disableKey=true}}
+</main>

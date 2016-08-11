@@ -25,34 +25,36 @@ export default ApplicationRoute.extend(ModelCrud, {
             },
             sort: "-createdDate,name",
         }).then(function(results) {
-            _this.hideLoading()
+            _this.hideLoading();
             return results;
         }, function() {
-            _this.hideLoading()
+            _this.hideLoading();
         });
     },
-    renderTemplate: function(controller, model) {
-        this._super(controller, model);
 
-        controller.set('type', this.get('type'));
-        controller.set('itemTemplate', this.get('type') + '/item');
+    // renderTemplate: function(controller, model) {
+        // this._super(controller, model);
 
-        this.render();
-        this.render('list', {
-            into: 'application',
-            outlet: 'list',
-            controller: controller,
-            model: model
-        });
-        this.render('placeholder', {
-            into: 'application',
-            outlet: 'edit'
-        });
-        this.render('list/_footer', {
-            into: 'list',
-            outlet: '_footer'
-        });
-    },
+        // controller.set('type', this.get('type'));
+        // controller.set('itemTemplate', this.get('type') + '/item');
+
+        // this.render();
+        // this.render('list', {
+        //     into: 'application',
+            // outlet: 'list',
+            // controller: controller,
+            // model: model
+        // });
+        // this.render('placeholder', {
+        //     into: 'application',
+        //     outlet: 'edit'
+        // });
+        // this.render('list/_footer', {
+        //     into: 'list',
+        //     outlet: '_footer'
+        // });
+    // },
+
     actions: {
         recordAdded: function() {
             this.refresh();

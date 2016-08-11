@@ -12,22 +12,24 @@ export default Ember.Route.extend(LoadingDisplay, {
         this._super(...arguments);
     },
 
-    renderTemplate: function() {
-        this.render();
-        this.render('navigation', {
-            into: 'application',
-            outlet: 'navigation'
-        });
-    },
+    // renderTemplate: function() {
+    //     this.render();
+    //     this.render('navigation', {
+    //         into: 'application',
+    //         outlet: 'navigation'
+    //     });
+    // },
 
     actions: {
         error: function(error, transition) {
 
-            error = error.errors[0];
+            error = error.errors || [];
+            error = error[0];
             if (error && 404 === parseInt(error.status)) {
                 transition.abort();
                 return this.transitionTo('/not-found');
             }
+
             return true;
         },
         willTransition: function() {
