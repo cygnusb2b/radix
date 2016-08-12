@@ -3,7 +3,9 @@
 </section>
 
 <section class="list">
-    {{partial 'list/_header'}}
+    <header>
+        <div class="center"></div>
+    </header>
     <main>
         <ul>
             {{#each model as |item|}}
@@ -21,5 +23,9 @@
     <div class="actions">
         {{#link-to 'model.create'}}<button class="create"><i class="ion-plus"></i></button>{{/link-to}}
     </div>
-    {{partial 'list/_footer'}}
+    <footer>
+        <div class="left"></div>
+        <div class="center"></div>
+        <div class="right"></div>
+    </footer>
 </section>

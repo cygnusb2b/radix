@@ -5,21 +5,6 @@ export default Ember.Route.extend(LoadingDisplay, {
     notify: Ember.inject.service('notify'),
     store: Ember.inject.service(),
 
-    type: null,
-
-    beforeModel: function() {
-        this.set('type', this.get('type'));
-        this._super(...arguments);
-    },
-
-    // renderTemplate: function() {
-    //     this.render();
-    //     this.render('navigation', {
-    //         into: 'application',
-    //         outlet: 'navigation'
-    //     });
-    // },
-
     actions: {
         error: function(error, transition) {
 

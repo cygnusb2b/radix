@@ -891,15 +891,8 @@ section.aside .seo-preview {
     background: #f2f2f2;
 }
 
-header button.dropdown-toggle {
-    border: 1px solid transparent;
-}
 
-button.dropdown-toggle.active {
-    border: 1px solid #dadee1;
-    border-bottom-width: 0;
-    background: #fff;
-}
+
 button.media.dropdown-toggle {
     margin-top: 0;
 }
@@ -958,7 +951,15 @@ button span.text-icon {
 }
 
 
+button.dropdown-toggle {
+    border: 1px solid transparent;
+}
 
+.active button.dropdown-toggle {
+    border: 1px solid #dadee1;
+    border-bottom-width: 0;
+    background: #fff;
+}
 
 
 span.button {
@@ -1303,8 +1304,10 @@ header {
     color: #f2f2f2;
     border-bottom: 1px solid #5d5378;
     background: #3e3950;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+
 }
+
+
 
 .aside header {
     color: #3e454c;
@@ -1373,7 +1376,19 @@ main .wrap {
     margin: 0 auto;
 }
 
-.edit main .wrap {
+section.edit main header {
+    background: #fff;
+    color: #3e454c;
+    z-index: 150;
+    border-bottom: none;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+}
+
+section.edit main main {
+    border-left: none;
+}
+
+section.edit main .wrap {
     max-width: 900px;
     margin: 0 auto;
 }

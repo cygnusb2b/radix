@@ -1,7 +1,6 @@
-import ApplicationRoute from 'modlr/routes/application';
+import Ember from 'ember';
 
-export default ApplicationRoute.extend({
-
+export default Ember.Route.extend({
     model: function(params) {
         return this.store.findRecord('model', params.id);
     },

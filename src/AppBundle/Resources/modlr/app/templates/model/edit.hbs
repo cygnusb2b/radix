@@ -5,11 +5,28 @@
         {{/link-to}}
     </div>
     <div class="center">
+        {{#link-to 'model.edit.index'}}
+            <button class="attributes dropdown-toggle">
+                <i class="ion-document-text"></i>
+            </button>
+        {{/link-to}}
+
+        {{#link-to 'model.edit.attributes'}}
+            <button class="attributes dropdown-toggle">
+                <i class="ion-pound"></i>
+            </button>
+        {{/link-to}}
     </div>
     <div class="right">
         {{partial 'model/_actions'}}
     </div>
 </header>
+
 <main>
-    {{model-mixin-keyable name=model.name key=model.key linkName=false disableKey=true}}
+    <header>
+        <div class="center">General</div>
+    </header>
+    <main>
+        {{model-mixin-keyable name=model.name key=model.key linkName=false disableKey=true}}
+    </main>
 </main>

@@ -13,8 +13,8 @@ Router.map(function() {
 
     this.route('model', function() {
         this.route('create');
-        this.route('edit', {
-            path: '/edit/:id'
+        this.route('edit', { path: '/edit/:id' }, function() {
+            this.route('attributes');
         });
     });
 
