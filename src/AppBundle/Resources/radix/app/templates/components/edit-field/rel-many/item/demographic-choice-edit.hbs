@@ -1,0 +1,33 @@
+<div class="form-group clearfix">
+    <p class="d-inline pull-left">Editing <strong>{{ model.name }}</strong></p>
+    <button type="button" class="close d-inline pull-right" aria-label="Close" {{action 'close'}}>
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="form-group">
+    <label class="sr-only" for="field-demographic-choice-name">Name</label>
+    {{ input class='form-control' value=model.name placeholder='Name' }}
+    <small class="form-text text-muted">The name of the choice.</small>
+</div>
+<div class="form-group">
+    <label class="sr-only" for="field-demographic-choice-description">Description</label>
+    {{ input class='form-control' value=model.description placeholder='Description' }}
+    <small class="form-text text-muted">A short description of the choice.</small>
+</div>
+
+{{partial 'demographic/choices/-options'}}
+
+<div class="form-group">
+    {{model-actions/save model=model}}
+    {{model-actions/undo model=model confirmValue=model.name rollbackRels=false}}
+    {{#unless model.isNew}}
+        {{model-actions/delete model=model confirmValue=model.name}}
+        <div class="pull-xs-right">
+            {{#link-to 'demographic.choices.edit' model.id class="btn btn-outline-primary" role="button" title="View in full editor."}}
+                <i class="ion-arrow-right-c"></i>
+            {{/link-to}}
+        </div>
+    {{/unless}}
+
+</div>
+

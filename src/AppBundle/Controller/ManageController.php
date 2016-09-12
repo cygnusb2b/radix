@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Utility\ModelUtility;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,11 +15,10 @@ class ManageController extends Controller
      *
      * @param   Request $request
      * @return  Response
-     * @Route("/manage", name="manage")
      */
     public function indexAction(Request $request)
     {
-        return $this->render('@AppBundle/Resources/views/modlr.html.twig', [
+        return $this->render('@AppBundle/Resources/views/radix.html.twig', [
             'emberConfig' => rawurlencode(json_encode($this->getEmberConfiguration()))
         ]);
     }
@@ -33,14 +33,17 @@ class ManageController extends Controller
         $prod = 'prod' === $this->get('kernel')->getEnvironment();
         return [
             'APP'                       => [
-                'name'      => 'modlr',
+                'name'      => 'radix',
                 'version'   => '0.0.0 a7b71d9c',
             ],
             'baseURL'                   => '/',
-            'modulePrefix'              => 'modlr',
-            'environment'               =>  $prod ? 'production' : 'development',
-            'LOG_TRANSITIONS'           =>  !$prod,
-            'LOG_TRANSITIONS_INTERNAL'  =>  !$prod,
+            'modulePrefix'              => 'radix',
+            'locationType'              => 'auto',
+            'environment'               => $prod ? 'production' : 'development',
+            'LOG_TRANSITIONS'           => !$prod,
+            'LOG_TRANSITIONS_INTERNAL'  => !$prod,
+            'formAnswerTypes'           => ModelUtility::getFormAnswerTypes(true),
+            'simpleScheduleTypes'       => ModelUtility::getSimpleScheduleTypes(true),
         ];
     }
 }

@@ -14,3 +14,9 @@ services:
         class: AppBundle\EventSubscriber\TimestampableSubscriber
         tags:
             - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.demographic:
+        private: true
+        class: AppBundle\EventSubscriber\DemographicSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }

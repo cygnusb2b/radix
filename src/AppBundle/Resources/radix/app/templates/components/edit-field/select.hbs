@@ -1,0 +1,6 @@
+{{#if defaultLabel}}
+    {{edit-field/select-option value="" label=defaultLabel selectValue=value}}
+{{/if}}
+{{#each options as |option|}}
+    {{edit-field/select-option value=option.value label=option.label selectValue=value}}
+{{/each}}

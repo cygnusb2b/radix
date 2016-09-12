@@ -1,0 +1,16 @@
+<div class="form-group">
+    <label class="sr-only" for="field-demographic-choice-name">Name</label>
+    {{ input class='form-control' value=model.name placeholder='Name' }}
+    <small class="form-text text-muted">The name of the choice.</small>
+</div>
+<div class="form-group">
+    <label class="sr-only" for="field-demographic-choice-description">Description</label>
+    {{ input class='form-control' value=model.description placeholder='Description' }}
+    <small class="form-text text-muted">A short description of the choice.</small>
+</div>
+
+{{partial 'demographic/choices/-options'}}
+
+<div class="alert alert-info" role="alert">
+    Demographic choice for {{#link-to 'demographic.questions.edit' model.demographic.id class="alert-link"}}{{model.demographic.name}}{{/link-to}}.
+</div>

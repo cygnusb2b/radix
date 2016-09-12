@@ -1,0 +1,40 @@
+<div class="form-group clearfix">
+    <p class="d-inline pull-left">
+        {{#unless model.isNew}}
+            Editing <strong>{{ model.demographic.name }}</strong>
+        {{/unless}}
+    </p>
+    <button type="button" class="close d-inline pull-right" aria-label="Close" {{action 'close'}}>
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+
+    <div class="form-group">
+        <label for="field-demographic-mapping-demographic-name">Demographic</label>
+        {{edit-field/selectize/model
+            selection=model.demographic
+            content=demographics
+            select-item="setDemographic"
+        }}
+        <small class="form-text text-muted">Select a demographic to map.</small>
+    </div>
+
+    <div class="form-group">
+        <label for="field-demographic-mapping-demographic-choice-value">Choice</label>
+        {{edit-field/selectize/model
+            disabled=(eq isDemographicSelected false)
+            content=demographicChoices
+            selection=model.choices
+            add-item="addDemographicChoice"
+            remove-item="removeDemographicChoice"
+            multiple=true
+        }}
+        <small class="form-text text-muted">Select a choice to map.</small>
+    </div>
+
+
+<div class="form-group">
+    {{model-actions/save model=model disabled=(eq canSave false) disabledReason="Save is disabled until a demographic and choice have been selected."}}
+    {{model-actions/undo model=model confirmValue=confirmValue rollbackRels=false}}
+</div>

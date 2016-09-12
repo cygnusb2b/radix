@@ -2,17 +2,13 @@ embed:
     entity:
         persistence:
             key: mongodb
-            db: modlr-space
+            db: radix
     mixins: [ 'keyable', 'timestampable' ]
     attributes:
         description:
             type: string
             description: The embed description. Generally short text explaining the purpose of the embed.
     relationships:
-        attributes:
-            type: many
-            entity: attribute
-            description: Attributes of the embed.
         embeds:
             type: many
             entity: embed
@@ -25,3 +21,8 @@ embed:
             type: one
             entity: workspace
             description: The workspace that owns this embed definition.
+    embeds:
+        attributes:
+            type: many
+            entity: attribute
+            description: Attributes of the model.

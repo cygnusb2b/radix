@@ -1,0 +1,18 @@
+demographic-mapping:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable' ]
+    # Should have unique index of { "owner": 1, "demographic": 1 }
+    relationships:
+        owner:
+            type: one
+            entity: demographic-choice
+        demographic:
+            type: one
+            entity: demographic
+        choices:
+            type: many
+            entity: demographic-choice
+

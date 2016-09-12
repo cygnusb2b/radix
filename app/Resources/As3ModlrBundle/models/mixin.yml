@@ -2,26 +2,27 @@ mixin:
     entity:
         persistence:
             key: mongodb
-            db: modlr-space
+            db: radix
     mixins: [ 'keyable', 'timestampable' ]
     attributes:
         description:
             type: string
             description: The mixin description. Generally short text explaining the purpose of the mixin.
     relationships:
-        attributes:
-            type: many
-            entity: attribute
-            description: Attributes of the mixin.
         embeds:
             type: many
             entity: embed
             description: Embeds of the model.
-        relationships:
-            type: many
-            entity: relationship
-            description: Relationships of the mixin.
         workspace:
             type: one
             entity: workspace
             description: The workspace that owns this mixin definition.
+    embeds:
+        attributes:
+            type: many
+            entity: attribute
+            description: Attributes of the model.
+        relationships:
+            type: many
+            entity: relationship
+            description: Relationships of the model.

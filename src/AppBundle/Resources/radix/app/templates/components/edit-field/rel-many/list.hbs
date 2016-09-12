@@ -1,0 +1,15 @@
+{{#if isSortable}}
+    {{#sortable-group tagName="div" class="list-group list-group-flush" onChange="reorderItems" as |group|}}
+        {{#each sorted as |item|}}
+            {{#sortable-item tagName="div" model=item group=group handle=".sort-handle"}}
+                {{edit-field/rel-many/item isSortable=true model=item confirmField=confirmField}}
+            {{/sortable-item}}
+        {{/each}}
+    {{/sortable-group}}
+{{else}}
+    <div class="list-group list-group-flush">
+        {{#each items as |item|}}
+            {{edit-field/rel-many/item isSortable=false model=item confirmField=confirmField}}
+        {{/each}}
+    </div>
+{{/if}}

@@ -1,0 +1,23 @@
+<div class="form-group">
+    <label class="sr-only" for="field-demographic-name">Name</label>
+    {{ input class='form-control' value=model.name placeholder="Name" }}
+    <small class="form-text text-muted">A short name describing this demographic.</small>
+</div>
+<div class="form-group">
+    <label class="sr-only" for="field-demographic-name">Label</label>
+    {{ input class='form-control' value=model.label placeholder="Label" }}
+    <small class="form-text text-muted">A user-friendly label for the demographic. Forms will display this by default.</small>
+</div>
+<hr>
+<div class="form-group">
+    <label for="field-demographic-labels">Labels</label>
+
+    {{edit-field/selectize/model-find-all
+        modelName="demographic-label"
+        highlight=false
+        selection=model.labels
+        multiple=true
+    }}
+
+    <small class="form-text text-muted">Organize demographics using labels.</small>
+</div>

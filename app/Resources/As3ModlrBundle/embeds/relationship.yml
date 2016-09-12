@@ -1,0 +1,12 @@
+relationship:
+    mixins: [ 'fieldable' ]
+    attributes:
+        relType:
+            type: string
+            description: The relationship type. Either one or many.
+        invserseField:
+            type: string
+            description: The inverse field name. A non-null value signifies that this relationship is inverse.
+        relatedModel:
+            type: string
+            description: The model type this relationship references.

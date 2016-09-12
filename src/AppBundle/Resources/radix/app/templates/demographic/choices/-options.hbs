@@ -1,0 +1,14 @@
+<fieldset class="form-group">
+    <small class="form-text text-muted">Additional options</small>
+    <div class="checkbox">
+        {{edit-field/checkbox checked=model.isNone label='Is a none of the above choice'}}
+    </div>
+
+    <div class="checkbox">
+        {{edit-field/checkbox checked=model.isOther label='Is an other choice'}}
+    </div>
+
+    <div class="checkbox">
+        {{edit-field/checkbox checked=model.isHidden label='Is a hidden choice'}}
+    </div>
+</fieldset>

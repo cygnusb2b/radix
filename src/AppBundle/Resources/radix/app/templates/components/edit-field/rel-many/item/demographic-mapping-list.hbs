@@ -1,0 +1,5 @@
+<div class="list-group list-group-flush">
+    {{#each items as |item|}}
+        {{edit-field/rel-many/demographic-mapping isSortable=false model=item confirmField=confirmField}}
+    {{/each}}
+</div>

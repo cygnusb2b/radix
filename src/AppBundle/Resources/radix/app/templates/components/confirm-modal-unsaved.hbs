@@ -1,0 +1,24 @@
+<div id="confirm-modal-unsaved" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-warning" role="alert">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"><i class="ion-alert-circled"></i> Unsaved Changes Detected</h4>
+            </div>
+            <div class="modal-body">
+                {{#if value}}
+                    <p>If you continue, all unsaved changes to <strong>&ldquo;{{ value }}&rdquo;</strong> will be lost.</p>
+                {{else}}
+                    <p>If you continue, all unsaved changes will be lost.</p>
+                {{/if}}
+                <p>Would you like to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" {{action 'confirmed'}} data-dismiss="modal">Yes</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>

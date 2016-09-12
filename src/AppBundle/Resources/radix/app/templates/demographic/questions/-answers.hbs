@@ -1,0 +1,18 @@
+<div class="form-group">
+    <label for="field-demographic-answer-type">Type</label>
+    {{edit-field/select/choice-types value=model.answerType}}
+    <small class="form-text text-muted">The type of answer this question supports.</small>
+</div>
+
+{{#if (eq model.answerType 'choice-single')}}
+    {{ partial 'demographic/questions/-choice-options' }}
+{{/if}}
+{{#if (eq model.answerType 'choice-multiple')}}
+    {{ partial 'demographic/questions/-choice-options' }}
+{{/if}}
+{{#if (eq model.answerType 'string')}}
+    {{ partial 'demographic/questions/-string-options' }}
+{{/if}}
+{{#if (eq model.answerType 'textarea')}}
+    {{ partial 'demographic/questions/-string-options' }}
+{{/if}}

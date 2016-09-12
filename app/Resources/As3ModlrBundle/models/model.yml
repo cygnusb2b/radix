@@ -2,17 +2,13 @@ model:
     entity:
         persistence:
             key: mongodb
-            db: modlr-space
+            db: radix
     mixins: [ 'keyable', 'timestampable' ]
     attributes:
         description:
             type: string
             description: The model description. Generally short text explaining the purpose of the model.
     relationships:
-        attributes:
-            type: many
-            entity: attribute
-            description: Attributes of the model.
         embeds:
             type: many
             entity: embed
@@ -21,11 +17,16 @@ model:
             type: many
             entity: mixin
             description: Mixins that the model uses.
-        relationships:
-            type: many
-            entity: relationship
-            description: Relationships of the model.
         workspace:
             type: one
             entity: workspace
             description: The workspace that owns this model definition.
+    embeds:
+        attributes:
+            type: many
+            entity: attribute
+            description: Attributes of the model.
+        relationships:
+            type: many
+            entity: relationship
+            description: Relationships of the model.

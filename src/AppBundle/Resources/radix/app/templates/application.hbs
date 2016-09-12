@@ -1,0 +1,15 @@
+{{ partial 'application/-loading-overlay'}}
+
+{{ confirm-modal-unsaved }}
+{{ confirm-modal-delete }}
+
+
+{{ partial 'application/-nav' }}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            {{ outlet }}
+        </div>
+    </div>
+</div>

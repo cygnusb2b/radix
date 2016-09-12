@@ -1,0 +1,40 @@
+<div class="form-group">
+    <div class="card">
+        <div class="card-header">{{ header }}</div>
+
+        <div class="card-block">
+            {{#if detailsTemplate}}
+                {{partial detailsTemplate}}
+            {{/if}}
+        </div>
+
+        {{partial listTemplate}}
+
+        <div class="card-block">
+            {{model-actions/ref-create-add preAdd="setSequence" model=model field=relField disabled=model.isNew disabledReason='The parent item must be saved before adding child items.'}}
+
+            {{#if isSortable}}
+                <div class="pull-xs-right">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        {{#if hasSortOptions}}
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Sort
+                                </button>
+                                <div class="dropdown-menu">
+                                    {{#each sortOptions as |option|}}
+                                        <a class="clickable dropdown-item" {{action 'sortBy' option.key}}>By {{option.label}}</a>
+                                    {{/each}}
+                                </div>
+                            </div>
+                        {{/if}}
+                        {{#if hasSorted}}
+                            {{form-button icon="ion-checkmark-round" class="btn-secondary text-success" title="Apply sort" onClick="applySort"}}
+                            {{form-button icon="ion-close-round" class="btn-secondary text-danger" title="Discard sort" onClick="discardSort"}}
+                        {{/if}}
+                    </div>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>

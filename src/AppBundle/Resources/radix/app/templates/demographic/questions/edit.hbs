@@ -1,0 +1,26 @@
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs pull-xs-left">
+            {{card-tab-item icon='ion-document' text='General' active=true target='general'}}
+            {{card-tab-item icon='ion-android-list' text='Choices' target='answers'}}
+            {{card-tab-item icon='ion-information-circled' text='Info' target='info'}}
+        </ul>
+        {{form-close class='pull-right' transitionTo='demographic.questions'}}
+    </div>
+    <form>
+        <div class="card-block">
+            {{card-tab-block key='general' model=model  template='demographic/questions/-general'}}
+            {{card-tab-block key='answers'  model=model  template='demographic/questions/-answers'}}
+            {{card-tab-block key='info'    model=model  template='demographic/questions/-info'}}
+        </div>
+        <div class="card-footer">
+            {{model-actions/save model=model transitionTo='demographic.questions.edit'}}
+
+            {{#if model.isNew}}
+                {{model-actions/undo model=model confirmValue=model.name transitionTo='demographic.questions'}}
+            {{else}}
+                {{model-actions/undo model=model confirmValue=model.name transitionTo='demographic.questions.edit'}}
+            {{/if}}
+        </div>
+    </form>
+</div>

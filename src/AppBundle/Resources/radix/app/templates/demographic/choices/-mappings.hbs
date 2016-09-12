@@ -1,0 +1,32 @@
+<div class="form-group">
+    {{!-- <div class="card">
+        <div class="card-header">Choices I'm Mapped To</div>
+        <div class="card-block">
+            <small class="text-muted">When a customer selects &ldquo;{{ model.demographic.name }}: {{model.name}}&rdquo; they will also be assigned to the following demographic choices.</small>
+        </div>
+        <div class="list-group list-group-flush m-b-1">
+            {{#each model.mappedTo as |mapping|}}
+                <div class="list-group-item">
+                    {{#link-to 'demographic.choices.edit' mapping.owner.id}}
+                        {{mapping.owner.demographic.name}}: {{mapping.owner.name}}
+                    {{/link-to}}
+                </div>
+            {{else}}
+                <div class="list-group-item">No mappings found.</div>
+            {{/each}}
+        </div>
+    </div> --}}
+</div>
+
+{{edit-field/rel-many
+    header="Choices Mapped to Me"
+    model=model
+    relField='mappings'
+    items=model.mappings
+    enableSort=false
+    confirmField='id'
+    detailsTemplate='components/edit-field/rel-many/item/demographic-mapping-details'
+    listTemplate='components/edit-field/rel-many/item/demographic-mapping-list'
+}}
+
+

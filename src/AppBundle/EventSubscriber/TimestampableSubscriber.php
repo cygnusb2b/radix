@@ -48,6 +48,16 @@ class TimestampableSubscriber implements EventSubscriberInterface
             $model->set('touchedDate', $now);
             $model->set('updatedDate', $now);
         }
+
+        // Fallbacks for missing dates.
+        if (null === $model->get('updatedDate')) {
+            $model->set('updatedDate', $now);
+            $model->set('touchedDate', $now);
+        }
+        if (null === $model->get('createdDate')) {
+            $model->set('createdDate', $model->get('updatedDate'));
+        }
+
     }
 
     /**

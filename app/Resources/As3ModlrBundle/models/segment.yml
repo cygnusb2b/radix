@@ -2,7 +2,7 @@ segment:
     entity:
         persistence:
             key: mongodb
-            db: modlr-space
+            db: radix
     mixins: [ 'keyable' ]
     relationships:
         workspace:

@@ -1,0 +1,11 @@
+{{#if showEditor}}
+    <div class="list-group-item list-group-item-info">
+        {{partial editTemplate}}
+    </div>
+{{else}}
+    <div class="clickable list-group-item list-group-item-action" {{action 'edit'}}>
+        {{!-- @todo Implement multi-select delete --}}
+        {{!-- {{edit-field/checkbox}} --}}
+        {{partial displayTemplate}}
+    </div>
+{{/if}}

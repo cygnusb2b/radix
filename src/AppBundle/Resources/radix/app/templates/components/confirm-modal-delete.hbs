@@ -1,0 +1,24 @@
+<div id="confirm-modal-delete" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header alert alert-danger" role="alert">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"><i class="ion-alert-circled"></i> Deletion Detected</h4>
+            </div>
+            <div class="modal-body">
+                {{#if value}}
+                    <p>If you continue, <strong>&ldquo;{{ value }}&rdquo;</strong> will be <strong>permanently</strong> deleted.</p>
+                {{else}}
+                    <p>If you continue, this item will be <strong>permanently</strong> deleted.</p>
+                {{/if}}
+                <p>This cannot be undone. Are you absolutely sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" {{action 'confirmed'}} data-dismiss="modal">Yes</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
