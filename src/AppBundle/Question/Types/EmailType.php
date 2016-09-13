@@ -33,6 +33,17 @@ class EmailType implements TypeInterface
     /**
      * {@inheritdoc}
      */
+    public function normalizeAnswer($value)
+    {
+        if (empty($value)) {
+            return;
+        }
+        return strtolower($value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function supportsChoices()
     {
         return false;
@@ -44,5 +55,15 @@ class EmailType implements TypeInterface
     public function supportsHtml()
     {
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAnswer($value)
+    {
+        if (false === stripos($value, '@')) {
+            throw new \InvalidArgumentException('Invalid value for an email response.');
+        }
     }
 }

@@ -33,6 +33,14 @@ class TextAreaType implements TypeInterface
     /**
      * {@inheritdoc}
      */
+    public function normalizeAnswer($value)
+    {
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function supportsChoices()
     {
         return false;
@@ -42,6 +50,14 @@ class TextAreaType implements TypeInterface
      * {@inheritdoc}
      */
     public function supportsHtml()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAnswer($value)
     {
         return true;
     }

@@ -26,6 +26,14 @@ interface TypeInterface
     public function getDescription();
 
     /**
+     * Normalizes an answer value after it has been processed by the answer type normalization.
+     *
+     * @param   mixed   $value
+     * @return  mixed
+     */
+    public function normalizeAnswer($value);
+
+    /**
      * Determines if this type supports choices.
      *
      * @return  bool
@@ -38,4 +46,12 @@ interface TypeInterface
      * @return  bool
      */
     public function supportsHtml();
+
+    /**
+     * Does low-level validation of the answer value.
+     *
+     * @param   mixed   $value
+     * @throws  \InvalidArgumentException
+     */
+    public function validateAnswer($value);
 }

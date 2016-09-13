@@ -27,6 +27,10 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.input.submission_manager:
+        class: AppBundle\Input\SubmissionManager
+        arguments: [ "@app_bundle.question.answer_factory" ]
+
     app_bundle.integrations.client.omeda:
         private: true
         class: AppBundle\Integrations\Clients\OmedaClient

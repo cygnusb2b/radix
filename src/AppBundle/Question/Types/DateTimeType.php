@@ -33,6 +33,14 @@ class DateTimeType implements TypeInterface
     /**
      * {@inheritdoc}
      */
+    public function normalizeAnswer($value)
+    {
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function supportsChoices()
     {
         return false;
@@ -44,5 +52,13 @@ class DateTimeType implements TypeInterface
     public function supportsHtml()
     {
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAnswer($value)
+    {
+        return true;
     }
 }

@@ -52,7 +52,12 @@ class KeyableSubscriber implements EventSubscriberInterface
 
         $model->set('name', $name);
         $key = (null === $model->get('key')) ? $name : $model->get('key');
-        $model->set('key', ModelUtility::sluggifyValue($key));
+        $key = ModelUtility::sluggifyValue($key);
+
+        if (1 === preg_match('/[a-f0-9]{24}/i', $key)) {
+            throw new \InvalidArgumentException(sprintf('The provided key "%s" cannot be in the provided format', $key));
+        }
+        $model->set('key', $key);
     }
 
     /**

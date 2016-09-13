@@ -111,4 +111,33 @@ class TypeManager
     {
         return isset($this->questionTypes[$key]);
     }
+
+    /**
+     * Normalizes an answer value for the provided question type.
+     *
+     * @param   string  $questionType
+     * @param   mixed   $value
+     * @param   bool    $allowHtml
+     * @return  mixed
+     */
+    public function normalizeAnswerFor($questionType, $value, $allowHtml = false)
+    {
+        $type  = $this->getQuestionTypeFor($questionType);
+        $value = $this->getAnswerTypeFor($type->getAnswerType())->normalize($value);
+        $value = $type->normalizeAnswer($value);
+
+        if (null === $value) {
+            return;
+        }
+
+        if (true === $type->supportsHtml() || false == $allowHtml) {
+            $value = trim(strip_tags($value));
+            if (empty($value)) {
+                return;
+            }
+        }
+
+        $type->validateAnswer($value);
+        return $value;
+    }
 }

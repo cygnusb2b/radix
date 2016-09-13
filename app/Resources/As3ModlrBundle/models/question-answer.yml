@@ -1,0 +1,12 @@
+question-answer:
+    entity:
+        abstract: true
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable' ]
+    relationships:
+        question:
+            type: one
+            entity: question

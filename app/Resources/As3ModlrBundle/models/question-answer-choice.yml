@@ -1,0 +1,10 @@
+question-answer-choice:
+    entity:
+        extends: question-answer
+        persistence:
+            key: mongodb
+            db: radix
+    relationships:
+        value:
+            type: one
+            entity: question-choice

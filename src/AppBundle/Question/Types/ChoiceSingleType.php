@@ -11,7 +11,7 @@ class ChoiceSingleType implements TypeInterface
      */
     public function getAnswerType()
     {
-        return 'string';
+        return 'choice';
     }
 
     /**
@@ -33,6 +33,14 @@ class ChoiceSingleType implements TypeInterface
     /**
      * {@inheritdoc}
      */
+    public function normalizeAnswer($value)
+    {
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function supportsChoices()
     {
         return true;
@@ -44,5 +52,13 @@ class ChoiceSingleType implements TypeInterface
     public function supportsHtml()
     {
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAnswer($value)
+    {
+        return true;
     }
 }

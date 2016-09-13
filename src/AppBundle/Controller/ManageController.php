@@ -18,8 +18,19 @@ class ManageController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $manager = $this->get('app_bundle.integrations.manager');
-        $manager->runFor('question-pull');
+        $manager = $this->get('app_bundle.input.submission_manager');
+        $payload = [
+            'email-address'             => 'jacob.bare@gmail.com',
+            'first-name'                => 'Jacob',
+            'last-name'                 => 'Bare',
+            '57d86d76d78c6af29f0041d2'  => 'Director, Analytics',
+            'omeda-5070382'             => '57d6e6c4d78c6abd830041c1',
+            'omeda-5070380'             => '5072061',
+            'omeda-5070381'             => 'Maintenance Management',
+            'question-not-found'        => 'foo',
+            'omeda-5070383'             => 'Value not found!',
+        ];
+        $manager->processSubmission($payload);
         var_dump(__METHOD__);
         die();
 

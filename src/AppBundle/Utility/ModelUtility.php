@@ -2,6 +2,8 @@
 
 namespace AppBundle\Utility;
 
+use As3\Modlr\Models\AbstractModel;
+
 /**
  * Static utility class for common model functions.
  *
@@ -31,6 +33,21 @@ class ModelUtility
             }
         }
         return implode('-', $parts);
+    }
+
+    public static function getModelValueFor(AbstractModel $model, $path)
+    {
+        $keys    = explode('.', $path);
+        $current = array_shift($keys);
+
+        if (empty($keys)) {
+            return $model->get($current);
+        } else {
+            $value = $model->get($current);
+            if ($value instanceof AbstractModel) {
+                return self::getModelValueFor($value, implode('.', $keys));
+            }
+        }
     }
 
     /**

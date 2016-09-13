@@ -13,10 +13,16 @@ services:
             - [ addQuestionType, [ "@app_bundle.question.type.text" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.url" ] ]
             - [ addAnswerType, [ "@app_bundle.question.answer_type.boolean" ] ]
+            - [ addAnswerType, [ "@app_bundle.question.answer_type.choice" ] ]
+            - [ addAnswerType, [ "@app_bundle.question.answer_type.choices" ] ]
             - [ addAnswerType, [ "@app_bundle.question.answer_type.date" ] ]
             - [ addAnswerType, [ "@app_bundle.question.answer_type.float" ] ]
             - [ addAnswerType, [ "@app_bundle.question.answer_type.integer" ] ]
             - [ addAnswerType, [ "@app_bundle.question.answer_type.string" ] ]
+
+    app_bundle.question.answer_factory:
+        class: AppBundle\Question\QuestionAnswerFactory
+        arguments: [ "@as3_modlr.store", "@app_bundle.question.type_manager" ]
 
     app_bundle.question.type.boolean:
         private: true
@@ -52,6 +58,12 @@ services:
     app_bundle.question.answer_type.boolean:
         private: true
         class: AppBundle\Question\AnswerTypes\BooleanType
+    app_bundle.question.answer_type.choice:
+        private: true
+        class: AppBundle\Question\AnswerTypes\ChoiceType
+    app_bundle.question.answer_type.choices:
+        private: true
+        class: AppBundle\Question\AnswerTypes\ChoicesType
     app_bundle.question.answer_type.date:
         private: true
         class: AppBundle\Question\AnswerTypes\DateType
