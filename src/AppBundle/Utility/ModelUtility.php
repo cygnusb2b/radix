@@ -95,4 +95,29 @@ class ModelUtility
         }
         return $objects;
     }
+
+    /**
+     * Gets the list of supported form question answer types.
+     *
+     * @param   bool    $asObjects
+     * @return  array
+     */
+    public static function getQuestionChoiceTypes($asObjects = false)
+    {
+        $types = [
+            'standard' => 'A standard choice.',
+            'other'    => 'An other choice.',
+            'none'     => 'A none-of-the-above choice.',
+            'hidden'   => 'A hidden (internal) choice.',
+
+        ];
+        if (false == $asObjects) {
+            return $types;
+        }
+        $objects = [];
+        foreach ($types as $key => $value) {
+            $objects[] = ['value' => $key, 'label' => $value];
+        }
+        return $objects;
+    }
 }

@@ -20,6 +20,8 @@ question:
         choices:
             type: many
             entity: question-choice
+            inverse: true
+            field: question
         pull:
             type: one
             entity: question-integration-pull
