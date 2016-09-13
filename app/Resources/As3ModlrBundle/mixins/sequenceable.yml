@@ -1,0 +1,4 @@
+sequenceable:
+    attributes:
+        sequence:
+            type: integer

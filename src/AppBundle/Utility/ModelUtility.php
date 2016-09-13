@@ -42,7 +42,7 @@ class ModelUtility
     public static function getFormAnswerTypes($asObjects = false)
     {
         $types = [
-            'string'            => 'A short, open-ended text answer (single line)',
+            'text'              => 'A short, open-ended text answer (single line)',
             'textarea'          => 'A long, open-ended text answer (multiple lines)',
             'choice-single'     => 'A list of choices with a single answer',
             'choice-multiple'   => 'A list of choices with multiple answers',

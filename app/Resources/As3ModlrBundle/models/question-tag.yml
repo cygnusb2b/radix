@@ -1,0 +1,6 @@
+question-tag:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'keyable', 'timestampable' ]

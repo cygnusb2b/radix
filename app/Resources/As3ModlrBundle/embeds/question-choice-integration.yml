@@ -1,0 +1,6 @@
+question-choice-integration:
+    attributes:
+        clientKey:
+            type: string
+        identifier:
+            type: string

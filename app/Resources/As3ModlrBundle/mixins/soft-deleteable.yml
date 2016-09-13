@@ -1,0 +1,5 @@
+soft-deleteable:
+    attributes:
+        deleted:
+            type: boolean
+            defaultValue: false

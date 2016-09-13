@@ -1,0 +1,24 @@
+question-choice:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'sequenceable', 'timestampable', 'soft-deleteable' ]
+    attributes:
+        name:
+            type: string
+        alternateId:
+            type: string
+        description:
+            type: string
+        choiceType:
+            type: string
+            defaultValue: standard # one of standard, other, none, or hidden
+    embeds:
+        integration:
+            type: one
+            entity: question-choice-integration
+    relationships:
+        question:
+            type: one
+            entity: question

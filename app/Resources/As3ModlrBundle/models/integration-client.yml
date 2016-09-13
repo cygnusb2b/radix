@@ -1,0 +1,17 @@
+integration-client:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable' ]
+    attributes:
+        name:
+            type: string
+        clientKey:
+            type: string
+        postProcess:
+            type: boolean
+            defaultValue: false
+        config:
+            type: object
+            defaultValue: []

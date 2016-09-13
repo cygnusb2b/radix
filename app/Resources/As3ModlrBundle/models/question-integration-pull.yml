@@ -1,0 +1,13 @@
+question-integration-pull:
+    entity:
+        extends: question-integration
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        identifier:
+            type: string
+    relationships:
+        tagWith:
+            type: many
+            entity: question-tag

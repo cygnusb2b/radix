@@ -1,0 +1,31 @@
+question:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'keyable', 'timestampable', 'soft-deleteable' ]
+    attributes:
+        allowHtml:
+            type: boolean
+            defaultValue: false
+        builtIn:
+            type: boolean
+            defaultValue: false
+        label:
+            type: string
+        questionType:
+            type: string
+            defaultValue: text
+    relationships:
+        choices:
+            type: many
+            entity: question-choice
+        pull:
+            type: one
+            entity: question-integration-pull
+        push:
+            type: many
+            entity: question-integration-push
+        tags:
+            type: many
+            entity: question-tag
