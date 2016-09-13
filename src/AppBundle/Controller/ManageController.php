@@ -18,6 +18,11 @@ class ManageController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $manager = $this->get('app_bundle.integrations.manager');
+        $manager->runFor('question-pull');
+        var_dump(__METHOD__);
+        die();
+
         return $this->render('@AppBundle/Resources/views/radix.html.twig', [
             'emberConfig' => rawurlencode(json_encode($this->getEmberConfiguration()))
         ]);

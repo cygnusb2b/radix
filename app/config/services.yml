@@ -1,8 +1,13 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/book/service_container.html
+imports:
+    - { resource: services/question-types.yml }
+
 parameters: ~
 
 services:
+    app_bundle.definitions.factory:
+        class: AppBundle\Definitions\DefinitionFactory
+        arguments: [ "@app_bundle.question.type_manager" ]
+
     app_bundle.event_subscriber.keyable:
         private: true
         class: AppBundle\EventSubscriber\KeyableSubscriber
@@ -15,16 +20,17 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
-    app_bundle.event_subscriber.demographic:
+    app_bundle.event_subscriber.question:
         private: true
-        class: AppBundle\EventSubscriber\DemographicSubscriber
+        class: AppBundle\EventSubscriber\QuestionSubscriber
+        arguments: [ "@app_bundle.question.type_manager" ]
         tags:
             - { name: as3_modlr.event_subscriber }
 
     app_bundle.integrations.client.omeda:
         private: true
         class: AppBundle\Integrations\Clients\OmedaClient
-        arguments: [ "@app_bundle.omeda_sdk.api_client" ]
+        arguments: [ "@app_bundle.omeda_sdk.api_client", "@app_bundle.definitions.factory" ]
 
     app_bundle.integrations.handler.question_pull:
         private: true

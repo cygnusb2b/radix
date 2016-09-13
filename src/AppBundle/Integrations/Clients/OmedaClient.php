@@ -2,8 +2,9 @@
 
 namespace AppBundle\Integrations\Clients;
 
-use AppBundle\Integrations\Definitions\QuestionChoiceDefinition;
-use AppBundle\Integrations\Definitions\QuestionDefinition;
+use AppBundle\Definitions\DefinitionFactory;
+use AppBundle\Definitions\QuestionChoiceDefinition;
+use AppBundle\Definitions\QuestionDefinition;
 use As3\OmedaSDK\ApiClient;
 use As3\Parameters\DefinedParameters as Parameters;
 use As3\Parameters\Definitions;
@@ -21,6 +22,11 @@ class OmedaClient extends AbstractClient
     private $brandData = [];
 
     /**
+     * @var DefinitionFactory
+     */
+    private $defFactory;
+
+    /**
      * @var bool
      */
     private $useStaging = false;
@@ -31,9 +37,10 @@ class OmedaClient extends AbstractClient
      * @param   ApiClient  $apiClient
      * @param   array|null $parameters
      */
-    public function __construct(ApiClient $apiClient, array $parameters = null)
+    public function __construct(ApiClient $apiClient, DefinitionFactory $defFactory, array $parameters = null)
     {
-        $this->apiClient = $apiClient;
+        $this->apiClient  = $apiClient;
+        $this->defFactory = $defFactory;
         parent::__construct($parameters);
     }
 
@@ -100,7 +107,7 @@ class OmedaClient extends AbstractClient
      */
     private function createQuestionDefinition(array $data)
     {
-        $definition = new QuestionDefinition(
+        $definition = $this->defFactory->createQuestionDefinition(
             $data['Description'],
             $this->getQuestionTypeFor($data['DemographicType'])
         );
@@ -122,10 +129,11 @@ class OmedaClient extends AbstractClient
      */
     private function createQuestionChoiceDefinition(array $value)
     {
-        $definition = new QuestionChoiceDefinition(
+        $definition = $this->defFactory->createQuestionChoiceDefinition(
             $value['ShortDescription'],
             $this->getChoiceTypeFor($value['DemographicValueType'])
         );
+
         $definition->setExternalId($value['Id']);
 
         if (isset($value['AlternateId'])) {

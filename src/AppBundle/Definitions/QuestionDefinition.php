@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Integrations\Definitions;
+namespace AppBundle\Definitions;
 
-use AppBundle\Utility\ModelUtility as RadixUtility;
+use AppBundle\Question\TypeManager;
 
 class QuestionDefinition
 {
@@ -32,13 +32,19 @@ class QuestionDefinition
     private $type;
 
     /**
+     * @var TypeManager
+     */
+    private $typeManager;
+
+    /**
      * @param   string  $name
      * @param   string  $type
      * @throws  \InvalidArgumentException
      */
-    public function __construct($name, $type)
+    public function __construct(TypeManager $typeManager, $name, $type)
     {
-        $this->name = trim($name);
+        $this->typeManager = $typeManager;
+        $this->name        = trim($name);
         if (empty($this->name)) {
             throw new \InvalidArgumentException('The question definition name cannot be empty.');
         }
@@ -51,26 +57,11 @@ class QuestionDefinition
      */
     public function addChoiceDefinition(QuestionChoiceDefinition $definition)
     {
-        if (true === $this->canAddChoices()) {
+        $type = $this->typeManager->getQuestionTypeFor($this->type);
+        if (true === $type->supportsChoices()) {
             $this->choiceDefinitions[] = $definition;
         }
         return $this;
-    }
-
-    /**
-     * @return  bool
-     */
-    public function canAddChoices()
-    {
-        return 'choice-single' === $this->type || 'choice-multiple' === $this->type;
-    }
-
-    /**
-     * @return  bool
-     */
-    public function canAllowHtml()
-    {
-        return 'string' === $this->type || 'textarea' === $this->type;
     }
 
     /**
@@ -119,7 +110,8 @@ class QuestionDefinition
      */
     public function setAllowHtml($bit = true)
     {
-        $this->allowHtml = (boolean) $bit;
+        $type            = $this->typeManager->getQuestionTypeFor($this->type);
+        $this->allowHtml = true === $type->supportsHtml() ? (boolean) $bit : false;
         return $this;
     }
 
@@ -141,7 +133,7 @@ class QuestionDefinition
      */
     private function setType($type)
     {
-        $types = RadixUtility::getFormAnswerTypes();
+        $types = $this->typeManager->getQuestionTypes();
         if (!isset($types[$type])) {
             throw new \InvalidArgumentException(sprintf('The provided question type "%s" is not valid. Valid types are "%s"', $type, implode(', ', array_keys($types))));
         }

@@ -3,8 +3,8 @@
 namespace AppBundle\Integrations\Handlers;
 
 use As3\Modlr\Models\Model;
-use AppBundle\Integrations\Definitions\QuestionChoiceDefinition;
-use AppBundle\Integrations\Definitions\QuestionDefinition;
+use AppBundle\Definitions\QuestionChoiceDefinition;
+use AppBundle\Definitions\QuestionDefinition;
 use AppBundle\Integrations\HandlerInterface;
 use AppBundle\Integrations\IntegrationManager;
 use Cygnus\ModlrBundle\Component\Utility;
@@ -85,6 +85,7 @@ class QuestionPullHandler implements HandlerInterface
         $this->appendCommonChoiceValues($choice, $definition);
 
         $choice->set('question', $question);
+        $choice->set('deleted', false);
         $embed = $choice->createEmbedFor('integration');
         $embed
             ->set('clientKey', $integration->get('client')->get('clientKey'))
@@ -115,21 +116,18 @@ class QuestionPullHandler implements HandlerInterface
             ->set('key', sprintf('%s-%s', $clientKey, $identifier))
             ->set('label', $definition->getLabel())
             ->set('pull', $integration)
+            ->set('questionType', $definition->getType())
+            ->set('builtIn', false)
+            ->set('allowHtml', $definition->getAllowHtml())
         ;
         foreach ($integration->get('tagWith') as $tag) {
             $question->push('tags', $tag);
         }
-        if (true === $definition->canAllowHtml()) {
-            $question->set('allowHtml', $definition->getAllowHtml());
-        }
 
         $question->save();
 
-        // If choices are allowed, create them.
-        if (true === $definition->canAddChoices()) {
-            foreach ($definition->getChoiceDefinitions() as $choiceDef) {
-                $this->createChoice($integration, $question, $choiceDef);
-            }
+        foreach ($definition->getChoiceDefinitions() as $choiceDef) {
+            $this->createChoice($integration, $question, $choiceDef);
         }
 
     }
@@ -243,7 +241,10 @@ class QuestionPullHandler implements HandlerInterface
      */
     private function updateQuestion(Model $integration, Model $question, QuestionDefinition $definition)
     {
-        $question->set('name', $definition->getName());
+        $question
+            ->set('name', $definition->getName())
+            ->set('allowHtml', $definition->getAllowHtml())
+        ;
         if (null === $question->get('label')) {
             $question->set('label', $definition->getLabel());
         }
@@ -253,46 +254,38 @@ class QuestionPullHandler implements HandlerInterface
             $question->push('tags', $tag);
         }
 
-        if (true === $definition->canAllowHtml()) {
-            $question->set('allowHtml', $definition->getAllowHtml());
-        }
-
         $question->save();
 
-
-        if (true === $definition->canAddChoices()) {
-
-            $current  = [];
-            foreach ($question->get('choices') as $choice) {
-                if (true === $choice->get('deleted')) {
-                    continue;
-                }
-                $intDetails = $choice->get('integration');
-
-                if (null === $intDetails || $integration->get('client')->get('clientKey') !== $intDetails->get('clientKey')) {
-                    // A non-integration or different integration source added this choice. This shouldn't happen, but it should be removed.
-                    $this->deleteChoice($choice);
-                    continue;
-                }
-                $current[$intDetails->get('identifier')] = $choice;
+        $current  = [];
+        foreach ($question->get('choices') as $choice) {
+            if (true === $choice->get('deleted')) {
+                continue;
             }
+            $intDetails = $choice->get('integration');
 
-            foreach ($definition->getChoiceDefinitions() as $choiceDef) {
-                $identifier = $choiceDef->getExternalId();
-                if (!isset($current[$identifier])) {
-                    // Create choice.
-                    $choice = $this->createChoice($integration, $question, $choiceDef);
-                } else {
-                    // Update choice.
-                    $choice = $this->updateChoice($current[$identifier], $choiceDef);
-                    unset($current[$identifier]);
-                }
-            }
-
-            // Any remaining models in the current set now should now be deleted.
-            foreach ($current as $choice) {
+            if (null === $intDetails || $integration->get('client')->get('clientKey') !== $intDetails->get('clientKey')) {
+                // A non-integration or different integration source added this choice. This shouldn't happen, but it should be removed.
                 $this->deleteChoice($choice);
+                continue;
             }
+            $current[$intDetails->get('identifier')] = $choice;
+        }
+
+        foreach ($definition->getChoiceDefinitions() as $choiceDef) {
+            $identifier = $choiceDef->getExternalId();
+            if (!isset($current[$identifier])) {
+                // Create choice.
+                $choice = $this->createChoice($integration, $question, $choiceDef);
+            } else {
+                // Update choice.
+                $choice = $this->updateChoice($current[$identifier], $choiceDef);
+                unset($current[$identifier]);
+            }
+        }
+
+        // Any remaining models in the current set should now be deleted.
+        foreach ($current as $choice) {
+            $this->deleteChoice($choice);
         }
     }
 }

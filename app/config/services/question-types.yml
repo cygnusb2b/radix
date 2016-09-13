@@ -1,0 +1,66 @@
+services:
+    app_bundle.question.type_manager:
+        class: AppBundle\Question\TypeManager
+        calls:
+            - [ addQuestionType, [ "@app_bundle.question.type.boolean" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.choice_single" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.choice_multiple" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.datetime" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.email" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.float" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.integer" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.textarea" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.text" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.url" ] ]
+            - [ addAnswerType, [ "@app_bundle.question.answer_type.boolean" ] ]
+            - [ addAnswerType, [ "@app_bundle.question.answer_type.date" ] ]
+            - [ addAnswerType, [ "@app_bundle.question.answer_type.float" ] ]
+            - [ addAnswerType, [ "@app_bundle.question.answer_type.integer" ] ]
+            - [ addAnswerType, [ "@app_bundle.question.answer_type.string" ] ]
+
+    app_bundle.question.type.boolean:
+        private: true
+        class: AppBundle\Question\Types\BooleanType
+    app_bundle.question.type.choice_single:
+        private: true
+        class: AppBundle\Question\Types\ChoiceSingleType
+    app_bundle.question.type.choice_multiple:
+        private: true
+        class: AppBundle\Question\Types\ChoiceMultipleType
+    app_bundle.question.type.datetime:
+        private: true
+        class: AppBundle\Question\Types\DateTimeType
+    app_bundle.question.type.email:
+        private: true
+        class: AppBundle\Question\Types\EmailType
+    app_bundle.question.type.float:
+        private: true
+        class: AppBundle\Question\Types\FloatType
+    app_bundle.question.type.integer:
+        private: true
+        class: AppBundle\Question\Types\IntegerType
+    app_bundle.question.type.textarea:
+        private: true
+        class: AppBundle\Question\Types\TextAreaType
+    app_bundle.question.type.text:
+        private: true
+        class: AppBundle\Question\Types\TextType
+    app_bundle.question.type.url:
+        private: true
+        class: AppBundle\Question\Types\UrlType
+
+    app_bundle.question.answer_type.boolean:
+        private: true
+        class: AppBundle\Question\AnswerTypes\BooleanType
+    app_bundle.question.answer_type.date:
+        private: true
+        class: AppBundle\Question\AnswerTypes\DateType
+    app_bundle.question.answer_type.float:
+        private: true
+        class: AppBundle\Question\AnswerTypes\FloatType
+    app_bundle.question.answer_type.integer:
+        private: true
+        class: AppBundle\Question\AnswerTypes\IntegerType
+    app_bundle.question.answer_type.string:
+        private: true
+        class: AppBundle\Question\AnswerTypes\StringType

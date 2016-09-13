@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Integrations\Definitions;
+namespace AppBundle\Definitions;
 
-use AppBundle\Utility\ModelUtility as RadixUtility;
+use AppBundle\Question\TypeManager;
 
 class QuestionChoiceDefinition
 {
@@ -37,13 +37,19 @@ class QuestionChoiceDefinition
     private $type;
 
     /**
+     * @var TypeManager
+     */
+    private $typeManager;
+
+    /**
      * @param   string  $name
      * @param   string  $type
      * @throws  \InvalidArgumentException
      */
-    public function __construct($name, $type)
+    public function __construct(TypeManager $typeManager, $name, $type)
     {
-        $this->name = trim($name);
+        $this->typeManager = $typeManager;
+        $this->name        = trim($name);
         if (empty($this->name)) {
             throw new \InvalidArgumentException('The question choice definition name cannot be empty.');
         }
@@ -148,7 +154,7 @@ class QuestionChoiceDefinition
      */
     private function setType($type)
     {
-        $types = RadixUtility::getQuestionChoiceTypes();
+        $types = $this->typeManager->getQuestionChoiceTypes();
         if (!isset($types[$type])) {
             throw new \InvalidArgumentException(sprintf('The provided question choice type "%s" is not valid. Valid types are "%s"', $type, implode(', ', array_keys($types))));
         }
