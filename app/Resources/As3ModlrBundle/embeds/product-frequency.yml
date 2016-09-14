@@ -1,0 +1,8 @@
+product-frequency:
+    attributes:
+        freq:
+            type: string
+            description: 'The frequency pattern: daily, weekly, monthly, yearly'
+        interval:
+            type: integer
+            defaultValue: 1

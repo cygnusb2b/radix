@@ -1,0 +1,8 @@
+customer-product-relatable:
+    relationships:
+        customer:
+            type: one
+            entity: customer
+        product: # an (optional) product this model is associated with, e.g. a specific address is related to a magazine
+            type: one
+            entity: product

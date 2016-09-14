@@ -1,0 +1,6 @@
+external-identifier:
+    attributes:
+        identifier:
+            type: string
+        source:
+            type: string

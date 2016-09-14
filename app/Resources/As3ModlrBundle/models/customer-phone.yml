@@ -1,0 +1,15 @@
+customer-phone:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable' ]
+    attributes:
+        phoneType:
+            type: string # business, home, mobile, fax, toll-free, etc.
+        number:
+            type: string # The phone number
+    relationships:
+        customer:
+            type: one
+            entity: customer

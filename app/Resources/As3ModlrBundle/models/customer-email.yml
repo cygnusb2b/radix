@@ -1,0 +1,14 @@
+customer-email:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable', 'customer-product-relatable' ] # does the email need to be linked to a product, or just the customer?
+    attributes:
+        emailType:
+            type: string # A type identifier: primary or secondary or null (if unknown) - should this actually be home, business??
+        isPrimary:
+            type: boolean
+            defaultValue: false
+        address:
+            type: string # The email address

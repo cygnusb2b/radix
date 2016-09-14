@@ -1,0 +1,25 @@
+customer-address:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable', 'customer-product-relatable' ]
+    attributes:
+        addressType:
+            type: string # A type identifier: home, business, or nothing (if unknown)
+        companyName:
+            type: string
+        street:
+            type: string
+        extra:
+            type: string
+        city:
+            type: string
+        region:
+            type: string
+        regionCode:
+            type: string
+        country:
+            type: string
+        countryCode:
+            type: string

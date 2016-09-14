@@ -1,0 +1,11 @@
+product:
+    entity:
+        polymorphic: true
+        abstract: true
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'keyable', 'timestampable' ]
+    attributes:
+        description:
+            type: string

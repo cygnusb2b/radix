@@ -1,0 +1,21 @@
+input-submission:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable' ]
+    attributes:
+        ipAddress:
+            type: string
+        ipInfo:
+            type: object
+            defaultValue: []
+    relationships:
+        answers:
+            type: many
+            entity: question-answer
+            inverse: true
+            field: submission
+        source:
+            type: one
+            entity: input-source

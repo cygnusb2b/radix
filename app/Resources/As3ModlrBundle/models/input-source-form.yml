@@ -1,0 +1,10 @@
+input-source-form:
+    entity:
+        extends: input-source
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        appKey:
+            type: string # Eventually, perhaps, link to a product model?
+    # Eventually should link to a form model??

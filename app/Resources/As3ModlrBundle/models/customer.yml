@@ -1,0 +1,51 @@
+customer:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable', 'soft-deleteable' ]
+    attributes:
+        firstName:
+            type: string
+        lastName:
+            type: string
+        middleName:
+            type: string
+        salutation:
+            type: string
+        suffix:
+            type: string
+        gender:
+            type: string # male or female, or nothing (if unknown) - use Facebook gender choices?
+        title:
+            type: string
+    embeds:
+        externalIds:
+            type: many
+            entity: external-identifier
+    relationships:
+        addresses:
+            type: many
+            entity: customer-address
+            inverse: true
+            field: customer
+        emails:
+            type: many
+            entity: customer-email
+            inverse: true
+            field: customer
+        phones:
+            type: many
+            entity: customer-phone
+            inverse: true
+            field: customer
+        authentications:
+            type: many
+            entity: customer-authentication
+            inverse: true
+            field: customer
+        answers:
+            type: many
+            entity: question-answer
+            inverse: true
+            field: customer

@@ -1,0 +1,9 @@
+product-website:
+    entity:
+        extends: product
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        url:
+            type: string

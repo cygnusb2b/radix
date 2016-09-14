@@ -1,0 +1,10 @@
+product-publication:
+    entity:
+        extends: product
+        persistence:
+            key: mongodb
+            db: radix
+    embeds:
+        frequency:
+            type: one
+            entity: product-frequency
