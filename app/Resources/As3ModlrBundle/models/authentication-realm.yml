@@ -1,0 +1,13 @@
+authentication-realm:
+    entity:
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable', 'keyable' ]
+    attributes:
+        roles:
+            type: array
+            defaultValue: []
+        defaultRole:
+            type: string

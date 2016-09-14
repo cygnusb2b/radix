@@ -1,0 +1,15 @@
+customer-account:
+    entity:
+        extends: customer
+        persistence:
+            key: mongodb
+            db: radix
+    relationships:
+        authentications:
+            type: many
+            entity: customer-authentication
+            inverse: true
+            field: account
+        identities:
+            type: many
+            entity: customer-identity

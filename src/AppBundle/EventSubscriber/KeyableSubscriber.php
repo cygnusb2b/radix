@@ -57,6 +57,11 @@ class KeyableSubscriber implements EventSubscriberInterface
         if (1 === preg_match('/[a-f0-9]{24}/i', $key)) {
             throw new \InvalidArgumentException(sprintf('The provided key "%s" cannot be in the provided format', $key));
         }
+
+        if (empty($key)) {
+            throw new \InvalidArgumentException('All keyable models must contain a value for the key field.');
+        }
+
         $model->set('key', $key);
     }
 

@@ -1,0 +1,37 @@
+services:
+    app_bundle.event_subscriber.authentication_realm_website:
+        private: true
+        class: AppBundle\EventSubscriber\AuthenticationRealmWebsiteSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.customer_authentication:
+        private: true
+        class: AppBundle\EventSubscriber\CustomerAuthenticationSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.keyable:
+        private: true
+        class: AppBundle\EventSubscriber\KeyableSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.product_website:
+        private: true
+        class: AppBundle\EventSubscriber\ProductWebsiteSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.timestampable:
+        private: true
+        class: AppBundle\EventSubscriber\TimestampableSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.question:
+        private: true
+        class: AppBundle\EventSubscriber\QuestionSubscriber
+        arguments: [ "@app_bundle.question.type_manager" ]
+        tags:
+            - { name: as3_modlr.event_subscriber }

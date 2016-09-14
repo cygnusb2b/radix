@@ -7,12 +7,12 @@ question-answer:
             db: radix
     mixins: [ 'timestampable' ]
     relationships:
-        customer:
-            type: one
-            entity: customer
         question:
             type: one
             entity: question
         submission:
             type: one
             entity: input-submission
+        customer:
+            type: one
+            entity: customer

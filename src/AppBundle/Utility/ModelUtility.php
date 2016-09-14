@@ -12,6 +12,45 @@ use As3\Modlr\Models\AbstractModel;
 class ModelUtility
 {
     /**
+     * Formats an external url value to ensure http: is appended (when applicable).
+     *
+     * @param   string  $url
+     * @return  string|null
+     */
+    public static function formatExternalUrlValue($url)
+    {
+        $url = trim($url);
+        if (0 === preg_match('/^http:|^https:|^mailto:|^ftp:|^\/\//i', $url)) {
+            // Assume http:
+            $url = sprintf('http://%s', $url);
+        }
+        $url = rtrim($url, '/');
+        return (empty($url)) ? null : $url;
+    }
+
+    /**
+     * Gets a model value for the provided path (dot-notated).
+     *
+     * @param   AbstractModel   $model
+     * @param   string          $path
+     * @return  mixed
+     */
+    public static function getModelValueFor(AbstractModel $model, $path)
+    {
+        $keys    = explode('.', $path);
+        $current = array_shift($keys);
+
+        if (empty($keys)) {
+            return $model->get($current);
+        } else {
+            $value = $model->get($current);
+            if ($value instanceof AbstractModel) {
+                return self::getModelValueFor($value, implode('.', $keys));
+            }
+        }
+    }
+
+    /**
      * Creates a URL safe, dasherized string from the provided value.
      *
      * @param   string  $value
@@ -33,21 +72,6 @@ class ModelUtility
             }
         }
         return implode('-', $parts);
-    }
-
-    public static function getModelValueFor(AbstractModel $model, $path)
-    {
-        $keys    = explode('.', $path);
-        $current = array_shift($keys);
-
-        if (empty($keys)) {
-            return $model->get($current);
-        } else {
-            $value = $model->get($current);
-            if ($value instanceof AbstractModel) {
-                return self::getModelValueFor($value, implode('.', $keys));
-            }
-        }
     }
 
     /**

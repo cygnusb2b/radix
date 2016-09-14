@@ -5,21 +5,30 @@ customer-authentication:
             db: radix
     mixins: [ 'timestampable' ]
     attributes:
-        username: # how do we handle email addresses here??
+        username:
             type: string
         password:
             type: string
         salt:
             type: string
-        namespace:
-            type: string # the auth namespace key, like 'website' - or should this be related to a website product?
         roles:
             type: array
             defaultValue: []
         isSocial:
             type: array
             defaultValue: false
+        lastLogin:
+            type: date
+        logins:
+            type: integer
+            defaultValue: 0
+        attempts:
+            type: integer
+            defaultValue: 0
     relationships:
-        customer:
+        realm:
             type: one
-            entity: customer
+            entity: authentication-realm
+        account:
+            type: one
+            entity: customer-account

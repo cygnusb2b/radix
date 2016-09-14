@@ -3,10 +3,16 @@ customer-address:
         persistence:
             key: mongodb
             db: radix
-    mixins: [ 'timestampable', 'customer-product-relatable' ]
+    mixins: [ 'timestampable' ]
     attributes:
-        addressType:
-            type: string # A type identifier: home, business, or nothing (if unknown)
+        name:
+            type: string
+        isPrimaryBilling:
+            type: boolean
+            defaultValue: false
+        isPrimaryMailing:
+            type: boolean
+            defaultValue: false
         companyName:
             type: string
         street:
@@ -23,3 +29,9 @@ customer-address:
             type: string
         countryCode:
             type: string
+        postalCode:
+            type: string
+    relationships:
+        customer:
+            type: one
+            entity: customer

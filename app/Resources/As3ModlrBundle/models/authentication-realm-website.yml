@@ -1,0 +1,10 @@
+authentication-realm-website:
+    entity:
+        extends: authentication-realm
+        persistence:
+            key: mongodb
+            db: radix
+    relationships:
+        website:
+            type: one
+            entity: product-website

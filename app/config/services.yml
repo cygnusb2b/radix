@@ -1,4 +1,5 @@
 imports:
+    - { resource: services/event-subscribers.yml }
     - { resource: services/question-types.yml }
 
 parameters: ~
@@ -7,31 +8,6 @@ services:
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory
         arguments: [ "@app_bundle.question.type_manager" ]
-
-    app_bundle.event_subscriber.keyable:
-        private: true
-        class: AppBundle\EventSubscriber\KeyableSubscriber
-        tags:
-            - { name: as3_modlr.event_subscriber }
-
-    app_bundle.event_subscriber.product_website:
-        private: true
-        class: AppBundle\EventSubscriber\ProductWebsiteSubscriber
-        tags:
-            - { name: as3_modlr.event_subscriber }
-
-    app_bundle.event_subscriber.timestampable:
-        private: true
-        class: AppBundle\EventSubscriber\TimestampableSubscriber
-        tags:
-            - { name: as3_modlr.event_subscriber }
-
-    app_bundle.event_subscriber.question:
-        private: true
-        class: AppBundle\EventSubscriber\QuestionSubscriber
-        arguments: [ "@app_bundle.question.type_manager" ]
-        tags:
-            - { name: as3_modlr.event_subscriber }
 
     app_bundle.input.submission_manager:
         class: AppBundle\Input\SubmissionManager

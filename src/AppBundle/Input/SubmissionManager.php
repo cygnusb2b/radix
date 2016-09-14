@@ -67,9 +67,20 @@ class SubmissionManager
      *
      * @param   array   $payload
      */
-    public function processSubmission(array $payload)
+    public function processSubmission(array $payload, Model $inputSource, $customerId = null, $ipAddress = null)
     {
         $answers = $this->createAnswersFor($payload);
+        if (empty($answers)) {
+            return;
+        }
+
+        $submission = $this->createInputSubmission($inputSource, $ipAddress);
+
+        if (empty($customerId)) {
+            // New customer. Attempt to match, else create new.
+        } else {
+            // Append submission to existing customer.
+        }
         var_dump(__METHOD__, $answers);
         die();
     }
@@ -115,5 +126,23 @@ class SubmissionManager
         return $answers;
     }
 
+    /**
+     * Creates a new, unsaved input submission model.
+     *
+     * @param   Model       $inputSource
+     * @param   string|null $ipAddress
+     * @return  Model
+     */
+    private function createInputSubmission(Model $inputSource, $ipAddress)
+    {
+        $submission = $this->getStore()->create('input-submission');
+        $submission->set('source', $inputSource);
+
+        if (!empty($ipAddress) {
+            $submission->set('ipAddress', $ipAddress);
+            // @todo Get IP address info.
+        }
+        return $submission;
+    }
 
 }

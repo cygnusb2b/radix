@@ -9,6 +9,9 @@ customer-phone:
             type: string # business, home, mobile, fax, toll-free, etc.
         number:
             type: string # The phone number
+        isPrimary:
+            type: boolean
+            defaultValue: false
     relationships:
         customer:
             type: one

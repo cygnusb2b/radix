@@ -1,13 +1,15 @@
 customer:
     entity:
+        abtract: true
+        polymorphic: true
         persistence:
             key: mongodb
             db: radix
     mixins: [ 'timestampable', 'soft-deleteable' ]
     attributes:
-        firstName:
+        givenName:
             type: string
-        lastName:
+        familyName:
             type: string
         middleName:
             type: string
@@ -16,7 +18,8 @@ customer:
         suffix:
             type: string
         gender:
-            type: string # male or female, or nothing (if unknown) - use Facebook gender choices?
+            type: string # Male, Female, Non-Binary, Unknown
+            defaultValue: Unknown
         title:
             type: string
     embeds:
@@ -39,11 +42,7 @@ customer:
             entity: customer-phone
             inverse: true
             field: customer
-        authentications:
-            type: many
-            entity: customer-authentication
-            inverse: true
-            field: customer
+
         answers:
             type: many
             entity: question-answer

@@ -1,0 +1,11 @@
+customer-identity:
+    entity:
+        extends: customer
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        canonical:
+            type: string
+        email:
+            type: string
