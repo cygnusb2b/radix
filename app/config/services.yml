@@ -14,6 +14,12 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.event_subscriber.product_website:
+        private: true
+        class: AppBundle\EventSubscriber\ProductWebsiteSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
     app_bundle.event_subscriber.timestampable:
         private: true
         class: AppBundle\EventSubscriber\TimestampableSubscriber
