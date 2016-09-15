@@ -15,7 +15,7 @@ customer-authentication:
             type: array
             defaultValue: []
         isSocial:
-            type: array
+            type: boolean
             defaultValue: false
         lastLogin:
             type: date

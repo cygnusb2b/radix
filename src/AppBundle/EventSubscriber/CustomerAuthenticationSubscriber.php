@@ -30,6 +30,7 @@ class CustomerAuthenticationSubscriber implements EventSubscriberInterface
             return;
         }
         $this->validateRequiredFields($model);
+        $this->appendDefaultRoles($model);
     }
 
     /**
@@ -39,6 +40,21 @@ class CustomerAuthenticationSubscriber implements EventSubscriberInterface
     protected function shouldProcess(Model $model)
     {
         return 'customer-authentication' === $model->getType();
+    }
+
+    /**
+     * @param   Model   $model
+     */
+    private function appendDefaultRoles(Model $model)
+    {
+        $roles = $model->get('roles');
+        if (!empty($roles)) {
+            return;
+        }
+        foreach ($model->get('realm')->get('defaultRoles') as $role) {
+            $roles[] = $role;
+        }
+        $model->set('roles', $roles);
     }
 
     /**

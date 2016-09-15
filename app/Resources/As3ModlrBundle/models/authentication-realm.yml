@@ -9,5 +9,6 @@ authentication-realm:
         roles:
             type: array
             defaultValue: []
-        defaultRole:
-            type: string
+        defaultRoles:
+            type: array
+            defaultValue: []
