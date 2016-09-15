@@ -12,6 +12,12 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        app:
+            pattern: ^/app
+            stateless: true
+            guard:
+                authenticators:
+                    - app_bundle.security.application_authenticator
 
         main:
             anonymous: ~

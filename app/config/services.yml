@@ -5,6 +5,9 @@ imports:
 parameters: ~
 
 services:
+    app_bundle.core.account_manager:
+        class: AppBundle\Core\AccountManager
+
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory
         arguments: [ "@app_bundle.question.type_manager" ]
@@ -29,5 +32,17 @@ services:
             - [ addClient,  [ "@app_bundle.integrations.client.omeda" ] ]
             - [ addHandler, [ "@app_bundle.integrations.handler.question_pull" ] ]
 
+    app_bundle.kernel_subscriber.account:
+        private: true
+        class: AppBundle\KernelSubscriber\AccountSubscriber
+        arguments: [ "@app_bundle.core.account_manager" ]
+        tags:
+            - { name: kernel.event_subscriber }
+
     app_bundle.omeda_sdk.api_client:
         class: As3\OmedaSDK\ApiClient
+
+    app_bundle.security.application_authenticator:
+        private: true
+        class: AppBundle\Security\ApplicationAuthenticator
+        arguments: [ "@as3_modlr.api.adapter", "@app_bundle.core.account_manager" ]

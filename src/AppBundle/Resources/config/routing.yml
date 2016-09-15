@@ -1,3 +1,7 @@
+app_bundle_app:
+    path: /app
+    defaults: { _controller: AppBundle:App:index }
+
 app_bundle_manage:
     path: /manage{path}
     defaults: { _controller: AppBundle:Manage:index, path: '' }
