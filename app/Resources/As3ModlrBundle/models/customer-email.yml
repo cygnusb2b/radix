@@ -5,8 +5,8 @@ customer-email: # for user data linking, registration must be confirmed via emai
             db: radix
     mixins: [ 'timestampable' ]
     attributes:
-        emailType:
-            type: string # A type identifier: primary or secondary or null (if unknown) - should this actually be home, business??
+        name:
+            type: string
         isPrimary:
             type: boolean
             defaultValue: false

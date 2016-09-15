@@ -9,3 +9,5 @@ customer-identity:
             type: string
         email:
             type: string
+        lastSeen:
+            type: date

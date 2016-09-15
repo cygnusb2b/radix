@@ -1,6 +1,6 @@
 customer:
     entity:
-        abtract: true
+        abstract: true
         polymorphic: true
         persistence:
             key: mongodb
@@ -42,7 +42,6 @@ customer:
             entity: customer-phone
             inverse: true
             field: customer
-
         answers:
             type: many
             entity: question-answer

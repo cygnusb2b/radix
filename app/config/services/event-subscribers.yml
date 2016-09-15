@@ -11,6 +11,12 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.event_subscriber.customer_email:
+        private: true
+        class: AppBundle\EventSubscriber\CustomerEmailSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
     app_bundle.event_subscriber.keyable:
         private: true
         class: AppBundle\EventSubscriber\KeyableSubscriber
