@@ -6,7 +6,7 @@ customer-phone:
     mixins: [ 'timestampable' ]
     attributes:
         phoneType:
-            type: string # business, home, mobile, fax, toll-free, etc.
+            type: string # Business, Home, Mobile, Fax
         number:
             type: string # The phone number
         isPrimary:

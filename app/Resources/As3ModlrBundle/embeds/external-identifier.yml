@@ -4,3 +4,6 @@ external-identifier:
             type: string
         source:
             type: string
+        extra:
+            type: object
+            defaultValue: []

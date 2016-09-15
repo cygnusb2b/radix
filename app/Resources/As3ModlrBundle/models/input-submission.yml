@@ -24,3 +24,6 @@ input-submission:
         source:
             type: one
             entity: input-source
+        customer:
+            type: one
+            entity: customer

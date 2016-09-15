@@ -5,12 +5,24 @@ customer-authentication:
             db: radix
     mixins: [ 'timestampable' ]
     attributes:
+        enabled:
+            type: boolean
+            defaultValue: false # an administrative, hard ban
+        locked:
+            type: boolean
+            defaultValue: false # is set for programatic reasons, e.g., too many failed password attempts
+        shadowbanned:
+            type: boolean
+            defaultValue: false # an administrative, soft ban
         username:
             type: string
         password:
             type: string
         salt:
             type: string
+        mechanism:
+            type: string
+            defaultValue: platform # one of platform, merrick, or drupal6
         roles:
             type: array
             defaultValue: []

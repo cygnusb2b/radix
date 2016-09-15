@@ -30,7 +30,12 @@ class ManageController extends Controller
             'question-not-found'        => 'foo',
             'omeda-5070383'             => 'Value not found!',
         ];
-        $manager->processSubmission($payload);
+
+        $source = $this->get('as3_modlr.store')->findQuery('input-source', ['key' => 'request-more-information'])->getSingleResult();
+        var_dump($source->get('key'));
+        die();
+
+        $manager->processSubmission($payload, $source, null, null);
         var_dump(__METHOD__);
         die();
 

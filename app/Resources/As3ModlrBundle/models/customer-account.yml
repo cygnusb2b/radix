@@ -4,6 +4,11 @@ customer-account:
         persistence:
             key: mongodb
             db: radix
+    attributes:
+        displayName:
+            type: string
+        picture:
+            type: string
     relationships:
         authentications:
             type: many

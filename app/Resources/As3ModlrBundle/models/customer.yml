@@ -47,6 +47,11 @@ customer:
             entity: customer-answer
             inverse: true
             field: customer
+        submissions:
+            type: many
+            entity: input-submission
+            inverse: true
+            field: customer
 
 # For answers:
 # Need to determine ALL answers currently associated with the user??
