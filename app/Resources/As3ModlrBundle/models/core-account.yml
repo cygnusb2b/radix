@@ -4,7 +4,9 @@ core-account:
             key: mongodb
             db: radix
     mixins: [ 'keyable', 'timestampable' ]
-    embeds:
+    relationships:
         applications:
             type: many
-            entity: core-account-app
+            inverse: true
+            field: account
+            entity: core-application
