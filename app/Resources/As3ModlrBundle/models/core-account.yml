@@ -1,0 +1,10 @@
+core-account:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'keyable', 'timestampable' ]
+    embeds:
+        applications:
+            type: many
+            entity: core-account-app
