@@ -1,0 +1,21 @@
+core-user:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable' ]
+    attributes:
+        email:
+            type: string
+        password:
+            type: string
+            serialize: false
+        salt:
+            type: string
+            serialize: false
+    relationships:
+        applications:
+            type: many
+            inverse: true
+            field: user
+            entity: core-user-application

@@ -1,0 +1,17 @@
+core-user-application:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable' ]
+    attributes:
+        roles:
+            type: array
+            defaultValue: [ ROLE_USER ]
+    relationships:
+        user:
+            type: one
+            entity: core-user
+        application:
+            type: one
+            entity: core-application
