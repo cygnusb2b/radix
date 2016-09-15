@@ -1,0 +1,7 @@
+customer-answer-boolean:
+    mixins: [ 'question-answerable-boolean' ]
+    entity:
+        extends: customer-answer
+        persistence:
+            key: mongodb
+            db: radix

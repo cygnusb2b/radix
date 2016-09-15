@@ -1,0 +1,7 @@
+customer-answer-choices:
+    mixins: [ 'question-answerable-choices' ]
+    entity:
+        extends: customer-answer
+        persistence:
+            key: mongodb
+            db: radix

@@ -1,0 +1,7 @@
+customer-answer-date:
+    mixins: [ 'question-answerable-date' ]
+    entity:
+        extends: customer-answer
+        persistence:
+            key: mongodb
+            db: radix

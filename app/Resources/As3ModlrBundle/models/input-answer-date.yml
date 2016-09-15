@@ -1,0 +1,7 @@
+input-answer-date:
+    mixins: [ 'question-answerable-date' ]
+    entity:
+        extends: input-answer
+        persistence:
+            key: mongodb
+            db: radix

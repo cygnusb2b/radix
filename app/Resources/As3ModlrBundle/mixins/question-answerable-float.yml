@@ -1,0 +1,4 @@
+question-answerable-float:
+    attributes:
+        value:
+            type: float

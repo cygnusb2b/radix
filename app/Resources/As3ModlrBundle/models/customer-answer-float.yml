@@ -1,0 +1,7 @@
+customer-answer-float:
+    mixins: [ 'question-answerable-float' ]
+    entity:
+        extends: customer-answer
+        persistence:
+            key: mongodb
+            db: radix

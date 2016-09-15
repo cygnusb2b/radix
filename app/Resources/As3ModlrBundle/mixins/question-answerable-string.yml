@@ -1,0 +1,4 @@
+question-answerable-string:
+    attributes:
+        value:
+            type: string

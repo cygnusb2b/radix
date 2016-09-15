@@ -11,6 +11,9 @@ question:
         builtIn:
             type: boolean
             defaultValue: false
+        linkToCustomer:
+            type: boolean
+            defaultValue: false
         label:
             type: string
         questionType:

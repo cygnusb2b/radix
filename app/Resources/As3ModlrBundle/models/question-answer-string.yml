@@ -1,9 +1,0 @@
-question-answer-string:
-    entity:
-        extends: question-answer
-        persistence:
-            key: mongodb
-            db: radix
-    attributes:
-        value:
-            type: string

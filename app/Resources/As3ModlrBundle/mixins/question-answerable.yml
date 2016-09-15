@@ -1,0 +1,5 @@
+question-answerable:
+    relationships:
+        question:
+            type: one
+            entity: question

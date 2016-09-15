@@ -1,9 +1,0 @@
-question-answer-date:
-    entity:
-        extends: question-answer
-        persistence:
-            key: mongodb
-            db: radix
-    attributes:
-        value:
-            type: date

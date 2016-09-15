@@ -1,0 +1,7 @@
+input-answer-boolean:
+    mixins: [ 'question-answerable-boolean' ]
+    entity:
+        extends: input-answer
+        persistence:
+            key: mongodb
+            db: radix

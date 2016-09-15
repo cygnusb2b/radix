@@ -1,0 +1,4 @@
+question-answerable-date:
+    attributes:
+        value:
+            type: date

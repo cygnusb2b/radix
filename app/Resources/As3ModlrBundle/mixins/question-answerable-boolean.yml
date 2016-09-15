@@ -1,0 +1,4 @@
+question-answerable-boolean:
+    attributes:
+        value:
+            type: boolean

@@ -1,0 +1,5 @@
+question-answerable-choices:
+    relationships:
+        value:
+            type: many
+            entity: question-choice

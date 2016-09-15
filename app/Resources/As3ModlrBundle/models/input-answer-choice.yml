@@ -1,0 +1,7 @@
+input-answer-choice:
+    mixins: [ 'question-answerable-choice' ]
+    entity:
+        extends: input-answer
+        persistence:
+            key: mongodb
+            db: radix

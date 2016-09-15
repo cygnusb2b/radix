@@ -44,6 +44,13 @@ customer:
             field: customer
         answers:
             type: many
-            entity: question-answer
+            entity: customer-answer
             inverse: true
             field: customer
+
+# For answers:
+# Need to determine ALL answers currently associated with the user??
+# Need to see the most current answers for the customer
+# Need to store all input submissions (e.g. form or third-party pull integration)
+# Eventually need to roll an answer down to the root fields?
+# Need to determine how answers will be linked to demographics, to prevent overwrites??
