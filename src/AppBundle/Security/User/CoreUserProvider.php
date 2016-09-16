@@ -53,7 +53,7 @@ class CoreUserProvider implements UserProviderInterface
      */
     public function refreshUser(UserInterface $user)
     {
-        if (false === $this->supportsClass($user)) {
+        if (false === $this->supportsClass(get_class($user))) {
             // Unsupported user class
             throw new UnsupportedUserException('The provided user object is not supported by this provider.');
         }
@@ -65,6 +65,6 @@ class CoreUserProvider implements UserProviderInterface
      */
     public function supportsClass($class)
     {
-        return $class instanceof CoreUser;
+        return 'AppBundle\Security\User\CoreUser' === $class;
     }
 }
