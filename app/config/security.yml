@@ -24,25 +24,13 @@ security:
             guard:
                 authenticators:
                     - app_bundle.security.authenticator.application
-        # api:
-        #     context: user
-        #     pattern: ^/api\/1\.0
-        #     provider: core_user
-        #     guard:
-        #         authenticators:
-        #             - app_bundle.security.authenticator.api
-        # userAuth:
-        #     context: user
-        #     pattern: ^/auth/user/submit
-        #     provider: core_user
-        #     guard:
-        #         authenticators:
-        #             - app_bundle.security.authenticator.core_user
-        #     remember_me:
-        #         secret: "%secret%"
-        #         lifetime: 432000
-        #         name: __radix-core
-        #         always_remember_me: true
+        api:
+            context: user
+            pattern: ^/api\/1\.0
+            provider: core_user
+            guard:
+                authenticators:
+                    - app_bundle.security.authenticator.api
         main:
             context: user
             anonymous: ~
@@ -50,8 +38,6 @@ security:
             guard:
                 authenticators:
                     - app_bundle.security.authenticator.core_user
-                    - app_bundle.security.authenticator.api
-                entry_point: app_bundle.security.authenticator.api
             remember_me:
                 secret: "%secret%"
                 lifetime: 432000
