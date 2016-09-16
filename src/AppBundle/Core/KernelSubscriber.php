@@ -1,8 +1,7 @@
 <?php
 
-namespace AppBundle\KernelSubscriber;
+namespace AppBundle\Core;
 
-use AppBundle\Core\AccountManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\HttpUtils;
 
-class AccountSubscriber implements EventSubscriberInterface
+class KernelSubscriber implements EventSubscriberInterface
 {
     const PUBLIC_KEY_PARAM = 'x-radix-appid';
     const USING_PARAM      = 'X-Radix-Using';

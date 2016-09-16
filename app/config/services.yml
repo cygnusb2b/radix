@@ -11,6 +11,23 @@ services:
         class: AppBundle\Core\AccountManager
         arguments: [ "@as3_modlr.store" ]
 
+    app_bundle.core.subscriber.console:
+        private: true
+        class: AppBundle\Core\ConsoleSubscriber
+        arguments: [ "@app_bundle.core.account_manager" ]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    app_bundle.core.subscriber.kernel:
+        private: true
+        class: AppBundle\Core\KernelSubscriber
+        arguments: [ "@app_bundle.core.account_manager", "@security.http_utils" ]
+        tags:
+            - { name: kernel.event_subscriber }
+        calls:
+            - [ addExcludeRoute, [ "app_bundle_auth_user_submit" ] ]
+            - [ addExcludeRoute, [ "app_bundle_auth_user_retrieve" ] ]
+
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory
         arguments: [ "@app_bundle.question.type_manager" ]
@@ -34,16 +51,6 @@ services:
         calls:
             - [ addClient,  [ "@app_bundle.integrations.client.omeda" ] ]
             - [ addHandler, [ "@app_bundle.integrations.handler.question_pull" ] ]
-
-    app_bundle.kernel_subscriber.account:
-        private: true
-        class: AppBundle\KernelSubscriber\AccountSubscriber
-        arguments: [ "@app_bundle.core.account_manager", "@security.http_utils" ]
-        tags:
-            - { name: kernel.event_subscriber }
-        calls:
-            - [ addExcludeRoute, [ "app_bundle_auth_user_submit" ] ]
-            - [ addExcludeRoute, [ "app_bundle_auth_user_retrieve" ] ]
 
     app_bundle.omeda_sdk.api_client:
         class: As3\OmedaSDK\ApiClient

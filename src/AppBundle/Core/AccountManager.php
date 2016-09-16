@@ -49,6 +49,20 @@ class AccountManager
         return sprintf('%s:%s', $this->account->get('key'), $this->application->get('key'));
     }
 
+    public function retrieveByAppKey($appKey)
+    {
+        $parts = explode(':', $appKey);
+        if (2 !== count($parts) || empty($parts[0]) || empty($parts[1])) {
+            throw new \InvalidArgumentException('Invalid app key.');
+        }
+        $account = $this->store->findQuery('core-account', ['key' => $parts[0]])->getSingleResult();
+        if (null === $account) {
+            return;
+        }
+        $criteria = ['account' => $account->getId(), 'key' => $parts[1]];
+        return $this->store->findQuery('core-application', $criteria)->getSingleResult();
+    }
+
     /**
      * @param   string  $publicKey
      * @return  Model|null
