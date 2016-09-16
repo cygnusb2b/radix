@@ -17,3 +17,4 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            _On6dvKqzugag6gcpU8wAhwEZ6ktu5EVFrgxlfkOurtQnMIFtfGpobqdUpYAGUzc
+    mongo_legacy_dsn:  localhost
