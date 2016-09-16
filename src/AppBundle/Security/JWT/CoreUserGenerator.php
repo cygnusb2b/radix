@@ -63,13 +63,13 @@ class CoreUserGenerator implements JWTGeneratorInterface
         $now     = time();
         $expires = $now + self::TTL;
 
-        $jwt = $builder
-            ->setSubject($token->getUsername())
+        $jwt = $this->builder
+            ->setSubject($user->getUsername())
             ->setIssuer(self::ISSUER)
             ->setExpiration($expires)
             ->setIssuedAt($now)
             ->setAudience($this->getAudienceKey())
-            ->sign($signer, $this->secret)
+            ->sign($this->signer, $this->secret)
             ->getToken()
         ;
         return (string) $jwt;

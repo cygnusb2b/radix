@@ -1,4 +1,15 @@
 services:
+    app_bundle.security.auth.generator_manager:
+        private: true
+        class: AppBundle\Security\Auth\AuthGeneratorManager
+        calls:
+            - [ addGenerator, [ "@app_bundle.security.auth.generator.core_user" ] ]
+
+    app_bundle.security.auth.generator.core_user:
+        private: true
+        class: AppBundle\Security\Auth\CoreUserGenerator
+        arguments: [ "@app_bundle.security.jwt.generator_manager" ]
+
     app_bundle.security.authenticator.api:
         private: true
         class: AppBundle\Security\Authenticator\ApiAuthenticator
@@ -12,7 +23,7 @@ services:
     app_bundle.security.authenticator.core_user:
         private: true
         class: AppBundle\Security\Authenticator\CoreUserAuthenticator
-        arguments: [ "@as3_modlr.api.adapter", "@security.encoder_factory" ]
+        arguments: [ "@as3_modlr.api.adapter", "@security.encoder_factory", "@app_bundle.security.auth.generator_manager" ]
 
     app_bundle.security.jwt.generator_manager:
         private: true

@@ -3,6 +3,7 @@
 namespace AppBundle\Security\Authenticator;
 
 use AppBundle\Security\User\CoreUser;
+use AppBundle\Security\Auth\AuthGeneratorManager;
 use As3\Modlr\Api\AdapterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,9 +16,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
-use Lcobucci\JWT\Builder as JWTBuilder;
-use Lcobucci\JWT\Signer\Hmac\Sha256 as JWTSigner;
-
 class CoreUserAuthenticator extends AbstractGuardAuthenticator
 {
     const USERNAME = 'username';
@@ -28,6 +26,8 @@ class CoreUserAuthenticator extends AbstractGuardAuthenticator
      */
     private $adapter;
 
+    private $authManager;
+
     /**
      * @var EncoderFactory
      */
@@ -37,10 +37,11 @@ class CoreUserAuthenticator extends AbstractGuardAuthenticator
      * @param   AdapterInterface    $adapter
      * @param   EncoderFactory      $encoderFactory
      */
-    public function __construct(AdapterInterface $adapter, EncoderFactory $encoderFactory)
+    public function __construct(AdapterInterface $adapter, EncoderFactory $encoderFactory, AuthGeneratorManager $authManager)
     {
         $this->adapter = $adapter;
         $this->encoderFactory = $encoderFactory;
+        $this->authManager = $authManager;
     }
 
     /**
@@ -107,19 +108,8 @@ class CoreUserAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // @todo This should made into an auth object generator. @see Cyngus\ApplicationBundle\Auth
-        $user     = $token->getUser();
-        $model    = $user->getModel();
-        $response = [
-            'username'      => $user->getUserName(),
-            'givenName'     => $user->getGivenName(),
-            'familyName'    => $user->getFamilyName(),
-            'roles'         => $user->getRoles(),
-            'applications'  => $user->getPublicKeys(),
-            'token'         => $this->createJwtToken($token),
-        ];
-
-        return new JsonResponse($response);
+        $data = $this->authManager->generateFor($token->getUser());
+        return new JsonResponse($data);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
@@ -151,37 +141,5 @@ class CoreUserAuthenticator extends AbstractGuardAuthenticator
         $response = new JsonResponse(null, $httpCode);
         $response->setJson($error);
         return $response;
-    }
-
-    /**
-     * @todo    This should move into an auth generator service and use the parameters.yml
-     */
-    private function createJwtToken(TokenInterface $token)
-    {
-        // Once this moves, will need to confirm that this a valid token. Can assume good here.
-
-        $signer  = new JWTSigner();
-        $builder = new JWTBuilder();
-
-        // These params should come from parameters.yml.
-        $ttl      = 86400;
-        $secret   = '_On6dvKqzugag6gcpU8wAhwEZ6ktu5EVFrgxlfkOurtQnMIFtfGpobqdUpYAGUzc';
-        $issuer   = 'radix';
-        $audience = 'core-user';
-
-        // Start the dance.
-        $now     = time();
-        $expires = time() + $ttl;
-
-        $jwt = $builder
-            ->setSubject($token->getUsername())
-            ->setIssuer($issuer)
-            ->setExpiration($expires)
-            ->setIssuedAt($now)
-            ->setAudience($audience)
-            ->sign($signer, $secret)
-            ->getToken()
-        ;
-        return (string) $jwt;
     }
 }
