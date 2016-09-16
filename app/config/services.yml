@@ -9,6 +9,7 @@ parameters: ~
 services:
     app_bundle.core.account_manager:
         class: AppBundle\Core\AccountManager
+        arguments: [ "@as3_modlr.store" ]
 
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory
@@ -37,9 +38,12 @@ services:
     app_bundle.kernel_subscriber.account:
         private: true
         class: AppBundle\KernelSubscriber\AccountSubscriber
-        arguments: [ "@app_bundle.core.account_manager" ]
+        arguments: [ "@app_bundle.core.account_manager", "@security.http_utils" ]
         tags:
             - { name: kernel.event_subscriber }
+        calls:
+            - [ addExcludeRoute, [ "app_bundle_auth_user_submit" ] ]
+            - [ addExcludeRoute, [ "app_bundle_auth_user_retrieve" ] ]
 
     app_bundle.omeda_sdk.api_client:
         class: As3\OmedaSDK\ApiClient
