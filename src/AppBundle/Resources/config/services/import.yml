@@ -19,14 +19,14 @@ services:
             - "@app_bundle.import.source.mongo.legacy"
 
     app_bundle.import.persister.as3_modlr:
-        class: AppBundle\Import\Persister\As3Modlr
+        class: As3\SymfonyData\Import\Persister\As3Modlr
         arguments:
             - "@as3_modlr.store"
 
     app_bundle.import.source.mongo.legacy:
-        class: Cygnus\ApplicationBundle\Import\Source\Mongo
+        class: As3\SymfonyData\Import\Source\Mongo
         tags:
-            - { name: "import.connection.legacy" }
+            - { name: "app_bundle.import.connection.legacy" }
 
     app_bundle.console.import:
         class: As3\SymfonyData\Console\Import
