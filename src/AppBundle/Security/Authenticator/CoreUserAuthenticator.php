@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Security;
+namespace AppBundle\Security\Authenticator;
 
 use AppBundle\Security\User\CoreUser;
 use As3\Modlr\Api\AdapterInterface;

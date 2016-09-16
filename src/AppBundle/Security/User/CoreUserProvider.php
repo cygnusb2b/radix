@@ -1,8 +1,7 @@
 <?php
 
-namespace AppBundle\Security;
+namespace AppBundle\Security\User;
 
-use AppBundle\Security\User\CoreUser;
 use As3\Modlr\Store\Store;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
