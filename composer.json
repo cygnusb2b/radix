@@ -35,7 +35,8 @@
         "symfony/assetic-bundle": "^2.8",
         "as3/omeda-sdk": "dev-master",
         "as3/parameters": "^1.0",
-        "lcobucci/jwt": "^3.2"
+        "lcobucci/jwt": "^3.2",
+        "as3/symfony-data-importer": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
