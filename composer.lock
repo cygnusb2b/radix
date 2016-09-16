@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c6ca89fd174ceec6d93b01910ba52350",
-    "content-hash": "c471c842160458bd914f1b9076bb999a",
+    "hash": "d3fb57f6a21b28ba17dd0bffb4195d2e",
+    "content-hash": "a701b20ee66e454c6cbe1ab3c84de9d7",
     "packages": [
         {
             "name": "as3/modlr",
@@ -275,6 +275,43 @@
             ],
             "description": "Common parameter bag classes and parameter formatting/definitions.",
             "time": "2016-09-09 15:33:48"
+        },
+        {
+            "name": "as3/symfony-data-importer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/symfony-data-importer.git",
+                "reference": "fc5db3d32c379a6bb1ce897b3c5649422d1d7ee9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/symfony-data-importer/zipball/fc5db3d32c379a6bb1ce897b3c5649422d1d7ee9",
+                "reference": "fc5db3d32c379a6bb1ce897b3c5649422d1d7ee9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "symfony/console": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "As3\\SymfonyData\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Worden",
+                    "email": "solocommand@gmail.com"
+                }
+            ],
+            "description": "Symfony console application to handle data importing.",
+            "time": "2016-09-15 21:03:49"
         },
         {
             "name": "doctrine/annotations",
@@ -2840,7 +2877,8 @@
         "as3/modlr-api-jsonapiorg": 20,
         "as3/modlr-search-elastic": 20,
         "as3/modlr-persister-mongodb": 20,
-        "as3/omeda-sdk": 20
+        "as3/omeda-sdk": 20,
+        "as3/symfony-data-importer": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
