@@ -5,6 +5,12 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.event_subscriber.core_user:
+        private: true
+        class: AppBundle\EventSubscriber\CoreUserSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
     app_bundle.event_subscriber.customer_authentication:
         private: true
         class: AppBundle\EventSubscriber\CustomerAuthenticationSubscriber

@@ -16,4 +16,9 @@ parameters:
     mailer_password:   ~
 
     # A secret key that's used to generate certain security-related tokens
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    secret:            _On6dvKqzugag6gcpU8wAhwEZ6ktu5EVFrgxlfkOurtQnMIFtfGpobqdUpYAGUzc
+    jwt:
+        core:
+            issuer: radix
+            audience: core-user
+            ttl: 86400

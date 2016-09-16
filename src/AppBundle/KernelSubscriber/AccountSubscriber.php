@@ -46,6 +46,7 @@ class AccountSubscriber implements EventSubscriberInterface
         if (!$event->isMasterRequest()) {
             return;
         }
+        return;
 
         if (false === $this->manager->hasApplication()) {
             throw new \RuntimeException('No application context has been selected. Unable to continue.');

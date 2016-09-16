@@ -1,4 +1,4 @@
-core-user-application:
+core-application-user:
     entity:
         persistence:
             key: mongodb

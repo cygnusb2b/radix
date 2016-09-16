@@ -14,3 +14,8 @@ core-application:
         account:
             type: one
             entity: core-account
+        users:
+            type: many
+            entity: core-application-user
+            inverse: true
+            field: user

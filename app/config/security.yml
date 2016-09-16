@@ -4,8 +4,13 @@ security:
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
+        core_user:
+            id: app_bundle.security.core_user_provider
         in_memory:
             memory: ~
+
+    encoders:
+        AppBundle\Security\User\CoreUser: bcrypt
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -13,13 +18,28 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         app:
+            context: customer
             pattern: ^/app
             stateless: true
             guard:
                 authenticators:
                     - app_bundle.security.application_authenticator
-
+        api:
+            context: user
+            pattern: ^/api\/1\.0
+            provider: core_user
+            guard:
+                authenticators:
+                    - app_bundle.security.api_authenticator
+        userAuth:
+            context: user
+            pattern: ^/auth/user/submit
+            provider: core_user
+            guard:
+                authenticators:
+                    - app_bundle.security.core_user_authenticator
         main:
+            context: user
             anonymous: ~
             # activate different ways to authenticate
 
@@ -28,3 +48,6 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+
+    access_control:
+        - { path: ^/api/1\.0, roles: [ ROLE_CORE\USER ] }

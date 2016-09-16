@@ -2,7 +2,6 @@
 
 namespace AppBundle\Security;
 
-use AppBundle\Core\AccountManager;
 use As3\Modlr\Api\AdapterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,18 +13,30 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
-class ApplicationAuthenticator extends AbstractGuardAuthenticator
-{
-    const PUBLIC_KEY_PARAM = 'x-radix-appid';
+use Lcobucci\JWT\Parser as JWTParser;
+use Lcobucci\JWT\Signer\Hmac\Sha256 as JWTSigner;
+use Lcobucci\JWT\Token as JWTToken;
+use Lcobucci\JWT\ValidationData;
 
+class ApiAuthenticator extends AbstractGuardAuthenticator
+{
+    /**
+     * @var AdapterInterface
+     */
     private $manager;
 
-    private $adapter;
+    private $parser;
 
-    public function __construct(AdapterInterface $adapter, AccountManager $manager)
+    private $signer;
+
+    /**
+     * @param   AdapterInterface    $adapter
+     */
+    public function __construct(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
-        $this->manager = $manager;
+        $this->parser  = new JWTParser();
+        $this->signer  = new JWTSigner();
     }
 
     /**
@@ -36,44 +47,34 @@ class ApplicationAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        $param = self::PUBLIC_KEY_PARAM;
-
-        $values = [
-            'header'  => $request->headers->get($param),
-            'request' => $request->query->get($param),
-        ];
-
-        $publicKey = null;
-        foreach ($values as $value) {
-            if (!empty($value)) {
-                $publicKey = $value;
-                break;
-            }
-        }
-        if (empty($publicKey)) {
+        $token = $this->extractRawToken($request);
+        if (empty($token)) {
             return;
         }
-        return ['token' => $publicKey];
+        return ['token' => $token];
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $publicKey = $credentials['token'];
 
-        try {
-            $application = $this->adapter->getStore()->findQuery('core-application', ['publicKey' => $publicKey])->getSingleResult();
-            if (null === $application) {
-                return;
-            }
-            // Set the application to the manager.
-            $this->manager->setApplication($application);
+        // @todo token parsing should be consolidated with generation.
+        $token = $this->parser->parse($credentials['token']);
 
-            // Need to return a UserInterface object.
-            // Since this is an application, and only needs the public key to find a model, we can return an empty, built-in user object.
-            return new User($application->get('key'), $application->get('publicKey'));
-        } catch (\Exception $e) {
-            throw new AuthenticationServiceException('', 0, $e);
+        $rules = new ValidationData();
+        $rules->setIssuer('radix');
+        if (false === $token->validate($rules)) {
+            throw new AuthenticationException('Invalid token.');
         }
+        if (false === $token->verify($this->signer, '_On6dvKqzugag6gcpU8wAhwEZ6ktu5EVFrgxlfkOurtQnMIFtfGpobqdUpYAGUzc')) {
+            throw new AuthenticationException('Invalid token.');
+        }
+
+        $username = $token->getClaim('sub');
+        if (empty($username)) {
+            throw new AuthenticationException('Invalid user.');
+        }
+
+        return $userProvider->loadUserByUsername($username);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -115,7 +116,24 @@ class ApplicationAuthenticator extends AbstractGuardAuthenticator
     {
         $error    = $this->adapter->getSerializer()->serializeError($title, $detail, $httpCode);
         $response = new JsonResponse(null, $httpCode);
+        $response->headers->set('WWW-Authenticate', 'Bearer');
         $response->setJson($error);
         return $response;
+    }
+
+    /**
+     * Extracts a raw JWT token from the request.
+     *
+     * @param   Request     $request
+     * @return  string|null
+     */
+    private function extractRawToken(Request $request)
+    {
+        $header = $request->headers->get('Authorization');
+        if (0 !== strpos($header, 'Bearer')) {
+            return null;
+        }
+        $raw = trim(str_replace('Bearer ', '', $request->headers->get('Authorization')));
+        return (empty($raw)) ? null : $raw;
     }
 }

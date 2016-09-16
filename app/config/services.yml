@@ -1,6 +1,7 @@
 imports:
     - { resource: services/event-subscribers.yml }
     - { resource: services/question-types.yml }
+    - { resource: services/security.yml }
 
 parameters: ~
 
@@ -41,8 +42,3 @@ services:
 
     app_bundle.omeda_sdk.api_client:
         class: As3\OmedaSDK\ApiClient
-
-    app_bundle.security.application_authenticator:
-        private: true
-        class: AppBundle\Security\ApplicationAuthenticator
-        arguments: [ "@as3_modlr.api.adapter", "@app_bundle.core.account_manager" ]

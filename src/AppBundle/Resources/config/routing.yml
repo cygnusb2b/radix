@@ -2,6 +2,14 @@ app_bundle_app:
     path: /app
     defaults: { _controller: AppBundle:App:index }
 
+app_bundle_auth_user_submit:
+    path: /auth/user/submit
+    defaults: { _controller: AppBundle:Auth:userSubmit }
+
+app_bundle_auth_user_retrieve:
+    path: /auth/user/retrieve
+    defaults: { _controller: AppBundle:Auth:userRetrieve }
+
 app_bundle_manage:
     path: /manage{path}
     defaults: { _controller: AppBundle:Manage:index, path: '' }

@@ -5,6 +5,10 @@ core-user:
             db: radix
     mixins: [ 'timestampable' ]
     attributes:
+        givenName:
+            type: string
+        familyName:
+            type: string
         email:
             type: string
         password:
@@ -13,9 +17,19 @@ core-user:
         salt:
             type: string
             serialize: false
+        lastLogin:
+            type: date
+        lastSeen:
+            type: date
+        logins:
+            type: integer
+            defaultValue: 0
+        remembers:
+            type: integer
+            defaultValue: 0
     relationships:
-        applications:
+        details:
             type: many
             inverse: true
             field: user
-            entity: core-user-application
+            entity: core-application-user
