@@ -23,6 +23,12 @@ as3_modlr:
         default:
             type: elastic
 
+app:
+    import:
+        connections:
+            legacy:
+                dsn: mongodb://localhost:27017
+
 assetic:
     debug:          '%kernel.debug%'
     use_controller: false
