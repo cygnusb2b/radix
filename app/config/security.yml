@@ -24,35 +24,39 @@ security:
             guard:
                 authenticators:
                     - app_bundle.security.authenticator.application
-        api:
+        # api:
+        #     context: user
+        #     pattern: ^/api\/1\.0
+        #     provider: core_user
+        #     guard:
+        #         authenticators:
+        #             - app_bundle.security.authenticator.api
+        # userAuth:
+        #     context: user
+        #     pattern: ^/auth/user/submit
+        #     provider: core_user
+        #     guard:
+        #         authenticators:
+        #             - app_bundle.security.authenticator.core_user
+        #     remember_me:
+        #         secret: "%secret%"
+        #         lifetime: 432000
+        #         name: __radix-core
+        #         always_remember_me: true
+        main:
             context: user
-            pattern: ^/api\/1\.0
-            provider: core_user
-            guard:
-                authenticators:
-                    - app_bundle.security.authenticator.api
-        userAuth:
-            context: user
-            pattern: ^/auth/user/submit
+            anonymous: ~
             provider: core_user
             guard:
                 authenticators:
                     - app_bundle.security.authenticator.core_user
+                    - app_bundle.security.authenticator.api
+                entry_point: app_bundle.security.authenticator.api
             remember_me:
-                secret: "%secret"
+                secret: "%secret%"
                 lifetime: 432000
                 name: __radix-core
                 always_remember_me: true
-        main:
-            context: user
-            anonymous: ~
-            # activate different ways to authenticate
-
-            # http_basic: ~
-            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: ~
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
 
     access_control:
         - { path: ^/api/1\.0, roles: [ ROLE_CORE\USER ] }

@@ -1,6 +1,5 @@
 services:
     app_bundle.security.auth.generator_manager:
-        private: true
         class: AppBundle\Security\Auth\AuthGeneratorManager
         calls:
             - [ addGenerator, [ "@app_bundle.security.auth.generator.core_user" ] ]
@@ -11,9 +10,9 @@ services:
         arguments: [ "@app_bundle.security.jwt.generator_manager" ]
 
     app_bundle.security.authenticator.api:
-        private: true
+        parent: app_bundle.security.authenticator.core_user.abstract
         class: AppBundle\Security\Authenticator\ApiAuthenticator
-        arguments: [ "@as3_modlr.api.adapter", "@app_bundle.security.jwt.generator_manager" ]
+        arguments: [ "@as3_modlr.api.adapter", "@security.http_utils", "@app_bundle.security.jwt.generator_manager" ]
 
     app_bundle.security.authenticator.application:
         private: true
@@ -21,9 +20,16 @@ services:
         arguments: [ "@as3_modlr.api.adapter", "@app_bundle.core.account_manager" ]
 
     app_bundle.security.authenticator.core_user:
-        private: true
+        parent: app_bundle.security.authenticator.core_user.abstract
         class: AppBundle\Security\Authenticator\CoreUserAuthenticator
-        arguments: [ "@as3_modlr.api.adapter", "@security.encoder_factory", "@app_bundle.security.auth.generator_manager" ]
+        arguments: [ "@as3_modlr.api.adapter", "@security.http_utils", "@security.encoder_factory", "@app_bundle.security.auth.generator_manager" ]
+
+    app_bundle.security.authenticator.core_user.abstract:
+        private: true
+        abstract: true
+        calls:
+            - [ addRoute, [ "app_bundle_auth_user_submit" ] ]
+            - [ addRoute, [ "as3_modlr_rest_api" ] ]
 
     app_bundle.security.jwt.generator_manager:
         private: true

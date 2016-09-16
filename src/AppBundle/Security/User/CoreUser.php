@@ -5,8 +5,9 @@ namespace AppBundle\Security\User;
 use \Serializable;
 use As3\Modlr\Models\Model;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 
-class CoreUser implements UserInterface, Serializable
+class CoreUser implements UserInterface, Serializable, EquatableInterface
 {
     private $model;
 
@@ -34,6 +35,11 @@ class CoreUser implements UserInterface, Serializable
         $this->username   = $model->get('email');
 
         $this->setRoles();
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        return true;
     }
 
     public function getFamilyName()

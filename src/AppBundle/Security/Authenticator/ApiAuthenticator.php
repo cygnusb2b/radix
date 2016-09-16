@@ -4,23 +4,15 @@ namespace AppBundle\Security\Authenticator;
 
 use AppBundle\Security\JWT\JWTGeneratorManager;
 use As3\Modlr\Api\AdapterInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Http\HttpUtils;
 
-class ApiAuthenticator extends AbstractGuardAuthenticator
+class ApiAuthenticator extends AbstractCoreAuthenticator
 {
-    /**
-     * @var AdapterInterface
-     */
-    private $adapter;
-
     /**
      * @var JWTGeneratorManager
      */
@@ -28,31 +20,26 @@ class ApiAuthenticator extends AbstractGuardAuthenticator
 
     /**
      * @param   AdapterInterface    $adapter
+     * @param   HttpUtils           $httpUtils
+     * @param   JWTGeneratorManager $jwtManager
      */
-    public function __construct(AdapterInterface $adapter, JWTGeneratorManager $jwtManager)
+    public function __construct(AdapterInterface $adapter, HttpUtils $httpUtils, JWTGeneratorManager $jwtManager)
     {
-        $this->adapter    = $adapter;
+        parent::__construct($adapter, $httpUtils);
         $this->jwtManager = $jwtManager;
     }
 
     /**
-     * Call on every matched request. If null is returned, the auth process stops.
-     *
-     * @param   Request     $request
-     * @return  array
+     * {@inheritdoc}
      */
-    public function getCredentials(Request $request)
+    public function checkCredentials($credentials, UserInterface $user)
     {
-        $token = $this->jwtManager->extractFrom($request);
-        if (empty($token)) {
-            return;
-        }
-        return $token;
+        // No credential check is needed in this case, because the act of extracting and verifying the JWT (and find the user) is considered authenticated.
+        return true;
     }
 
     /**
-     * Gets the user from the database.
-     *
+     * {@inheritdoc}
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -65,34 +52,13 @@ class ApiAuthenticator extends AbstractGuardAuthenticator
         return $userProvider->loadUserByUsername($username);
     }
 
-    public function checkCredentials($credentials, UserInterface $user)
-    {
-        // No credential check is needed in this case, because the act of extracting and verifying the JWT (and find the user) is considered authenticated.
-        return true;
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // Let the request continue
+        // Let the request continue, since this is an API call.
         return;
-    }
-
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
-    {
-        return $this->createErrorResponse('Forbidden', $exception->getMessageKey(), 403);
-    }
-
-    /**
-     * Called when authentication is needed, but it's not sent
-     */
-    public function start(Request $request, AuthenticationException $authException = null)
-    {
-        return $this->createErrorResponse('Unauthorized', 'Authentication required.', 401);
-    }
-
-    public function supportsRememberMe()
-    {
-        return false;
     }
 
     /**
@@ -100,12 +66,22 @@ class ApiAuthenticator extends AbstractGuardAuthenticator
      * @param   string  $detail
      * @param   int     $httpCode
      */
-    private function createErrorResponse($title, $detail, $httpCode)
+    protected function createErrorResponse($title, $detail, $httpCode)
     {
-        $error    = $this->adapter->getSerializer()->serializeError($title, $detail, $httpCode);
-        $response = new JsonResponse(null, $httpCode);
+        $response = parent::createErrorResponse($title, $detail, $httpCode);
         $response->headers->set('WWW-Authenticate', 'Bearer');
-        $response->setJson($error);
         return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function extractCredentials(Request $request)
+    {
+        $token = $this->jwtManager->extractFrom($request);
+        if (empty($token)) {
+            return;
+        }
+        return $token;
     }
 }
