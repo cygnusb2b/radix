@@ -94,12 +94,14 @@ class KernelSubscriber implements EventSubscriberInterface
         }
 
         if (empty($publicKey)) {
-            throw new \RuntimeException('Fatal: No application key found.');
+            $this->manager->allowDbOperations(false);
+            return;
         }
 
         $application = $this->manager->retrieveByPublicKey($publicKey);
         if (null === $application) {
-            throw new \RuntimeException('Fatal: No application found using the provided key.');
+            $this->manager->allowDbOperations(false);
+            return;
         }
 
         // Set the application model to the manager.

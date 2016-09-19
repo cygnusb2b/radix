@@ -13,6 +13,11 @@ class AccountManager
     private $account;
 
     /**
+     * @var bool
+     */
+    private $allowDbOps = true;
+
+    /**
      * @var Model|null
      */
     private $application;
@@ -31,11 +36,15 @@ class AccountManager
     }
 
     /**
-     * @return  bool
+     * Sets whether database operations are allowed.
+     *
+     * @param   bool    $bit
+     * @return  self
      */
-    public function hasApplication()
+    public function allowDbOperations($bit = true)
     {
-        return null !== $this->application;
+        $this->allowDbOps = (boolean) $bit;
+        return $this;
     }
 
     /**
@@ -49,6 +58,29 @@ class AccountManager
         return sprintf('%s:%s', $this->account->get('key'), $this->application->get('key'));
     }
 
+    /**
+     * @return  string|null
+     */
+    public function getDatabaseSuffix()
+    {
+        if (false === $this->hasApplication()) {
+            return;
+        }
+        return sprintf('%s-%s', $this->account->get('key'), $this->application->get('key'));
+    }
+
+    /**
+     * @return  bool
+     */
+    public function hasApplication()
+    {
+        return null !== $this->application;
+    }
+
+    /**
+     * @param   string  $appKey
+     * @return  Model|null
+     */
     public function retrieveByAppKey($appKey)
     {
         $parts = explode(':', $appKey);
@@ -81,5 +113,18 @@ class AccountManager
         $this->application = $application;
         $this->account     = $application->get('account');
         return $this;
+    }
+
+    /**
+     * Deteremines whether database operations are allowed.
+     *
+     * @return  bool
+     */
+    public function shouldAllowDbOperations()
+    {
+        if (true === $this->allowDbOps) {
+            return true;
+        }
+        return $this->hasApplication();
     }
 }

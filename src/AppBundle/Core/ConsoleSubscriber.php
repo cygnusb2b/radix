@@ -15,6 +15,12 @@ class ConsoleSubscriber implements EventSubscriberInterface
      */
     private $manager;
 
+    private $skip = [
+        'as3:modlr:metadata:cache:clear' => true,
+        'cache:clear'                    => true,
+        'cache:warmup'                   => true,
+    ];
+
     /**
      * @param   AccountManager  $manager
      */
@@ -43,18 +49,21 @@ class ConsoleSubscriber implements EventSubscriberInterface
      */
     public function loadApplication(ConsoleCommandEvent $event)
     {
-        $app = getenv('APP');
+        $app  = getenv('APP');
+        $name = $event->getCommand()->getName();
+
+        if (isset($this->skip[$name])) {
+            return;
+        }
 
         if (empty($app)) {
-            $event->getOutput()->writeLn(sprintf('<error>No application has been set. Set using APP="account:group"</error>'));
-            $event->disableCommand();
+            $this->manager->allowDbOperations(false);
             return;
         }
 
         $application = $this->manager->retrieveByAppKey($app);
         if (null === $application) {
-            $event->getOutput()->writeLn(sprintf('<error>No application found for hthe provided APP context.</error>'));
-            $event->disableCommand();
+            $this->manager->allowDbOperations(false);
             return;
         }
 
