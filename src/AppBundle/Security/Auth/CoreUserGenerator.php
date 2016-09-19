@@ -2,8 +2,10 @@
 
 namespace AppBundle\Security\Auth;
 
-use AppBundle\Security\User\CoreUser;
+use AppBundle\Core\AccountManager;
 use AppBundle\Security\JWT\JWTGeneratorManager;
+use AppBundle\Security\User\CoreUser;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -19,11 +21,25 @@ class CoreUserGenerator implements AuthGeneratorInterface
     private $jwtManager;
 
     /**
-     * @param   JWTGeneratorManager     $jwtManager
+     * @var AccountManager
      */
-    public function __construct(JWTGeneratorManager $jwtManager)
+    private $manager;
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
+     * @param   JWTGeneratorManager     $jwtManager
+     * @param   RequestStack            $requestStack
+     * @param   AccountManager          $accountManager
+     */
+    public function __construct(JWTGeneratorManager $jwtManager, RequestStack $requestStack, AccountManager $manager)
     {
-        $this->jwtManager = $jwtManager;
+        $this->jwtManager   = $jwtManager;
+        $this->requestStack = $requestStack;
+        $this->manager      = $manager;
     }
 
     /**
@@ -31,14 +47,27 @@ class CoreUserGenerator implements AuthGeneratorInterface
      */
     public function generateFor(UserInterface $user)
     {
-        return [
+        $data = [
             'username'      => $user->getUserName(),
             'givenName'     => $user->getGivenName(),
             'familyName'    => $user->getFamilyName(),
             'roles'         => $user->getRoles(),
-            'applications'  => $user->getPublicKeys(),
+            'applications'  => [],
             'token'         => $this->jwtManager->createFor($user),
+            'using'         => $this->manager->getCompositeKey(),
         ];
+
+        $request = $this->requestStack->getCurrentRequest();
+        $baseUrl = sprintf('%s%s', $request->getSchemeAndHttpHost(), $request->getPathInfo());
+
+        foreach ($user->getPublicKeys() as $app => $key) {
+            $data['applications'][$app] = [
+                'key'   => $key,
+                'use'   => sprintf('%s?%s=%s', $baseUrl, AccountManager::PUBLIC_KEY_PARAM, $key),
+            ];
+        }
+
+        return $data;
     }
 
     /**

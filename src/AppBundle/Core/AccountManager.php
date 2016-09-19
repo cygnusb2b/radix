@@ -7,6 +7,10 @@ use As3\Modlr\Store\Store;
 
 class AccountManager
 {
+    const PUBLIC_KEY_PARAM = 'x-radix-appid';
+    const USING_PARAM      = 'X-Radix-Using';
+    const ENV_KEY          = 'APP';
+
     /**
      * @var Model|null
      */

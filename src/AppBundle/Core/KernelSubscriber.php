@@ -12,9 +12,6 @@ use Symfony\Component\Security\Http\HttpUtils;
 
 class KernelSubscriber implements EventSubscriberInterface
 {
-    const PUBLIC_KEY_PARAM = 'x-radix-appid';
-    const USING_PARAM      = 'X-Radix-Using';
-
     /**
      * Route names that do NOT need to check for the existence of the app id.
      * Some examples may include: the initial management login page, auth checks/submits, etc.
@@ -59,7 +56,7 @@ class KernelSubscriber implements EventSubscriberInterface
 
     public function appendKey(FilterResponseEvent $event)
     {
-        $event->getResponse()->headers->set(self::USING_PARAM, $this->manager->getCompositeKey());
+        $event->getResponse()->headers->set(AccountManager::USING_PARAM, $this->manager->getCompositeKey());
     }
 
     /**
@@ -85,7 +82,7 @@ class KernelSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $param     = self::PUBLIC_KEY_PARAM;
+        $param     = AccountManager::PUBLIC_KEY_PARAM;
         $publicKey = $this->extractPublicKey($request);
 
         if (empty($publicKey)) {
@@ -120,7 +117,7 @@ class KernelSubscriber implements EventSubscriberInterface
 
     private function getRedirectUrl(Request $request)
     {
-        $param = self::PUBLIC_KEY_PARAM;
+        $param = AccountManager::PUBLIC_KEY_PARAM;
         if ('GET' !== $request->getMethod() || false === $request->query->has($param)) {
             return;
         }
@@ -136,7 +133,7 @@ class KernelSubscriber implements EventSubscriberInterface
      */
     private function extractPublicKey(Request $request)
     {
-        $param   = self::PUBLIC_KEY_PARAM;
+        $param   = AccountManager::PUBLIC_KEY_PARAM;
         $values  = [
             'header' => $request->headers->get($param),
             'query'  => $request->query->get($param),

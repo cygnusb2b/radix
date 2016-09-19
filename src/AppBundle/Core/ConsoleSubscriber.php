@@ -8,8 +8,6 @@ use Symfony\Component\Console\Event\ConsoleCommandEvent;
 
 class ConsoleSubscriber implements EventSubscriberInterface
 {
-    const ENV_KEY = 'APP';
-
     /**
      * @var AccountManager
      */
@@ -49,7 +47,7 @@ class ConsoleSubscriber implements EventSubscriberInterface
      */
     public function loadApplication(ConsoleCommandEvent $event)
     {
-        $app  = getenv('APP');
+        $app  = getenv(AccountManager::ENV_KEY);
         $name = $event->getCommand()->getName();
 
         if (isset($this->skip[$name])) {

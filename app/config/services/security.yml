@@ -7,7 +7,7 @@ services:
     app_bundle.security.auth.generator.core_user:
         private: true
         class: AppBundle\Security\Auth\CoreUserGenerator
-        arguments: [ "@app_bundle.security.jwt.generator_manager" ]
+        arguments: [ "@app_bundle.security.jwt.generator_manager", "@request_stack", "@app_bundle.core.account_manager" ]
 
     app_bundle.security.authenticator.api:
         parent: app_bundle.security.authenticator.core_user.abstract
