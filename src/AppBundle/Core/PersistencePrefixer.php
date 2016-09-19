@@ -80,7 +80,7 @@ class PersistencePrefixer implements EventSubscriberInterface
                 throw new \RuntimeException('No application has been defined. Database operations halted.');
             }
             if (true === $manager->hasApplication()) {
-                $dbName = sprintf('%s_%s', $dbName, $manager->getDatabaseSuffix());
+                $dbName = sprintf('%s-%s', $dbName, $manager->getDatabaseSuffix());
             }
 
         }
