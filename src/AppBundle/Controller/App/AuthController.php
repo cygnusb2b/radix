@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\App;
 
 use AppBundle\Security\User\Customer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -9,14 +9,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AppController extends Controller
+class AuthController extends Controller
 {
 
     /**
      * Creates a new customer account.
      *
      */
-    public function authCreateAction()
+    public function createAction()
     {
         // @todo Implement. Must ensure the user has appropriate permission to create new users.
         throw new \BadMethodCallException('NYI');
@@ -28,7 +28,7 @@ class AppController extends Controller
      * @param   Request $request
      * @return  JsonResponse
      */
-    public function authRetrieveAction(Request $request)
+    public function retrieveAction(Request $request)
     {
         $storage = $this->get('security.token_storage');
         $manager = $this->get('app_bundle.security.auth.generator_manager');
@@ -46,18 +46,7 @@ class AppController extends Controller
      * Submits customer account credentials (logs a customer in).
      * Is a placeholder for the firewall.
      */
-    public function authSubmitAction()
+    public function submitAction()
     {
-    }
-
-    public function initAction(Request $request)
-    {
-        // Do initilization things here: check the app id, check the (optional) realm.
-        return new JsonResponse(['app' => true]);
-    }
-
-    public function indexAction(Request $request)
-    {
-        return new Response('Application!');
     }
 }
