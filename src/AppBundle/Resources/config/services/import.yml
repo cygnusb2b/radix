@@ -6,8 +6,14 @@ services:
             - ['addImporter', [ "@app_bundle.import.importer.merrick.customer" ]]
             # - ['addImporter', [ "@app_bundle.import.importer.merrick.customer_data" ]]
 
+    app_bundle.import.importer.merrick:
+        abstract: true
+        arguments:
+            - "@app_bundle.core.account_manager"
+
     app_bundle.import.importer.merrick.customer:
         class: AppBundle\Import\Importer\Merrick\Customer
+        parent: app_bundle.import.importer.merrick
         arguments:
             - "@app_bundle.import.persister.as3_modlr"
             - "@app_bundle.import.source.mongo.legacy"

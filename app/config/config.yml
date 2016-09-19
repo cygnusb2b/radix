@@ -28,6 +28,8 @@ app:
         connections:
             legacy:
                 dsn: mongodb://mongo.legacy.as3.io:27017
+                options:
+                    connectTimeoutMS: 200
 
 assetic:
     debug:          '%kernel.debug%'

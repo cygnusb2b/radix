@@ -2,9 +2,9 @@
 
 namespace AppBundle\Import\Importer\Merrick;
 
+use AppBundle\Core\AccountManager;
 use AppBundle\Import\Importer\Merrick;
 use AppBundle\Import\Segment\Merrick\Customer as Segment;
-use As3\SymfonyData\Import\ImporterInterface;
 use As3\SymfonyData\Import\PersisterInterface;
 use As3\SymfonyData\Import\SourceInterface;
 
@@ -13,23 +13,18 @@ use As3\SymfonyData\Import\SourceInterface;
  *
  * @author  Josh Worden <jworden@southcomm.com>
  */
-class Customer extends Merrick implements ImporterInterface
+class Customer extends Merrick
 {
     /**
      * {@inheritdoc}
      */
-    protected $supportedContexts = [
-        'default'
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(PersisterInterface $persister, SourceInterface $source)
+    public function __construct(AccountManager $accountManager, PersisterInterface $persister, SourceInterface $source)
     {
+        parent::__construct($accountManager, $persister, $source);
         $source->setDatabase('merrick');
-        parent::__construct($persister, $source);
-        $this->segments[] = new Segment\Model\Customer($this, $source);
+
+        $this->segments[] = new Segment\Model\CustomerAccount($this, $source);
+        $this->segments[] = new Segment\Model\CustomerIdentity($this, $source);
     }
 
     /**
