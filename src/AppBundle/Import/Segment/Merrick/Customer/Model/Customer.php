@@ -68,6 +68,9 @@ class Customer extends Segment
         return $this->importer->getPersister()->batchInsert('customer', $items);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getCriteria()
     {
         return ['site' => 'www.vehicleservicepros.com'];

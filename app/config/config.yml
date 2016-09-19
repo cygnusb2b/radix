@@ -27,7 +27,7 @@ app:
     import:
         connections:
             legacy:
-                dsn: mongodb://localhost:27017
+                dsn: mongodb://mongo.legacy.as3.io:27017
 
 assetic:
     debug:          '%kernel.debug%'

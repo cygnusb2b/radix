@@ -38,15 +38,35 @@ class AppExtension extends Extension
         $this->initializeImportServices($container, $config);
     }
 
+    /**
+     * Handles creation of import services.
+     */
     private function initializeImportServices(ContainerBuilder $container, array $config)
     {
+        // Create the MongoDB logger service
+        $logger = new Definition();
+        $logger->setClass('As3\Modlr\Persister\MongoDb\Logger');
+        $loggerRef = new Reference('logger');
+        $logger->setArguments([$loggerRef, 'import query']);
+        $container->setDefinition('app_bundle.import.logger', $logger);
+        $loggerRef = new Reference('app_bundle.import.logger');
+
+        // Create the MongoDB configuration
+        $configuration = new Definition();
+        $configuration->setClass('Doctrine\MongoDB\Configuration');
+        $configuration->addMethodCall('setLoggerCallable', [[new Reference($loggerRef), 'logQuery']]);
+        $container->setDefinition('app_bundle.import.configuration', $configuration);
+        $configurationRef = new Reference('app_bundle.import.configuration');
+
+        // Create the MongoDB connections
         foreach ($config['import']['connections'] as $key => $parameters) {
             $name = sprintf('app_bundle.import.connection.%s', $key);
             $def = new Definition();
             $def->setClass('Doctrine\MongoDB\Connection');
-            $def->setArguments([$parameters['dsn'], $parameters['options']]);
+            $def->setArguments([$parameters['dsn'], $parameters['options'], $configurationRef]);
             $container->setDefinition($name, $def);
 
+            // Inject the connnection into the related import source.
             $ref = new Reference($name);
             $source = $container->getDefinition(sprintf('app_bundle.import.source.mongo.%s', $key));
             $source->setArguments([$ref]);
