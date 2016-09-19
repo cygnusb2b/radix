@@ -7,7 +7,7 @@ customer-authentication:
     attributes:
         enabled:
             type: boolean
-            defaultValue: false # an administrative, hard ban
+            defaultValue: true # an administrative, hard ban
         locked:
             type: boolean
             defaultValue: false # is set for programatic reasons, e.g., too many failed password attempts

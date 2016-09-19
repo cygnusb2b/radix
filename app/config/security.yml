@@ -21,7 +21,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         app:
-            context: customer
+            context: application
             pattern: ^/app
             provider: customer
             anonymous: ~
@@ -34,14 +34,14 @@ security:
                 name: __radix-application
                 always_remember_me: true
         api:
-            context: user
+            context: core
             pattern: ^/api\/1\.0
             provider: core_user
             guard:
                 authenticators:
                     - app_bundle.security.authenticator.api
         main:
-            context: user
+            context: core
             anonymous: ~
             provider: core_user
             guard:

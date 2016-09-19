@@ -4,15 +4,19 @@ namespace AppBundle\Security\User;
 
 use \Serializable;
 use As3\Modlr\Models\Model;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
-class Customer implements UserInterface, Serializable
+class Customer implements AdvancedUserInterface, Serializable
 {
     private $authModel;
 
     private $customerModel;
 
     private $familyName;
+
+    private $locked;
+
+    private $enabled;
 
     private $givenName;
 
@@ -41,6 +45,9 @@ class Customer implements UserInterface, Serializable
             'username' => $this->authModel->get('username'),
             'realm' => $this->authModel->get('realm')->getId()
         ]);
+
+        $this->locked  = $this->authModel->get('locked');
+        $this->enabled = $this->authModel->get('enabled');
 
         $this->setRoles();
     }
@@ -110,6 +117,38 @@ class Customer implements UserInterface, Serializable
     /**
      * {@inheritdoc}
      */
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAccountNonLocked()
+    {
+        return false === $this->locked;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEnabled()
+    {
+        return true === $this->enabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function eraseCredentials()
     {
         return;
@@ -124,6 +163,8 @@ class Customer implements UserInterface, Serializable
             $this->roles,
             $this->salt,
             $this->username,
+            $this->locked,
+            $this->enabled,
         ]);
     }
 
@@ -135,7 +176,9 @@ class Customer implements UserInterface, Serializable
             $this->password,
             $this->roles,
             $this->salt,
-            $this->username
+            $this->username,
+            $this->locked,
+            $this->enabled
         ) = unserialize($serialized);
     }
 
