@@ -31,6 +31,11 @@ services:
         arguments: [ "@app_bundle.core.account_manager", "@security.http_utils" ]
         tags:
             - { name: kernel.event_subscriber }
+        calls:
+            - [ addExcludeRoute, [ "app_bundle_lib_css" ] ]
+            - [ addExcludeRoute, [ "app_bundle_lib_css_min" ] ]
+            - [ addExcludeRoute, [ "app_bundle_lib_js" ] ]
+            - [ addExcludeRoute, [ "app_bundle_lib_js_min" ] ]
 
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory

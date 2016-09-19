@@ -1,3 +1,5 @@
+# FRONT-END APPLICATION ROUTES #
+
 app_bundle_app_auth_create:
     path: /app/auth/create
     defaults: { _controller: AppBundle:App\Auth:create }
@@ -11,6 +13,25 @@ app_bundle_app_auth_submit:
     path: /app/auth/submit
     defaults: { _controller: AppBundle:App\Auth:submit }
 
+# LIBRARY ROUTES #
+
+app_bundle_lib_css:
+    path: /lib/{name}.css
+    defaults: { _controller: AppBundle:App\Library:css, minified: false }
+
+app_bundle_lib_css_min:
+    path: /lib/{name}.min.css
+    defaults: { _controller: AppBundle:App\Library:css, minified: true }
+
+app_bundle_lib_js:
+    path: /lib/{name}.js
+    defaults: { _controller: AppBundle:App\Library:js, minified: false }
+
+app_bundle_lib_js_min:
+    path: /lib/{name}.min.js
+    defaults: { _controller: AppBundle:App\Library:js, minified: true }
+
+# CORE RELATED ROUTES #
 
 app_bundle_auth_user_create:
     path: /auth/user/create
@@ -25,7 +46,7 @@ app_bundle_auth_user_submit:
     path: /auth/user/submit
     defaults: { _controller: AppBundle:Auth:userSubmit }
 
-
+# MANAGE EMBER ROUTE #
 
 app_bundle_manage:
     path: /manage{path}
