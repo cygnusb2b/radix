@@ -58,7 +58,7 @@ class CoreUserGenerator implements AuthGeneratorInterface
         ];
 
         $request = $this->requestStack->getCurrentRequest();
-        $baseUrl = sprintf('%s%s', $request->getSchemeAndHttpHost(), $request->getPathInfo());
+        $baseUrl = sprintf('%s%s', $request->getSchemeAndHttpHost(), '/auth/user/retrieve');
 
         foreach ($user->getPublicKeys() as $app => $key) {
             $data['applications'][$app] = [
