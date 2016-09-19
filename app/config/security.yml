@@ -6,11 +6,14 @@ security:
     providers:
         core_user:
             id: app_bundle.security.user_provider.core_user
+        customer:
+            id: app_bundle.security.user_provider.customer
         in_memory:
             memory: ~
 
     encoders:
         AppBundle\Security\User\CoreUser: bcrypt
+        AppBundle\Security\User\Customer: bcrypt
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -20,10 +23,16 @@ security:
         app:
             context: customer
             pattern: ^/app
-            stateless: true
+            provider: customer
+            anonymous: ~
             guard:
                 authenticators:
-                    - app_bundle.security.authenticator.application
+                    - app_bundle.security.authenticator.customer
+            remember_me:
+                secret: "%secret%"
+                lifetime: 518400
+                name: __radix-application
+                always_remember_me: true
         api:
             context: user
             pattern: ^/api\/1\.0

@@ -6,9 +6,11 @@ use \Serializable;
 use As3\Modlr\Models\Model;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class CoreUser implements UserInterface, Serializable
+class Customer implements UserInterface, Serializable
 {
-    private $model;
+    private $authModel;
+
+    private $customerModel;
 
     private $familyName;
 
@@ -16,22 +18,29 @@ class CoreUser implements UserInterface, Serializable
 
     private $password;
 
-    private $publicKeys = [];
-
     private $roles = [];
 
     private $salt;
 
     private $username;
 
-    public function __construct(Model $model)
+    public function __construct(Model $authModel)
     {
-        $this->model      = $model;
-        $this->familyName = $model->get('familyName');
-        $this->givenName  = $model->get('givenName');
-        $this->password   = $model->get('password');
-        $this->salt       = $model->get('salt');
-        $this->username   = $model->get('email');
+        $this->authModel     = $authModel;
+        $this->customerModel = $authModel->get('account');
+
+        if (null === $this->customerModel) {
+            throw new \RuntimeException('No customer found on customer auth model.');
+        }
+
+        $this->familyName = $this->customerModel->get('familyName');
+        $this->givenName  = $this->customerModel->get('givenName');
+        $this->password   = $this->authModel->get('password');
+        $this->salt       = $this->authModel->get('salt');
+        $this->username   = json_encode([
+            'username' => $this->authModel->get('username'),
+            'realm' => $this->authModel->get('realm')->getId()
+        ]);
 
         $this->setRoles();
     }
@@ -55,13 +64,13 @@ class CoreUser implements UserInterface, Serializable
     }
 
     /**
-     * Gets the user model for this user instance.
+     * Gets the customer auth model for this user instance.
      *
      * @return  Model
      */
-    public function getModel()
+    public function getAuthModel()
     {
-        return $this->model;
+        return $this->authModel;
     }
 
     /**
@@ -112,7 +121,6 @@ class CoreUser implements UserInterface, Serializable
             $this->familyName,
             $this->givenName,
             $this->password,
-            $this->publicKeys,
             $this->roles,
             $this->salt,
             $this->username,
@@ -125,7 +133,6 @@ class CoreUser implements UserInterface, Serializable
             $this->familyName,
             $this->givenName,
             $this->password,
-            $this->publicKeys,
             $this->roles,
             $this->salt,
             $this->username
@@ -134,20 +141,12 @@ class CoreUser implements UserInterface, Serializable
 
     private function setRoles()
     {
-        $this->roles[] = 'ROLE_CORE\USER';
-        foreach ($this->model->get('details') as $details) {
-            $application = $details->get('application');
-            $key = sprintf('%s:%s', $application->get('account')->get('key'), $application->get('key'));
-
-            $this->publicKeys[$key] = $application->get('publicKey');
-
-            foreach($details->get('roles') as $role) {
-                $role = strtoupper($role);
-                if (0 === stripos($role, 'role_')) {
-                    $role = str_replace('ROLE_', '', $role);
-                }
-                $this->roles[] = sprintf('ROLE_%s\%s', strtoupper($key), $role);
+        foreach ($this->authModel->get('roles') as $role) {
+            $role = strtoupper($role);
+            if (0 === stripos($role, 'role_')) {
+                $role = str_replace('ROLE_', '', $role);
             }
+            $this->roles[] = sprintf('ROLE_APPLICATION\%s', $role);
         }
     }
 }

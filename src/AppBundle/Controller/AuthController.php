@@ -10,6 +10,22 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AuthController extends Controller
 {
+    /**
+     * Creates a new, core user.
+     *
+     */
+    public function userCreateAction()
+    {
+        // @todo Implement. Must ensure the user has appropriate permission to create new users.
+        throw new \BadMethodCallException('NYI');
+    }
+
+    /**
+     * Retrieves the core user auth state.
+     *
+     * @param   Request $request
+     * @return  JsonResponse
+     */
     public function userRetrieveAction(Request $request)
     {
         $storage = $this->get('security.token_storage');
@@ -24,6 +40,10 @@ class AuthController extends Controller
         return new JsonResponse($payload);
     }
 
+    /**
+     * Submits core user credentials (logs a core user in).
+     * Is a placeholder for the firewall.
+     */
     public function userSubmitAction()
     {
     }

@@ -2,13 +2,37 @@ app_bundle_app:
     path: /app
     defaults: { _controller: AppBundle:App:index }
 
-app_bundle_auth_user_submit:
-    path: /auth/user/submit
-    defaults: { _controller: AppBundle:Auth:userSubmit }
+app_bundle_app_init:
+    path: /app/init
+    defaults: { _controller: AppBundle:App:init }
+
+app_bundle_auth_customer_create:
+    path: /app/auth/create
+    defaults: { _controller: AppBundle:App:authCreate }
+    methods: [ POST ]
+
+app_bundle_app_auth_retrieve:
+    path: /app/auth/retrieve
+    defaults: { _controller: AppBundle:App:authRetrieve }
+
+app_bundle_app_auth_submit:
+    path: /app/auth/submit
+    defaults: { _controller: AppBundle:App:authSubmit }
+
+app_bundle_app_auth_create:
+    path: /auth/user/create
+    defaults: { _controller: AppBundle:Auth:userCreate }
+    methods: [ POST ]
 
 app_bundle_auth_user_retrieve:
     path: /auth/user/retrieve
     defaults: { _controller: AppBundle:Auth:userRetrieve }
+
+app_bundle_auth_user_submit:
+    path: /auth/user/submit
+    defaults: { _controller: AppBundle:Auth:userSubmit }
+
+
 
 app_bundle_manage:
     path: /manage{path}

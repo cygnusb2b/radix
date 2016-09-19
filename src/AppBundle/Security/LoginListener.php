@@ -4,6 +4,7 @@ namespace AppBundle\Security;
 
 use \MongoDate;
 use AppBundle\Security\User\CoreUser;
+use AppBundle\Security\User\Customer;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
 use Symfony\Component\Security\Core\Authentication\Token\RememberMeToken;
@@ -51,6 +52,8 @@ class LoginListener
 
         if ($user instanceof CoreUser) {
             $this->updateCoreUser($user->getModel());
+        } elseif ($user instanceof Customer) {
+            $this->updateCustomer($user->getAuthModel());
         }
     }
 
@@ -60,6 +63,31 @@ class LoginListener
      * @param   Model   $model
      */
     protected function updateCoreUser(Model $model)
+    {
+        $now = new MongoDate();
+        if ($this->securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $model
+                ->set('lastLogin', $now)
+                ->set('lastSeen', $now)
+                ->set('logins', $model->get('logins') + 1)
+                ->save()
+            ;
+        } elseif ($this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            // From remember me cookie
+            $model
+                ->set('lastSeen', $now)
+                ->set('remembers', $model->get('remembers') + 1)
+                ->save()
+            ;
+        }
+    }
+
+    /**
+     * Updates the customer auth model on login.
+     *
+     * @param   Model   $model
+     */
+    protected function updateCustomer(Model $model)
     {
         $now = new MongoDate();
         if ($this->securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {

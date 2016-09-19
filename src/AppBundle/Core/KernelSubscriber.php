@@ -46,7 +46,7 @@ class KernelSubscriber implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => [
-                ['loadApplication', 7], // 7 Ensures that this runs right after the firewall.
+                ['loadApplication', 8], // 8 Ensures that this runs right before the firewall.
             ],
             KernelEvents::RESPONSE => [
                 ['appendKey']
@@ -78,26 +78,29 @@ class KernelSubscriber implements EventSubscriberInterface
     public function loadApplication(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        if (!$event->isMasterRequest() || false === $this->shouldProcess($request)) {
+        $context = $this->manager->extractContextFrom($request);
+
+        if (!$event->isMasterRequest() || false === $this->shouldProcess($request, $context)) {
             return;
         }
 
-        $param     = AccountManager::PUBLIC_KEY_PARAM;
-        $publicKey = $this->extractPublicKey($request);
+        $param        = AccountManager::PUBLIC_KEY_PARAM;
+        $publicKey    = $this->manager->extractPublicKeyFrom($request);
+        $sessionParam = $this->manager->getSessionKeyFor($request);
 
         if (empty($publicKey)) {
             // Attempt to find key in session.
-            $publicKey = $request->getSession()->get($param);
+            $publicKey = $request->getSession()->get($sessionParam);
         }
 
         if (empty($publicKey)) {
-            $this->manager->allowDbOperations(false);
+            $this->handleEmptyApp($context);
             return;
         }
 
         $application = $this->manager->retrieveByPublicKey($publicKey);
         if (null === $application) {
-            $this->manager->allowDbOperations(false);
+            $this->handleEmptyApp($context);
             return;
         }
 
@@ -106,7 +109,7 @@ class KernelSubscriber implements EventSubscriberInterface
 
 
         // Set the public key to the session.
-        $request->getSession()->set($param, $publicKey);
+        $request->getSession()->set($sessionParam, $publicKey);
 
         if (null !== $redirect = $this->getRedirectUrl($request)) {
             // Redirect.
@@ -115,6 +118,12 @@ class KernelSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * Gets a redirect url for the provided request, if applicable.
+     *
+     * @param   Request $request
+     * @return  string|null
+     */
     private function getRedirectUrl(Request $request)
     {
         $param = AccountManager::PUBLIC_KEY_PARAM;
@@ -128,29 +137,31 @@ class KernelSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param   Request     $request
-     * @return  string|null
+     * Handles an empty application condition.
+     *
+     * @param   string  $context
+     * @throws  \RuntimeException
      */
-    private function extractPublicKey(Request $request)
+    private function handleEmptyApp($context)
     {
-        $param   = AccountManager::PUBLIC_KEY_PARAM;
-        $values  = [
-            'header' => $request->headers->get($param),
-            'query'  => $request->query->get($param),
-        ];
-
-        $publicKey = null;
-        foreach ($values as $value) {
-            if (!empty($value)) {
-                $publicKey = $value;
-                break;
-            }
+        $this->manager->allowDbOperations(false);
+        if ('application' === $context) {
+            throw new \RuntimeException('No application was defined or found. Operations terminated.');
         }
-        return empty($publicKey) ? null : $publicKey;
     }
 
-    private function shouldProcess(Request $request)
+    /**
+     * Determines if the subscriber should process data.
+     *
+     * @param   Request $request
+     * @param   string  $context
+     * @return  bool
+     */
+    private function shouldProcess(Request $request, $context)
     {
+        if ('application' === $context) {
+            return true;
+        }
         foreach ($this->excludeRoutes as $name => $enabled) {
             if (true === $this->httpUtils->checkRequestPath($request, $name)) {
                 return false;
