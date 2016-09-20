@@ -919,6 +919,7 @@
                     email: React.findDOMNode(this.refs.email).value,
                     confirmEmail: React.findDOMNode(this.refs.confirmEmail).value,
                     displayName: React.findDOMNode(this.refs.displayName).value.trim(),
+                    username: React.findDOMNode(this.refs.username).value.trim(),
                 };
 
                 if (payload.password) {
@@ -984,18 +985,12 @@
                                 Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', value: this.getValue('title') })
                             ),
                             React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { name: 'phone', label: 'Phone', value: this.getValue('phone') }),
-                                Radix.FormModule.get('textField', { name: 'fax', label: 'Fax', value: this.getValue('fax') })
-                            ),
-                            React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { name: 'username', label: 'Username', required: true, value: this.getValue('username') })
+                                Radix.FormModule.get('textField', { name: 'username', label: 'Username', required: true, value: this.getValue('username') }),
+                                Radix.FormModule.get('textField', { name: 'displayName', label: 'Display Name', required: true, value: this.getValue('displayName') })
                             ),
                             React.createElement("div", {className: ""},
                                 Radix.FormModule.get('textField', { type: 'password', name: 'password', label: 'Password', required: true, onBlur: this.verifyPasswordField, value: this.getValue('password') }),
                                 Radix.FormModule.get('textField', { type: 'password', name: 'confirmPassword', label: 'Confirm Password', required: true, onBlur: this.verifyConfirmPasswordField, value: this.getValue('confirmPassword') })
-                            ),
-                            React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { name: 'displayName', label: 'Display Name', required: true, value: this.getValue('displayName') })
                             )
                         ),
                         React.createElement("p", {className: "error text-danger"}, this.state.errorMessage),
