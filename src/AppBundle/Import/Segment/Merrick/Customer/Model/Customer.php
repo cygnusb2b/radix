@@ -37,6 +37,9 @@ abstract class Customer extends Segment
      */
     final public function persist(array $items)
     {
+        if (empty($items)) {
+            return $items;
+        }
         return $this->importer->getPersister()->batchInsert($this->getModelType(), $items);
     }
 

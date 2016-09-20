@@ -17,18 +17,16 @@ class CustomerAccount extends Customer
      */
     protected function formatModel(array $doc)
     {
-        $kv = [
-            'legacy'    => [
-                'id'        => (string) $doc['_id'],
-                'source'    => 'users_v2',
-            ],
-        ];
         if ($this->isSocial($doc)) {
             return;
         }
 
-        $transformer = new Transformer\CustomerAccount();
-        return array_merge($kv, $transformer->toApp($doc));
+        $transformer = new Transformer\Customer();
+        return $transformer->toApp($doc);
+        $kv = $transformer->toApp($doc);
+
+        var_dump($doc, $kv);
+        die(__METHOD__);
     }
 
     /**
@@ -51,13 +49,15 @@ class CustomerAccount extends Customer
 
     private function isSocial(array $doc)
     {
-        switch (true) {
-            case isset($doc['gigya_id']):
-            case isset($doc['facebook_id']):
-            case isset($doc['linkedin_id']):
-            case isset($doc['google_id']):
-            case isset($doc['twitter_id']):
-                return true;
+        $fields = ['gigya_id', 'facebook_id', 'linkedin_id', 'google_id', 'twitter_id'];
+
+        foreach ($fields as $field) {
+            if (isset($doc[$field])) {
+                $val = trim($doc[$field]);
+                if (!empty($val)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

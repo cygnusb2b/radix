@@ -17,15 +17,8 @@ class CustomerIdentity extends Customer
      */
     protected function formatModel(array $doc)
     {
-        $kv = [
-            'legacy'    => [
-                'id'        => (string) $doc['_id'],
-                'source'    => 'users_v2',
-            ],
-        ];
-
-        $transformer = new Transformer\CustomerAccount();
-        return array_merge($kv, $transformer->toApp($doc));
+        $transformer = new Transformer\Customer();
+        return $transformer->toApp($doc);
     }
 
     /**
