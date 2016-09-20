@@ -8,10 +8,10 @@
     var Debugger        = new Debugger();
     var Ajax            = new Ajax();
     // var ServerConfig    = new ServerConfig(hostname, serverConfig);
-    // var ClientConfig    = new ClientConfig();
     var EventDispatcher = new EventDispatcher();
     var Callbacks       = new Callbacks();
 
+    var ClientConfig;
     var ComponentLoader;
     var CustomerManager;
     var LibraryLoader;
@@ -20,11 +20,16 @@
         return Ajax.sendForm(url, method, payload, headers);
     };
 
-    Radix.init = function() {
-        console.info('Init me!!');
-        // ComponentLoader = new ComponentLoader();
-        // CustomerManager = new CustomerManager();
-        // LibraryLoader   = new LibraryLoader();
+    Radix.init = function(config) {
+        ClientConfig = new ClientConfig(config);
+        if (true === ClientConfig.valid()) {
+            Debugger.info('Configuration intialized and valid.');
+            ComponentLoader = new ComponentLoader();
+            CustomerManager = new CustomerManager();
+            LibraryLoader   = new LibraryLoader();
+        } else {
+            Debugger.error('Client config is invalid. Ensure all require properties were set.');
+        }
     };
 
     Radix.on = function(key, callback) {
@@ -93,11 +98,11 @@
                 Debugger.info('Loading library ' + libraries[i]);
                 $.getScript(libraries[i]).then(function() {
                     if ('function' === typeof Auth0) {
-                        auth0 = new Auth0({
-                            domain: ServerConfig.values.external_libraries.auth0.domain,
-                            clientID: ServerConfig.values.external_libraries.auth0.client_id,
-                            callbackOnLocationHash: true
-                        });
+                        // auth0 = new Auth0({
+                        //     domain: ServerConfig.values.external_libraries.auth0.domain,
+                        //     clientID: ServerConfig.values.external_libraries.auth0.client_id,
+                        //     callbackOnLocationHash: true
+                        // });
                     }
                     count = count + 1;
                     if (count >= libraries.length) {
@@ -228,7 +233,7 @@
                         React.createElement("div", {className: ""},
                             React.createElement("div", {className: ""},
                                 React.createElement("button", {className: "", type: "submit"}, "Sign Up"),
-                                React.createElement("p", {className: "text-center muted"}, "Already have an account? ", React.createElement("a", {href: "javascript:void(0)", onClick: PlatformComponents.SignIn.login}, "Sign in"), " .")
+                                React.createElement("p", {className: "text-center muted"}, "Already have an account? ", React.createElement("a", {href: "javascript:void(0)", onClick: Radix.SignIn.login}, "Sign in"), " .")
                             )
                         )
 
@@ -239,16 +244,16 @@
 
         var RegisterContainer = React.createClass({displayName: "RegisterContainer",
             render: function() {
-                var providerNodes = ServerConfig.values.customer.auth.map(function(key, index) {
-                    if ('auth0' == key) {
-                        return (
-                            React.createElement(SocialLogin, {key: index})
-                        );
-                    }
-                    return (
-                        React.createElement(DatabaseRegister, {key: index})
-                    );
-                });
+                // var providerNodes = ServerConfig.values.customer.auth.map(function(key, index) {
+                //     if ('auth0' == key) {
+                //         return (
+                //             React.createElement(SocialLogin, {key: index})
+                //         );
+                //     }
+                //     return (
+                //         React.createElement(DatabaseRegister, {key: index})
+                //     );
+                // });
                 return (
                     React.createElement("div", {className: "register"},
                         React.createElement("p", {className: "error text-danger"}),
@@ -286,7 +291,8 @@
             getInitialState: function() {
                 return {
                     data: {
-                        providers: ServerConfig.values.customer.social_providers
+                        // providers: ServerConfig.values.customer.social_providers
+                        providers: []
                     }
                 }
             },
@@ -377,16 +383,17 @@
             },
 
             render: function() {
-                var providerNodes = ServerConfig.values.customer.auth.map(function(key, index) {
-                    if ('auth0' === key) {
-                        return (
-                            React.createElement(SocialLogin, {key: index})
-                        );
-                    }
-                    return (
-                        React.createElement(DatabaseLogin, {key: index})
-                    );
-                });
+                var providerNodes;
+                // var providerNodes = ServerConfig.values.customer.auth.map(function(key, index) {
+                //     if ('auth0' === key) {
+                //         return (
+                //             React.createElement(SocialLogin, {key: index})
+                //         );
+                //     }
+                //     return (
+                //         React.createElement(DatabaseLogin, {key: index})
+                //     );
+                // });
                 return (
                     React.createElement("div", {className: "login-list"},
                         React.createElement("h2", {className: "name"}, "Log In"),
@@ -402,7 +409,7 @@
                 return (
                     React.createElement("div", {className: "login"},
                         React.createElement("h2", {className: "name"}, "You are currently logged in."),
-                        React.createElement("p", null, React.createElement("a", {href: "javascript:void(0)", onClick: PlatformComponents.SignIn.logout}, "Logout"))
+                        React.createElement("p", null, React.createElement("a", {href: "javascript:void(0)", onClick: Radix.SignIn.logout}, "Logout"))
                     )
                 );
             }
@@ -445,7 +452,7 @@
             },
 
             render: function() {
-                if (true == ServerConfig.values.customer.enabled) {
+                // if (true == ServerConfig.values.customer.enabled) {
                     var contents;
                     if (false === CustomerManager.isLoggedIn()) {
                         if (false === this.state.registering) {
@@ -469,9 +476,9 @@
                             contents
                         )
                     );
-                } else {
-                    Debugger.error('PlatformJS: Customer component is not enabled.');
-                }
+                // } else {
+                //     Debugger.error('PlatformJS: Customer component is not enabled.');
+                // }
             }
         });
 
@@ -539,17 +546,17 @@
         {
             $(document).on('click', ClientConfig.values.targets.loginButton, function(e) {
                 e.preventDefault();
-                PlatformComponents.SignIn.login();
+                Radix.SignIn.login();
             }.bind(this));
 
             $(document).on('click', ClientConfig.values.targets.registerButton, function(e) {
                 e.preventDefault();
-                PlatformComponents.SignIn.register();
+                Radix.SignIn.register();
             }.bind(this));
 
             $(document).on('click', ClientConfig.values.targets.logoutButton, function(e) {
                 e.preventDefault();
-                PlatformComponents.SignIn.logout();
+                Radix.SignIn.logout();
             }.bind(this));
         }
     }
@@ -623,8 +630,10 @@
 
                 var attribution,
                     customer,
-                    picture = ServerConfig.values.comments.default_avatar,
-                    modPicture = ServerConfig.values.comments.moderator_avatar,
+                    // picture = ServerConfig.values.comments.default_avatar,
+                    // modPicture = ServerConfig.values.comments.moderator_avatar,
+                    picture,
+                    modPicture,
                     displayName = 'Anonymous',
                     isModerator = this.props.data.hasOwnProperty('moderator')
                 ;
@@ -776,15 +785,15 @@
                         React.createElement("button", {type: "submit", className: ""}, "Submit")
                     )
 
-                if (ServerConfig.values.comments.force_login === false) {
-                    authBlock = React.createElement("div", null,
-                        React.createElement("label", {htmlFor: "inputEmail", className: ""}, "Email Address"),
-                        React.createElement("input", {className: "", id: "inputEmail", type: "email", placeholder: "Enter email address", required: "required", ref: "email"}),
-                        React.createElement("span", {className: "help-block"}, "Required")
-                    )
-                } else {
+                // if (ServerConfig.values.comments.force_login === false) {
+                //     authBlock = React.createElement("div", null,
+                //         React.createElement("label", {htmlFor: "inputEmail", className: ""}, "Email Address"),
+                //         React.createElement("input", {className: "", id: "inputEmail", type: "email", placeholder: "Enter email address", required: "required", ref: "email"}),
+                //         React.createElement("span", {className: "help-block"}, "Required")
+                //     )
+                // } else {
                     if (!CustomerManager.isLoggedIn()) {
-                        authBlock = React.createElement("p", {className: "muted"}, "This site requires you to ", React.createElement("a", {style: {cursor:"pointer"}, onClick: PlatformComponents.SignIn.login}, "login"), " or ", React.createElement("a", {style: {cursor:"pointer"}, onClick: PlatformComponents.SignIn.register}, "register"), " to post a comment.")
+                        authBlock = React.createElement("p", {className: "muted"}, "This site requires you to ", React.createElement("a", {style: {cursor:"pointer"}, onClick: Radix.SignIn.login}, "login"), " or ", React.createElement("a", {style: {cursor:"pointer"}, onClick: Radix.SignIn.register}, "register"), " to post a comment.")
                         fields = React.createElement("div", null)
                     } else {
                         authBlock = React.createElement("p", {className: ""},
@@ -792,7 +801,7 @@
                                 React.createElement("input", {type: "hidden", name: "customer", value: CustomerManager.getCustomer().id})
                             )
                     }
-                }
+                // }
                 return (
                     React.createElement("form", {className: "commentForm disabled", onSubmit: this.handleSubmit},
                         authBlock,
@@ -987,7 +996,8 @@
 
                 var attribution,
                     customer,
-                    picture = ServerConfig.values.comments.default_avatar,
+                    // picture = ServerConfig.values.comments.default_avatar,
+                    picture,
                     displayName = 'Anonymous'
                 ;
 
@@ -1142,15 +1152,15 @@
                         React.createElement("button", {type: "submit", className: ""}, "Submit")
                     )
 
-                if (ServerConfig.values.comments.force_login === false) {
-                    authBlock = React.createElement("div", null,
-                        React.createElement("label", {htmlFor: "inputEmail", className: ""}, "Email Address"),
-                        React.createElement("input", {className: "", id: "inputEmail", type: "email", placeholder: "Enter email address", required: "required", ref: "email"}),
-                        React.createElement("span", {className: "help-block"}, "Required")
-                    )
-                } else {
+                // if (ServerConfig.values.comments.force_login === false) {
+                //     authBlock = React.createElement("div", null,
+                //         React.createElement("label", {htmlFor: "inputEmail", className: ""}, "Email Address"),
+                //         React.createElement("input", {className: "", id: "inputEmail", type: "email", placeholder: "Enter email address", required: "required", ref: "email"}),
+                //         React.createElement("span", {className: "help-block"}, "Required")
+                //     )
+                // } else {
                     if (!CustomerManager.isLoggedIn()) {
-                        authBlock = React.createElement("p", {className: "muted"}, "This site requires you to ", React.createElement("a", {style: {cursor:"pointer"}, onClick: PlatformComponents.SignIn.login}, "login"), " or ", React.createElement("a", {style: {cursor:"pointer"}, onClick: PlatformComponents.SignIn.register}, "register"), " to post a comment.")
+                        authBlock = React.createElement("p", {className: "muted"}, "This site requires you to ", React.createElement("a", {style: {cursor:"pointer"}, onClick: Radix.SignIn.login}, "login"), " or ", React.createElement("a", {style: {cursor:"pointer"}, onClick: Radix.SignIn.register}, "register"), " to post a comment.")
                         fields = React.createElement("div", null)
                     } else {
                         authBlock = React.createElement("p", {className: ""},
@@ -1158,7 +1168,7 @@
                                 React.createElement("input", {type: "hidden", name: "customer", value: CustomerManager.getCustomer().id})
                             )
                     }
-                }
+                // }
                 return (
                     React.createElement("form", {className: "commentForm disabled", onSubmit: this.handleSubmit},
                         authBlock,
@@ -1242,17 +1252,17 @@
     function ComponentLoader()
     {
         EventDispatcher.subscribe('ready', function() {
-            PlatformComponents.SignIn = new SignInComponent();
-            if (true === ServerConfig.values.comments.enabled) {
-                PlatformComponents.Comments = new CommentComponent();
-                PlatformComponents.Reviews = new ReviewComponent();
-            }
+            Radix.SignIn = new SignInComponent();
+            // if (true === ServerConfig.values.comments.enabled) {
+                Radix.Comments = new CommentComponent();
+                Radix.Reviews = new ReviewComponent();
+            // }
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            PlatformComponents.SignIn.render();
-            PlatformComponents.Comments.render();
-            PlatformComponents.Reviews.render();
+            Radix.SignIn.render();
+            Radix.Comments.render();
+            Radix.Reviews.render();
         });
     }
 
@@ -1272,7 +1282,7 @@
 
         function createKey(key)
         {
-            return 'PlatformComponents.' + key;
+            return 'Radix.' + key;
         }
     }
 
@@ -1481,7 +1491,7 @@
             }
             method = method || 'POST';
             headers = 'object' === typeof headers ? headers : {};
-            var url =  'http://' + ServerConfig.host + endpoint;
+            var url =  'http://' + ClientConfig.values.host + endpoint;
 
             return new RSVP.Promise(function(resolve, reject) {
                 var xhr = new XMLHttpRequest();
@@ -1526,9 +1536,16 @@
         }
     }
 
-    function ClientConfig()
+    function ClientConfig(config)
     {
+        config = 'object' === typeof config ? config : {};
+
         var defaults = {
+            debug: false,
+            host: null,
+            appId: null,
+            realm: null,
+
             bindTarget: null,
             loginTitle: 'Log In',
             registerTitle: 'Sign Up',
@@ -1549,27 +1566,25 @@
             streamUrl: null
         };
 
-        var config = {};
-        var scripts = document.getElementsByTagName("script");
-
-        for (var i = scripts.length - 1; i >= 0; i--) {
-            var src = scripts[i].src.toLowerCase();
-
-            if (-1 < src.indexOf(ServerConfig.host)) {
-                if ("" !== scripts[i].innerHTML.replace(/^\s+|\s+$/g, "")) {
-                    try {
-                        config = JSON.parse(scripts[i].innerHTML);
-                        // Debugger.info('Client configuration loaded.', config);
-                    } catch (e) {
-                        Debugger.error('Configuration could not be parsed. Using defaults.', e);
-                    }
-                }
-                break;
-            }
-        };
-
         $.extend(defaults, config);
         this.values = defaults;
+
+        if (config.debug) {
+            Radix.setDebug(this.values.debug);
+        }
+        Debugger.info('Config', this.values);
+
+        this.valid = function() {
+            var required = ['host', 'appId', 'realm'];
+            for (var i = 0; i < required.length; i++) {
+                var key = required[i];
+                if (!defaults[key]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
 
     function Debugger(enabled)
