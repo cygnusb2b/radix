@@ -5,10 +5,10 @@
     var auth0;
 
     // Private properties
-    var Debugger        = new Debugger(debug);
+    var Debugger        = new Debugger();
     var Ajax            = new Ajax();
-    var ServerConfig    = new ServerConfig(hostname, serverConfig);
-    var ClientConfig    = new ClientConfig();
+    // var ServerConfig    = new ServerConfig(hostname, serverConfig);
+    // var ClientConfig    = new ClientConfig();
     var EventDispatcher = new EventDispatcher();
     var Callbacks       = new Callbacks();
 
@@ -16,25 +16,26 @@
     var CustomerManager;
     var LibraryLoader;
 
-    PlatformComponents.ajaxSend = function(url, method, payload, headers) {
+    Radix.ajaxSend = function(url, method, payload, headers) {
         return Ajax.sendForm(url, method, payload, headers);
     };
 
-    PlatformComponents.init = function() {
-        ComponentLoader = new ComponentLoader();
-        CustomerManager = new CustomerManager();
-        LibraryLoader   = new LibraryLoader();
+    Radix.init = function() {
+        console.info('Init me!!');
+        // ComponentLoader = new ComponentLoader();
+        // CustomerManager = new CustomerManager();
+        // LibraryLoader   = new LibraryLoader();
     };
 
-    PlatformComponents.on = function(key, callback) {
+    Radix.on = function(key, callback) {
         EventDispatcher.subscribe(key, callback);
     };
 
-    PlatformComponents.emit = function(key) {
+    Radix.emit = function(key) {
         EventDispatcher.trigger(key);
     };
 
-    PlatformComponents.registerCallback = function(key, callback) {
+    Radix.registerCallback = function(key, callback) {
         Callbacks.register(key, callback);
     };
 
@@ -42,17 +43,17 @@
 
 
     // Public methods
-    PlatformComponents.setDebug = function(bit) {
+    Radix.setDebug = function(bit) {
         bit = Boolean(bit);
         if (true === bit) { Debugger.enable(); } else { Debugger.disable(); }
-        return PlatformComponents;
+        return Radix;
     };
 
-    PlatformComponents.hasCustomer = function() {
+    Radix.hasCustomer = function() {
         return CustomerManager.isLoggedIn();
     };
 
-    PlatformComponents.getCustomer = function() {
+    Radix.getCustomer = function() {
         return CustomerManager.getCustomer();
     };
 
@@ -1438,7 +1439,6 @@
         }
 
         this.sendForm = function(url, method, payload, headers) {
-            console.info('sendForm called');
             if (false === this.supports()) {
                 Debugger.error('XHR unsupported!');
                 return;
