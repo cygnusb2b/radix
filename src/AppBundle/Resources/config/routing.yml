@@ -47,6 +47,10 @@ app_bundle_auth_user_retrieve:
 app_bundle_auth_user_submit:
     path: /auth/user/submit
 
+app_bundle_test_app:
+    path: /sandbox
+    defaults: { _controller: AppBundle:Sandbox:index }
+
 # MANAGE EMBER ROUTE #
 
 app_bundle_manage:
