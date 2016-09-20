@@ -17,21 +17,18 @@ app_bundle_app_auth_submit:
 
 # LIBRARY ROUTES #
 
-app_bundle_lib_css:
-    path: /lib/{name}.css
-    defaults: { _controller: AppBundle:App\Library:css, minify: false }
+app_bundle_lib:
+    path: /lib/{name}.{_format}
+    defaults: { _controller: AppBundle:App\Library:index, minify: false }
+    requirements:
+        _format: css|js
 
-app_bundle_lib_css_min:
-    path: /lib/{name}.min.css
-    defaults: { _controller: AppBundle:App\Library:css, minify: true }
+app_bundle_lib_min:
+    path: /lib/{name}.min.{_format}
+    defaults: { _controller: AppBundle:App\Library:index, minify: true }
+    requirements:
+        _format: css|js
 
-app_bundle_lib_js:
-    path: /lib/{name}.js
-    defaults: { _controller: AppBundle:App\Library:js, minify: false }
-
-app_bundle_lib_js_min:
-    path: /lib/{name}.min.js
-    defaults: { _controller: AppBundle:App\Library:js, minify: true }
 
 # CORE RELATED ROUTES #
 

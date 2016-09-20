@@ -32,10 +32,8 @@ services:
         tags:
             - { name: kernel.event_subscriber }
         calls:
-            - [ addExcludeRoute, [ "app_bundle_lib_css" ] ]
-            - [ addExcludeRoute, [ "app_bundle_lib_css_min" ] ]
-            - [ addExcludeRoute, [ "app_bundle_lib_js" ] ]
-            - [ addExcludeRoute, [ "app_bundle_lib_js_min" ] ]
+            - [ addExcludeRoute, [ "app_bundle_lib" ] ]
+            - [ addExcludeRoute, [ "app_bundle_lib_min" ] ]
 
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory

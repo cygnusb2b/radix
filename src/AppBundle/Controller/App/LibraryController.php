@@ -20,33 +20,18 @@ class LibraryController extends Controller
     const TTL = 7200;
 
     /**
-     * Retrieves a CSS library.
+     * Retrieves a library file.
      *
      * @param   string  $name
      * @param   bool    $minify
      * @return  Response
      */
-    public function cssAction($name, $minify)
+    public function indexAction($name, $minify, Request $request)
     {
-        $response = $this->loadFileResponseFor($name, 'css', 'text/css');
+        $format   = $request->attributes->get('_format');
+        $response = $this->loadFileResponseFor($name, $format);
         if (true == $minify) {
-            $response->setContent(CssMin::minify($response->getContent()));
-        }
-        return $response;
-    }
-
-    /**
-     * Retrieves a JS library.
-     *
-     * @param   string  $name
-     * @param   bool    $minify
-     * @return  Response
-     */
-    public function jsAction($name, $minify)
-    {
-        $response = $this->loadFileResponseFor($name, 'js', 'application/javascript');
-        if (true == $minify) {
-            $response->setContent(JSMin::minify($response->getContent()));
+            $this->minify($response, $format);
         }
         return $response;
     }
@@ -56,13 +41,12 @@ class LibraryController extends Controller
      *
      * @param   string  $contents
      * @param   int     $modifiedTime
-     * @param   string  $contentType
      * @return  Response
      */
-    private function createFileResponseFor($contents, $modifiedTime, $contentType)
+    private function createFileResponseFor($contents, $modifiedTime)
     {
         $modified = $expires = new DateTime();
-        $response = new Response($contents, 200, ['Content-Type' => $contentType]);
+        $response = new Response($contents, 200);
 
         $modified->setTimestamp($modifiedTime);
         $expires->setTimestamp($expires->getTimestamp() + self::TTL);
@@ -78,24 +62,43 @@ class LibraryController extends Controller
     }
 
     /**
-     * Loads the file response for the file and extension (or throws not found).
+     * Loads the file response for the file or throws not found.
      *
      * @param   string  $filename
-     * @param   string  $extension
-     * @param   string  $contentType
+     * @param   string  $format
      * @return  Response
      */
-    private function loadFileResponseFor($filename, $extension, $contentType)
+    private function loadFileResponseFor($filename, $format)
     {
-        $file = sprintf('%s.%s', $filename, $extension);
-        $path = sprintf('@AppBundle/Resources/library/%s', $extension);
+        $file = sprintf('%s.%s', $filename, $format);
+        $path = sprintf('@AppBundle/Resources/library/%s', $format);
         $path = $this->get('kernel')->locateResource($path);
 
         $finder = new Finder();
         $files  = $finder->files()->in($path)->name($file);
         foreach ($files as $file) {
-            return $this->createFileResponseFor($file->getContents(), filemtime($file), $contentType);
+            return $this->createFileResponseFor($file->getContents(), filemtime($file));
         }
         throw $this->createNotFoundException();
+    }
+
+    /**
+     * Minifies a response.
+     *
+     * @param   Response    $response
+     * @param   string      $format
+     */
+    private function minify(Response $response, $format)
+    {
+        $content = $response->getContent();
+        switch ($format) {
+            case 'css':
+                $content = CssMin::minify($content);
+                break;
+            case 'js':
+                $content = JSMin::minify($content);
+                break;
+        }
+        $response->setContent($content);
     }
 }
