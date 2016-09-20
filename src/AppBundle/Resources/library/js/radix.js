@@ -17,14 +17,14 @@
     var CustomerManager;
     var LibraryLoader;
 
-    Radix.ajaxSend = function(url, method, payload, headers) {
-        return Ajax.sendForm(url, method, payload, headers);
-    };
+    // Radix.ajaxSend = function(url, method, payload, headers) {
+    //     return Ajax.sendForm(url, method, payload, headers);
+    // };
 
     Radix.init = function(config) {
         ClientConfig = new ClientConfig(config);
         if (true === ClientConfig.valid()) {
-            Debugger.info('Configuration intialized and valid.');
+            Debugger.info('Configuration initialized and valid.');
             ComponentLoader = new ComponentLoader();
             CustomerManager = new CustomerManager();
             LibraryLoader   = new LibraryLoader();
@@ -1341,7 +1341,7 @@
         }
 
         this.isLoggedIn = function() {
-            return null !== customer.id;
+            return 'undefined' !== typeof customer.username;
         }
 
         this.checkAuth = function() {
@@ -1419,11 +1419,7 @@
 
         function getDefaultCustomerObject()
         {
-            return {
-                id: null,
-                roles: [],
-                fields: {}
-            };
+            return {};
         }
 
     }
