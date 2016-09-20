@@ -46,6 +46,7 @@ class Customer implements AdvancedUserInterface, Serializable
             'realm' => $this->authModel->get('realm')->getId()
         ]);
 
+        $this->realm   = $this->authModel->get('realm')->get('key');
         $this->locked  = $this->authModel->get('locked');
         $this->enabled = $this->authModel->get('enabled');
 
@@ -60,6 +61,11 @@ class Customer implements AdvancedUserInterface, Serializable
     public function getGivenName()
     {
         return $this->givenName;
+    }
+
+    public function getRealm()
+    {
+        return $this->realm;
     }
 
     /**
@@ -165,6 +171,7 @@ class Customer implements AdvancedUserInterface, Serializable
             $this->username,
             $this->locked,
             $this->enabled,
+            $this->realm,
         ]);
     }
 
@@ -178,7 +185,8 @@ class Customer implements AdvancedUserInterface, Serializable
             $this->salt,
             $this->username,
             $this->locked,
-            $this->enabled
+            $this->enabled,
+            $this->realm
         ) = unserialize($serialized);
     }
 

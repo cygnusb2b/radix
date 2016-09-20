@@ -22,7 +22,10 @@ class CustomerGenerator implements AuthGeneratorInterface
             'username'      => $values['username'],
             'givenName'     => $user->getGivenName(),
             'familyName'    => $user->getFamilyName(),
-            'realm'         => $values['realm'],
+            'realm'         => [
+                'id'    => $values['realm'],
+                'key'   => $user->getRealm(),
+            ],
             'roles'         => $user->getRoles(),
         ];
     }
