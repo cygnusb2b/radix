@@ -324,12 +324,16 @@
             handleSubmit: function(e) {
                 e.preventDefault();
                 var profile = {
-                    _username: React.findDOMNode(this.refs.email).value.trim(),
-                    _password: React.findDOMNode(this.refs.password).value
+                    username: React.findDOMNode(this.refs.username).value.trim(),
+                    password: React.findDOMNode(this.refs.password).value,
+                    realm: ClientConfig.values.realm,
                 };
 
-                if (!profile._username || !profile._password) {
-                  return;
+                if (!profile.username || !profile.password) {
+                    return;
+                }
+                if (!profile.realm) {
+                    Debugger.error('No authentication realm was specified. The login request will fail.');
                 }
 
                 CustomerManager.databaseLogin(profile);
@@ -344,8 +348,8 @@
                         React.createElement("div", {className: ""},
                         React.createElement("div", {className: ""},
                             React.createElement("div", {className: ""},
-                                React.createElement("label", {htmlFor: "inputEmail", className: ""}, "Email address"),
-                                React.createElement("input", {type: "email", ref: "email", id: "inputEmail", className: "", placeholder: "* Email address", required: "required", autofocus: "autofocus"})
+                                React.createElement("label", {htmlFor: "inputEmail", className: ""}, "Username"),
+                                React.createElement("input", {type: "username", ref: "username", id: "inputEmail", className: "", placeholder: "* Username", required: "required", autofocus: "autofocus"})
                             ),
                             React.createElement("div", {className: ""},
                                 React.createElement("label", {htmlFor: "inputPassword", className: ""}, "Password"),
@@ -398,7 +402,8 @@
                 return (
                     React.createElement("div", {className: "login-list"},
                         React.createElement("h2", {className: "name"}, "Log In"),
-                        providerNodes,
+                        // providerNodes,
+                        React.createElement(DatabaseLogin, {key: 0}),
                         React.createElement("p", {className: "error text-danger"}, this.state.errorMessage)
                     )
                 );
@@ -1301,7 +1306,7 @@
 
         this.init = function() {
             this.checkAuth().then(function (response) {
-                customer = response;
+                customer = response.data;
                 EventDispatcher.trigger('CustomerManager.customer.loaded');
                 EventDispatcher.trigger('CustomerManager.init');
             }, function () {
@@ -1335,7 +1340,7 @@
         this.databaseLogin = function(payload) {
             EventDispatcher.trigger('CustomerManager.login.submit');
             var headers = {
-                'X-Auth-Service': 'Database',
+                // 'X-Auth-Service': 'Database',
             }
             return login(payload, headers);
         }
@@ -1360,7 +1365,7 @@
         this.logout = function() {
             if (this.isLoggedIn()) {
 
-                var promise = Ajax.send('/logout', 'GET');
+                var promise = Ajax.send('/app/auth/destroy', 'GET');
                     promise.then(function (response) {
                     // Success
                     customer = getDefaultCustomerObject();
@@ -1370,7 +1375,7 @@
                 function(jqXHR) {
                     // Error
                     var error = jqXHR.responseJSON.error || {};
-                    Debugger.warn('Unable to login customer', error);
+                    Debugger.warn('Unable to logout customer', error);
                     EventDispatcher.trigger('CustomerManager.logout.failure', [error]);
                 });
 
@@ -1384,10 +1389,10 @@
             var headers = {
                 'X-Auth-Service': 'Database',
             }
-            var promise = Ajax.send('/signup', 'POST', payload, headers);
+            var promise = Ajax.send('/app/auth/create', 'POST', payload, headers);
             promise.then(function (response) {
                 // Success
-                customer = response;
+                customer = response.data;
                 EventDispatcher.trigger('CustomerManager.register.success', [response]);
                 EventDispatcher.trigger('CustomerManager.login.success', [response]);
             },
@@ -1402,17 +1407,19 @@
 
         function login(payload, headers)
         {
-            var promise = Ajax.send('/authenticate', 'POST', payload, headers);
+            var promise = Ajax.send('/app/auth/submit', 'POST', payload, headers);
             promise.then(function (response) {
                 // Success
-                customer = response;
+                customer = response.data;
                 EventDispatcher.trigger('CustomerManager.login.success', [response, payload]);
             },
             function(object) {
                 // Error
-                var error = object.error || {};
-                Debugger.warn('Unable to login customer', error);
-                EventDispatcher.trigger('CustomerManager.login.failure', [error]);
+                var errors  = object.errors|| [{}];
+                var error   = errors[0];
+                var message = error.detail || 'An unknown error occured.';
+                Debugger.warn('Unable to login customer', errors);
+                EventDispatcher.trigger('CustomerManager.login.failure', [message]);
             });
             return promise;
         }
