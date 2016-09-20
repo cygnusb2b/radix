@@ -32,21 +32,6 @@ class AuthController extends Controller
     {
         $storage = $this->get('security.token_storage');
         $manager = $this->get('app_bundle.security.auth.generator_manager');
-        $token   = $storage->getToken();
-
-        if ($token->getUser() instanceof Customer)  {
-            $payload = $manager->generateFor($token->getUser());
-        } else {
-            $payload = new \stdClass();
-        }
-        return new JsonResponse($payload);
-    }
-
-    /**
-     * Submits customer account credentials (logs a customer in).
-     * Is a placeholder for the firewall.
-     */
-    public function submitAction()
-    {
+        return $manager->createResponseFor($storage->getToken()->getUser());
     }
 }

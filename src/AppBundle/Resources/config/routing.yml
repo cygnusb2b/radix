@@ -5,13 +5,15 @@ app_bundle_app_auth_create:
     defaults: { _controller: AppBundle:App\Auth:create }
     methods: [ POST ]
 
+app_bundle_app_auth_destory:
+    path: /app/auth/destroy
+
 app_bundle_app_auth_retrieve:
     path: /app/auth/retrieve
     defaults: { _controller: AppBundle:App\Auth:retrieve }
 
 app_bundle_app_auth_submit:
     path: /app/auth/submit
-    defaults: { _controller: AppBundle:App\Auth:submit }
 
 # LIBRARY ROUTES #
 
@@ -38,13 +40,15 @@ app_bundle_auth_user_create:
     defaults: { _controller: AppBundle:Auth:userCreate }
     methods: [ POST ]
 
+app_bundle_auth_user_destroy:
+    path: /auth/user/destroy
+
 app_bundle_auth_user_retrieve:
     path: /auth/user/retrieve
     defaults: { _controller: AppBundle:Auth:userRetrieve }
 
 app_bundle_auth_user_submit:
     path: /auth/user/submit
-    defaults: { _controller: AppBundle:Auth:userSubmit }
 
 # MANAGE EMBER ROUTE #
 

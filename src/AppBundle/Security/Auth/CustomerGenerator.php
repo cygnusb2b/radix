@@ -17,10 +17,12 @@ class CustomerGenerator implements AuthGeneratorInterface
      */
     public function generateFor(UserInterface $user)
     {
+        $values = json_decode($user->getUserName(), true);
         return [
-            'username'      => $user->getUserName(),
+            'username'      => $values['username'],
             'givenName'     => $user->getGivenName(),
             'familyName'    => $user->getFamilyName(),
+            'realm'         => $values['realm'],
             'roles'         => $user->getRoles(),
         ];
     }

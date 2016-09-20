@@ -72,8 +72,7 @@ class CoreUserAuthenticator extends AbstractCoreAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        $data = $this->authManager->generateFor($token->getUser());
-        return new JsonResponse($data);
+        return $this->authManager->createResponseFor($token->getUser());
     }
 
     /**

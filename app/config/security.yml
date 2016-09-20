@@ -30,9 +30,14 @@ security:
                     - app_bundle.security.authenticator.customer
             remember_me:
                 secret: "%secret%"
-                lifetime: 518400
+                lifetime: 63072000
                 name: __radix-application
                 always_remember_me: true
+            logout:
+                path: /app/auth/destroy
+                # delete_cookies: ~ # @todo Will need to determine if identity cookies need deletion?
+                invalidate_session: false
+                success_handler: app_bundle_security.logout_success_handler
         api:
             context: core
             pattern: ^/api\/1\.0
@@ -52,6 +57,11 @@ security:
                 lifetime: 432000
                 name: __radix-core
                 always_remember_me: true
+            logout:
+                path: /auth/user/destroy
+                # delete_cookies: ~ # @todo Will need to determine if identity cookies need deletion?
+                invalidate_session: false
+                success_handler: app_bundle_security.logout_success_handler
 
     access_control:
         - { path: ^/api/1\.0, roles: [ ROLE_CORE\USER ] }

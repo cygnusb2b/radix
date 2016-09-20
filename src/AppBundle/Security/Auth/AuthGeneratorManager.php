@@ -3,6 +3,7 @@
 namespace AppBundle\Security\Auth;
 
 use AppBundle\Security\JWT\JWTGeneratorManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -25,6 +26,32 @@ class AuthGeneratorManager
     {
         $this->generators[] = $generator;
         return $this;
+    }
+
+    /**
+     * Creates a default, non-authed response.
+     *
+     * @return  JsonResponse
+     */
+    public function createDefaultResponse()
+    {
+        return new JsonResponse(['data' => new \stdClass()]);
+    }
+
+    /**
+     * Creates an auth response for the provided user.
+     *
+     * @param   UserInterface|string    $user
+     * @return  JsonResponse
+     */
+    public function createResponseFor($user)
+    {
+        if (!$user instanceof UserInterface) {
+            return $this->createDefaultResponse();
+        }
+        return new JsonResponse([
+            'data'  => $this->generateFor($user),
+        ]);
     }
 
     /**
