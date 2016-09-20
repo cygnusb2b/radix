@@ -988,6 +988,9 @@
                                 Radix.FormModule.get('textField', { name: 'fax', label: 'Fax', value: this.getValue('fax') })
                             ),
                             React.createElement("div", {className: ""},
+                                Radix.FormModule.get('textField', { name: 'username', label: 'Username', required: true, value: this.getValue('username') })
+                            ),
+                            React.createElement("div", {className: ""},
                                 Radix.FormModule.get('textField', { type: 'password', name: 'password', label: 'Password', required: true, onBlur: this.verifyPasswordField, value: this.getValue('password') }),
                                 Radix.FormModule.get('textField', { type: 'password', name: 'confirmPassword', label: 'Confirm Password', required: true, onBlur: this.verifyConfirmPasswordField, value: this.getValue('confirmPassword') })
                             ),
