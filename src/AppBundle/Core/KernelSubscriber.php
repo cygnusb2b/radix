@@ -2,6 +2,7 @@
 
 namespace AppBundle\Core;
 
+use AppBundle\Cors\CorsDefinition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,6 +85,12 @@ class KernelSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if (true === $this->isPreflightRequest($request, $context)) {
+            // Is a CORs pre-flight request. Let the process continue, but prevent db ops (as a safety);
+            $this->manager->allowDbOperations(false);
+            return;
+        }
+
         $param        = AccountManager::PUBLIC_KEY_PARAM;
         $publicKey    = $this->manager->extractPublicKeyFrom($request);
         $sessionParam = $this->manager->getSessionKeyFor($request);
@@ -106,7 +113,6 @@ class KernelSubscriber implements EventSubscriberInterface
 
         // Set the application model to the manager.
         $this->manager->setApplication($application);
-
 
         // Set the public key to the session.
         $request->getSession()->set($sessionParam, $publicKey);
@@ -148,6 +154,22 @@ class KernelSubscriber implements EventSubscriberInterface
         if ('application' === $context) {
             throw new \RuntimeException('No application was defined or found. Operations terminated.');
         }
+    }
+
+    /**
+     * Determines if this is a CORs pre-flight request.
+     *
+     * @param   Request $request
+     * @param   string  $context
+     * @return  bool
+     */
+    private function isPreflightRequest(Request $request, $context)
+    {
+        if ('application' !== $context) {
+            return false;
+        }
+        $origin = $request->headers->get('Origin');
+        return 'OPTIONS' === $request->getMethod() && !empty($origin);
     }
 
     /**

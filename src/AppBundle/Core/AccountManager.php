@@ -88,6 +88,14 @@ class AccountManager
         return empty($publicKey) ? null : $publicKey;
     }
 
+    /**
+     * @return  Model|null
+     */
+    public function getApplication()
+    {
+        return $this->application;
+    }
+
 
     /**
      * @return  string|null
