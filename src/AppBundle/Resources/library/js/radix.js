@@ -1374,9 +1374,12 @@
                 },
                 function(jqXHR) {
                     // Error
-                    var error = jqXHR.responseJSON.error || {};
-                    Debugger.warn('Unable to logout customer', error);
-                    EventDispatcher.trigger('CustomerManager.logout.failure', [error]);
+                    var errors  = jqXHR.errors|| [{}];
+                    var error   = errors[0];
+                    var message = error.detail || 'An unknown error occured.';
+
+                    Debugger.warn('Unable to logout customer', errors);
+                    EventDispatcher.trigger('CustomerManager.logout.failure', [message]);
                 });
 
             } else {
@@ -1413,9 +1416,9 @@
                 customer = response.data;
                 EventDispatcher.trigger('CustomerManager.login.success', [response, payload]);
             },
-            function(object) {
+            function(jqXHR) {
                 // Error
-                var errors  = object.errors|| [{}];
+                var errors  = jqXHR.errors|| [{}];
                 var error   = errors[0];
                 var message = error.detail || 'An unknown error occured.';
                 Debugger.warn('Unable to login customer', errors);

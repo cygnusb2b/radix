@@ -40,12 +40,16 @@ class CustomerProvider implements UserProviderInterface
             throw new AuthenticationServiceException('Unable to extract username and realm values.');
         }
 
+
+
         $this->setRealm($values['realm']);
 
         $username = trim($values['username']);
         if (empty($username)) {
             throw new BadCredentialsException('The presented username cannot be empty.');
         }
+
+
 
         if (0 === preg_match('/^[0-9a-f]{24}$/', $this->realm)) {
             throw new AuthenticationServiceException('An invalid authentication realm was specified.');
@@ -59,6 +63,9 @@ class CustomerProvider implements UserProviderInterface
             }
             return new Customer($model);
         } catch (\Exception $e) {
+            if ($e instanceof UsernameNotFoundException) {
+                throw $e;
+            }
             throw new AuthenticationServiceException('An internal error occurred when retrieving the user.', 0, $e);
         }
     }

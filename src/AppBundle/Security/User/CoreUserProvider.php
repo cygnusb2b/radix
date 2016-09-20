@@ -44,6 +44,9 @@ class CoreUserProvider implements UserProviderInterface
             }
             return new CoreUser($model);
         } catch (\Exception $e) {
+            if ($e instanceof UsernameNotFoundException) {
+                throw $e;
+            }
             throw new AuthenticationServiceException('An internal error occurred when retrieving the user.', 0, $e);
         }
     }
