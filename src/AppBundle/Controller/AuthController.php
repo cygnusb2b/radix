@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Security\User\CoreUser;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
