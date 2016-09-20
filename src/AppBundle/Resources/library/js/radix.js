@@ -7,6 +7,7 @@
     // Private properties
     var Debugger        = new Debugger();
     var Ajax            = new Ajax();
+    // @todo Must account for the items that were using the server config.
     // var ServerConfig    = new ServerConfig(hostname, serverConfig);
     var EventDispatcher = new EventDispatcher();
     var Callbacks       = new Callbacks();
@@ -1349,7 +1350,7 @@
             if (Callbacks.has('checkAuth')) {
                 headers = Callbacks.get('checkAuth')();
             }
-            return Ajax.send('/check_auth', 'GET', undefined, headers);
+            return Ajax.send('/app/auth/retrieve', 'GET', undefined, headers);
         }
 
         this.getCustomer = function() {
@@ -1496,13 +1497,17 @@
             return new RSVP.Promise(function(resolve, reject) {
                 var xhr = new XMLHttpRequest();
 
+                headers['Content-Type']  = 'application/json';
+                headers['X-Radix-AppId'] = ClientConfig.values.appId;
+
                 xhr.open(method, url, true);
                 for (var i in headers) {
                     if (headers.hasOwnProperty(i)) {
+                        console.info(i, headers[i]);
                         xhr.setRequestHeader(i, headers[i]);
                     }
                 }
-                xhr.setRequestHeader('Content-Type', 'application/json');
+
                 xhr.withCredentials = true;
 
                 xhr.onreadystatechange = function() {
@@ -1516,8 +1521,10 @@
                 }
 
                 if (payload) {
+                    Debugger.info('Sending XHR request', method, url, headers, payload);
                     xhr.send(JSON.stringify(payload));
                 } else {
+                    Debugger.info('Sending XHR request', method, url, headers);
                     xhr.send();
                 }
             });
