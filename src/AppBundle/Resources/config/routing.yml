@@ -1,37 +1,37 @@
 # FRONT-END APPLICATION ROUTES #
 
 app_bundle_app_auth_create:
-    path: /app/auth/create
+    path: /app/auth/create # POST /app/auth
     defaults: { _controller: AppBundle:App\Auth:create }
     methods: [ POST ]
 
 app_bundle_app_auth_destory:
-    path: /app/auth/destroy
+    path: /app/auth/destroy # DELETE /app/auth
 
 app_bundle_app_auth_retrieve:
-    path: /app/auth/retrieve
+    path: /app/auth/retrieve # GET /app/auth
     defaults: { _controller: AppBundle:App\Auth:retrieve }
 
 app_bundle_app_auth_submit:
-    path: /app/auth/submit
+    path: /app/auth/submit # PATCH /app/auth
 
 # LIBRARY ROUTES #
 
 app_bundle_lib_css:
     path: /lib/{name}.css
-    defaults: { _controller: AppBundle:App\Library:css, minified: false }
+    defaults: { _controller: AppBundle:App\Library:css, minify: false }
 
 app_bundle_lib_css_min:
     path: /lib/{name}.min.css
-    defaults: { _controller: AppBundle:App\Library:css, minified: true }
+    defaults: { _controller: AppBundle:App\Library:css, minify: true }
 
 app_bundle_lib_js:
     path: /lib/{name}.js
-    defaults: { _controller: AppBundle:App\Library:js, minified: false }
+    defaults: { _controller: AppBundle:App\Library:js, minify: false }
 
 app_bundle_lib_js_min:
     path: /lib/{name}.min.js
-    defaults: { _controller: AppBundle:App\Library:js, minified: true }
+    defaults: { _controller: AppBundle:App\Library:js, minify: true }
 
 # CORE RELATED ROUTES #
 

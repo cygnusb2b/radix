@@ -36,7 +36,9 @@
         "as3/omeda-sdk": "dev-master",
         "as3/parameters": "^1.0",
         "lcobucci/jwt": "^3.2",
-        "as3/symfony-data-importer": "dev-master"
+        "as3/symfony-data-importer": "dev-master",
+        "natxet/CssMin": "^3.0",
+        "linkorb/jsmin-php": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
