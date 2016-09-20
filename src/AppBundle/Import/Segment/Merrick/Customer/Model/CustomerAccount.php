@@ -23,10 +23,6 @@ class CustomerAccount extends Customer
 
         $transformer = new Transformer\Customer();
         return $transformer->toApp($doc);
-        $kv = $transformer->toApp($doc);
-
-        var_dump($doc, $kv);
-        die(__METHOD__);
     }
 
     /**

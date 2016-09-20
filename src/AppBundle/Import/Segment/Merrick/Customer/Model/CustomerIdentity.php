@@ -27,11 +27,9 @@ class CustomerIdentity extends Customer
     protected function getCriteria()
     {
         $criteria = [
-            'pwd'   => [
-                '$or'   => [
-                    ['$exists'  => false],
-                    ['$eq'      => '']
-                ]
+            '$or'   => [
+                ['pwd'  => ['$exists'  => false]],
+                ['pwd'  => ['$eq'      => '']]
             ]
         ];
         return array_merge(parent::getCriteria(), $criteria);
