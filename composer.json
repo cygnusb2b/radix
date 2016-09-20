@@ -38,7 +38,8 @@
         "lcobucci/jwt": "^3.2",
         "as3/symfony-data-importer": "dev-master",
         "natxet/CssMin": "^3.0",
-        "linkorb/jsmin-php": "^1.0"
+        "linkorb/jsmin-php": "^1.0",
+        "aol/transformers": "^3"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
