@@ -31,37 +31,56 @@ class CustomerProvider implements UserProviderInterface
     }
 
     /**
+     * Attempts to find a customer using password credentials (email/username).
+     *
+     * @param   string  $emailOrUsername
+     * @return  Model
+     * @throws  BadCredentialsException|UsernameNotFoundException
+     */
+    public function findViaPasswordCredentials($emailOrUsername)
+    {
+        $emailOrUsername = trim($emailOrUsername);
+        if (empty($emailOrUsername)) {
+            throw new BadCredentialsException('The presented username/email cannot be empty.');
+        }
+
+        // Try email address
+        $criteria = [
+            'value'    => strtolower($emailOrUsername),
+            'verification.verified' => true,
+        ];
+        $email = $this->store->findQuery('customer-email', $criteria)->getSingleResult();
+        if (null !== $email && null !== $email->get('account') && false === $email->get('account')->get('deleted')) {
+            // Valid customer.
+            return $email->get('account');
+        }
+
+        // Try username
+        $criteria = [
+            'credentials.password.username' => $emailOrUsername,
+        ];
+        $customer = $this->store->findQuery('customer-account', $criteria)->getSingleResult();
+        if (null !== $customer && false === $customer->get('deleted')) {
+            return $customer;
+        }
+        throw new UsernameNotFoundException('Unable to retrieve customer via email or username');
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($username)
+    public function loadUserByUsername($customerId)
     {
-        $values = @json_decode($username, true);
-        if (!is_array($values) || !isset($values['username']) || !isset($values['realm'])) {
-            throw new AuthenticationServiceException('Unable to extract username and realm values.');
+        if (0 === preg_match('/^[a-f0-9]{24}$/', $customerId)) {
+            throw new BadCredentialsException('The provided customer account identifier is invalid.');
         }
 
-
-
-        $this->setRealm($values['realm']);
-
-        $username = trim($values['username']);
-        if (empty($username)) {
-            throw new BadCredentialsException('The presented username cannot be empty.');
-        }
-
-
-
-        if (0 === preg_match('/^[0-9a-f]{24}$/', $this->realm)) {
-            throw new AuthenticationServiceException('An invalid authentication realm was specified.');
-        }
-
-        $criteria  = ['username' => $username, 'realm' => $this->realm];
         try {
-            $model = $this->store->findQuery('customer-authentication', $criteria)->getSingleResult();
-            if (null === $model) {
+            $customer = $this->store->find('customer-account', $customerId);
+            if (null === $customer || true === $customer->get('deleted')) {
                 throw new UsernameNotFoundException('No user found.');
             }
-            return new Customer($model);
+            return new Customer($customer);
         } catch (\Exception $e) {
             if ($e instanceof UsernameNotFoundException) {
                 throw $e;

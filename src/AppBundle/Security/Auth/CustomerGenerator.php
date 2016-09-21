@@ -13,19 +13,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class CustomerGenerator implements AuthGeneratorInterface
 {
     /**
-     *{@inheritdoc}
+     * {@inheritdoc}
+     *
+     * @todo    The auth response will likely need to retrieve the customer model and fully serialize it.
      */
     public function generateFor(UserInterface $user)
     {
-        $values = json_decode($user->getUserName(), true);
         return [
-            'username'      => $values['username'],
+            'id'            => $user->getUserName(),
             'givenName'     => $user->getGivenName(),
             'familyName'    => $user->getFamilyName(),
-            'realm'         => [
-                'id'    => $values['realm'],
-                'key'   => $user->getRealm(),
-            ],
             'roles'         => $user->getRoles(),
         ];
     }

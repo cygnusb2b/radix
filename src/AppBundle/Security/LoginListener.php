@@ -53,7 +53,7 @@ class LoginListener
         if ($user instanceof CoreUser) {
             $this->updateCoreUser($user->getModel());
         } elseif ($user instanceof Customer) {
-            $this->updateCustomer($user->getAuthModel());
+            $this->updateCustomer($user->getModel());
         }
     }
 
@@ -90,20 +90,28 @@ class LoginListener
     protected function updateCustomer(Model $model)
     {
         $now = new MongoDate();
+
+        $history = $model->get('history');
+        if (null === $history) {
+            $history = $model->createEmbedFor('history');
+            $model->set('history', $history);
+        }
+
+
         if ($this->securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $model
+            $history
                 ->set('lastLogin', $now)
                 ->set('lastSeen', $now)
-                ->set('logins', $model->get('logins') + 1)
-                ->save()
+                ->set('logins', $history->get('logins') + 1)
             ;
+            $model->save();
         } elseif ($this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             // From remember me cookie
-            $model
+            $history
                 ->set('lastSeen', $now)
-                ->set('remembers', $model->get('remembers') + 1)
-                ->save()
+                ->set('remembers', $history->get('remembers') + 1)
             ;
+            $model->save();
         }
     }
 }

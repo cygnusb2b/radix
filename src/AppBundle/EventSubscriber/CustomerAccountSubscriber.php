@@ -76,6 +76,16 @@ class CustomerAccountSubscriber implements EventSubscriberInterface
             throw new HttpFriendlyException('Customer passwords cannot be empty.', 400);
         }
 
+        if (null !== $password && null !== $password->get('username')) {
+            $username = trim($password->get('username'));
+            if (empty($username)) {
+                throw new HttpFriendlyException('Usernames cannot be empty', 400);
+            }
+            if (false !== stripos($username, '@')) {
+                throw new HttpFriendlyException('Usernames cannot contain the @ symbol.', 400);
+            }
+        }
+
         $fields = ['provider', 'authProvider', 'identifier'];
         foreach ($credentials->get('social') as $social) {
             foreach ($fields as $field) {

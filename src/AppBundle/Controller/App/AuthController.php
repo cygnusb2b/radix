@@ -5,6 +5,7 @@ namespace AppBundle\Controller\App;
 use AppBundle\Exception\ExceptionQueue;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Security\User\Customer;
+use AppBundle\Utility\RequestUtility;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,7 @@ class AuthController extends Controller
      */
     public function createAction(Request $request)
     {
-        $payload = $this->extractPayload($request);
+        $payload = RequestUtility::extractPayload($request);
 
         // @todo Once form gen is in place, any front-end field validation (such as required, etc) should also be handled (again) on the backend
         // @todo This should be handled by a generic form validation service, that looks at the form in question, reads its validation rules, and validates the incoming data.
@@ -54,27 +55,6 @@ class AuthController extends Controller
         $storage = $this->get('security.token_storage');
         $manager = $this->get('app_bundle.security.auth.generator_manager');
         return $manager->createResponseFor($storage->getToken()->getUser());
-    }
-
-    /**
-     * Extracts the customer creation payload from the request.
-     *
-     * @todo    A generic form handling service should extract all form payloads.
-     * @param   Request $request
-     * @return  array
-     * @throws  \InvalidArgumentException
-     */
-    private function extractPayload(Request $request)
-    {
-        if (0 !== stripos($request->headers->get('content-type'), 'application/json')) {
-            throw new HttpFriendlyException('Invalid request content type. Expected application/json.', 415);
-        }
-        // JSON request.
-        $payload = @json_decode($request->getContent(), true);
-        if (!isset($payload['data'])) {
-            throw new HttpFriendlyException('No data member was found in the request payload.', 422);
-        }
-        return (array) $payload['data'];
     }
 
     /**

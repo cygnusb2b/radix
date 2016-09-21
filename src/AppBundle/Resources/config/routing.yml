@@ -6,8 +6,8 @@ app_bundle_app_auth_create:
     methods: [ POST ]
 
 app_bundle_app_auth_destory:
-    path: /app/auth
-    methods: [ DELETE ]
+    path: /app/auth/destroy
+    methods: [ GET ]
 
 app_bundle_app_auth_retrieve:
     path: /app/auth

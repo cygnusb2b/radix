@@ -24,7 +24,6 @@ class SandboxController extends Controller
         $config = [
             'appId' => '97b09a4b-8eb8-475f-b72f-19d0f2073256',
             'host'  => 'dev.radix.vehicleservicepros.com',
-            'realm' => '57d985c1d78c6a07a20041de',
             'debug' => true,
         ];
 

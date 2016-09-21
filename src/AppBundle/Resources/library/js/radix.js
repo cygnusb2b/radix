@@ -132,11 +132,14 @@
                     value: null,
                     required: false,
                     autofocus: true,
+                    autocomplete: true,
                     type: 'text',
                     onKeyUp: null,
                     onBlur: null
                 }
                 $.extend(defaults, props);
+
+                console.info(defaults);
 
                 var label = defaults.label || Utils.titleize(defaults.name);
                 var inputProps = {
@@ -154,6 +157,7 @@
                 if (defaults.value) inputProps.value = defaults.value;
                 if (true === defaults.required) inputProps.required = 'required';
                 if (true === defaults.autofocus) inputProps.autofocus = 'autofocus';
+                if (false === defaults.autocomplete) inputProps.autoComplete = 'off';
                 if ('function' === typeof defaults.onKeyUp) inputProps.onKeyUp = defaults.onKeyUp;
                 if ('function' === typeof defaults.onBlur) inputProps.onBlur = defaults.onBlur;
                 return React.createElement(defaults.wrapperTagName, { className: 'form-element-wrapper '+defaults.name+'' },
@@ -916,21 +920,21 @@
                     familyName: React.findDOMNode(this.refs.familyName).value.trim(),
                     companyName: React.findDOMNode(this.refs.companyName).value.trim(),
                     title: React.findDOMNode(this.refs.title).value.trim(),
-                    displayName: React.findDOMNode(this.refs.displayName).value.trim(),
+                    // displayName: React.findDOMNode(this.refs.displayName).value.trim(),
 
                     emails: [
                         {
-                            value: React.findDOMNode(this.refs.email).value,
-                            confirm: React.findDOMNode(this.refs.confirmEmail).value,
+                            value: React.findDOMNode(this.refs.email).value.trim(),
+                            // confirm: React.findDOMNode(this.refs.confirmEmail).value,
                             isPrimary: true
                         }
                     ],
 
                     authentications: [
                         {
-                            username: React.findDOMNode(this.refs.username).value.trim(),
+                            username: React.findDOMNode(this.refs.email).value.trim(),
+                            email: React.findDOMNode(this.refs.email).value.trim(),
                             password: React.findDOMNode(this.refs.password).value,
-                            confirm: React.findDOMNode(this.refs.confirmPassword).value,
                             realm: ClientConfig.values.realm
                         }
 
@@ -944,16 +948,13 @@
                     } else if (payload.authentications[0].password.length > 4096) {
                         this.setState({errorMessage: 'Password must be less than 4096 characters!'});
                         return false;
-                    } else if (payload.authentications[0].password !== payload.authentications[0].confirm) {
-                        this.setState({errorMessage: 'Passwords must match!'});
-                        return false;
                     }
                 }
 
-                if (payload.emails[0].value !== payload.emails[0].confirm) {
-                    this.setState({errorMessage: 'Emails must match!'});
-                    return false;
-                }
+                // if (payload.emails[0].value !== payload.emails[0].confirm) {
+                //     this.setState({errorMessage: 'Emails must match!'});
+                //     return false;
+                // }
 
                 CustomerManager.databaseRegister(payload);
 
@@ -988,24 +989,16 @@
                         React.createElement('fieldset', { className: 'contact-info' },
                             // React.createElement('legend', null, 'Contact Information'),
                             React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { name: 'givenName', label: 'First Name', required: true, autofocus: true, value: this.getValue('givenName') }),
-                                Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, value: this.getValue('familyName') })
+                                Radix.FormModule.get('textField', { name: 'givenName', label: 'First Name', required: true, autofocus: true, autocomplete: false, value: this.getValue('givenName') }),
+                                Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, autocomplete: false, value: this.getValue('familyName') })
                             ),
                             React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', required: true, onBlur: this.verifyEmailField, value: this.getValue('email') }),
-                                Radix.FormModule.get('textField', { type: 'email', name: 'confirmEmail', label: 'Confirm Email Address', required: true, onBlur: this.verifyConfirmEmailField, value: this.getValue('confirmEmail') })
+                                Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', required: true, autocomplete: false, value: this.getValue('email') }),
+                                Radix.FormModule.get('textField', { type: 'password', name: 'password', label: 'Password', required: true, autocomplete: false, value: this.getValue('password') })
                             ),
                             React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', value: this.getValue('companyName') }),
-                                Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', value: this.getValue('title') })
-                            ),
-                            React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { name: 'username', label: 'Username', required: true, value: this.getValue('username') }),
-                                Radix.FormModule.get('textField', { name: 'displayName', label: 'Display Name', required: true, value: this.getValue('displayName') })
-                            ),
-                            React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { type: 'password', name: 'password', label: 'Password', required: true, onBlur: this.verifyPasswordField, value: this.getValue('password') }),
-                                Radix.FormModule.get('textField', { type: 'password', name: 'confirmPassword', label: 'Confirm Password', required: true, onBlur: this.verifyConfirmPasswordField, value: this.getValue('confirmPassword') })
+                                Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', autocomplete: false, value: this.getValue('companyName') }),
+                                Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', autocomplete: false, value: this.getValue('title') })
                             )
                         ),
                         React.createElement("p", {className: "error text-danger"}, this.state.errorMessage),
@@ -1180,20 +1173,15 @@
                 e.preventDefault();
                 var profile = {
                     username: React.findDOMNode(this.refs.username).value.trim(),
-                    password: React.findDOMNode(this.refs.password).value,
-                    realm: ClientConfig.values.realm
+                    password: React.findDOMNode(this.refs.password).value
                 };
 
                 if (!profile.username || !profile.password) {
                     return;
                 }
 
-                if (!profile.realm) {
-                    Debugger.error('No authentication realm was specified. The login request will fail.');
-                }
-
                 EventDispatcher.trigger('form.login.lock');
-                CustomerManager.databaseLogin(profile);
+                CustomerManager.databaseLogin({ data: profile });
 
                 // React.findDOMNode(this.refs.email).value = ''; // Do not reset email.
                 React.findDOMNode(this.refs.password).value = '';
@@ -1213,7 +1201,7 @@
                         React.createElement("div", {className: ""},
                             // React.createElement("h4", {className: "text-center name"}, "OR"),
                             React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { type: 'text', name: 'username', label: 'Username', required: true, autofocus: "autofocus", value: this.getValue('username') }),
+                                Radix.FormModule.get('textField', { type: 'text', name: 'username', label: 'Username or Email', required: true, autofocus: "autofocus", value: this.getValue('username') }),
                                 Radix.FormModule.get('textField', { type: 'password', name: 'password', label: 'Password', required: true, value: this.getValue('password') })
                             ),
                             React.createElement("div", {className: ""},
@@ -2639,7 +2627,7 @@
         }
 
         this.isLoggedIn = function() {
-            return 'undefined' !== typeof customer.username;
+            return 'undefined' !== typeof customer.id;
         }
 
         this.checkAuth = function() {
@@ -2658,7 +2646,7 @@
         this.logout = function() {
             if (this.isLoggedIn()) {
 
-                var promise = Ajax.send('/app/auth', 'DELETE');
+                var promise = Ajax.send('/app/auth/destroy', 'GET');
                     promise.then(function (response) {
                     // Success
                     customer = getDefaultCustomerObject();
@@ -2848,7 +2836,6 @@
             debug: false,
             host: null,
             appId: null,
-            realm: null,
 
             bindTarget: null,
             loginTitle: 'Log In',
@@ -2883,7 +2870,7 @@
         Debugger.info('Config', this.values);
 
         this.valid = function() {
-            var required = ['host', 'appId', 'realm'];
+            var required = ['host', 'appId'];
             for (var i = 0; i < required.length; i++) {
                 var key = required[i];
                 if (!defaults[key]) {

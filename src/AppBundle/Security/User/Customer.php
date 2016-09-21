@@ -8,47 +8,36 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 class Customer implements AdvancedUserInterface, Serializable
 {
-    private $authModel;
-
-    private $customerModel;
-
-    private $familyName;
-
-    private $locked;
-
+    private $customer;
     private $enabled;
-
+    private $familyName;
     private $givenName;
-
+    private $locked;
     private $password;
-
     private $roles = [];
-
     private $salt;
-
     private $username;
 
-    public function __construct(Model $authModel)
+    public function __construct(Model $customer)
     {
-        $this->authModel     = $authModel;
-        $this->customerModel = $authModel->get('account');
+        $this->customer = $customer;
 
-        if (null === $this->customerModel) {
-            throw new \RuntimeException('No customer found on customer auth model.');
-        }
+        $this->familyName  = $customer->get('familyName');
+        $this->givenName   = $customer->get('givenName');
 
-        $this->familyName = $this->customerModel->get('familyName');
-        $this->givenName  = $this->customerModel->get('givenName');
-        $this->password   = $this->authModel->get('password');
-        $this->salt       = $this->authModel->get('salt');
-        $this->username   = json_encode([
-            'username' => $this->authModel->get('username'),
-            'realm' => $this->authModel->get('realm')->getId()
-        ]);
+        // @todo Will need to account for how social users get loaded here.
+        // Or will (likely) need a new user class.
 
-        $this->realm   = $this->authModel->get('realm')->get('key');
-        $this->locked  = $this->authModel->get('locked');
-        $this->enabled = $this->authModel->get('enabled');
+        $password = $customer->get('credentials')->get('password');
+
+        $this->password   = $password->get('value');
+        $this->salt       = $password->get('salt');
+        $this->username   = $customer->getId();
+
+        $settings = $customer->get('settings');
+
+        $this->locked  = $settings->get('locked');
+        $this->enabled = $settings->get('enabled');
 
         $this->setRoles();
     }
@@ -63,9 +52,9 @@ class Customer implements AdvancedUserInterface, Serializable
         return $this->givenName;
     }
 
-    public function getRealm()
+    public function getModel()
     {
-        return $this->realm;
+        return $this->customer;
     }
 
     /**
@@ -77,31 +66,11 @@ class Customer implements AdvancedUserInterface, Serializable
     }
 
     /**
-     * Gets the customer auth model for this user instance.
-     *
-     * @return  Model
-     */
-    public function getAuthModel()
-    {
-        return $this->authModel;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Gets the application public access keys available to this user.
-     *
-     * @return  array
-     */
-    public function getPublicKeys()
-    {
-        return $this->publicKeys;
     }
 
     /**
@@ -171,7 +140,6 @@ class Customer implements AdvancedUserInterface, Serializable
             $this->username,
             $this->locked,
             $this->enabled,
-            $this->realm,
         ]);
     }
 
@@ -185,14 +153,13 @@ class Customer implements AdvancedUserInterface, Serializable
             $this->salt,
             $this->username,
             $this->locked,
-            $this->enabled,
-            $this->realm
+            $this->enabled
         ) = unserialize($serialized);
     }
 
     private function setRoles()
     {
-        foreach ($this->authModel->get('roles') as $role) {
+        foreach ($this->customer->get('roles') as $role) {
             $role = strtoupper($role);
             if (0 === stripos($role, 'role_')) {
                 $role = str_replace('ROLE_', '', $role);
