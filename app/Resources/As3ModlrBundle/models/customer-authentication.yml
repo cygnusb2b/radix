@@ -16,6 +16,9 @@ customer-authentication:
             defaultValue: false # an administrative, soft ban
         username:
             type: string
+        confirm:
+            type: string
+            store: false
         password:
             type: string
         salt:

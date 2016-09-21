@@ -12,6 +12,9 @@ customer-email: # for user data linking, registration must be confirmed via emai
             defaultValue: false
         value:
             type: string # The email address
+        confirm:
+            type: string
+            store: false
     relationships:
         customer:
             type: one
