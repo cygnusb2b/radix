@@ -110,11 +110,6 @@ class KernelSubscriber implements EventSubscriberInterface
         $sessionParam = $this->manager->getSessionKeyFor($request);
 
         if (empty($publicKey)) {
-            // Attempt to find key in session.
-            $publicKey = $request->getSession()->get($sessionParam);
-        }
-
-        if (empty($publicKey)) {
             $this->handleEmptyApp($context);
             return;
         }
@@ -127,9 +122,6 @@ class KernelSubscriber implements EventSubscriberInterface
 
         // Set the application model to the manager.
         $this->manager->setApplication($application);
-
-        // Set the public key to the session.
-        $request->getSession()->set($sessionParam, $publicKey);
 
         if (null !== $redirect = $this->getRedirectUrl($request)) {
             // Redirect.
