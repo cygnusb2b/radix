@@ -30,6 +30,9 @@ class HttpFriendlySerializer
         if ($exception instanceof HttpFriendlyException) {
             return $exception->getStatusCode();
         }
+        if ($exception instanceof ExceptionQueue) {
+            return $this->extractStatusCodeForQueue($exception->all());
+        }
         return 500;
     }
 
@@ -75,6 +78,9 @@ class HttpFriendlySerializer
      */
     public function toArray(Exception $exception)
     {
+        if ($exception instanceof ExceptionQueue) {
+            return $this->queueToArray($exception->all());
+        }
         if ($exception instanceof HttpFriendlyException) {
             $error = [
                 'status'    => (string) $exception->getStatusCode(),
@@ -133,6 +139,16 @@ class HttpFriendlySerializer
      */
     public function queueToJson(array $exceptions)
     {
-        return json_encode($this->queueToArray($exceptions));
+        $process = [];
+        foreach ($exceptions as $e) {
+            if ($e instanceof ExceptionQueue) {
+                foreach ($e->all() as $child) {
+                    $process[] = $child;
+                }
+            } else {
+                $process[] = $e;
+            }
+        }
+        return json_encode($this->queueToArray($process));
     }
 }
