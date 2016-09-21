@@ -3,11 +3,14 @@
 namespace AppBundle\Core;
 
 use AppBundle\Cors\CorsDefinition;
+use AppBundle\Exception\HttpFriendlySerializer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\HttpUtils;
 
@@ -32,12 +35,20 @@ class KernelSubscriber implements EventSubscriberInterface
     private $manager;
 
     /**
-     * @param   AccountManager  $manager
+     * @var HttpFriendlySerializer
      */
-    public function __construct(AccountManager $manager, HttpUtils $httpUtils)
+    private $serializer;
+
+    /**
+     * @param   AccountManager          $manager
+     * @param   HttpUtils               $httpUtils
+     * @param   HttpFriendlySerializer  $serializer
+     */
+    public function __construct(AccountManager $manager, HttpUtils $httpUtils, HttpFriendlySerializer $serializer)
     {
-        $this->manager   = $manager;
-        $this->httpUtils = $httpUtils;
+        $this->manager    = $manager;
+        $this->httpUtils  = $httpUtils;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -51,6 +62,9 @@ class KernelSubscriber implements EventSubscriberInterface
             ],
             KernelEvents::RESPONSE => [
                 ['appendKey']
+            ],
+            KernelEvents::EXCEPTION => [
+                ['onKernelException']
             ],
         ];
     }
@@ -122,6 +136,31 @@ class KernelSubscriber implements EventSubscriberInterface
             $event->setResponse(new RedirectResponse($redirect));
             return;
         }
+    }
+
+    public function onKernelException(GetResponseForExceptionEvent $event)
+    {
+        $request  = $event->getRequest();
+        $response = $event->getResponse();
+        $context  = $this->manager->extractContextFrom($request);
+
+        if (!$event->isMasterRequest() || false === $this->shouldProcess($request, $context)) {
+            return;
+        }
+
+        $exception  = $event->getException();
+        $status     = $this->serializer->extractStatusCode($exception);
+        $serialized = $this->serializer->queueToJson([$exception]);
+
+        $response = $response ?: new Response();
+
+        $response->setStatusCode($status);
+        $response->setContent($serialized);
+        $response->headers->set('content-type', 'application/json');
+
+        $event->setResponse($response);
+
+        return $response;
     }
 
     /**

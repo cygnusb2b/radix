@@ -11,7 +11,7 @@ services:
         class: AppBundle\Core\AccountManager
         arguments: [ "@as3_modlr.store" ]
 
-    cygnus_platform.core.persistence_prefixer:
+    app_bundle.core.persistence_prefixer:
         private: true
         class: AppBundle\Core\PersistencePrefixer
         arguments: [ "@service_container" ]
@@ -28,7 +28,7 @@ services:
     app_bundle.core.subscriber.kernel:
         private: true
         class: AppBundle\Core\KernelSubscriber
-        arguments: [ "@app_bundle.core.account_manager", "@security.http_utils" ]
+        arguments: [ "@app_bundle.core.account_manager", "@security.http_utils", "@app_bundle.exception.http_serializer" ]
         tags:
             - { name: kernel.event_subscriber }
         calls:
@@ -45,6 +45,10 @@ services:
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory
         arguments: [ "@app_bundle.question.type_manager" ]
+
+    app_bundle.exception.http_serializer:
+        class: AppBundle\Exception\HttpFriendlySerializer
+        arguments: [ "%kernel.debug%" ]
 
     app_bundle.input.submission_manager:
         class: AppBundle\Input\SubmissionManager

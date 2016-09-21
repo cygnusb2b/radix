@@ -51,7 +51,7 @@ class CorsListener implements EventSubscriberInterface
                 ['onKernelResponse', -255], // Run last.
             ],
             KernelEvents::EXCEPTION => [
-                ['onKernelException']
+                ['onKernelException', -255], // Run last.
             ],
         ];
     }
@@ -113,7 +113,9 @@ class CorsListener implements EventSubscriberInterface
             return;
         }
 
-        if (false === $this->definition->isOriginAllowed($origin)) {
+
+
+        if (false === $this->definition->isOriginAllowed($origin) && null !== $response) {
             // Origin disallowed.
             return;
         }
