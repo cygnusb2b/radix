@@ -1,0 +1,11 @@
+customer-email-verification:
+    attributes:
+        verified:
+            type: boolean
+            defaultValue: false
+        hash:
+            type: string # The verification hash. Used when verifying an email.
+        completedDate:
+            type: date # The date the verification was completed
+        sentDate:
+            type: date # The date the verification was sent

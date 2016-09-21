@@ -1,0 +1,12 @@
+customer-account-history:
+    attributes:
+        lastLogin:
+            type: date
+        lastSeen:
+            type: date
+        logins:
+            type: integer
+            defaultValue: 0
+        remembers:
+            type: integer
+            defaultValue: 0

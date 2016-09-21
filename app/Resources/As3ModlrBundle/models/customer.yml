@@ -22,6 +22,8 @@ customer:
             defaultValue: Unknown
         title:
             type: string
+        companyName:
+            type: string
     embeds:
         externalIds:
             type: many
@@ -30,11 +32,6 @@ customer:
         addresses:
             type: many
             entity: customer-address
-            inverse: true
-            field: customer
-        emails:
-            type: many
-            entity: customer-email
             inverse: true
             field: customer
         phones:

@@ -6,15 +6,30 @@ customer-account:
             db: radix
     attributes:
         displayName:
-            type: string
+            type: string # should have an intelligent default if empty: try the first part of an email address, try a password username value, try a social nickname, etc.
         picture:
             type: string
+        roles:
+            type: array
+            defaultValue: [ USER ]
+    embeds:
+        credentials: # Accounts can log in three ways: via a social credential, a password credential (with an optional username), a password credential with a verified account email address
+            type: one
+            entity: customer-credentials
+        settings:
+            type: one
+            entity: customer-account-settings
+        history:
+            type: one
+            entity: customer-account-history
     relationships:
-        authentications:
+        emails:
             type: many
-            entity: customer-authentication
+            entity: customer-email
             inverse: true
             field: account
         identities:
             type: many
             entity: customer-identity
+            inverse: true
+            field: account
