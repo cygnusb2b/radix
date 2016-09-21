@@ -5,9 +5,15 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
-    app_bundle.event_subscriber.customer-account:
+    app_bundle.event_subscriber.customer_account:
         private: true
         class: AppBundle\EventSubscriber\CustomerAccountSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.customer_address:
+        private: true
+        class: AppBundle\EventSubscriber\CustomerAddressSubscriber
         tags:
             - { name: as3_modlr.event_subscriber }
 
