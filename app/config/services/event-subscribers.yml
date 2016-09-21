@@ -20,6 +20,7 @@ services:
     app_bundle.event_subscriber.customer_email:
         private: true
         class: AppBundle\EventSubscriber\CustomerEmailSubscriber
+        arguments: [ "@app_bundle.customer.email_verify.token_generator" ]
         tags:
             - { name: as3_modlr.event_subscriber }
 

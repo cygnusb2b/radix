@@ -1,0 +1,4 @@
+services:
+    app_bundle.customer.email_verify.token_generator:
+        class: AppBundle\Customer\EmailVerifyTokenGenerator
+        arguments: [ "%secret%" ]

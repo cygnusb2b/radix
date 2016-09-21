@@ -68,6 +68,5 @@ services:
         arguments: [ "@as3_modlr.store" ]
 
     app_bundle.security.user_provider.customer:
-        private: true
         class: AppBundle\Security\User\CustomerProvider
         arguments: [ "@as3_modlr.store" ]

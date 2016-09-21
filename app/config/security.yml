@@ -12,8 +12,12 @@ security:
             memory: ~
 
     encoders:
-        AppBundle\Security\User\CoreUser: bcrypt
-        AppBundle\Security\User\Customer: bcrypt
+        AppBundle\Security\User\CoreUser:
+            algorithm: bcrypt
+            cost: 13
+        AppBundle\Security\User\Customer:
+            algorithm: bcrypt
+            cost: 10
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs

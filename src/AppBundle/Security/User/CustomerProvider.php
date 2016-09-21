@@ -67,6 +67,14 @@ class CustomerProvider implements UserProviderInterface
     }
 
     /**
+     * @return  Store
+     */
+    public function getStore()
+    {
+        return $this->store;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function loadUserByUsername($customerId)

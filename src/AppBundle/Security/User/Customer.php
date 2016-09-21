@@ -9,10 +9,10 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 class Customer implements AdvancedUserInterface, Serializable
 {
     private $customer;
-    private $enabled;
+    private $enabled = false;
     private $familyName;
     private $givenName;
-    private $locked;
+    private $locked = true;
     private $password;
     private $roles = [];
     private $salt;
@@ -28,17 +28,18 @@ class Customer implements AdvancedUserInterface, Serializable
         // @todo Will need to account for how social users get loaded here.
         // Or will (likely) need a new user class.
 
-        $password = $customer->get('credentials')->get('password');
+        $credentials = $customer->get('credentials');
 
-        $this->password   = $password->get('value');
-        $this->salt       = $password->get('salt');
-        $this->username   = $customer->getId();
+        if (null !== $credentials && null !== $password = $credentials->get('password')) {
+            $this->password   = $password->get('value');
+            $this->salt       = $password->get('salt');
+            $this->username   = $customer->getId();
+        }
 
-        $settings = $customer->get('settings');
-
-        $this->locked  = $settings->get('locked');
-        $this->enabled = $settings->get('enabled');
-
+        if (null !== $settings = $customer->get('settings')) {
+            $this->locked  = $settings->get('locked');
+            $this->enabled = $settings->get('enabled');
+        }
         $this->setRoles();
     }
 
@@ -159,7 +160,8 @@ class Customer implements AdvancedUserInterface, Serializable
 
     private function setRoles()
     {
-        foreach ($this->customer->get('roles') as $role) {
+        $roles = (array) $this->customer->get('roles');
+        foreach ($roles as $role) {
             $role = strtoupper($role);
             if (0 === stripos($role, 'role_')) {
                 $role = str_replace('ROLE_', '', $role);

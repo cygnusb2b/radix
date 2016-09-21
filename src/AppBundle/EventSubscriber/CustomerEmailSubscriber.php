@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Customer\EmailVerifyTokenGenerator;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Utility\ModelUtility;
 use As3\Modlr\Events\EventSubscriberInterface;
@@ -11,6 +12,19 @@ use As3\Modlr\Store\Events\ModelLifecycleArguments;
 
 class CustomerEmailSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var EmailVerifyTokenGenerator
+     */
+    private $tokenGenerator;
+
+    /**
+     * @param   EmailVerifyTokenGenerator   $tokenGenerator
+     */
+    public function __construct(EmailVerifyTokenGenerator $tokenGenerator)
+    {
+        $this->tokenGenerator = $tokenGenerator;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +97,12 @@ class CustomerEmailSubscriber implements EventSubscriberInterface
             if (null !== $email) {
                 throw new HttpFriendlyException(sprintf('The customer email address "%s" is already verified and assigned to another account.', $model->get('value')), 400);
             }
-            $model->get('verification')->set('hash', md5($model->getId()));
+
+            // Generate and set the JWT token for email verification.
+            $token = $this->tokenGenerator->createFor(
+                $model->get('value'), $model->get('account')->getId()
+            );
+            $model->get('verification')->set('token', $token);
         }
     }
 }

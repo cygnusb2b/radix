@@ -3,8 +3,8 @@ customer-email-verification:
         verified:
             type: boolean
             defaultValue: false
-        hash:
-            type: string # The verification hash. Used when verifying an email.
+        token:
+            type: string # The verification token. Used when verifying an email.
         completedDate:
             type: date # The date the verification was completed
         sentDate:

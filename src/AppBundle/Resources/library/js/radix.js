@@ -930,22 +930,18 @@
                         }
                     ],
 
-                    authentications: [
-                        {
-                            username: React.findDOMNode(this.refs.email).value.trim(),
-                            email: React.findDOMNode(this.refs.email).value.trim(),
-                            password: React.findDOMNode(this.refs.password).value,
-                            realm: ClientConfig.values.realm
+                    credentials: {
+                        password: {
+                            value: React.findDOMNode(this.refs.password).value,
                         }
-
-                    ]
+                    }
                 };
 
-                if (payload.authentications[0].password) {
-                    if (payload.authentications[0].password.length < 4) {
+                if (payload.credentials.password.value) {
+                    if (payload.credentials.password.value.length < 4) {
                         this.setState({errorMessage: 'Password must be at least 4 characters!'});
                         return false;
-                    } else if (payload.authentications[0].password.length > 4096) {
+                    } else if (payload.credentials.password.value.length > 4096) {
                         this.setState({errorMessage: 'Password must be less than 4096 characters!'});
                         return false;
                     }
@@ -959,7 +955,6 @@
                 CustomerManager.databaseRegister(payload);
 
                 React.findDOMNode(this.refs.password).value = '';
-                React.findDOMNode(this.refs.confirmPassword).value = '';
             },
 
             componentDidMount: function() {
