@@ -37,7 +37,7 @@ class Customer extends Transformer
         $this->define('legacy.address.city', 'city');
         $this->define('legacy.address.postalCode', 'postal_code');
         $this->defineCallable('legacy.address.country', 'country', 'country');
-        $this->defineCallable('legacy.address.countryCode', 'country', 'regionCode');
+        $this->defineCallable('legacy.address.countryCode', 'country', 'countryCode');
         $this->defineCallable('legacy.address.region', 'region', 'region');
         $this->defineCallable('legacy.address.regionCode', 'region', 'regionCode');
 
