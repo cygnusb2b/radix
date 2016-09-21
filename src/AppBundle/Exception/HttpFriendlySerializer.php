@@ -3,6 +3,8 @@
 namespace AppBundle\Exception;
 
 use \Exception;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class HttpFriendlySerializer
 {
@@ -27,7 +29,7 @@ class HttpFriendlySerializer
      */
     public function extractStatusCode(Exception $exception)
     {
-        if ($exception instanceof HttpFriendlyException) {
+        if ($exception instanceof HttpFriendlyException || $exception instanceof HttpExceptionInterface) {
             return $exception->getStatusCode();
         }
         if ($exception instanceof ExceptionQueue) {
@@ -86,6 +88,12 @@ class HttpFriendlySerializer
                 'status'    => (string) $exception->getStatusCode(),
                 'title'     => $exception->getMessage(),
                 'detail'    => $exception->getDetail(),
+            ];
+        } elseif ($exception instanceof HttpExceptionInterface) {
+            $error = [
+                'status'    => (string) $exception->getStatusCode(),
+                'title'     => Response::$statusTexts[$exception->getStatusCode()],
+                'detail'    => $exception->getMessage(),
             ];
         } else {
             $error = [
