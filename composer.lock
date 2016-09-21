@@ -53,16 +53,16 @@
         },
         {
             "name": "as3/modlr",
-            "version": "v0.3.11",
+            "version": "v0.3.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/modlr.git",
-                "reference": "1a17ecafbe8757b7bc8f7c677d94ef98a5477ca6"
+                "reference": "039d4f4843b55901d545d156c2edc238ea8934c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/modlr/zipball/1a17ecafbe8757b7bc8f7c677d94ef98a5477ca6",
-                "reference": "1a17ecafbe8757b7bc8f7c677d94ef98a5477ca6",
+                "url": "https://api.github.com/repos/as3io/modlr/zipball/039d4f4843b55901d545d156c2edc238ea8934c0",
+                "reference": "039d4f4843b55901d545d156c2edc238ea8934c0",
                 "shasum": ""
             },
             "require": {
@@ -93,7 +93,7 @@
                 }
             ],
             "description": "Simplified PHP library for fast and efficient RESTful API for MongoDB. Designed for use with front end web frameworks such as EmberJS.",
-            "time": "2016-09-19 16:41:08"
+            "time": "2016-09-21 18:03:19"
         },
         {
             "name": "as3/modlr-api-jsonapiorg",
@@ -326,12 +326,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/symfony-data-importer.git",
-                "reference": "87253e6fafbc59f8e376cad8069a181106d8bced"
+                "reference": "ef74374c5ba8144486a64f541b8b4b2c6e537e54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/symfony-data-importer/zipball/87253e6fafbc59f8e376cad8069a181106d8bced",
-                "reference": "87253e6fafbc59f8e376cad8069a181106d8bced",
+                "url": "https://api.github.com/repos/as3io/symfony-data-importer/zipball/ef74374c5ba8144486a64f541b8b4b2c6e537e54",
+                "reference": "ef74374c5ba8144486a64f541b8b4b2c6e537e54",
                 "shasum": ""
             },
             "require": {
@@ -355,7 +355,7 @@
                 }
             ],
             "description": "Symfony console application to handle data importing.",
-            "time": "2016-09-19 18:02:12"
+            "time": "2016-09-21 17:19:01"
         },
         {
             "name": "doctrine/annotations",
