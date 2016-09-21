@@ -1,0 +1,41 @@
+services:
+
+    app_bundle.import.manager:
+        class: As3\SymfonyData\Import\Manager
+        calls:
+            - ['addImporter', [ "@app_bundle.import.importer.merrick.customer" ]]
+            # - ['addImporter', [ "@app_bundle.import.importer.merrick.customer_data" ]]
+
+    app_bundle.import.importer.merrick:
+        abstract: true
+        arguments:
+            - "@app_bundle.core.account_manager"
+
+    app_bundle.import.importer.merrick.customer:
+        class: AppBundle\Import\Importer\Merrick\Customer
+        parent: app_bundle.import.importer.merrick
+        arguments:
+            - "@app_bundle.import.persister.as3_modlr"
+            - "@app_bundle.import.source.mongo.legacy"
+
+    app_bundle.import.importer.merrick.customer_data:
+        class: AppBundle\Import\Importer\Merrick\CustomerData
+        arguments:
+            - "@app_bundle.import.persister.as3_modlr"
+            - "@app_bundle.import.source.mongo.legacy"
+
+    app_bundle.import.persister.as3_modlr:
+        class: As3\SymfonyData\Import\Persister\As3Modlr
+        arguments:
+            - "@as3_modlr.store"
+
+    app_bundle.import.source.mongo.legacy:
+        class: As3\SymfonyData\Import\Source\Mongo
+        tags:
+            - { name: "app_bundle.import.connection.legacy" }
+
+    app_bundle.console.import:
+        class: As3\SymfonyData\Console\Import
+        arguments: [ "radix:import", "@app_bundle.import.manager" ]
+        tags:
+            -  { name: "console.command" }
