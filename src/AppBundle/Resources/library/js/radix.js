@@ -910,32 +910,47 @@
             handleSubmit: function(e) {
                 e.preventDefault();
                 var payload = {
-                    firstName: React.findDOMNode(this.refs.firstName).value.trim(),
-                    lastName: React.findDOMNode(this.refs.lastName).value.trim(),
+                    // @todo Eventually the form fields themselves should be namespaced and linked to a model
+                    // Example app:customer-account:givenName or app:customer-account:emails[0][value]
+                    givenName: React.findDOMNode(this.refs.givenName).value.trim(),
+                    familyName: React.findDOMNode(this.refs.familyName).value.trim(),
                     companyName: React.findDOMNode(this.refs.companyName).value.trim(),
                     title: React.findDOMNode(this.refs.title).value.trim(),
-                    password: React.findDOMNode(this.refs.password).value,
-                    confirmPassword: React.findDOMNode(this.refs.confirmPassword).value,
-                    email: React.findDOMNode(this.refs.email).value,
-                    confirmEmail: React.findDOMNode(this.refs.confirmEmail).value,
                     displayName: React.findDOMNode(this.refs.displayName).value.trim(),
-                    username: React.findDOMNode(this.refs.username).value.trim(),
+
+                    emails: [
+                        {
+                            value: React.findDOMNode(this.refs.email).value,
+                            confirm: React.findDOMNode(this.refs.confirmEmail).value,
+                            isPrimary: true
+                        }
+                    ],
+
+                    authentications: [
+                        {
+                            username: React.findDOMNode(this.refs.username).value.trim(),
+                            password: React.findDOMNode(this.refs.password).value,
+                            confirm: React.findDOMNode(this.refs.confirmPassword).value,
+                            realm: ClientConfig.values.realm
+                        }
+
+                    ]
                 };
 
-                if (payload.password) {
-                    if (payload.password.length < 4) {
+                if (payload.authentications[0].password) {
+                    if (payload.authentications[0].password.length < 4) {
                         this.setState({errorMessage: 'Password must be at least 4 characters!'});
                         return false;
-                    } else if (payload.password.length > 4096) {
+                    } else if (payload.authentications[0].password.length > 4096) {
                         this.setState({errorMessage: 'Password must be less than 4096 characters!'});
                         return false;
-                    } else if (payload.password !== payload.confirmPassword) {
+                    } else if (payload.authentications[0].password !== payload.authentications[0].confirm) {
                         this.setState({errorMessage: 'Passwords must match!'});
                         return false;
                     }
                 }
 
-                if (payload.email !== payload.confirmEmail) {
+                if (payload.emails[0].value !== payload.emails[0].confirm) {
                     this.setState({errorMessage: 'Emails must match!'});
                     return false;
                 }
@@ -973,8 +988,8 @@
                         React.createElement('fieldset', { className: 'contact-info' },
                             // React.createElement('legend', null, 'Contact Information'),
                             React.createElement("div", {className: ""},
-                                Radix.FormModule.get('textField', { name: 'firstName', label: 'First Name', required: true, autofocus: true, value: this.getValue('firstName') }),
-                                Radix.FormModule.get('textField', { name: 'lastName', label: 'Last Name', required: true, value: this.getValue('lastName') })
+                                Radix.FormModule.get('textField', { name: 'givenName', label: 'First Name', required: true, autofocus: true, value: this.getValue('givenName') }),
+                                Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, value: this.getValue('familyName') })
                             ),
                             React.createElement("div", {className: ""},
                                 Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', required: true, onBlur: this.verifyEmailField, value: this.getValue('email') }),
@@ -2451,7 +2466,7 @@
         this.reloadCustomer = function() {
             var promise = this.checkAuth();
             promise.then(function (response) {
-                customer = response;
+                customer = response.data;
             }, function() {
                 Debugger.error('Unable to retrieve a customer.');
             });
@@ -2633,7 +2648,7 @@
             if (Callbacks.has('checkAuth')) {
                 headers = Callbacks.get('checkAuth')();
             }
-            return Ajax.send('/app/auth/retrieve', 'GET', undefined, headers);
+            return Ajax.send('/app/auth', 'GET', undefined, headers);
         }
 
         this.getCustomer = function() {
@@ -2643,7 +2658,7 @@
         this.logout = function() {
             if (this.isLoggedIn()) {
 
-                var promise = Ajax.send('/app/auth/destroy', 'GET');
+                var promise = Ajax.send('/app/auth', 'DELETE');
                     promise.then(function (response) {
                     // Success
                     customer = getDefaultCustomerObject();
@@ -2667,7 +2682,7 @@
 
         this.databaseRegister = function(payload) {
             EventDispatcher.trigger('CustomerManager.register.submit');
-            var promise = Ajax.send('/app/auth/create', 'POST', payload);
+            var promise = Ajax.send('/app/auth', 'POST', { data: payload });
             promise.then(function (response) {
                 // Success
                 customer = response.data;
@@ -2685,7 +2700,7 @@
 
         function login(payload, headers)
         {
-            var promise = Ajax.send('/app/auth/submit', 'POST', payload, headers);
+            var promise = Ajax.send('/app/auth', 'PATCH', payload, headers);
             promise.then(function (response) {
                 // Success
                 customer = response.data;
@@ -2698,6 +2713,7 @@
                 var error   = errors[0];
                 var message = error.detail || 'An unknown error occured.';
                 Debugger.warn('Unable to login customer', errors);
+                EventDispatcher.trigger('form.login.unlock');
                 EventDispatcher.trigger('CustomerManager.login.failure', [message]);
             });
             return promise;
