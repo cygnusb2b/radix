@@ -29,18 +29,15 @@ class HttpFriendlySerializer
      */
     public function extractStatusCode(Exception $exception)
     {
-        $now = new \DateTime();
-        if ('April 1st' === $now->format('F jS')) {
-            return 418;
-        }
-
         if ($exception instanceof HttpFriendlyException || $exception instanceof HttpExceptionInterface) {
             return $exception->getStatusCode();
         }
         if ($exception instanceof ExceptionQueue) {
             return $this->extractStatusCodeForQueue($exception->all());
         }
-        return 500;
+
+        $now = new \DateTime();
+        return ('April 1st' === $now->format('F jS')) ? 418 : 500;
     }
 
     /**
