@@ -1,0 +1,8 @@
+customer-account-settings:
+    attributes:
+        enabled:
+            type: boolean
+        locked:
+            type: boolean
+        shadowbanned:
+            type: boolean

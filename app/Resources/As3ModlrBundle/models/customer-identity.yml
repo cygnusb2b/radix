@@ -5,9 +5,11 @@ customer-identity:
             key: mongodb
             db: radix
     attributes:
-        canonical:
-            type: string
         email:
             type: string
         lastSeen:
             type: date
+    relationships:
+        account:
+            type: one
+            entity: customer-account

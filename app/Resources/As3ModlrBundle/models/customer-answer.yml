@@ -10,7 +10,4 @@ customer-answer:
         customer:
             type: one
             entity: customer
-        product:
-            type: one
-            entity: product
 
