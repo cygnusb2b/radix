@@ -22,6 +22,7 @@ class CustomerAccount extends Customer
         }
 
         $transformer = new Transformer\Customer();
+        $transformer->define('legacy.email', 'email', 'strtolower');
         return $transformer->toApp($doc);
     }
 

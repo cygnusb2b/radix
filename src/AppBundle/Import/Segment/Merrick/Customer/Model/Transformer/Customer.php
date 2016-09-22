@@ -15,23 +15,25 @@ class Customer extends Transformer
         $this->define('legacy.id', '_id', 'strval');
         $this->defineStatic('legacy.source', 'users_v2');
 
-        $this->define('legacy.auth.password', 'pwd');
-        $this->define('legacy.auth.salt', 'salt');
+        $this->defineStatic('settings', ['enabled' => true, 'locked' => false, 'shadowbanned' => false]);
+        $this->defineStatic('roles', ['USER']);
+        $this->defineStatic('deleted', false);
 
+        $this->define('history.lastLogin', 'last_login');
         $this->define('legacy.origin', 'origin');
         $this->define('legacy.type', 'type');
-
-        $this->defineStatic('deleted', false);
         $this->define('createdDate', 'created');
         $this->define('updatedDate', 'profile_updated');
         $this->define('touchedDate', 'updated');
-
         $this->define('givenName', 'first_name');
         $this->define('familyName', 'last_name');
         $this->define('gender', 'gender');
         $this->define('title', 'title');
         $this->define('companyName', 'company_name');
+        $this->define('displayName', 'display_name');
+        $this->define('picture', 'photo_url');
 
+        // Set up for reference passes
         $this->define('legacy.address.street', 'address1');
         $this->define('legacy.address.extra', 'address2');
         $this->define('legacy.address.city', 'city');
@@ -41,10 +43,9 @@ class Customer extends Transformer
         $this->defineCallable('legacy.address.region', 'region', 'region');
         $this->defineCallable('legacy.address.regionCode', 'region', 'regionCode');
 
-        $this->define('legacy.email', 'email');
-        $this->define('legacy.phones.phone', 'phone');
-        $this->define('legacy.phones.mobile', 'mobile');
-
+        // Global passes for multi fields
+        $this->defineGlobal('credentials', 'credentials');
+        $this->defineGlobal('phones', 'phones');
         $this->defineGlobal('externalIds', 'externalIds');
     }
 
@@ -95,5 +96,45 @@ class Customer extends Transformer
             ];
         }
         return $externalIds;
+    }
+
+    public function credentials($data)
+    {
+        $credentials = [];
+        if (isset($data['pwd'])) {
+            $credentials['password'] = [
+                'value'     => $data['pwd'],
+                'salt'      => isset($data['salt']) ? $data['salt'] : null,
+                'mechanism' => 'merick'
+            ];
+        }
+        return $credentials;
+    }
+
+    public function phones($data)
+    {
+        $phones = [];
+        if (isset($data['phone'])) {
+            $value = trim($data['phone']);
+            if (!empty($value)) {
+                $phones[] = [
+                    'isPrimary' => 0 === count($phones),
+                    'number'    => $value,
+                    'phoneType' => 'Phone'
+                ];
+            }
+        }
+
+        if (isset($data['mobile'])) {
+            $value = trim($data['mobile']);
+            if (!empty($value)) {
+                $phones[] = [
+                    'isPrimary' => 0 === count($phones),
+                    'number'    => $value,
+                    'phoneType' => 'Mobile'
+                ];
+            }
+        }
+        return $phones;
     }
 }
