@@ -5,6 +5,7 @@ namespace AppBundle\Security\User;
 use As3\Modlr\Store\Store;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -62,6 +63,17 @@ class CustomerProvider implements UserProviderInterface
         $customer = $this->store->findQuery('customer-account', $criteria)->getSingleResult();
         if (null !== $customer && false === $customer->get('deleted')) {
             return $customer;
+        }
+
+        // Determine if this is a pending email
+        $criteria = [
+            'value'    => strtolower($emailOrUsername),
+            'verification.verified' => false,
+        ];
+        $email = $this->store->findQuery('customer-email', $criteria)->getSingleResult();
+        if (null !== $email && null !== $email->get('account')) {
+            // Currently pending email verification.
+            throw new CustomUserMessageAuthenticationException('This account is awaiting email verificaiton. Please check your email and click the verification link.');
         }
         throw new UsernameNotFoundException('Unable to retrieve customer via email or username');
     }
