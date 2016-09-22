@@ -13,6 +13,9 @@ class ConsoleSubscriber implements EventSubscriberInterface
      */
     private $manager;
 
+    /**
+     * @var array
+     */
     private $skip = [
         'as3:modlr:metadata:cache:clear' => true,
         'cache:clear'                    => true,
@@ -20,11 +23,17 @@ class ConsoleSubscriber implements EventSubscriberInterface
     ];
 
     /**
+     * @var ApplicationQuery
+     */
+    private $query;
+
+    /**
      * @param   AccountManager  $manager
      */
-    public function __construct(AccountManager $manager)
+    public function __construct(AccountManager $manager, ApplicationQuery $query)
     {
         $this->manager = $manager;
+        $this->query   = $query;
     }
 
     /**
@@ -59,7 +68,7 @@ class ConsoleSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $application = $this->manager->retrieveByAppKey($app);
+        $application = $this->query->retrieveByAppKey($app);
         if (null === $application) {
             $this->manager->allowDbOperations(false);
             return;

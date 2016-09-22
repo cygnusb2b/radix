@@ -6,7 +6,6 @@ use As3\Modlr\Metadata\EntityMetadata;
 use As3\Modlr\Events\EventSubscriberInterface;
 use As3\Modlr\Metadata\Events;
 use As3\Modlr\Metadata\Events\MetadataArguments;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Prefixes the modlr database name with the active apps's account and application keys.
@@ -16,16 +15,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class PersistencePrefixer implements EventSubscriberInterface
 {
     /**
-     * @var ContainerInterface
+     * @var AccountManager
      */
-    private $container;
+    private $manager;
 
     /**
-     * @param   ContainerInterface     $container
+     * @param   AccountManager      $manager
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(AccountManager $manager)
     {
-        $this->container = $container;
+        $this->manager = $manager;
     }
 
     /**
@@ -60,27 +59,18 @@ class PersistencePrefixer implements EventSubscriberInterface
     }
 
     /**
-     * @return  AccountManager
-     */
-    private function getManager()
-    {
-        return $this->container->get('app_bundle.core.account_manager');
-    }
-
-    /**
      * @param   EntityMetadata  $metadata
      */
     private function setDatabaseFor(EntityMetadata $metadata)
     {
         $dbName  = 'radix';
-        $manager = $this->getManager();
         if (0 !== stripos($metadata->type, 'core-')) {
             // Application specific model.
-            if (false === $manager->shouldAllowDbOperations()) {
+            if (false === $this->manager->shouldAllowDbOperations()) {
                 throw new \RuntimeException('No application has been defined. Database operations halted.');
             }
-            if (true === $manager->hasApplication()) {
-                $dbName = sprintf('%s-%s', $dbName, $manager->getDatabaseSuffix());
+            if (true === $this->manager->hasApplication()) {
+                $dbName = sprintf('%s-%s', $dbName, $this->manager->getDatabaseSuffix());
             }
 
         }

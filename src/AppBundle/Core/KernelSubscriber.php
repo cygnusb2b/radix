@@ -40,13 +40,20 @@ class KernelSubscriber implements EventSubscriberInterface
     private $serializer;
 
     /**
+     * @var ApplicationQuery
+     */
+    private $query;
+
+    /**
      * @param   AccountManager          $manager
+     * @param   ApplicationQuery        $query
      * @param   HttpUtils               $httpUtils
      * @param   HttpFriendlySerializer  $serializer
      */
-    public function __construct(AccountManager $manager, HttpUtils $httpUtils, HttpFriendlySerializer $serializer)
+    public function __construct(AccountManager $manager, ApplicationQuery $query, HttpUtils $httpUtils, HttpFriendlySerializer $serializer)
     {
         $this->manager    = $manager;
+        $this->query      = $query;
         $this->httpUtils  = $httpUtils;
         $this->serializer = $serializer;
     }
@@ -119,7 +126,7 @@ class KernelSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $application = $this->manager->retrieveByPublicKey($publicKey);
+        $application = $this->query->retrieveByPublicKey($publicKey);
         if (null === $application) {
             $this->handleEmptyApp($context);
             return;

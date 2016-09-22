@@ -9,26 +9,29 @@ parameters: ~
 services:
     app_bundle.core.account_manager:
         class: AppBundle\Core\AccountManager
+
+    app_bundle.core.application_query:
+        class: AppBundle\Core\ApplicationQuery
         arguments: [ "@as3_modlr.store" ]
 
     app_bundle.core.persistence_prefixer:
         private: true
         class: AppBundle\Core\PersistencePrefixer
-        arguments: [ "@service_container" ]
+        arguments: [ "@app_bundle.core.account_manager" ]
         tags:
             - { name: as3_modlr.event_subscriber }
 
     app_bundle.core.subscriber.console:
         private: true
         class: AppBundle\Core\ConsoleSubscriber
-        arguments: [ "@app_bundle.core.account_manager" ]
+        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.core.application_query" ]
         tags:
             - { name: kernel.event_subscriber }
 
     app_bundle.core.subscriber.kernel:
         private: true
         class: AppBundle\Core\KernelSubscriber
-        arguments: [ "@app_bundle.core.account_manager", "@security.http_utils", "@app_bundle.exception.http_serializer" ]
+        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.core.application_query", "@security.http_utils", "@app_bundle.exception.http_serializer" ]
         tags:
             - { name: kernel.event_subscriber }
         calls:
