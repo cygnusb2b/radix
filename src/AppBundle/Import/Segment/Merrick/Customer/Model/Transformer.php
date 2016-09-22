@@ -16,11 +16,6 @@ class Transformer extends BaseTransformer
     protected $originalData = [];
 
     /**
-     * @var     array   Values that should be set after transformation
-     */
-    protected $static = [];
-
-    /**
      * @var     array   Virtual fields that are appended to the data to trigger global transformations
      */
     protected $globalTriggers = [];
@@ -32,6 +27,11 @@ class Transformer extends BaseTransformer
         'legacy.id',
         'legacy.source'
     ];
+
+    /**
+     * @var     array   Values that should be set after transformation
+     */
+    protected $static = [];
 
     /**
      * @var     mixed   The source document's primary key field

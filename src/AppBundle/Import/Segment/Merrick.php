@@ -1,27 +1,18 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model;
+namespace AppBundle\Import\Segment;
 
 use As3\SymfonyData\Import\Segment;
 
-abstract class Customer extends Segment
+abstract class Merrick extends Segment
 {
-    /**
-     * {@inheritdoc}
-     */
-    final public function count()
-    {
-        return $this->source->count('users_v2', $this->getCriteria());
-    }
-
     /**
      * {@inheritdoc}
      */
     final public function modify($limit = 200, $skip = 0)
     {
         $kvs = [];
-        $docs = $this->source->retrieve('users_v2', $this->getCriteria(), $this->getFields(), $this->getSort(), $limit, $skip);
-        $now = new \DateTime();
+        $docs = $this->getDocuments($limit, $skip);
 
         foreach ($docs as $doc) {
             $kv = $this->formatModel($doc);
@@ -35,7 +26,7 @@ abstract class Customer extends Segment
     /**
      * {@inheritdoc}
      */
-    final public function persist(array $items)
+    public function persist(array $items)
     {
         if (empty($items)) {
             return $items;
@@ -52,10 +43,28 @@ abstract class Customer extends Segment
     abstract protected function formatModel(array $doc);
 
     /**
-     * {@inheritdoc}
+     * Returns the source collection
+     *
+     * @return  string
      */
-    protected function getCriteria()
+    abstract protected function getCollection();
+
+    /**
+     * Returns documents from the source in a standard way
+     *
+     * @param   int     $limit
+     * @param   int     $skip
+     * @return  array
+     */
+    protected function getDocuments($limit = 200, $skip = 0)
     {
-        return ['site' => $this->importer->getDomain()];
+        return $this->source->retrieve($this->getCollection(), $this->getCriteria(), $this->getFields(), $this->getSort(), $limit, $skip);
     }
+
+    /**
+     * Returns the model type in use for this segment.
+     *
+     * @return  string
+     */
+    abstract protected function getModelType();
 }
