@@ -20,18 +20,23 @@ class Customer extends Transformer
         $this->defineStatic('deleted', false);
 
         $this->define('history.lastLogin', 'last_login');
-        $this->define('legacy.origin', 'origin');
-        $this->define('legacy.type', 'type');
         $this->define('createdDate', 'created');
         $this->define('updatedDate', 'profile_updated');
         $this->define('touchedDate', 'updated');
         $this->define('givenName', 'first_name');
         $this->define('familyName', 'last_name');
-        $this->define('gender', 'gender');
         $this->define('title', 'title');
         $this->define('companyName', 'company_name');
         $this->define('displayName', 'display_name');
         $this->define('picture', 'photo_url');
+        $this->define('gender', 'gender', function($val) {
+            switch (strtolower($val)) {
+                case 'm':
+                    return 'Male';
+                case 'f':
+                    return 'Female';
+            }
+        });
 
         // Set up for reference passes
         $this->define('legacy.address.street', 'address1');

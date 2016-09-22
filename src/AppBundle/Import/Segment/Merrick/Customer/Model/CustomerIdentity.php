@@ -2,6 +2,8 @@
 
 namespace AppBundle\Import\Segment\Merrick\Customer\Model;
 
+use AppBundle\Import\Segment\Merrick\Customer;
+
 class CustomerIdentity extends Customer
 {
     /**
@@ -36,6 +38,9 @@ class CustomerIdentity extends Customer
         return array_merge(parent::getCriteria(), $criteria);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getModelType()
     {
         return 'customer-identity';
