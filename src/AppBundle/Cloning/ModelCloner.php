@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Utility;
+namespace AppBundle\Cloning;
 
 use AppBundle\Exception\HttpFriendlyException;
 use As3\Modlr\Metadata\EmbeddedPropMetadata;
@@ -25,7 +25,7 @@ class ModelCloner
      * @param   Model   $model
      * @return  Model
      */
-    public function cloneModel(Model $model)
+    public function cloneFrom(Model $model)
     {
         $clone = $model->getStore()->create($model->getType());
         $this->apply($model, $clone);

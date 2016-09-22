@@ -12,18 +12,24 @@ input-submission:
         ipInfo:
             type: object
             defaultValue: []
-        requestData:
+        payload:
             type: object
             defaultValue: []
+        sourceKey:
+            type: string # The input source key... eventually this should link to a source model
+    embeds:
+        request:
+            type: one
+            entity: input-submission-request
     relationships:
         answers:
             type: many
             entity: input-answer
             inverse: true
             field: submission
-        source:
-            type: one
-            entity: input-source
+        # source:
+        #     type: one
+        #     entity: input-source
         customer:
             type: one
             entity: customer

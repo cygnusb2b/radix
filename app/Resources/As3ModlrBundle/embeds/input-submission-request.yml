@@ -1,0 +1,12 @@
+input-submission-request:
+    attributes:
+        host:
+            type: string
+        method:
+            type: string
+        path:
+            type: string
+        query:
+            type: string
+        headers:
+            type: string

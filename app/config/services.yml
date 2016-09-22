@@ -1,4 +1,5 @@
 imports:
+    - { resource: services/cloning.yml }
     - { resource: services/customer.yml }
     - { resource: services/event-subscribers.yml }
     - { resource: services/question-types.yml }
@@ -44,6 +45,9 @@ services:
         arguments: [ "@app_bundle.core.account_manager" ]
         tags:
             - { name: kernel.event_subscriber }
+
+    app_bundle.data_formatter.mongo_db:
+        class: AppBundle\DataFormatter\MongoDBFormatter
 
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory

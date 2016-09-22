@@ -1,0 +1,11 @@
+services:
+    app_bundle.cloning.model_cloner:
+        class: AppBundle\Cloning\ModelCloner
+
+    app_bundle.cloning.transformer.abstract_transformer:
+        abstract: true
+        arguments: [ "@as3_modlr.store", "@app_bundle.cloning.model_cloner" ]
+
+    app_bundle.cloning.transformer.account_identity_transformer:
+        parent: app_bundle.cloning.transformer.abstract_transformer
+        class: AppBundle\Cloning\Transformer\AccountIdentityTransformer

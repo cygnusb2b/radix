@@ -24,6 +24,13 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.event_subscriber.input_submission:
+        private: true
+        class: AppBundle\EventSubscriber\InputSubmissionSubscriber
+        arguments: [ "@request_stack", "@app_bundle.data_formatter.mongo_db" ]
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
     app_bundle.event_subscriber.keyable:
         private: true
         class: AppBundle\EventSubscriber\KeyableSubscriber

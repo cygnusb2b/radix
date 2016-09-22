@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\App;
 
+use AppBundle\Utility\ModelCloner;
 use AppBundle\Exception\ExceptionQueue;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Security\User\Customer;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class AuthController extends Controller
@@ -43,6 +45,7 @@ class AuthController extends Controller
         $store          = $this->get('as3_modlr.store');
         $encoder        = $this->get('security.password_encoder');
 
+
         // First, determine if a customer exists with these credentials.
         // @todo Add support for social!
 
@@ -50,6 +53,10 @@ class AuthController extends Controller
             $email    = $payload['emails'][0]['value'];
             $customer = $provider->findViaPasswordCredentials($email);
             throw new HttpFriendlyException(sprintf('The email address "%s" is already associated with an account.', $email), 400);
+        } catch (CustomUserMessageAuthenticationException $e) {
+            // Pending email
+            throw new HttpFriendlyException($e->getMessage(), 409);
+
         } catch (UsernameNotFoundException $e) {
             // Catch the not found exception so we can continue...
         }
@@ -97,7 +104,28 @@ class AuthController extends Controller
         $customer->save();
         $email->save();
 
+        // Create the submission model at this point.
+        $submission = $store->create('input-submission');
+
+        // Erase credentials
+        if (isset($payload['credentials'])) {
+            unset($payload['credentials']);
+        }
+        // Needs to scope the payload. Eventually this should use the raw form submission (which should already be scoped).
+        $scoped = [];
+        foreach ($payload as $key => $value) {
+            $scoped[sprintf('customer-account:%s', $key)] = $value;
+        }
+        $submission->set('payload', $scoped);
+        $submission->set('customer', $customer);
+
+        $submission->set('sourceKey', 'customer-account:create');
+        $submission->save();
+
+
+
         // Now attempt to link an identity to the customer.
+        // Identity linking does NOT happen here, it would happen once the user verifies their email address.
         $criteria = ['email' => $email->get('value')];
         $identity = $store->findQuery('customer-identity', $criteria)->getSingleResult();
         if (null !== $identity) {
@@ -108,6 +136,7 @@ class AuthController extends Controller
             $identity->save();
         } else {
             // @todo This actually SHOULD create an identity (left unlinked), because user data was submitted. Its possible the user may never verify...
+            // @todo On verification, check for this identity again and link
         }
 
         // @todo Now handle sending verification email

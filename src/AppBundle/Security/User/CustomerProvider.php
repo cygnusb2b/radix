@@ -65,6 +65,8 @@ class CustomerProvider implements UserProviderInterface
             return $email->get('account');
         }
 
+
+
         // Determine if this is an email awaiting verification.
         $criteria = [
             'value'    => strtolower($emailOrUsername),
@@ -73,7 +75,7 @@ class CustomerProvider implements UserProviderInterface
         $email = $this->store->findQuery('customer-email', $criteria)->getSingleResult();
         if (null !== $email && null !== $email->get('account')) {
             // Currently pending email verification.
-            throw new CustomUserMessageAuthenticationException('This account is awaiting email verificaiton. Please check your email and click the verification link.');
+            throw new CustomUserMessageAuthenticationException('This account is awaiting email verificaton. Please check your email and click the verification link.');
         }
         throw new UsernameNotFoundException('Unable to retrieve customer via email or username');
     }
