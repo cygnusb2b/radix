@@ -1,9 +1,4 @@
 customer-phone:
-    entity:
-        persistence:
-            key: mongodb
-            db: radix
-    mixins: [ 'timestampable' ]
     attributes:
         phoneType:
             type: string # Business, Home, Mobile, Fax
@@ -12,7 +7,3 @@ customer-phone:
         isPrimary:
             type: boolean
             defaultValue: false
-    relationships:
-        customer:
-            type: one
-            entity: customer

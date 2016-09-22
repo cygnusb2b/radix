@@ -28,15 +28,13 @@ customer:
         externalIds:
             type: many
             entity: external-identifier
+        phones:
+            type: many
+            entity: customer-phone
     relationships:
         addresses:
             type: many
             entity: customer-address
-            inverse: true
-            field: customer
-        phones:
-            type: many
-            entity: customer-phone
             inverse: true
             field: customer
         answers:
