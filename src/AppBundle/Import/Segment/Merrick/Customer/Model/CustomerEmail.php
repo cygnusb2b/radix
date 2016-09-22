@@ -4,7 +4,7 @@ namespace AppBundle\Import\Segment\Merrick\Customer\Model;
 
 use AppBundle\Import\Segment\Merrick\Customer;
 
-class CustomerAddress extends Customer
+class CustomerEmail extends Customer
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class CustomerAddress extends Customer
      */
     public function getKey()
     {
-        return 'merrick_customer_model_customer_address';
+        return 'merrick_customer_model_customer_email';
     }
 
     /**
@@ -30,10 +30,13 @@ class CustomerAddress extends Customer
      */
     protected function formatModel(array $doc)
     {
-        $transformer = new Transformer\CustomerAddress();
-        $transformer->defineStatic('legacy.id', (string) $doc['_id']);
-        $transformer->defineStatic('customer', ['id' => $doc['_id'], 'type' => $doc['_type']]);
-        return $transformer->toApp($doc['legacy']['address']);
+        $email = [
+            'id'        => (string) $doc['_id'],
+            'value'     => $doc['legacy']['email'],
+            'account'   => $doc['_id']
+        ];
+        $transformer = new Transformer\CustomerEmail();
+        return $transformer->toApp($email);
     }
 
     /**
@@ -57,7 +60,7 @@ class CustomerAddress extends Customer
      */
     protected function getCriteria()
     {
-        return ['legacy.address' => ['$exists' => true]];
+        return ['legacy.email' => ['$exists' => true]];
     }
 
     /**
@@ -65,6 +68,6 @@ class CustomerAddress extends Customer
      */
     protected function getModelType()
     {
-        return 'customer-address';
+        return 'customer-email';
     }
 }

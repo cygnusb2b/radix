@@ -26,6 +26,7 @@ class Customer extends Merrick
         $this->segments[] = new Segment\Model\CustomerAccount($this, $source);
         $this->segments[] = new Segment\Model\CustomerIdentity($this, $source);
         $this->segments[] = new Segment\Model\CustomerAddress($this, $source);
+        $this->segments[] = new Segment\Model\CustomerEmail($this, $source);
     }
 
     /**
