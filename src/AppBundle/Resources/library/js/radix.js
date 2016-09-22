@@ -139,8 +139,6 @@
                 }
                 $.extend(defaults, props);
 
-                console.info(defaults);
-
                 var label = defaults.label || Utils.titleize(defaults.name);
                 var inputProps = {
                     id: 'form-element-field-' + defaults.name,
@@ -896,6 +894,116 @@
                 element
             );
             document.body.scrollTop = element.offsetTop;
+        }
+    }
+
+    function InquiryComponent() {
+
+        var InquiryContainer = React.createClass({displayName: "InquiryContainer",
+
+            getInitialState: function() {
+                return {
+                    customer: CustomerManager.getCustomer()
+                }
+            },
+
+            getDefaultProps: function() {
+                return {
+                    title: 'Request More Information',
+                    model : {},
+                    notify: {
+                        enabled: false,
+                        email: null
+                    }
+                }
+            },
+
+            componentDidMount: function() {
+                EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
+                    this.setState({ customer: CustomerManager.getCustomer() })
+                }.bind(this));
+
+                EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
+                    this.setState({ customer: CustomerManager.getCustomer() })
+                }.bind(this));
+            },
+
+            render: function() {
+                console.info('render', this.props, this.state);
+                // EventDispatcher.trigger('Comments.render');
+                // var check = ClientConfig.values.comments.detachedCount.bindTarget.replace('#','');
+                // if (null !== document.getElementById(check)) {
+                //     // update detached count if item is found
+                //     var identifier = document.getElementById(check).getAttribute('data-identifier');
+                //     if (identifier) {
+                //         document.getElementById(check).innerHTML = this.state.total;
+                //     } else {
+                //         Debugger.error('CommentComponent: No `identifier` data attribute found on `#'+check+'`!');
+                //     }
+                // } else {
+                //     Debugger.warn('CommentComponent: Could not find comments.detachedCount.bindTarget #`'+check+'`.');
+                // }
+
+                var loginBlock;
+                if (this.state.customer.id) {
+
+                } else {
+                    loginBlock = React.createElement("p", {className: "muted"}, "If you already have an account, you can ", React.createElement("a", {style: {cursor:"pointer"}, onClick: Radix.SignIn.login}, "login"), " to speed up your request.");
+                }
+
+                var block = (this.state.customer.id) ? 'Logged in' : 'Not logged in';
+                return (
+
+                    React.createElement("div", null,
+                        React.createElement("div", {className: "inquiry-container"},
+                            React.createElement("h3", null, this.props.title),
+                            loginBlock
+                            // React.createElement(CommentForm, {onCommentSubmit: this.handleCommentSubmit}),
+                            // React.createElement(CommentList, {data: this.state.data})
+                        ),
+                        React.createElement("hr", null)
+                    )
+                );
+            }
+        });
+
+
+        this.render = function() {
+            var check = ClientConfig.values.targets.inquiryContainer.replace('#',''),
+                model = {
+                    identifier: $('#'+check).data('model-identifier'),
+                    type:       $('#'+check).data('model-type')
+                };
+
+            if (null == document.getElementById(check)) {
+                Debugger.warn('InquiryComponent: Could not find targets.inquiryContainer #`'+check+'`.');
+                return;
+            }
+            if (!model.identifier) {
+                Debugger.error('InquiryComponent: No `model-identifier` data attribute found on `#'+check+'`!');
+                return;
+            }
+            if (!model.type) {
+                Debugger.error('InquiryComponent: No `model-type` data attribute found on `#'+check+'`!');
+                return;
+            }
+
+            document.getElementById(check).classList.add('platformInquiry');
+            document.getElementById(check).classList.add('platform-element');
+
+            var props = {
+                model  : model,
+                notify : {
+                    enabled : $('#'+check).data('enable-notify') || false,
+                    email   : $('#'+check).data('notify-email') || null
+                }
+            }
+
+            // ClientConfig.values.comments.identifier = identifier;
+            React.render(
+                React.createElement(InquiryContainer, props),
+                document.getElementById(check)
+            );
         }
     }
 
@@ -1925,8 +2033,6 @@
                 React.createElement(CommentBox, null),
                 document.getElementById(check)
             );
-
-
         }
     }
 
@@ -2390,10 +2496,13 @@
             // if (true === ServerConfig.values.subscriptions.component.enabled) {
                 Radix.Subscriptions = new SubscriptionsComponent();
             // }
+            // if (true === ServerConfig.values.inquiry.component.enabled) {
+                Radix.Inquiry = new InquiryComponent();
+            // }
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['SignIn', 'Comments', 'Reviews', 'Subscriptions'];
+            var componentKeys = ['SignIn', 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -2672,10 +2781,13 @@
                 EventDispatcher.trigger('CustomerManager.register.success', [response]);
                 EventDispatcher.trigger('CustomerManager.login.success', [response]);
             },
-            function(response) {
-                var error = response.error || {};
-                Debugger.warn('Unable to register customer', error);
-                EventDispatcher.trigger('CustomerManager.register.failure', [error]);
+            function(jqXHR) {
+                var errors  = jqXHR.errors|| [{}];
+                var error   = errors[0];
+                var message = error.detail || 'An unknown error occured.';
+
+                Debugger.warn('Unable to register customer', errors);
+                EventDispatcher.trigger('CustomerManager.register.failure', [message]);
             });
             return promise;
 
@@ -2846,6 +2958,7 @@
                 registerButton: '.platform-register',
                 logoutButton: '.platform-logout',
                 reviewContainer: 'platformReviews',
+                inquiryContainer: 'platformInquiry',
                 guidrSubmit: '.guidr-submit'
             },
             reviewIdentifier: null,
