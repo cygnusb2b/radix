@@ -45,6 +45,15 @@ class CustomerProvider implements UserProviderInterface
             throw new BadCredentialsException('The presented username/email cannot be empty.');
         }
 
+        // Try username
+        $criteria = [
+            'credentials.password.username' => $emailOrUsername,
+        ];
+        $customer = $this->store->findQuery('customer-account', $criteria)->getSingleResult();
+        if (null !== $customer && false === $customer->get('deleted')) {
+            return $customer;
+        }
+
         // Try email address
         $criteria = [
             'value'    => strtolower($emailOrUsername),
@@ -56,16 +65,7 @@ class CustomerProvider implements UserProviderInterface
             return $email->get('account');
         }
 
-        // Try username
-        $criteria = [
-            'credentials.password.username' => $emailOrUsername,
-        ];
-        $customer = $this->store->findQuery('customer-account', $criteria)->getSingleResult();
-        if (null !== $customer && false === $customer->get('deleted')) {
-            return $customer;
-        }
-
-        // Determine if this is a pending email
+        // Determine if this is an email awaiting verification.
         $criteria = [
             'value'    => strtolower($emailOrUsername),
             'verification.verified' => false,
