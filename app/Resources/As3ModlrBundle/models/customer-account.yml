@@ -17,6 +17,11 @@ customer-account:
             calculated:
                 class: AppBundle\CalculatedFields
                 method: customerAccountPrimaryEmail
+        primaryPhone:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerAccountPrimaryPhone
         username:
             type: string
             calculated:

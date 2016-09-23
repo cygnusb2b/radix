@@ -133,6 +133,7 @@
                     required: false,
                     autofocus: true,
                     autocomplete: true,
+                    disabled: false,
                     type: 'text',
                     onKeyUp: null,
                     onBlur: null
@@ -155,6 +156,7 @@
                 if (defaults.value) inputProps.value = defaults.value;
                 if (true === defaults.required) inputProps.required = 'required';
                 if (true === defaults.autofocus) inputProps.autofocus = 'autofocus';
+                if (true === defaults.disabled) inputProps.disabled = 'disabled';
                 if (false === defaults.autocomplete) inputProps.autoComplete = 'off';
                 if ('function' === typeof defaults.onKeyUp) inputProps.onKeyUp = defaults.onKeyUp;
                 if ('function' === typeof defaults.onBlur) inputProps.onBlur = defaults.onBlur;
@@ -953,19 +955,16 @@
                 e.preventDefault();
             },
 
-            getValue: function(key) {
-                if (true === this.refs.hasOwnProperty(key)) {
-                    return this.refs[key].props.value;
-                }
-
-                var customer = this.state.customer;
-                if (customer.id && true === customer.hasOwnProperty(key)) {
-                    return customer[key];
-                }
-                return null;
-            },
-
             getForm: function() {
+                var disableEmail = (this.state.customer._id) ? true : false;
+
+                var phoneLabel = 'Phone #';
+                var phoneValue;
+                if (this.state.customer.primaryPhone) {
+                    phoneLabel = this.state.customer.primaryPhone.phoneType + ' #';
+                    phoneValue = this.state.customer.primaryPhone.number;
+                }
+
                 return React.createElement("form", {className: "databaseForm", onSubmit: this.handleSubmit},
                     React.createElement('fieldset', { className: 'contact-info' },
                         React.createElement("div", {className: ""},
@@ -973,12 +972,12 @@
                             Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, autocomplete: false, value: this.state.customer.familyName })
                         ),
                         React.createElement("div", {className: ""},
-                            Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', required: true, autocomplete: false, value: this.getValue('email') }),
-                            Radix.FormModule.get('textField', { type: 'phone', name: 'phone', label: 'Phone #', required: false, autocomplete: false, value: this.getValue('phone') })
+                            Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', disabled: disableEmail, required: true, autocomplete: false, value: this.state.customer.primaryEmail }),
+                            Radix.FormModule.get('textField', { type: 'phone', name: 'phone', label: phoneLabel, required: false, autocomplete: false, value: phoneValue })
                         ),
                         React.createElement("div", {className: ""},
-                            Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', autocomplete: false, value: this.getValue('companyName') }),
-                            Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', autocomplete: false, value: this.getValue('title') })
+                            Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', autocomplete: false, value: this.state.customer.companyName }),
+                            Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', autocomplete: false, value: this.state.customer.title })
                         )
                     ),
                     React.createElement("p", {className: "error text-danger"}, this.state.errorMessage),

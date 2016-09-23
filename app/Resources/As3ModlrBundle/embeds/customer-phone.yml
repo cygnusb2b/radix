@@ -1,7 +1,8 @@
 customer-phone:
     attributes:
         phoneType:
-            type: string # Business, Home, Mobile, Fax
+            type: string # Work, Home, Mobile, Fax, Phone (if unknown/default)
+            defaultValue: Phone
         number:
             type: string # The phone number
         isPrimary:

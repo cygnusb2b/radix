@@ -50,6 +50,32 @@ class CalculatedFields
     }
 
     /**
+     * Calculates the primary email field for a customer account model.
+     *
+     * @param   Model   $model
+     * @return  string|null
+     */
+    public static function customerAccountPrimaryPhone(Model $model)
+    {
+        $primary = null;
+        foreach ($model->get('phones') as $phone) {
+            $type = $phone->get('phoneType');
+            if ('fax' === strtolower($type)) {
+                continue;
+            }
+            if (null === $primary) {
+                // Use first phone as primary, as a default.
+                $primary = ['number' => $phone->get('number'), 'phoneType' => $phone->get('phoneType')];
+            }
+            if (true === $phone->get('isPrimary')) {
+                $primary = ['number' => $phone->get('number'), 'phoneType' => $phone->get('phoneType')];
+                break;
+            }
+        }
+        return $primary;
+    }
+
+    /**
      * Calculates the username field for a customer account model.
      *
      * @param   Model   $model
