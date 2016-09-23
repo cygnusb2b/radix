@@ -9,7 +9,7 @@ abstract class Merrick extends Segment
     /**
      * {@inheritdoc}
      */
-    final public function modify($limit = 200, $skip = 0)
+    public function modify($limit = 200, $skip = 0)
     {
         $kvs = [];
         $docs = $this->getDocuments($limit, $skip);

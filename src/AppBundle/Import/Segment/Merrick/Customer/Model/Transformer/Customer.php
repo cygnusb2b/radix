@@ -52,6 +52,7 @@ class Customer extends Transformer
         $this->defineGlobal('credentials', 'credentials');
         $this->defineGlobal('phones', 'phones');
         $this->defineGlobal('externalIds', 'externalIds');
+        $this->defineGlobal('legacy.questions', 'questions');
     }
 
     public function country($value)
@@ -141,5 +142,21 @@ class Customer extends Transformer
             }
         }
         return $phones;
+    }
+
+    public function questions($data)
+    {
+        $questions = [];
+        foreach ($data as $key => $value) {
+            if (false === stripos($key, 'omeda')) {
+                continue;
+            }
+            $oKey = str_replace('omeda_', '', $key);
+            if (!is_numeric($oKey)) {
+                continue;
+            }
+            $questions[] = ['question' => $oKey, 'answer' => $value];
+        }
+        return $questions;
     }
 }

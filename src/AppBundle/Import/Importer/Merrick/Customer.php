@@ -23,10 +23,14 @@ class Customer extends Merrick
         parent::__construct($accountManager, $persister, $source);
         $source->setDatabase('merrick');
 
+        // Customer data
         $this->segments[] = new Segment\Model\CustomerAccount($this, $source);
         $this->segments[] = new Segment\Model\CustomerIdentity($this, $source);
         $this->segments[] = new Segment\Model\CustomerAddress($this, $source);
         $this->segments[] = new Segment\Model\CustomerEmail($this, $source);
+
+        // Demographics
+        $this->segments[] = new Segment\Model\CustomerAnswer($this, $source);
     }
 
     /**
