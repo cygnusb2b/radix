@@ -45,20 +45,11 @@ class LibraryController extends Controller
      */
     private function createFileResponseFor($contents, $modifiedTime)
     {
-        $modified = $expires = new DateTime();
+        $caching  = $this->get('app_bundle.caching.response_cache');
         $response = new Response($contents, 200);
-
+        $modified = new DateTime();
         $modified->setTimestamp($modifiedTime);
-        $expires->setTimestamp($expires->getTimestamp() + self::TTL);
-
-        $response
-            ->setPublic()
-            ->setExpires($expires)
-            ->setMaxAge(self::TTL)
-            ->setSharedMaxAge(self::TTL)
-            ->setLastModified($modified)
-        ;
-        return $response;
+        return $caching->addStandardHeaders($response, $modified, self::TTL);
     }
 
     /**

@@ -8,6 +8,10 @@ imports:
 parameters: ~
 
 services:
+    app_bundle.caching.response_cache:
+        class: AppBundle\Caching\ResponseCache
+        arguments: [ "@kernel" ]
+
     app_bundle.core.account_manager:
         class: AppBundle\Core\AccountManager
 

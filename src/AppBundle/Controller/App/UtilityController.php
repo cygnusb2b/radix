@@ -22,7 +22,7 @@ class UtilityController extends Controller
         foreach (LocaleUtility::getCountries() as $value => $label) {
             $options[$value] = ['value' => $value, 'label' => $label];
         }
-        return new JsonResponse(['data' => array_values($options)]);
+        return $this->createOptionsResponse($options);
     }
 
     /**
@@ -50,6 +50,20 @@ class UtilityController extends Controller
         foreach (LocaleUtility::{$method}() as $value => $label) {
             $options[$value] = ['value' => $value, 'label' => $label];
         }
-        return new JsonResponse(['data' => array_values($options)]);
+        return $this->createOptionsResponse($options);
+    }
+
+    /**
+     * Creates and adds the appropriate caching to the options response.
+     *
+     * @param   array   $options
+     * @return  JsonResponse
+     */
+    private function createOptionsResponse(array $options)
+    {
+        $response = new JsonResponse(['data' => array_values($options)]);
+        $caching  = $this->get('app_bundle.caching.response_cache');
+        $caching->addHeadersForFile($response, '@AppBundle/Utility', 'LocaleUtility.php', 86400);
+        return $response;
     }
 }
