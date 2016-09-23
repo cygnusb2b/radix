@@ -164,13 +164,14 @@
 
             FormSelect: React.createClass({ displayName: 'FormSelect',
 
+                componentWillMount: function() {
+                    this.insertPlaceholder(this.props);
+                },
+
                 componentWillReceiveProps: function(props) {
-                    if (this.props.options.length !== props.options.length && this.props.placeholder) {
-                        // The options will change. Ensure the placeholder is added.
-                        props.options.unshift({
-                            value: this.props.placeholder,
-                            label: this.props.placeholder
-                        });
+                    if (this.props.options.length !== props.options.length) {
+                        // The options are going to change. Ensure the placeholder is added again.
+                        this.insertPlaceholder(props);
                     }
 
                     // Handle the selected value.
@@ -185,6 +186,10 @@
 
                 getDefaultProps: function() {
                     return {
+                        className: 'form-element-field',
+                        name: 'unknown',
+                        disabled: false,
+                        label: null,
                         placeholder: 'Please select...',
                         selected: null,
                         options: [],
@@ -197,12 +202,8 @@
                     }
                 },
 
-                handleChange: function(event) {
-                    this.setState({ value: event.target.value })
-                },
-
-                render: function() {
-                    var Options = this.props.options.map(function(option) {
+                getOptions: function() {
+                    return this.props.options.map(function(option) {
                         option = Utils.isObject(option) ? option : {};
                         var optionProps = {
                             value: option.value || null,
@@ -210,8 +211,36 @@
                         };
                         return React.createElement(Radix.FormModule.getComponent('FormSelectOption'), optionProps);
                     });
+                },
+
+                getSelectProps: function() {
+                    return {
+                        id        : 'form-element-field-' + this.props.name,
+                        value     : this.state.value,
+                        name      : this.props.name,
+                        className : this.props.className,
+                        onChange  : this.handleChange,
+                        disabled  : this.props.disabled
+                    };
+                },
+
+                handleChange: function(event) {
+                    this.setState({ value: event.target.value })
+                },
+
+                insertPlaceholder: function(props) {
+                    if (!this.props.placeholder) {
+                        return;
+                    }
+                    props.options.unshift({
+                        value: this.props.placeholder,
+                        label: this.props.placeholder
+                    });
+                },
+
+                render: function() {
                     return (
-                        React.createElement('select', { value: this.state.value, onChange: this.handleChange }, Options)
+                        React.createElement('select', this.getSelectProps(), this.getOptions())
                     )
                 }
             }),
