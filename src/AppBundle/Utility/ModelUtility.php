@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utility;
 
+use AppBundle\Exception\HttpFriendlyException;
 use As3\Modlr\Models\AbstractModel;
 
 /**
@@ -11,6 +12,25 @@ use As3\Modlr\Models\AbstractModel;
  */
 class ModelUtility
 {
+    /**
+     * Formats and validates an email address value.
+     *
+     * @param   string  $value
+     * @return  string
+     */
+    public static function formatEmailAddress($value)
+    {
+        $value = strtolower(trim($value));
+        if (empty($value)) {
+            throw new HttpFriendlyException('The email address value cannot be empty.', 400);
+        }
+
+        if (false === filter_var($ip, FILTER_VALIDATE_EMAIL)) {
+            throw new HttpFriendlyException(sprintf('The provided email address "%s" is invalid.', $value), 400);
+        }
+        return $value;
+    }
+
     /**
      * Formats an external url value to ensure http: is appended (when applicable).
      *

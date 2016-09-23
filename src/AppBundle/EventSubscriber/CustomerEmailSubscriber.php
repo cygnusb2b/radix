@@ -44,10 +44,14 @@ class CustomerEmailSubscriber implements EventSubscriberInterface
         if (false === $this->shouldProcess($model)) {
             return;
         }
-        $this->formatEmailAddress($model);
+
         if (null === $model->get('account')) {
             throw new HttpFriendlyException('All customer email addresses must be assigned to a account.', 400);
         }
+
+        // Format/validate email address.
+        $model->set('value', ModelUtility::formatEmailAddress($model->get('value')));
+
         $this->handleVerification($model);
     }
 
@@ -58,24 +62,6 @@ class CustomerEmailSubscriber implements EventSubscriberInterface
     protected function shouldProcess(Model $model)
     {
         return 'customer-email' === $model->getType();
-    }
-
-    /**
-     * @param   Model   $model
-     * @throws  \InvalidArgumentException
-     */
-    private function formatEmailAddress(Model $model)
-    {
-        $value = $model->get('value');
-        $value = trim($value);
-        if (empty($value)) {
-            throw new HttpFriendlyException('The customer email value cannot be empty.', 400);
-        }
-        $value = strtolower($value);
-        if (false === stripos($value, '@')) {
-            throw new HttpFriendlyException(sprintf('The provided email address "%s" is invalid.', $value), 400);
-        }
-        $model->set('value', $value);
     }
 
     /**
@@ -95,7 +81,7 @@ class CustomerEmailSubscriber implements EventSubscriberInterface
             $criteria = ['value' => $model->get('value'), 'verification.verified' => true];
             $email    = $model->getStore()->findQuery('customer-email', $criteria)->getSingleResult();
             if (null !== $email) {
-                throw new HttpFriendlyException(sprintf('The customer email address "%s" is already verified and assigned to another account.', $model->get('value')), 400);
+                throw new HttpFriendlyException(sprintf('The email address "%s" is already is use by another account.', $model->get('value')), 400);
             }
 
             // Generate and set the JWT token for email verification.
