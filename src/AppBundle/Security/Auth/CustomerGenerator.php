@@ -3,6 +3,7 @@
 namespace AppBundle\Security\Auth;
 
 use AppBundle\Security\User\Customer;
+use AppBundle\Serializer\PublicApiSerializer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -13,18 +14,27 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class CustomerGenerator implements AuthGeneratorInterface
 {
     /**
+     * @var PublicApiSerializer
+     */
+    private $serializer;
+
+    /**
+     * @param   PublicApiSerializer     $serializer
+     */
+    public function __construct(PublicApiSerializer $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @todo    The auth response will likely need to retrieve the customer model and fully serialize it.
      */
     public function generateFor(UserInterface $user)
     {
-        return [
-            'id'            => $user->getUserName(),
-            'givenName'     => $user->getGivenName(),
-            'familyName'    => $user->getFamilyName(),
-            'roles'         => $user->getRoles(),
-        ];
+        $model = $user->getModel();
+        return $this->serializer->serialize($model);
     }
 
     /**

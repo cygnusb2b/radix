@@ -899,13 +899,7 @@
 
     function InquiryComponent() {
 
-        var InquiryContainer = React.createClass({displayName: "InquiryContainer",
-
-            getInitialState: function() {
-                return {
-                    customer: CustomerManager.getCustomer()
-                }
-            },
+        var InquiryForm = React.createClass({displayName: "InquiryForm",
 
             getDefaultProps: function() {
                 return {
@@ -918,53 +912,84 @@
                 }
             },
 
+            getInitialState: function() {
+                return {
+                    customer: CustomerManager.getCustomer(),
+                    errorMessage: null
+                }
+            },
+
             componentDidMount: function() {
                 EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
-                    this.setState({ customer: CustomerManager.getCustomer() })
+                    this.setState({ customer: CustomerManager.getCustomer() });
                 }.bind(this));
 
                 EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
-                    this.setState({ customer: CustomerManager.getCustomer() })
+                    this.setState({ customer: CustomerManager.getCustomer() });
                 }.bind(this));
             },
 
             render: function() {
-                console.info('render', this.props, this.state);
-                // EventDispatcher.trigger('Comments.render');
-                // var check = ClientConfig.values.comments.detachedCount.bindTarget.replace('#','');
-                // if (null !== document.getElementById(check)) {
-                //     // update detached count if item is found
-                //     var identifier = document.getElementById(check).getAttribute('data-identifier');
-                //     if (identifier) {
-                //         document.getElementById(check).innerHTML = this.state.total;
-                //     } else {
-                //         Debugger.error('CommentComponent: No `identifier` data attribute found on `#'+check+'`!');
-                //     }
-                // } else {
-                //     Debugger.warn('CommentComponent: Could not find comments.detachedCount.bindTarget #`'+check+'`.');
-                // }
-
+                var form = this.getForm();
                 var loginBlock;
-                if (this.state.customer.id) {
-
-                } else {
-                    loginBlock = React.createElement("p", {className: "muted"}, "If you already have an account, you can ", React.createElement("a", {style: {cursor:"pointer"}, onClick: Radix.SignIn.login}, "login"), " to speed up your request.");
+                if (!this.state.customer._id) {
+                    loginBlock = React.createElement("p", {className: "muted"}, "If you already have an account, you can ", React.createElement("a", {style: {cursor:"pointer"}, onClick: Radix.SignIn.login}, "login"), " to speed up this request.");
                 }
 
-                var block = (this.state.customer.id) ? 'Logged in' : 'Not logged in';
                 return (
 
                     React.createElement("div", null,
                         React.createElement("div", {className: "inquiry-container"},
                             React.createElement("h3", null, this.props.title),
                             loginBlock
-                            // React.createElement(CommentForm, {onCommentSubmit: this.handleCommentSubmit}),
-                            // React.createElement(CommentList, {data: this.state.data})
                         ),
-                        React.createElement("hr", null)
+                        React.createElement("hr", null),
+                        form
+                    )
+                );
+            },
+
+            handleSubmit: function(e) {
+                e.preventDefault();
+            },
+
+            getValue: function(key) {
+                if (true === this.refs.hasOwnProperty(key)) {
+                    return this.refs[key].props.value;
+                }
+
+                var customer = this.state.customer;
+                if (customer.id && true === customer.hasOwnProperty(key)) {
+                    return customer[key];
+                }
+                return null;
+            },
+
+            getForm: function() {
+                return React.createElement("form", {className: "databaseForm", onSubmit: this.handleSubmit},
+                    React.createElement('fieldset', { className: 'contact-info' },
+                        React.createElement("div", {className: ""},
+                            Radix.FormModule.get('textField', { name: 'givenName', label: 'First Name', required: true, autofocus: true, autocomplete: false, value: this.state.customer.givenName }),
+                            Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, autocomplete: false, value: this.state.customer.familyName })
+                        ),
+                        React.createElement("div", {className: ""},
+                            Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', required: true, autocomplete: false, value: this.getValue('email') }),
+                            Radix.FormModule.get('textField', { type: 'phone', name: 'phone', label: 'Phone #', required: false, autocomplete: false, value: this.getValue('phone') })
+                        ),
+                        React.createElement("div", {className: ""},
+                            Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', autocomplete: false, value: this.getValue('companyName') }),
+                            Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', autocomplete: false, value: this.getValue('title') })
+                        )
+                    ),
+                    React.createElement("p", {className: "error text-danger"}, this.state.errorMessage),
+                    React.createElement("div", {className: ""},
+                        React.createElement("div", {className: ""},
+                            React.createElement("button", {className: "", type: "submit"}, "Submit")
+                        )
                     )
                 );
             }
+
         });
 
 
@@ -992,6 +1017,7 @@
             document.getElementById(check).classList.add('platform-element');
 
             var props = {
+                customer: CustomerManager.getCustomer(),
                 model  : model,
                 notify : {
                     enabled : $('#'+check).data('enable-notify') || false,
@@ -1001,7 +1027,7 @@
 
             // ClientConfig.values.comments.identifier = identifier;
             React.render(
-                React.createElement(InquiryContainer, props),
+                React.createElement(InquiryForm, props),
                 document.getElementById(check)
             );
         }
@@ -2731,7 +2757,7 @@
         }
 
         this.isLoggedIn = function() {
-            return 'undefined' !== typeof customer.id;
+            return 'undefined' !== typeof customer._id;
         }
 
         this.checkAuth = function() {

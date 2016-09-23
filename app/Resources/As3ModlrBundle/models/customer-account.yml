@@ -12,6 +12,16 @@ customer-account:
         roles:
             type: array
             defaultValue: [ USER ]
+        primaryEmail:
+            type: string
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerAccountPrimaryEmail
+        username:
+            type: string
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerAccountUsername
     embeds:
         credentials: # Accounts can log in three ways: via a social credential, a password credential (with an optional username), a password credential with a verified account email address
             type: one

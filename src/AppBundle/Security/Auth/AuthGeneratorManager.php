@@ -49,9 +49,18 @@ class AuthGeneratorManager
         if (!$user instanceof UserInterface) {
             return $this->createDefaultResponse();
         }
-        return new JsonResponse([
-            'data'  => $this->generateFor($user),
-        ]);
+        $generated = $this->generateFor($user);
+        if (empty($generated)) {
+            return $this->createDefaultResponse();
+        }
+
+        $formatted = [];
+        $formatted = !isset($generated['data']) ? ['data' => $generated] : $generated;
+
+        if (empty($formatted['data'])) {
+            return $this->createDefaultResponse();
+        }
+        return new JsonResponse($formatted);
     }
 
     /**

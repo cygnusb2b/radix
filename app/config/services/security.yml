@@ -13,6 +13,7 @@ services:
     app_bundle.security.auth.generator.customer:
         private: true
         class: AppBundle\Security\Auth\CustomerGenerator
+        arguments: [ "@app_bundle.serializer.public_api" ]
 
     app_bundle.security.authenticator.api:
         parent: app_bundle.security.authenticator.core_user.abstract
