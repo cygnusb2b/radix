@@ -24,6 +24,16 @@ customer:
             type: string
         companyName:
             type: string
+        primaryPhone:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerPrimaryPhone
+        primaryAddress:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerPrimaryAddress
     embeds:
         externalIds:
             type: many

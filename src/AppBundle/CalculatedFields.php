@@ -7,6 +7,38 @@ use As3\Modlr\Models\Model;
 class CalculatedFields
 {
     /**
+     * Calculates the primary address field for customer models.
+     *
+     * @param   Model   $model
+     * @return  string|null
+     */
+    public static function customerPrimaryAddress(Model $model)
+    {
+        $buildAddress = function(Model $model) {
+            $fields = ['name', 'companyName', 'street', 'extra', 'city', 'regionCode', 'postalCode', 'countryCode'];
+            $object = ['_id'   => $model->getId()];
+            foreach ($fields as $key) {
+                $object[$key] = $model->get($key);
+            }
+            return $object;
+        };
+
+        $primary = null;
+        foreach ($model->get('addresses') as $address) {
+
+            if (null === $primary) {
+                // Use first address as primary, as a default.
+                $primary = $buildAddress($address);
+            }
+            if (true === $address->get('isPrimaryMailing')) {
+                $primary = $buildAddress($address);
+                break;
+            }
+        }
+        return $primary;
+    }
+
+    /**
      * Calculates the primary email field for a customer account model.
      *
      * @param   Model   $model
@@ -50,12 +82,12 @@ class CalculatedFields
     }
 
     /**
-     * Calculates the primary email field for a customer account model.
+     * Calculates the primary email field for customer models.
      *
      * @param   Model   $model
      * @return  string|null
      */
-    public static function customerAccountPrimaryPhone(Model $model)
+    public static function customerPrimaryPhone(Model $model)
     {
         $primary = null;
         foreach ($model->get('phones') as $phone) {

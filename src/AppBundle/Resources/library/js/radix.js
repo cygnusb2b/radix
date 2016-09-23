@@ -123,6 +123,61 @@
     function FormModule()
     {
         this.elements = {
+            selectOption: function(props) {
+                var defaults = {
+                    value: '',
+                    label: ''
+                };
+
+                $.extend(defaults, props);
+
+                return React.createElement('option', { value: defaults.value }, defaults.label);
+            },
+
+            select: function(props) {
+                var defaults = {
+                    wrapperTagName: 'div',
+                    name: 'unknown',
+                    label: null,
+                    value: null,
+                    required: false,
+                    disabled: false,
+                    options: [],
+                    onChange: null
+                };
+
+                $.extend(defaults, props);
+
+                var label = defaults.label || Utils.titleize(defaults.name);
+                var inputProps = {
+                    id: 'form-element-field-' + defaults.name,
+                    name: defaults.name,
+                    ref: defaults.name,
+                    className: 'form-element-field',
+                    // placeholder: defaults.placeholder || label,
+                    onChange: function(e) {
+                        if ('function' === typeof defaults.onChange) {
+                            defaults.onChange(e, this.props);
+                        }
+                        this.props.value = e.target.value;
+                    }
+                };
+
+                if (defaults.value) inputProps.value = defaults.value;
+                if (true === defaults.required) inputProps.required = 'required';
+                if (true === defaults.disabled) inputProps.disabled = 'disabled';
+
+                var options = defaults.options.map(function(option) {
+                    return Radix.FormModule.get('selectOption', option);
+                });
+
+                return React.createElement(defaults.wrapperTagName, { className: 'form-element-wrapper '+defaults.name+'' },
+                    React.createElement('select', inputProps, options),
+                    React.createElement('label', { htmlFor: inputProps.id, className: 'form-element-label' }, label)
+                );
+
+            },
+
             textField: function(props) {
                 var defaults = {
                     wrapperTagName: 'div',
@@ -131,7 +186,7 @@
                     placeholder: null,
                     value: null,
                     required: false,
-                    autofocus: true,
+                    autofocus: false,
                     autocomplete: true,
                     disabled: false,
                     type: 'text',
@@ -176,6 +231,7 @@
                     rows: 3,
                     required: false,
                     autofocus: true,
+                    disabled: false,
                     type: 'text',
                     onKeyUp: null,
                     onBlur: null
@@ -199,6 +255,7 @@
                 if (defaults.value) inputProps.value = defaults.value;
                 if (true === defaults.required) inputProps.required = 'required';
                 if (true === defaults.autofocus) inputProps.autofocus = 'autofocus';
+                if (true === defaults.disabled) inputProps.disabled = 'disabled';
                 if ('function' === typeof defaults.onKeyUp) inputProps.onKeyUp = defaults.onKeyUp;
                 if ('function' === typeof defaults.onBlur) inputProps.onBlur = defaults.onBlur;
                 return React.createElement(defaults.wrapperTagName, { className: 'form-element-wrapper '+defaults.name+'' },
@@ -915,20 +972,48 @@
             },
 
             getInitialState: function() {
+                var customer = this._fillCustomer(CustomerManager.getCustomer());
                 return {
-                    customer: CustomerManager.getCustomer(),
+                    customer: customer,
+                    countryCode: customer.primaryAddress.countryCode || null,
+                    countries: [],
                     errorMessage: null
                 }
             },
 
+            _fillCustomer: function(customer) {
+                customer.primaryAddress = customer.primaryAddress || {};
+                customer.primaryPhone   = customer.primaryPhone   || {};
+                return customer;
+            },
+
+            countryChange: function(e) {
+                this.setState({ countryCode: e.target.value });
+            },
+
             componentDidMount: function() {
+
                 EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
-                    this.setState({ customer: CustomerManager.getCustomer() });
+                    var customer = this._fillCustomer(CustomerManager.getCustomer());
+                    this.setState({
+                        customer: customer,
+                        countryCode: customer.primaryAddress.countryCode || null
+                    });
                 }.bind(this));
 
                 EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
-                    this.setState({ customer: CustomerManager.getCustomer() });
+                    this.setState({
+                        customer: this._fillCustomer(CustomerManager.getCustomer()),
+                        countryCode: null
+                    });
                 }.bind(this));
+
+                Ajax.send('/app/util/country-options?placeholder=Please%20select...', 'GET').then(
+                    function(response) {
+                        this.setState({ countries: response.data })
+                    }.bind(this)
+                );
+
             },
 
             render: function() {
@@ -939,7 +1024,6 @@
                 }
 
                 return (
-
                     React.createElement("div", null,
                         React.createElement("div", {className: "inquiry-container"},
                             React.createElement("h3", null, this.props.title),
@@ -956,20 +1040,24 @@
             },
 
             getForm: function() {
-                var disableEmail = (this.state.customer._id) ? true : false;
 
-                var phoneLabel = 'Phone #';
-                var phoneValue;
-                if (this.state.customer.primaryPhone) {
-                    phoneLabel = this.state.customer.primaryPhone.phoneType + ' #';
-                    phoneValue = this.state.customer.primaryPhone.number;
+                var customer     = this.state.customer;
+                var disableEmail = (customer._id) ? true : false;
+
+                var phoneLabel = customer.primaryPhone.phoneType + ' #';
+                var phoneValue = customer.primaryPhone.number;
+
+                // @todo Need to re-do form components as ACTUAL components, not as React.createElements that are returned.
+                var postalCodeField;
+                if ('USA' === this.state.countryCode || 'CAN' === this.state.countryCode) {
+                    postalCodeField = Radix.FormModule.get('textField', { name: 'postalCode', label: 'Zip/Postal Code', autocomplete: false, value: customer.primaryAddress.postalCode });
                 }
 
                 return React.createElement("form", {className: "databaseForm", onSubmit: this.handleSubmit},
                     React.createElement('fieldset', { className: 'contact-info' },
                         React.createElement("div", {className: ""},
-                            Radix.FormModule.get('textField', { name: 'givenName', label: 'First Name', required: true, autofocus: true, autocomplete: false, value: this.state.customer.givenName }),
-                            Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, autocomplete: false, value: this.state.customer.familyName })
+                            Radix.FormModule.get('textField', { name: 'givenName', label: 'First Name', required: true, autofocus: true, autocomplete: false, value: customer.givenName }),
+                            Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, autocomplete: false, value: customer.familyName })
                         ),
                         React.createElement("div", {className: ""},
                             Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', disabled: disableEmail, required: true, autocomplete: false, value: this.state.customer.primaryEmail }),
@@ -978,6 +1066,10 @@
                         React.createElement("div", {className: ""},
                             Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', autocomplete: false, value: this.state.customer.companyName }),
                             Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', autocomplete: false, value: this.state.customer.title })
+                        ),
+                        React.createElement("div", {className: ""},
+                            Radix.FormModule.get('select', { name: 'countryCode', label: 'Country', required: true, value: this.state.countryCode, options: this.state.countries, onChange: this.countryChange }),
+                            postalCodeField
                         )
                     ),
                     React.createElement("p", {className: "error text-danger"}, this.state.errorMessage),
