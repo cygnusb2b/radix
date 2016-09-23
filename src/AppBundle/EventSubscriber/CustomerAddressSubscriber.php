@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Utility\LocaleUtility;
 use As3\Modlr\Events\EventSubscriberInterface;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Events;
@@ -41,20 +42,28 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @todo    Eventually this should validate the code values against ISO
      * @param   Model   $model
      */
     private function validateCodes(Model $model)
     {
+        $regions    = LocaleUtility::getRegionsAll();
         $regionCode = $model->get('regionCode');
-        if (null !== $regionCode) {
-            $regionCode = (2 !== strlen($regionCode)) ? null : strtoupper($regionCode);
-            $model->set('regionCode', $regionCode);
+
+        if (!isset($regions[$regionCode])) {
+            $model->get('regionCode', null);
+            if (null === $model->get('region')) {
+                $model->set('region', $regionCode);
+            }
         }
+
+        $countries   = LocaleUtility::getCountries();
         $countryCode = $model->get('countryCode');
-        if (null !== $countryCode) {
-            $countryCode = (3 !== strlen($countryCode)) ? null : strtoupper($countryCode);
-            $model->set('countryCode', $countryCode);
+
+        if (!isset($countries[$countryCode])) {
+            $model->get('countryCode', null);
+            if (null === $model->get('country')) {
+                $model->set('country', $countryCode);
+            }
         }
     }
 }
