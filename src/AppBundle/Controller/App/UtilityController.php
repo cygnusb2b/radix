@@ -19,11 +19,10 @@ class UtilityController extends Controller
     public function countryOptionsAction(Request $request)
     {
         $options = [];
-        $this->insertPlaceholder($request, $options);
         foreach (LocaleUtility::getCountries() as $value => $label) {
-            $options[] = ['value' => $value, 'label' => $label];
+            $options[$value] = ['value' => $value, 'label' => $label];
         }
-        return new JsonResponse(['data' => $options]);
+        return new JsonResponse(['data' => array_values($options)]);
     }
 
     /**
@@ -48,25 +47,9 @@ class UtilityController extends Controller
             throw new HttpFriendlyException(sprintf('No regions found for "%s"', $country), 404);
         }
 
-        $this->insertPlaceholder($request, $options);
         foreach (LocaleUtility::{$method}() as $value => $label) {
-            $options[] = ['value' => $value, 'label' => $label];
+            $options[$value] = ['value' => $value, 'label' => $label];
         }
-        return new JsonResponse(['data' => $options]);
-    }
-
-    /**
-     * Inserts a placeholder option.
-     *
-     * @param   Request $request
-     * @param   array   $options
-     * @return  array
-     */
-    private function insertPlaceholder(Request $request, array $options)
-    {
-        if (null !== $placeholder = $request->query->get('placeholder')) {
-            $options[] = ['value' => '', 'label' => $placeholder];
-        }
-        return $options;
+        return new JsonResponse(['data' => array_values($options)]);
     }
 }

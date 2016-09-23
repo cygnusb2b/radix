@@ -122,6 +122,120 @@
 
     function FormModule()
     {
+        this.components = {
+
+            FormSelectCountry: React.createClass({ displayName: 'FormSelectCountry',
+
+                getDefaultProps: function() {
+                    return {
+                        selected: null
+                    };
+                },
+
+                getInitialState: function() {
+                    return {
+                        loaded: false,
+                        options: []
+                    };
+                },
+
+                componentDidMount: function() {
+                    Ajax.send('/app/util/country-options', 'GET').then(
+                        function(response) {
+                            this.setState({ loaded: true, options: response.data });
+                        }.bind(this)
+                    );
+                },
+
+                render: function() {
+                    var props = {};
+                    if (this.state.loaded) {
+                        props = {
+                            selected: this.props.selected,
+                            options:  this.state.options
+                        };
+                    }
+                    return (
+                        React.createElement(Radix.FormModule.getComponent('FormSelect'), props)
+                    )
+                }
+
+            }),
+
+            FormSelect: React.createClass({ displayName: 'FormSelect',
+
+                componentWillReceiveProps: function(props) {
+                    if (this.props.options.length !== props.options.length && this.props.placeholder) {
+                        // The options will change. Ensure the placeholder is added.
+                        props.options.unshift({
+                            value: this.props.placeholder,
+                            label: this.props.placeholder
+                        });
+                    }
+
+                    // Handle the selected value.
+                    var value = null;
+                    if (props.selected) {
+                        value = props.selected;
+                    } else if (this.props.placeholder) {
+                        value = this.props.placeholder;
+                    }
+                    this.setState({ value: value});
+                },
+
+                getDefaultProps: function() {
+                    return {
+                        placeholder: 'Please select...',
+                        selected: null,
+                        options: [],
+                    };
+                },
+
+                getInitialState: function() {
+                    return {
+                        value: this.props.selected
+                    }
+                },
+
+                handleChange: function(event) {
+                    this.setState({ value: event.target.value })
+                },
+
+                render: function() {
+                    var Options = this.props.options.map(function(option) {
+                        option = Utils.isObject(option) ? option : {};
+                        var optionProps = {
+                            value: option.value || null,
+                            label: option.label || null,
+                        };
+                        return React.createElement(Radix.FormModule.getComponent('FormSelectOption'), optionProps);
+                    });
+                    return (
+                        React.createElement('select', { value: this.state.value, onChange: this.handleChange }, Options)
+                    )
+                }
+            }),
+
+            FormSelectOption: React.createClass({ displayName: 'FormSelectOption',
+
+                getDefaultProps: function() {
+                    return {
+                        value: null,
+                        label: null,
+                    };
+                },
+
+                render: function() {
+                    return (
+                        React.createElement('option', {
+                            value: this.props.value,
+                            label: this.props.label
+                        })
+                    )
+                }
+            })
+        };
+
         this.elements = {
             selectOption: function(props) {
                 var defaults = {
@@ -269,6 +383,14 @@
         this.has = function(key)
         {
             return null !== this.get(key);
+        }
+
+        this.getComponent = function(key)
+        {
+            if (this.components.hasOwnProperty(key)) {
+                return this.components[key];
+            }
+            return null;
         }
 
         this.get = function(key, props)
@@ -1007,13 +1129,6 @@
                         countryCode: null
                     });
                 }.bind(this));
-
-                Ajax.send('/app/util/country-options?placeholder=Please%20select...', 'GET').then(
-                    function(response) {
-                        this.setState({ countries: response.data })
-                    }.bind(this)
-                );
-
             },
 
             render: function() {
@@ -1026,11 +1141,14 @@
                 return (
                     React.createElement("div", null,
                         React.createElement("div", {className: "inquiry-container"},
-                            React.createElement("h3", null, this.props.title),
+                            React.createElement(Radix.FormModule.getComponent('FormSelectCountry'), { selected: this.state.customer.primaryAddress.countryCode }),
+                            // Radix.FormModule.getComponent('FormSelect'),
+                            // FormSelect,
+                            React.createElement("h2", null, this.props.title),
                             loginBlock
                         ),
-                        React.createElement("hr", null),
-                        form
+                        React.createElement("hr", null)
+                        // form
                     )
                 );
             },
