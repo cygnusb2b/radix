@@ -18,6 +18,11 @@ app_bundle_app_auth_submit:
     path: /app/auth
     methods: [ PATCH ]
 
+app_bundle_app_question:
+    path: /app/question/{keyOrId}
+    defaults: { _controller: AppBundle:App\Question:retrieve }
+    methods: [ GET ]
+
 app_bundle_app_util_country_options:
     path: /app/util/country-options
     defaults: { _controller: AppBundle:App\Utility:countryOptions }

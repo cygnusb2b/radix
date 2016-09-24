@@ -223,10 +223,11 @@ class PublicApiSerializer
      */
     private function serializeHasMany(Model $owner, array $models = null)
     {
-        if (empty($models)) {
-            return $this->serialize(null);
+        $serialized = [];
+        if (!empty($models)) {
+            $serialized = $this->serializeArray($models);
         }
-        return $this->serializeArray($models);
+        return $serialized;
     }
 
     /**
@@ -238,7 +239,7 @@ class PublicApiSerializer
      */
     private function serializeHasOne(Model $owner, Model $model = null)
     {
-        $serialized = null;
+        $serialized = new \stdClass();
         if (null !== $model) {
             $serialized = $this->serializeModel($model);
             ksort($serialized);
@@ -337,6 +338,7 @@ class PublicApiSerializer
     private function setRules()
     {
         $this->addRule(new Rules\CustomerAccountRule());
+        $this->addRule(new Rules\QuestionRule());
         return $this;
     }
 
