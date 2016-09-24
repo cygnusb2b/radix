@@ -43,7 +43,7 @@ class SandboxController extends Controller
         foreach (['js', 'css'] as $extension) {
             $base    = sprintf('http://%s/lib/radix.%s?x-radix-appid=', $config['host'], $extension);
             $url     = sprintf('%s%s', $base, $config['appId']);
-            $display = sprintf('%s{app-id}', $base);
+            $display = sprintf('%s{{appId}}', $base);
             // $headers = @get_headers($url);
             // $found   = isset($headers[0]) && false !== stripos($headers[0], '200 OK');
             $libraries[$extension] = ['url' => $url, 'display' => $display];
