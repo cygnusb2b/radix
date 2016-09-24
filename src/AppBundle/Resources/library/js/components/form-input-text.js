@@ -16,6 +16,7 @@ React.createClass({ displayName: 'ComponentFormInputText',
             disabled     : false,
             required     : false,
             autocomplete : false,
+            readonly     : false,
             type         : 'text',
             value        : null,
             label        : null,
@@ -39,7 +40,8 @@ React.createClass({ displayName: 'ComponentFormInputText',
             placeholder : this.props.placeholder,
             onChange    : this.handleChange,
             disabled    : this.props.disabled,
-            required    : this.props.required
+            required    : this.props.required,
+            readOnly    : this.props.readonly,
         };
         if (false === this.props.autocomplete) props.autoComplete = 'off';
         return props;

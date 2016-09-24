@@ -3,7 +3,15 @@ React.createClass({ displayName: 'FormInquiry',
     handleSubmit: function(event) {
         event.preventDefault();
 
-        // this.props.onSuccess(event);
+        this.setState({ locked: true });
+
+        Ajax.send('/app/auth', 'GET').then(function(response) {
+            this.props.onSuccess(response);
+            this.setState({ locked: false });
+        }.bind(this), function(jqXHR) {
+            this.props.onFailure(response);
+            this.setState({ locked: false });
+        }.bind(this));
     },
 
     getDefaultProps: function() {
@@ -16,7 +24,9 @@ React.createClass({ displayName: 'FormInquiry',
     },
 
     getInitialState: function() {
-        return {};
+        return {
+            locked: false
+        };
     },
 
     render: function() {
@@ -27,13 +37,13 @@ React.createClass({ displayName: 'FormInquiry',
         var phoneLabel   = phoneType + ' #';
 
         return (
-            React.createElement(Radix.Components.get('Form'), { autocomplete: false, onSubmit: this.handleSubmit },
+            React.createElement(Radix.Components.get('Form'), { locked: this.state.locked, autocomplete: false, onSubmit: this.handleSubmit },
                 React.createElement('div', null,
                     React.createElement(Radix.Components.get('FormInputText'), { name: 'givenName', label: 'First Name', required: true, value: customer.givenName }),
                     React.createElement(Radix.Components.get('FormInputText'), { name: 'familyName', label: 'Last Name', required: true, value: customer.familyName })
                 ),
                 React.createElement("div", null,
-                    React.createElement(Radix.Components.get('FormInputText'), { type: 'email', name: 'email', label: 'Email Address', required: !disableEmail, disabled: disableEmail, value: customer.primaryEmail }),
+                    React.createElement(Radix.Components.get('FormInputText'), { type: 'email', name: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
                     React.createElement(Radix.Components.get('FormInputText'), { type: 'tel', name: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
                 )
             )
