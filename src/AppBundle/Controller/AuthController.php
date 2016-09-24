@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class AuthController extends Controller
+class AuthController extends AbstractController
 {
     /**
      * Creates a new, core user.
@@ -27,8 +27,8 @@ class AuthController extends Controller
      */
     public function userRetrieveAction(Request $request)
     {
-        $storage = $this->get('security.token_storage');
+        $token   = $this->getUserToken();
         $manager = $this->get('app_bundle.security.auth.generator_manager');
-        return $manager->createResponseFor($storage->getToken()->getUser());
+        return $manager->createResponseFor($token->getUser());
     }
 }

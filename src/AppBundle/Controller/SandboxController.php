@@ -2,10 +2,9 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class SandboxController extends Controller
+class SandboxController extends AbstractController
 {
     public function indexAction(Request $request)
     {

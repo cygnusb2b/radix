@@ -4,11 +4,10 @@ namespace AppBundle\Controller\App;
 
 use AppBundle\Utility\LocaleUtility;
 use AppBundle\Exception\HttpFriendlyException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class UtilityController extends Controller
+class UtilityController extends AbstractAppController
 {
     /**
      * Retrieves country options for use in a select form element.

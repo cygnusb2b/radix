@@ -2,20 +2,19 @@
 
 namespace AppBundle\Controller\App;
 
-use AppBundle\Utility\ModelCloner;
 use AppBundle\Exception\ExceptionQueue;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Security\User\Customer;
+use AppBundle\Utility\ModelCloner;
 use AppBundle\Utility\RequestUtility;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-class AuthController extends Controller
+class AuthController extends AbstractAppController
 {
 
     /**
@@ -154,9 +153,9 @@ class AuthController extends Controller
      */
     public function retrieveAction()
     {
-        $storage = $this->get('security.token_storage');
+        $token   = $this->getUserToken();
         $manager = $this->get('app_bundle.security.auth.generator_manager');
-        return $manager->createResponseFor($storage->getToken()->getUser());
+        return $manager->createResponseFor($token->getUser());
     }
 
     /**

@@ -4,11 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utility\ModelUtility;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ManageController extends Controller
+class ManageController extends AbstractController
 {
     /**
      * Displays the modlr management application.

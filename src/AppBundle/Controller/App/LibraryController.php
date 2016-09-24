@@ -6,13 +6,12 @@ use \CssMin;
 use \DateTime;
 use \JSMin;
 use AppBundle\Security\User\Customer;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class LibraryController extends Controller
+class LibraryController extends AbstractAppController
 {
     /**
      * Sets the max age and calcs the expiration of the library response.

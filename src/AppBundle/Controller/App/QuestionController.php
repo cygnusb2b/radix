@@ -6,11 +6,10 @@ use \DateTime;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Serializer\PublicApiRules as Rules;
 use As3\Modlr\Models\Model;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class QuestionController extends Controller
+class QuestionController extends AbstractAppController
 {
     const CACHE_TTL = 3600;
 
