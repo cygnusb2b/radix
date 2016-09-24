@@ -32,12 +32,16 @@ React.createClass({ displayName: 'ComponentFormQuestion',
     },
 
     componentDidMount: function() {
-        if (!this.props.keyOrId) {
-            Debugger.error('No question key or id provided for the question. Unable to retrieve question.');
+        var url;
+        if (this.props.tagKeyOrId) {
+            url = '/app/question/tag/' + this.props.tagKeyOrId;
+        } else if (this.props.keyOrId) {
+            url = '/app/question/' + this.props.keyOrId;
+        }
+        if (!url) {
+            Debugger.error('No question id, key, or tag provided for the question. Unable to retrieve question.');
             return;
         }
-
-        var url = '/app/question/' + this.props.keyOrId;
 
         Ajax.send(url, 'GET').then(
             function(response) {
@@ -51,7 +55,8 @@ React.createClass({ displayName: 'ComponentFormQuestion',
 
     getDefaultProps: function() {
         return {
-            keyOrId: null
+            keyOrId: null,
+            tagKeyOrId: null
         };
     },
 

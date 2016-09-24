@@ -6,14 +6,14 @@ React.createClass({ displayName: 'ComponentForm',
             className   : 'database-form',
             autocomplete: false,
             buttonLabel : 'Submit',
-            onSubmit    : function(event) { event.preventDefault(); Debugger.error('ComponentForm', 'Nothing handled the submit action.') }
+            onSubmit    : null
         };
     },
 
     getFormProps: function() {
         return {
             className   : this.props.className,
-            onSubmit    : this.props.onSubmit,
+            onSubmit    : this.handleSubmit,
             autoComplete: this.props.autocomplete
         };
     },
@@ -22,7 +22,16 @@ React.createClass({ displayName: 'ComponentForm',
         if (this.props.locked) {
             return React.createElement('div', {className: 'form-lock'}, React.createElement('i', {className: 'pcfa pcfa-spinner pcfa-5x pcfa-pulse'}));
         }
+    },
 
+    handleSubmit: function(event) {
+        event.preventDefault();
+        var handler = this.props.onSubmit;
+        if (true === Utils.isFunction(hander)) {
+            handler(event);
+        } else {
+            Debugger.error('ComponentForm', 'Nothing handled the submit action.');
+        }
     },
 
     render: function() {

@@ -18,6 +18,11 @@ app_bundle_app_auth_submit:
     path: /app/auth
     methods: [ PATCH ]
 
+app_bundle_app_question_by_tag:
+    path: /app/question/tag/{tagKeyOrId}
+    defaults: { _controller: AppBundle:App\Question:retrieveByTag }
+    methods: [ GET ]
+
 app_bundle_app_question:
     path: /app/question/{keyOrId}
     defaults: { _controller: AppBundle:App\Question:retrieve }

@@ -34,6 +34,32 @@ class QuestionController extends AbstractAppController
     }
 
     /**
+     * Retrieves a question by tag id, serializes it, and returns a JSON reponse.
+     *
+     * @param   string  $tagKeyOrId
+     * @return  JsonResponse
+     * @throws  HttpFriendlyException
+     */
+    public function retrieveByTagAction($tagKeyOrId)
+    {
+        if (preg_match('/^[a-f0-9]{24}$/i', $tagKeyOrId)) {
+            $tag = $this->retrieveTagById($tagKeyOrId);
+        } else {
+            $tag = $this->retrieveTagByKey($tagKeyOrId);
+        }
+
+        if (null === $tag) {
+            throw new HttpFriendlyException(sprintf('No question tag found for key or id `%s`', $tagKeyOrId), 404);
+        }
+
+        $question = $this->retrieveByTagId($tag->getId());
+        if (null === $question || true === $question->get('deleted')) {
+            throw new HttpFriendlyException(sprintf('No question found using tag id `%s`', $tag->getId()), 404);
+        }
+        return $this->createResponseFor($question);
+    }
+
+    /**
      * Creates a response for the provided question.
      *
      * @param   Model   $question
@@ -74,6 +100,42 @@ class QuestionController extends AbstractAppController
     {
         $criteria = ['id' => $identifier];
         return $this->get('as3_modlr.store')->findQuery('question', $criteria)->getSingleResult();
+    }
+
+    /**
+     * Retrieve a question model by tag id.
+     *
+     * @param   string  $key
+     * @param   Model|null
+     */
+    private function retrieveByTagId($identifier)
+    {
+        $criteria = ['tags' => $identifier];
+        return $this->get('as3_modlr.store')->findQuery('question', $criteria)->getSingleResult();
+    }
+
+    /**
+     * Retrieve a question tag model by key.
+     *
+     * @param   string  $key
+     * @param   Model|null
+     */
+    private function retrieveTagById($identifier)
+    {
+        $criteria = ['id' => $identifier];
+        return $this->get('as3_modlr.store')->findQuery('question-tag', $criteria)->getSingleResult();
+    }
+
+    /**
+     * Retrieve a question tag model by key.
+     *
+     * @param   string  $key
+     * @param   Model|null
+     */
+    private function retrieveTagByKey($key)
+    {
+        $criteria = ['key' => $key];
+        return $this->get('as3_modlr.store')->findQuery('question-tag', $criteria)->getSingleResult();
     }
 
     /**

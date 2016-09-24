@@ -80,8 +80,8 @@ React.createClass({ displayName: 'FormInquiry',
                 ),
                 React.createElement('div', null,
                     React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'purchase-intent' }),
-                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'omeda-5070380' }),
-                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'omeda-5070381' }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { tagKeyOrId: 'business-code' }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { tagKeyOrId: 'title-code' }),
                     React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'comments' })
                 )
             )
