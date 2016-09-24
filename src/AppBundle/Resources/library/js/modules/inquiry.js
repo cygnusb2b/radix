@@ -22,6 +22,7 @@ function InquiryModule()
         },
 
         fillCustomer: function(customer) {
+            // @todo This should be handled by the backend...
             customer.primaryAddress = customer.primaryAddress || {};
             customer.primaryPhone   = customer.primaryPhone   || {};
             return customer;
@@ -47,7 +48,6 @@ function InquiryModule()
         },
 
         getInitialState: function() {
-            // @todo This should be handled by the backend...
             var customer = this.fillCustomer(CustomerManager.getCustomer());
             return {
                 customer     : customer,
@@ -56,13 +56,25 @@ function InquiryModule()
             }
         },
 
+        handleFormFailure: function(jqXHR) {
+
+        },
+
+        handleFormSuccess: function(response) {
+
+        },
+
         render: function() {
             return (
                 React.createElement('div', { className: 'platform-element' },
                     React.createElement('h2', null, this.props.title),
                     this.getAuthElement(),
                     React.createElement('hr'),
-                    React.createElement(Radix.Forms.get('Inquiry'), { customer: this.state.customer })
+                    React.createElement(Radix.Forms.get('Inquiry'), {
+                        customer    : this.state.customer,
+                        onSuccess   : this.handleFormSuccess,
+                        onFailure   : this.handleFormFailure
+                    })
                 )
             )
         }

@@ -2,6 +2,21 @@ React.createClass({ displayName: 'FormInquiry',
 
     handleSubmit: function(event) {
         event.preventDefault();
+
+        // this.props.onSuccess(event);
+    },
+
+    getDefaultProps: function() {
+        return {
+            customer   : {},
+            model      : {},
+            onSuccess  : function(response) { },
+            onFailure  : function(jqXHR) { }
+        }
+    },
+
+    getInitialState: function() {
+        return {};
     },
 
     render: function() {
@@ -19,7 +34,7 @@ React.createClass({ displayName: 'FormInquiry',
                 ),
                 React.createElement("div", null,
                     React.createElement(Radix.Components.get('FormInputText'), { type: 'email', name: 'email', label: 'Email Address', required: !disableEmail, disabled: disableEmail, value: customer.primaryEmail }),
-                    React.createElement(Radix.Components.get('FormInputText'), { type: 'text', name: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
+                    React.createElement(Radix.Components.get('FormInputText'), { type: 'tel', name: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
                 )
             )
         )
