@@ -22,13 +22,14 @@ React.createClass({ displayName: 'ComponentFormSelect',
 
     getDefaultProps: function() {
         return {
-            className: 'form-element-field',
-            name: 'unknown',
-            disabled: false,
-            label: null,
-            placeholder: 'Please select...',
-            selected: null,
-            options: [],
+            className   : 'form-element-field',
+            name        : 'unknown',
+            disabled    : false,
+            label       : null,
+            placeholder : 'Please select...',
+            selected    : null,
+            options     : [],
+            onChange    : null
         };
     },
 
@@ -45,7 +46,7 @@ React.createClass({ displayName: 'ComponentFormSelect',
                 value: option.value || null,
                 label: option.label || null,
             };
-            return React.createElement(Radix.Forms.getComponent('SelectOption'), optionProps);
+            return React.createElement(Radix.Components.get('FormSelectOption'), optionProps);
         });
     },
 
@@ -61,7 +62,10 @@ React.createClass({ displayName: 'ComponentFormSelect',
     },
 
     handleChange: function(event) {
-        this.setState({ value: event.target.value })
+        this.setState({ value: event.target.value });
+        if (Utils.isFunction(this.props.onChange)) {
+            this.props.onChange(event);
+        }
     },
 
     insertPlaceholder: function(props) {
@@ -77,8 +81,8 @@ React.createClass({ displayName: 'ComponentFormSelect',
     render: function() {
         var label = this.props.label || Utils.titleize(this.props.name);
         return (
-            React.createElement(Radix.Forms.getComponent('FieldWrapper'), { name: this.props.name },
-                React.createElement(Radix.Forms.getComponent('Label'), { id: this.props.id, value: label }),
+            React.createElement(Radix.Components.get('FormFieldWrapper'), { name: this.props.name },
+                React.createElement(Radix.Components.get('FormLabel'), { id: this.props.id, value: label }),
                 React.createElement('select', this.getSelectProps(),
                     this.getOptions()
                 )

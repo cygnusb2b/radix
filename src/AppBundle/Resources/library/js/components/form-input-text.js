@@ -20,7 +20,8 @@ React.createClass({ displayName: 'ComponentFormInputText',
             type         : 'text',
             value        : null,
             label        : null,
-            placeholder  : null
+            placeholder  : null,
+            onChange     : null
         };
     },
 
@@ -41,14 +42,17 @@ React.createClass({ displayName: 'ComponentFormInputText',
             onChange    : this.handleChange,
             disabled    : this.props.disabled,
             required    : this.props.required,
-            readOnly    : this.props.readonly,
+            readOnly    : this.props.readonly
         };
         if (false === this.props.autocomplete) props.autoComplete = 'off';
         return props;
     },
 
     handleChange: function(event) {
-        this.setState({ value: event.target.value })
+        this.setState({ value: event.target.value });
+        if (Utils.isFunction(this.props.onChange)) {
+            this.props.onChange(event);
+        }
     },
 
     render: function() {

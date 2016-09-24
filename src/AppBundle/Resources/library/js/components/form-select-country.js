@@ -4,7 +4,8 @@ React.createClass({ displayName: 'ComponentFormSelectCountry',
         return {
             name     : 'countryCode',
             label    : 'Country',
-            selected : null
+            selected : null,
+            onChange : null
         };
     },
 
@@ -25,15 +26,16 @@ React.createClass({ displayName: 'ComponentFormSelectCountry',
 
     render: function() {
         var props = {
-            name  : this.props.name,
-            label : this.props.label
+            name     : this.props.name,
+            label    : this.props.label,
+            onChange : this.props.onChange
         };
         if (this.state.loaded) {
             props.selected = this.props.selected;
             props.options  = this.state.options;
         }
         return (
-            React.createElement(Radix.Forms.getComponent('Select'), props)
+            React.createElement(Radix.Components.get('FormSelect'), props)
         )
     }
 });

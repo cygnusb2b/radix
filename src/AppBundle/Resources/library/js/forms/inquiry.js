@@ -1,5 +1,14 @@
 React.createClass({ displayName: 'FormInquiry',
 
+    componentWillReceiveProps: function(props) {
+        var address = props.customer.primaryAddress || {};
+        if (address.countryCode) {
+            this.setState({ country: address.countryCode });
+        } else {
+            this.setState({ country: null });
+        }
+    },
+
     handleSubmit: function(event) {
         event.preventDefault();
 
@@ -25,8 +34,23 @@ React.createClass({ displayName: 'FormInquiry',
 
     getInitialState: function() {
         return {
-            locked: false
+            locked  : false,
+            country : this.props.customer.primaryAddress.countryCode
         };
+    },
+
+    getPostalCodeElement: function() {
+        var element;
+        var country  = this.state.country;
+        var customer = this.props.customer;
+        if ('USA' === country || 'CAN' === country) {
+            element = React.createElement(Radix.Components.get('FormInputText'), { name: 'postalCode', label: 'Zip/Postal Code', value: customer.primaryAddress.postalCode });
+        }
+        return element;
+    },
+
+    handleCountryChange: function(event) {
+        this.setState({ country: event.target.value });
     },
 
     render: function() {
@@ -45,6 +69,14 @@ React.createClass({ displayName: 'FormInquiry',
                 React.createElement("div", null,
                     React.createElement(Radix.Components.get('FormInputText'), { type: 'email', name: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
                     React.createElement(Radix.Components.get('FormInputText'), { type: 'tel', name: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
+                ),
+                React.createElement("div", null,
+                    React.createElement(Radix.Components.get('FormInputText'), { name: 'companyName', label: 'Company Name', value: customer.companyName }),
+                    React.createElement(Radix.Components.get('FormInputText'), { name: 'title', label: 'Job Title', value: customer.title })
+                ),
+                React.createElement("div", null,
+                    React.createElement(Radix.Components.get('FormSelectCountry'), { selected: this.state.country, onChange: this.handleCountryChange }),
+                    this.getPostalCodeElement()
                 )
             )
         )
