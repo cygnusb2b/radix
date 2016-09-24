@@ -40,8 +40,8 @@ services:
         tags:
             - { name: kernel.event_subscriber }
         calls:
-            - [ addExcludeRoute, [ "app_bundle_lib" ] ]
-            - [ addExcludeRoute, [ "app_bundle_lib_min" ] ]
+            - [ addNoRedirectRoute, [ "app_bundle_lib" ] ]
+            - [ addNoRedirectRoute, [ "app_bundle_lib_min" ] ]
 
     app_bundle.cors.listener:
         private: true
@@ -86,3 +86,9 @@ services:
 
     app_bundle.serializer.public_api:
         class: AppBundle\Serializer\PublicApiSerializer
+
+    app_bundle.twig.library_extension:
+        class: AppBundle\Twig\LibraryExtension
+        arguments: [ "@app_bundle.core.account_manager" ]
+        tags:
+            - { name: twig.extension }

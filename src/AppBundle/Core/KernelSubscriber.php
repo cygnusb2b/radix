@@ -35,6 +35,13 @@ class KernelSubscriber implements EventSubscriberInterface
     private $manager;
 
     /**
+     * Route names to not redirect if app id present in query string.
+     *
+     * @var array
+     */
+    private $noRedirectRoutes = [];
+
+    /**
      * @var HttpFriendlySerializer
      */
     private $serializer;
@@ -88,6 +95,16 @@ class KernelSubscriber implements EventSubscriberInterface
     public function addExcludeRoute($routeName)
     {
         $this->excludeRoutes[$routeName] = true;
+        return $this;
+    }
+
+    /**
+     * @param   string  $routeName
+     * @return  self
+     */
+    public function addNoRedirectRoute($routeName)
+    {
+        $this->noRedirectRoutes[$routeName] = true;
         return $this;
     }
 
@@ -181,6 +198,12 @@ class KernelSubscriber implements EventSubscriberInterface
         $param = AccountManager::PUBLIC_KEY_PARAM;
         if ('GET' !== $request->getMethod() || false === $request->query->has($param)) {
             return;
+        }
+
+        foreach ($this->noRedirectRoutes as $name => $enabled) {
+            if (true === $this->httpUtils->checkRequestPath($request, $name)) {
+                return;
+            }
         }
 
         $request->query->remove($param);

@@ -41,10 +41,12 @@ class SandboxController extends Controller
         $config = $this->getInitConfig($request);
         $libraries = [];
         foreach (['js', 'css'] as $extension) {
-            $url     = sprintf('http://%s/lib/radix.%s', $config['host'], $extension);
-            $headers = @get_headers($url);
-            $found   = isset($headers[0]) && false !== stripos($headers[0], '200 OK');
-            $libraries[$extension] = ['url' => $url, 'found' => $found];
+            $base    = sprintf('http://%s/lib/radix.%s?x-radix-appid=', $config['host'], $extension);
+            $url     = sprintf('%s%s', $base, $config['appId']);
+            $display = sprintf('%s{app-id}', $base);
+            // $headers = @get_headers($url);
+            // $found   = isset($headers[0]) && false !== stripos($headers[0], '200 OK');
+            $libraries[$extension] = ['url' => $url, 'display' => $display];
         }
         return $libraries;
     }

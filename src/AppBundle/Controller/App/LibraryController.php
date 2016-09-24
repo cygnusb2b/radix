@@ -28,8 +28,16 @@ class LibraryController extends Controller
      */
     public function indexAction($name, $minify, Request $request)
     {
+        $caching  = $this->get('app_bundle.caching.response_cache');
         $format   = $request->attributes->get('_format');
-        $response = $this->loadFileResponseFor($name, $format);
+        $path     = '@AppBundle/Resources/library/js';
+        $file     = sprintf('%s.%s', $name, $format);
+        $response = $this->render(sprintf('@AppBundle/Resources/library/%s/%s', $format, $file));
+        $modified = new DateTime();
+
+        $modified->setTimestamp($this->findMostRecentModified($path));
+        $caching->addStandardHeaders($response, $modified, self::TTL);
+
         if (true == $minify) {
             $this->minify($response, $format);
         }
@@ -37,40 +45,25 @@ class LibraryController extends Controller
     }
 
     /**
-     * Creates the response for the file contents.
+     * Finds the most recently modified time for a provided resource path.
      *
-     * @param   string  $contents
-     * @param   int     $modifiedTime
-     * @return  Response
+     * @param   string  $resource
+     * @return  int
      */
-    private function createFileResponseFor($contents, $modifiedTime)
+    private function findMostRecentModified($resource)
     {
-        $caching  = $this->get('app_bundle.caching.response_cache');
-        $response = new Response($contents, 200);
-        $modified = new DateTime();
-        $modified->setTimestamp($modifiedTime);
-        return $caching->addStandardHeaders($response, $modified, self::TTL);
-    }
-
-    /**
-     * Loads the file response for the file or throws not found.
-     *
-     * @param   string  $filename
-     * @param   string  $format
-     * @return  Response
-     */
-    private function loadFileResponseFor($filename, $format)
-    {
-        $file = sprintf('%s.%s', $filename, $format);
-        $path = sprintf('@AppBundle/Resources/library/%s', $format);
-        $path = $this->get('kernel')->locateResource($path);
-
+        $path = $this->get('kernel')->locateResource($resource);
         $finder = new Finder();
-        $files  = $finder->files()->in($path)->name($file);
+        $files  = $finder->files()->in($path);
+
+        $modified = 0;
         foreach ($files as $file) {
-            return $this->createFileResponseFor($file->getContents(), filemtime($file));
+            $mtime = filemtime($file);
+            if ($mtime > $modified) {
+                $modified = $mtime;
+            }
         }
-        throw $this->createNotFoundException();
+        return $modified;
     }
 
     /**
