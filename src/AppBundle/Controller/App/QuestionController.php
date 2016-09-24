@@ -88,11 +88,23 @@ class QuestionController extends AbstractAppController
         $serializer->addRule(new Rules\QuestionSimpleRule());
         $serializer->addRule(new Rules\QuestionChoiceSimpleRule());
 
+        $user    = $this->getCustomer();
+        $answers = [];
+        if (null !== $user) {
+            $customer = $user->getModel();
+            foreach ($customer->get('answers') as $answer) {
+                if ($answer->get('question')->getId() === $question->getId()) {
+                    $answers[] = $answer;
+                }
+            }
+        }
+
         $serialized = $serializer->serialize($question);
         foreach ($serialized['data']['choices'] as $index => $choice) {
+
             $serialized['data']['choices'][$index]['option'] = [
-                'value' => $choice['_id'],
-                'label' => $choice['name'],
+                'value'     => $choice['_id'],
+                'label'     => $choice['name']
             ];
         }
         return $serialized;

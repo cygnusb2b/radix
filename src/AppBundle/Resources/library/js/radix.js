@@ -93,6 +93,8 @@
         this.FormSelect        = {{ loadComponent('form-select') }}
         this.FormSelectCountry = {{ loadComponent('form-select-country') }}
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
+        this.FormQuestion      = {{ loadComponent('form-question') }}
+        this.FormTextArea      = {{ loadComponent('form-textarea') }}
 
         this.get = function(name) {
             return this[name];

@@ -66,17 +66,23 @@ React.createClass({ displayName: 'FormInquiry',
                     React.createElement(Radix.Components.get('FormInputText'), { name: 'givenName', label: 'First Name', required: true, value: customer.givenName }),
                     React.createElement(Radix.Components.get('FormInputText'), { name: 'familyName', label: 'Last Name', required: true, value: customer.familyName })
                 ),
-                React.createElement("div", null,
+                React.createElement('div', null,
                     React.createElement(Radix.Components.get('FormInputText'), { type: 'email', name: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
                     React.createElement(Radix.Components.get('FormInputText'), { type: 'tel', name: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
                 ),
-                React.createElement("div", null,
+                React.createElement('div', null,
                     React.createElement(Radix.Components.get('FormInputText'), { name: 'companyName', label: 'Company Name', value: customer.companyName }),
                     React.createElement(Radix.Components.get('FormInputText'), { name: 'title', label: 'Job Title', value: customer.title })
                 ),
-                React.createElement("div", null,
+                React.createElement('div', null,
                     React.createElement(Radix.Components.get('FormSelectCountry'), { selected: this.state.country, onChange: this.handleCountryChange }),
                     this.getPostalCodeElement()
+                ),
+                React.createElement('div', null,
+                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'purchase-intent' }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'omeda-5070380' }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'omeda-5070381' }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'comments' })
                 )
             )
         )
