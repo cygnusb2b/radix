@@ -7,6 +7,14 @@ function ClientConfig(config)
         host: null,
         appId: null,
 
+        modules: {
+            inquiry: {
+                target: '.radix-module-inquiry'
+            }
+        },
+
+        // -------///
+
         bindTarget: null,
         loginTitle: 'Log In',
         registerTitle: 'Sign Up',

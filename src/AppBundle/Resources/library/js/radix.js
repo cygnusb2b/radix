@@ -14,6 +14,7 @@
     var Utils           = new Utils();
 
     var Components;
+    var Forms;
     var ClientConfig;
     var ComponentLoader;
     var CustomerManager;
@@ -85,10 +86,12 @@
      */
     function Components()
     {
+        this.Form              = {{ loadComponent('form') }}
         this.FormFieldWrapper  = {{ loadComponent('form-field-wrapper') }}
+        this.FormInputText     = {{ loadComponent('form-input-text') }}
         this.FormLabel         = {{ loadComponent('form-label') }}
-        this.FormSelectCountry = {{ loadComponent('form-select-country') }}
         this.FormSelect        = {{ loadComponent('form-select') }}
+        this.FormSelectCountry = {{ loadComponent('form-select-country') }}
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
 
         this.get = function(name) {
@@ -109,11 +112,12 @@
     {
         EventDispatcher.subscribe('ready', function() {
 
-            Radix.Components = new Components();
+            Radix.Components    = new Components();
+            Radix.Forms         = new Forms();
 
-            Radix.FormModule = new FormModule();
-            Radix.SignIn     = new SignInComponent();
-            // Radix.Inquiry    = new InquiryComponent();
+            Radix.FormModule    = new FormModule(); // @deprecated
+            Radix.SignIn        = new SignInComponent();
+            Radix.InquiryModule = new InquiryModule();
 
             // if (true === ServerConfig.values.comments.enabled) {
                 // Radix.Comments = new CommentComponent();
@@ -122,13 +126,10 @@
             // if (true === ServerConfig.values.subscriptions.component.enabled) {
                 // Radix.Subscriptions = new SubscriptionsComponent();
             // }
-            // if (true === ServerConfig.values.inquiry.component.enabled) {
-
-            // }
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['SignIn']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
+            var componentKeys = ['SignIn', 'InquiryModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -160,7 +161,6 @@
 
     function LibraryLoader()
     {
-
         var count = 0,
             libraries = [
                 '//cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
@@ -200,6 +200,7 @@
 
     {{ loadModule('form') }}
     {{ loadModule('sign-in') }}
+    {{ loadModule('inquiry') }}
 
     {{ loadFile('ajax') }}
     {{ loadFile('client-config') }}

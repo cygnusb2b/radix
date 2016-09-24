@@ -644,9 +644,11 @@
     background: rgba(255,255,255,.8);
 }
 
-.platform-element .databaseForm {
+.platform-element .databaseForm,
+.platform-element .database-form {
     clear: both;
 }
+
 .platform-element .auth0Form > div {
     display: flex;
 
