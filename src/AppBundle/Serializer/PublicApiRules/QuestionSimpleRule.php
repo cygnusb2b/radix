@@ -13,6 +13,7 @@ class QuestionSimpleRule extends QuestionRule implements PublicApiRuleInterface
     {
         return [
             'allowHtml'     => true,
+            'boundTo'       => true,
             'choices'       => true,
             'key'           => true,
             'name'          => true,

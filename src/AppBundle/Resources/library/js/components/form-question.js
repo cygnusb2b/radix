@@ -1,36 +1,5 @@
 React.createClass({ displayName: 'ComponentFormQuestion',
 
-    buildElement: function() {
-        var question = this.state.question;
-        var label    = question.label || question.name;
-
-        var element;
-        switch (question.questionType) {
-            case 'choice-single':
-                var options = [];
-                for (var i = 0; i < question.choices.length; i++) {
-                    var choice = question.choices[i];
-                    options.push(choice.option);
-                }
-                element = React.createElement(Radix.Components.get('FormSelect'), {
-                    name    : question.key,
-                    label   : label,
-                    options : options
-                });
-                break;
-            case 'textarea':
-                element = React.createElement(Radix.Components.get('FormTextArea'), {
-                    name    : question.key,
-                    label   : label
-                });
-                break;
-            default:
-                element = React.createElement('p', null, label);
-                break;
-        }
-        return element;
-    },
-
     componentDidMount: function() {
         var url;
         if (this.props.tagKeyOrId) {
@@ -56,7 +25,8 @@ React.createClass({ displayName: 'ComponentFormQuestion',
     getDefaultProps: function() {
         return {
             keyOrId: null,
-            tagKeyOrId: null
+            tagKeyOrId: null,
+            answers: []
         };
     },
 
@@ -70,8 +40,80 @@ React.createClass({ displayName: 'ComponentFormQuestion',
     render: function() {
         var element = React.createElement('div');
         if (this.state.loaded) {
-            element = this.buildElement();
+            element = this._buildElement();
         }
         return (element);
+    },
+
+    _buildElement: function() {
+        var question = this.state.question;
+        var answer   = this._extractAnswer();
+        var label    = question.label || question.name;
+
+        var element;
+        switch (question.questionType) {
+            case 'choice-single':
+                var options = [];
+                for (var i = 0; i < question.choices.length; i++) {
+                    var choice = question.choices[i];
+                    options.push(choice.option);
+                }
+                element = React.createElement(Radix.Components.get('FormSelect'), {
+                    name    : question.key,
+                    label   : label,
+                    options : options,
+                    selected: answer
+                });
+                break;
+            case 'textarea':
+                element = React.createElement(Radix.Components.get('FormTextArea'), {
+                    name    : question.key,
+                    label   : label,
+                    value   : answer
+                });
+                break;
+            default:
+                element = React.createElement('p', null, label);
+                break;
+        }
+        return element;
+    },
+
+    _extractAnswer: function() {
+        var value = null;
+        var question = this.state.question;
+        if ('customer' !== question.boundTo) {
+            return value;
+        }
+
+        for (var i = 0; i < this.props.answers.length; i++) {
+            var answer = this.props.answers[i];
+            if (answer.question._id !== question._id) {
+                continue;
+            }
+            return this._extractAnswerValue(answer);
+        };
+        return value;
+    },
+
+    _extractAnswerValue: function(answer) {
+        var value = answer.value;
+
+        if ('customer-answer-choice' === answer._type) {
+            if (false === Utils.isObject(value)) {
+                return;
+            }
+            return value._id;
+        } else if ('customer-answer-choices' === answer._type) {
+            if (value.length < 1) {
+                return [];
+            }
+            var values = [];
+            for (var i = 0; i < value.length; i++) {
+                values.push(value[i]._id);
+            }
+            return values;
+        }
+        return value;
     }
 });

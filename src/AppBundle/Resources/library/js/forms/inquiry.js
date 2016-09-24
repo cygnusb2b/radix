@@ -79,10 +79,10 @@ React.createClass({ displayName: 'FormInquiry',
                     this.getPostalCodeElement()
                 ),
                 React.createElement('div', null,
-                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'purchase-intent' }),
-                    React.createElement(Radix.Components.get('FormQuestion'), { tagKeyOrId: 'business-code' }),
-                    React.createElement(Radix.Components.get('FormQuestion'), { tagKeyOrId: 'title-code' }),
-                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'comments' })
+                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'purchase-intent', answers: customer.answers }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { tagKeyOrId: 'business-code', answers: customer.answers }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { tagKeyOrId: 'title-code', answers: customer.answers }),
+                    React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: 'comments', answers: customer.answers })
                 )
             )
         )

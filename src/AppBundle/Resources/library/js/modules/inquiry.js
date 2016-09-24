@@ -23,6 +23,7 @@ function InquiryModule()
 
         fillCustomer: function(customer) {
             // @todo This should be handled by the backend...
+            customer.answers        = customer.answers        || [];
             customer.primaryAddress = customer.primaryAddress || {};
             customer.primaryPhone   = customer.primaryPhone   || {};
             return customer;

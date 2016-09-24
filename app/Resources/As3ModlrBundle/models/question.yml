@@ -11,9 +11,9 @@ question:
         builtIn:
             type: boolean
             defaultValue: false
-        linkToCustomer:
-            type: boolean
-            defaultValue: false
+        boundTo:
+            type: string
+            defaultValue: submission # determines, where the answer is bound: one of customer or submission
         label:
             type: string
         questionType:
