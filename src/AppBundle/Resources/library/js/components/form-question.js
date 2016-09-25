@@ -24,9 +24,10 @@ React.createClass({ displayName: 'ComponentFormQuestion',
 
     getDefaultProps: function() {
         return {
-            keyOrId: null,
-            tagKeyOrId: null,
-            answers: []
+            keyOrId    : null,
+            tagKeyOrId : null,
+            answers    : [],
+            onChange   : null,
         };
     },
 
@@ -59,17 +60,18 @@ React.createClass({ displayName: 'ComponentFormQuestion',
                     options.push(choice.option);
                 }
                 element = React.createElement(Radix.Components.get('FormSelect'), {
-                    name    : question.key,
-                    label   : label,
-                    options : options,
-                    selected: answer
+                    name        : question._id,
+                    label       : label,
+                    options     : options,
+                    selected    : answer,
+                    onChange    : this.props.onChange
                 });
                 break;
             case 'textarea':
                 element = React.createElement(Radix.Components.get('FormTextArea'), {
-                    name    : question.key,
-                    label   : label,
-                    value   : answer
+                    name        : question._id,
+                    label       : label,
+                    onChange    : this.props.onChange
                 });
                 break;
             default:

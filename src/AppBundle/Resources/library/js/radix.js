@@ -86,10 +86,12 @@
      */
     function Components()
     {
-        this.Form              = {{ loadComponent('form') }}
+        this.CountryPostalCode = {{ loadComponent('form-country-postal-code') }}
+        this.FormErrors        = {{ loadComponent('form-errors') }}
         this.FormFieldWrapper  = {{ loadComponent('form-field-wrapper') }}
         this.FormInputText     = {{ loadComponent('form-input-text') }}
         this.FormLabel         = {{ loadComponent('form-label') }}
+        this.FormLock          = {{ loadComponent('form-lock') }}
         this.FormSelect        = {{ loadComponent('form-select') }}
         this.FormSelectCountry = {{ loadComponent('form-select-country') }}
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}

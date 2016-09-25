@@ -7,17 +7,12 @@ function InquiryModule()
         componentDidMount: function() {
             EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({
-                    customer    : customer,
-                    countryCode : customer.primaryAddress.countryCode || null
-                });
+                this.setState({ customer : customer });
             }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
-                this.setState({
-                    customer    : this.fillCustomer(CustomerManager.getCustomer()),
-                    countryCode : null
-                });
+                var customer = this.fillCustomer(CustomerManager.getCustomer());
+                this.setState({ customer : customer });
             }.bind(this));
         },
 
@@ -51,18 +46,30 @@ function InquiryModule()
         getInitialState: function() {
             var customer = this.fillCustomer(CustomerManager.getCustomer());
             return {
-                customer     : customer,
-                countryCode  : customer.primaryAddress.countryCode || null,
-                errorMessage : null
+                customer    : customer,
+                error       : null
             }
         },
 
-        handleFormFailure: function(jqXHR) {
+        handleSubmit: function(event) {
+            event.preventDefault();
 
+            console.info('InquiryModule', 'handleSubmit');
+
+            var locker = this._formLock;
+
+            locker.lock();
+
+            Ajax.send('/app/auth', 'POST').then(function(response) {
+                locker.unlock();
+            }.bind(this), function(jqXHR) {
+                locker.unlock();
+                this._error.displayAjaxError(jqXHR);
+            }.bind(this));
         },
 
-        handleFormSuccess: function(response) {
-
+        handleChange: function(event) {
+            console.info('InquiryModule', 'handleChange', event.target.value);
         },
 
         render: function() {
@@ -73,12 +80,23 @@ function InquiryModule()
                     React.createElement('hr'),
                     React.createElement(Radix.Forms.get('Inquiry'), {
                         customer    : this.state.customer,
-                        onSuccess   : this.handleFormSuccess,
-                        onFailure   : this.handleFormFailure
-                    })
+                        onSubmit    : this.handleSubmit,
+                        onChange    : this.handleChange
+                    }),
+                    React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+                    React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
                 )
             )
-        }
+        },
+
+        _setErrorDisplay: function(ref) {
+            this._error = ref;
+        },
+
+        _setLock: function(ref) {
+            this._formLock = ref;
+        },
+
     });
 
     this.getProps = function() {
