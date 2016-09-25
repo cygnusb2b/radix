@@ -21,7 +21,8 @@ React.createClass({ displayName: 'ComponentFormInputText',
             value        : null,
             label        : null,
             placeholder  : null,
-            onChange     : null
+            onChange     : null,
+            wrapperClass : null
         };
     },
 
@@ -58,7 +59,7 @@ React.createClass({ displayName: 'ComponentFormInputText',
     render: function() {
         var label = this.props.label || Utils.titleize(this.props.name);
         return (
-            React.createElement(Radix.Components.get('FormFieldWrapper'), { name: this.props.name },
+            React.createElement(Radix.Components.get('FormFieldWrapper'), { name: this.props.name, className: this.props.wrapperClass },
                 React.createElement(Radix.Components.get('FormLabel'), { id: this.props.id, value: label }),
                 React.createElement('input', this.getInputProps())
             )

@@ -20,16 +20,16 @@ React.createClass({ displayName: 'FormInquiry',
         return (
             React.createElement('form', { autocomplete: false, className: 'database-form', onSubmit: this.props.onSubmit },
                 React.createElement('div', null,
-                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:givenName', label: 'First Name', required: true, value: customer.givenName }),
-                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:familyName', label: 'Last Name', required: true, value: customer.familyName })
+                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:givenName', wrapperClass: 'givenName', label: 'First Name', required: true, value: customer.givenName }),
+                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:familyName', wrapperClass: 'familyName', label: 'Last Name', required: true, value: customer.familyName })
                 ),
                 React.createElement('div', null,
-                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, type: 'email', name: 'customer:primaryEmail', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
-                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, type: 'tel', name: 'customer:primaryPhone', label: phoneLabel, value: customer.primaryPhone.number })
+                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, type: 'email', name: 'customer:primaryEmail', wrapperClass: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
+                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, type: 'tel', name: 'customer:primaryPhone', wrapperClass: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
                 ),
                 React.createElement('div', null,
-                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:companyName', label: 'Company Name', value: customer.companyName }),
-                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:title', label: 'Job Title', value: customer.title })
+                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:companyName', wrapperClass: 'companyName', label: 'Company Name', value: customer.companyName }),
+                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:title', wrapperClass: 'title', label: 'Job Title', value: customer.title })
                 ),
                 React.createElement('div', null,
                     React.createElement(Radix.Components.get('CountryPostalCode'), { onChange: handleChange, postalCode: customer.primaryAddress.postalCode, countryCode: customer.primaryAddress.countryCode })

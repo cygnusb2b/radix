@@ -13,10 +13,11 @@ React.createClass({ displayName: 'ComponentFormSelectCountry',
 
     getDefaultProps: function() {
         return {
-            name     : 'customer:primaryAddress.countryCode',
-            label    : 'Country',
-            selected : null,
-            onChange : null
+            name        : 'customer:primaryAddress.countryCode',
+            label       : 'Country',
+            selected    : null,
+            onChange    : null,
+            wrapperClass: null
         };
     },
 
@@ -37,11 +38,12 @@ React.createClass({ displayName: 'ComponentFormSelectCountry',
 
     _buildElement: function() {
         return React.createElement(Radix.Components.get('FormSelect'), {
-            name     : this.props.name,
-            label    : this.props.label,
-            onChange : this.props.onChange,
-            selected : this.props.selected,
-            options  : this.state.options
+            name        : this.props.name,
+            label       : this.props.label,
+            onChange    : this.props.onChange,
+            selected    : this.props.selected,
+            options     : this.state.options,
+            wrapperClass: this.props.wrapperClass
         });
     }
 });

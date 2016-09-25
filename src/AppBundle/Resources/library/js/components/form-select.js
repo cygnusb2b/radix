@@ -29,7 +29,8 @@ React.createClass({ displayName: 'ComponentFormSelect',
             placeholder : 'Please select...',
             selected    : null,
             options     : [],
-            onChange    : null
+            onChange    : null,
+            wrapperClass: null
         };
     },
 
@@ -81,7 +82,7 @@ React.createClass({ displayName: 'ComponentFormSelect',
     render: function() {
         var label = this.props.label || Utils.titleize(this.props.name);
         return (
-            React.createElement(Radix.Components.get('FormFieldWrapper'), { name: this.props.name },
+            React.createElement(Radix.Components.get('FormFieldWrapper'), { name: this.props.name, className: this.props.wrapperClass },
                 React.createElement(Radix.Components.get('FormLabel'), { id: this.props.id, value: label }),
                 React.createElement('select', this.getSelectProps(),
                     this.getOptions()

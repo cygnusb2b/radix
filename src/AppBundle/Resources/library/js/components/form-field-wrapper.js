@@ -4,16 +4,16 @@ React.createClass({ displayName: 'ComponentFormFieldWrapper',
         return {
             name      : 'unknown',
             tagName   : 'div',
-            className : 'form-element-wrapper'
+            className : null,
         };
     },
 
     render: function() {
         var props = {
-            className: this.props.className
+            className: 'form-element-wrapper'
         };
-        if (this.props.name) {
-            props.className = props.className + ' ' + this.props.name;
+        if (this.props.className) {
+            props.className = props.className + ' ' + this.props.className;
         }
         return (React.createElement(this.props.tagName, props, this.props.children))
     }

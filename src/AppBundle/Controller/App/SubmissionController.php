@@ -29,5 +29,9 @@ class SubmissionController extends AbstractAppController
             // If no identity found, create, set customer data, and link submission
             // Drop a cookie of some sort
 
+        // Determine how to send notifications
+        // Thank you to the customer
+        // Notify sales contacts, etc, based on passed meta.
+
     }
 }

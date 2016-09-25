@@ -64,14 +64,16 @@ React.createClass({ displayName: 'ComponentFormQuestion',
                     label       : label,
                     options     : options,
                     selected    : answer,
-                    onChange    : this.props.onChange
+                    onChange    : this.props.onChange,
+                    wrapperClass: question.key
                 });
                 break;
             case 'textarea':
                 element = React.createElement(Radix.Components.get('FormTextArea'), {
                     name        : question.boundTo + ':answer.' + question._id,
                     label       : label,
-                    onChange    : this.props.onChange
+                    onChange    : this.props.onChange,
+                    wrapperClass: question.key
                 });
                 break;
             default:
