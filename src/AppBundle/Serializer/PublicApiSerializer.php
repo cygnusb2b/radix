@@ -259,7 +259,7 @@ class PublicApiSerializer
     {
         $metadata = $model->getMetadata();
         $serialized = [
-            '_id'    => $model->getId(),
+            '_id'    => $model->getState()->is('new') ? null : $model->getId(),
             '_type'  => $model->getType(),
         ];
         if ($this->depth > 1) {

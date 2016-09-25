@@ -25,7 +25,7 @@ class ModelUtility
             throw new HttpFriendlyException('The email address value cannot be empty.', 400);
         }
 
-        if (false === filter_var($ip, FILTER_VALIDATE_EMAIL)) {
+        if (false === filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw new HttpFriendlyException(sprintf('The provided email address "%s" is invalid.', $value), 400);
         }
         return $value;

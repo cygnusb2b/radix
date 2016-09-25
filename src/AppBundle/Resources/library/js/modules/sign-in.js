@@ -33,7 +33,8 @@ function SignInComponent()
                     password: {
                         value: React.findDOMNode(this.refs.password).value,
                     }
-                }
+                },
+                formData: this._formData
             };
 
             if (payload.credentials.password.value) {
@@ -66,10 +67,19 @@ function SignInComponent()
             }.bind(this));
         },
 
+        handleChange: function(event) {
+            console.info('handleChange', event.target.name, event.target.value);
+        },
+
+        _formData: {},
+
         getValue: function(key)
         {
             if (true === this.refs.hasOwnProperty(key)) {
                 return this.refs[key].props.value;
+            }
+            if (true === this._formData.hasOwnProperty(key)) {
+                return this._formData.hasOwnProperty(key);
             }
             return null;
         },
@@ -93,6 +103,14 @@ function SignInComponent()
                         React.createElement("div", {className: ""},
                             Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', autocomplete: false, value: this.getValue('companyName') }),
                             Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', autocomplete: false, value: this.getValue('title') })
+                        ),
+                        React.createElement("div", {className: ""},
+                            React.createElement(Radix.Components.get('CountryPostalCode'), { onChange: this.handleChange, postalCode: this.getValue('customer:primaryAddress.postalCode'), countryCode: this.getValue('customer:primaryAddress.countryCode') })
+                        ),
+                        // @todo In this situation, there isn't a customer, so there aren't any answers to extract -- a default customer object would fix this issue!
+                        React.createElement('div', null,
+                            React.createElement(Radix.Components.get('FormQuestion'), { onChange: this.handleChange, tagKeyOrId: 'business-code' }),
+                            React.createElement(Radix.Components.get('FormQuestion'), { onChange: this.handleChange, tagKeyOrId: 'title-code' })
                         )
                     ),
                     React.createElement("p", {className: "error text-danger"}, this.state.errorMessage),
