@@ -24,7 +24,7 @@ React.createClass({ displayName: 'ComponentFormCountryPostalCode',
     render: function() {
         return (
             React.createElement('div', null,
-                React.createElement(Radix.Components.get('FormSelectCountry'), { onChange: this.handleCountryChange, selected: this.state.countryCode }),
+                React.createElement(Radix.Components.get('FormSelectCountry'), { onChange: this.handleCountryChange, selected: this.state.countryCode, name: 'customer:primaryAddress.countryCode' }),
                 this._buildDependentElement()
             )
         );
@@ -34,7 +34,7 @@ React.createClass({ displayName: 'ComponentFormCountryPostalCode',
         var code = this.state.countryCode;
         var element;
         if ('USA' === code || 'CAN' === code) {
-            element = React.createElement(Radix.Components.get('FormInputText'), { onChange: this.props.onChange, name: 'postalCode', label: 'Zip/Postal Code', value: this.props.postalCode });
+            element = React.createElement(Radix.Components.get('FormInputText'), { onChange: this.props.onChange, name: 'customer:primaryAddress.postalCode', label: 'Zip/Postal Code', value: this.props.postalCode });
         }
         return element;
     }

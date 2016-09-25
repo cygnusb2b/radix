@@ -28,6 +28,11 @@ app_bundle_app_question:
     defaults: { _controller: AppBundle:App\Question:retrieve }
     methods: [ GET ]
 
+app_bundle_app_submission_inquiry:
+    path: /app/submission/inquiry
+    defaults: { _controller: AppBundle:App\Submission:inquiry }
+    methods: [ POST ]
+
 app_bundle_app_util_country_options:
     path: /app/util/country-options
     defaults: { _controller: AppBundle:App\Utility:countryOptions }

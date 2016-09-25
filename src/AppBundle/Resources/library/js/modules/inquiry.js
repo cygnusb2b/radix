@@ -60,16 +60,28 @@ function InquiryModule()
 
             locker.lock();
 
-            Ajax.send('/app/auth', 'POST').then(function(response) {
+            var sourceKey = 'inquiry';
+            var payload   = {
+                data: this._formData,
+                meta: {
+                    model  : this.props.model,
+                    notify : this.props.notify
+                }
+            };
+
+            Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
                 locker.unlock();
+                // Show thank you page??
             }.bind(this), function(jqXHR) {
                 locker.unlock();
                 this._error.displayAjaxError(jqXHR);
             }.bind(this));
         },
 
+        _formData: {},
+
         handleChange: function(event) {
-            console.info('InquiryModule', 'handleChange', event.target.value);
+            this._formData[event.target.name] = event.target.value;
         },
 
         render: function() {

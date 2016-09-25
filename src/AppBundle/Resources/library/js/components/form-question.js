@@ -60,7 +60,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
                     options.push(choice.option);
                 }
                 element = React.createElement(Radix.Components.get('FormSelect'), {
-                    name        : question._id,
+                    name        : question.boundTo + ':answer.' + question._id,
                     label       : label,
                     options     : options,
                     selected    : answer,
@@ -69,7 +69,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
                 break;
             case 'textarea':
                 element = React.createElement(Radix.Components.get('FormTextArea'), {
-                    name        : question._id,
+                    name        : question.boundTo + ':answer.' + question._id,
                     label       : label,
                     onChange    : this.props.onChange
                 });
