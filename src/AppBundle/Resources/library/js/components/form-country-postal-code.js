@@ -1,5 +1,9 @@
 React.createClass({ displayName: 'ComponentFormCountryPostalCode',
 
+    componentWillReceiveProps: function(props) {
+        this.setState({ countryCode: props.countryCode});
+    },
+
     getDefaultProps: function() {
         return {
             postalCode  : null,
