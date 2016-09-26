@@ -9,6 +9,14 @@ use As3\Modlr\Store\Store;
 class QuestionAnswerFactory
 {
     /**
+     * @var array
+     */
+    private $answerContexts = [
+        'customer'  => true,
+        'input'     => true,
+    ];
+
+    /**
      * @var Store
      */
     private $store;
@@ -32,12 +40,16 @@ class QuestionAnswerFactory
      * Creates a new, unsaved answer model for the provided question and value.
      * Will return null if the value normalizes to null, or if a question choice could not be found.
      *
+     * @param   string  $context    The answer context: either customer or input.
      * @param   Model   $question
      * @param   mixed   $value
      * @return  Model|null
      */
-    public function createAnswerFor(Model $question, $value)
+    public function createAnswerFor($context, Model $question, $value)
     {
+        if (!isset($this->answerContexts[$context])) {
+            throw new \InvalidArgumentException(sprintf('The supplied answer context "%s" is not supported.', $context));
+        }
         $questionType = $question->get('questionType');
         $typeObj      = $this->typeManager->getQuestionTypeFor($questionType);
         $answerType   = $typeObj->getAnswerType();
@@ -47,13 +59,15 @@ class QuestionAnswerFactory
             return;
         }
 
-        $modelType = sprintf('question-answer-%s', $answerType);
+        $modelType = sprintf('%s-answer-%s', $context, $answerType);
         if ($typeObj->supportsChoices()) {
-            return $this->createChoiceAnswer($modelType, $question, $value);
+            $answer = $this->createChoiceAnswer($modelType, $question, $value);
+            return $answer->set('question', $question);
         } else {
             $answer = $this->store->create($modelType);
             $answer->set('value', $value);
         }
+        $answer->set('question', $question);
 
         return $answer;
     }

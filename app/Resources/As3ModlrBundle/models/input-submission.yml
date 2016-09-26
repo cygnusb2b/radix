@@ -17,6 +17,10 @@ input-submission:
             defaultValue: []
         sourceKey:
             type: string # The input source key... eventually this should link to a source model
+        referringHost:
+            type: string
+        referringHref:
+            type: string
     embeds:
         request:
             type: one

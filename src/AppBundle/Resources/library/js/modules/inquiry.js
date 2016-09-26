@@ -60,7 +60,8 @@ function InquiryModule()
 
             locker.lock();
 
-            this._formData['submission:referringUrl'] = window.location.protocol + '//' + window.location.host;
+            this._formData['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
+            this._formData['submission:referringHref'] = window.location.href;
 
             var sourceKey = 'inquiry';
             var payload   = {

@@ -54,6 +54,8 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
             if (null === $model->get('region')) {
                 $model->set('region', $regionCode);
             }
+        } else {
+            $model->set('region', $regions[$regionCode]);
         }
 
         $countries   = LocaleUtility::getCountries();
@@ -64,6 +66,8 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
             if (null === $model->get('country')) {
                 $model->set('country', $countryCode);
             }
+        } else {
+            $model->set('country', $countries[$countryCode]);
         }
     }
 }

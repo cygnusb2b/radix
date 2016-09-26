@@ -43,7 +43,8 @@ function SignInComponent()
             var locker = this._formLock;
             locker.lock();
 
-            data['submission:referringUrl'] = window.location.protocol + '//' + window.location.host;
+            data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
+            data['submission:referringHref'] = window.location.href;
             var payload = {
                 data: data
             };
