@@ -240,7 +240,7 @@ function CustomerManager()
 
     this.databaseRegister = function(payload) {
         EventDispatcher.trigger('CustomerManager.register.submit');
-        var promise = Ajax.send('/app/auth', 'POST', { data: payload });
+        var promise = Ajax.send('/app/auth', 'POST', payload);
         promise.then(function (response) {
             // Success
             customer = response.data;

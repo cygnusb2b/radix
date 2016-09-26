@@ -168,7 +168,9 @@ function SignInComponent()
 
             locker.lock();
 
-            var payload = {};
+            var payload = {
+                data: this._formData
+            };
 
             CustomerManager.databaseRegister(payload);
 
