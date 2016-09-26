@@ -197,7 +197,7 @@ function CustomerManager()
     }
 
     this.isLoggedIn = function() {
-        return 'undefined' !== typeof customer._id;
+        return (customer._id) ? true : false;
     }
 
     this.checkAuth = function() {

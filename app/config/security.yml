@@ -41,7 +41,7 @@ security:
                 path: /app/auth/destroy
                 # delete_cookies: ~ # @todo Will need to determine if identity cookies need deletion?
                 invalidate_session: false
-                success_handler: app_bundle_security.logout_success_handler
+                success_handler: app_bundle_security.logout_success_handler.application
         api:
             context: core
             pattern: ^/api\/1\.0

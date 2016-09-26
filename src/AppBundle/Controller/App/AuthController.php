@@ -27,6 +27,7 @@ class AuthController extends AbstractAppController
      */
     public function createAction(Request $request)
     {
+        // @TODO PHONES AREN'T BEING ADDED!!!!
         $payload = RequestUtility::extractPayload($request, false);
 
         // @todo Once form gen is in place, any front-end field validation (such as required, etc) should also be handled (again) on the backend

@@ -63,6 +63,11 @@ services:
         class: AppBundle\Security\LogoutSuccessHandler
         arguments: [ "@app_bundle.security.auth.generator_manager" ]
 
+    app_bundle_security.logout_success_handler.application:
+        private: true
+        class: AppBundle\Security\ApplicationLogoutSuccessHandler
+        arguments: [ "@app_bundle.customer.manager" ]
+
     app_bundle.security.user_provider.core_user:
         private: true
         class: AppBundle\Security\User\CoreUserProvider

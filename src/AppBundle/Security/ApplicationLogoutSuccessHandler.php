@@ -2,7 +2,7 @@
 
 namespace AppBundle\Security;
 
-use AppBundle\Security\Auth\AuthGeneratorManager;
+use AppBundle\Customer\CustomerManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
@@ -12,27 +12,28 @@ use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
  *
  * @author Jacob Bare <jacob.bare@gmail.com>
  */
-class LogoutSuccessHandler implements LogoutSuccessHandlerInterface
+class ApplicationLogoutSuccessHandler implements LogoutSuccessHandlerInterface
 {
     /**
-     * @var AuthGeneratorManager
+     * @var CustomerManager
      */
-    private $authManager;
+    private $manager;
 
     /**
-     * @param   AuthGeneratorManager    $authManager
+     * @param   CustomerManager    $manager
      */
-    public function __construct(AuthGeneratorManager $authManager)
+    public function __construct(CustomerManager $manager)
     {
-        $this->authManager = $authManager;
+        $this->manager = $manager;
     }
 
     /**
      * {@inheritDoc}
-     * @todo Need to determine how to show default auth object here.
+     *
      */
     public function onLogoutSuccess(Request $request)
     {
-        return $this->authManager->createDefaultResponse();
+        $request->attributes->set('destroyCookies', true);
+        return $this->manager->createDefaultAuthResponse();
     }
 }

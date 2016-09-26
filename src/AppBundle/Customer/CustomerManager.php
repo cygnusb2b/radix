@@ -65,10 +65,20 @@ class CustomerManager
         $user = $this->getSecurityUser();
         if ($user) {
             $serialized = $this->authGenerator->generateFor($user);
-        } else {
-            $model = $this->store->create('customer-account');
-            $serialized = $this->authGenerator->getSerializer()->serialize($model);
+            return new JsonResponse($serialized);
         }
+        return $this->createDefaultAuthResponse();
+    }
+
+    /**
+     * Creates the security auth response (e.g. the non logged-in response).
+     *
+     * @return  JsonResponse
+     */
+    public function createDefaultAuthResponse()
+    {
+        $model = $this->store->create('customer-account');
+        $serialized = $this->authGenerator->getSerializer()->serialize($model);
         return new JsonResponse($serialized);
     }
 
