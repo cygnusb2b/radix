@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: indices.yml}
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -18,7 +19,7 @@ as3_modlr:
         default:
             type: mongodb
             parameters:
-                host: mongodb://localhost:27017
+                host: mongodb://mongo.platform.as3.io:27017
     search_clients:
         default:
             type: elastic

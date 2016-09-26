@@ -1,0 +1,72 @@
+as3_modlr:
+    schema_indices:
+    # Core Models
+        -
+            model_type: core-account
+            keys:
+                key: 1
+            options:
+                unique: true
+        -
+            model_type: core-application
+            keys:
+                key: 1
+            options:
+                unique: true
+        -
+            model_type: core-application
+            keys:
+                publicKey: 1
+            options:
+                unique: true
+        -
+            model_type: core-application-user
+            keys:
+                application: 1
+                user: 1
+            options:
+                unique: true
+        -
+            model_type: core-application-user
+            keys:
+                user: 1
+        -
+            model_type: core-user
+            keys:
+                email: 1
+            options:
+                unique: true
+    # Context-specific models
+        -
+            model_type: customer
+            keys:
+                _id: 1
+                _type: 1
+            options:
+                unique: true
+        -
+            model_type: customer
+            keys:
+                "credentials.password.username": 1
+            options:
+                unique: true
+                partialFilterExpression:
+                    "credentials.password.username":
+                        "$exists": true
+        -
+            model_type: customer
+            keys:
+                "credentials.social.identifier": 1
+            options:
+                unique: true
+                partialFilterExpression:
+                    "credentials.social.identifier":
+                        "$exists": true
+        -
+            model_type: customer
+            keys:
+                email: 1
+            options:
+                unique: true
+                partialFilterExpression:
+                    _type: "customer-identity"
