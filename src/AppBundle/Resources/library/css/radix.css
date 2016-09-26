@@ -44,8 +44,10 @@
 }
 .platform-element[data-element=modal]#guidrSubmitModal {
     z-index: 99989;
-    text-align: center;
+
     height: 100vh;
+
+    text-align: center;
 }
 
 
@@ -66,43 +68,47 @@
     position: relative;
 
     width: 100%;
+    height: calc(100vh - 180px);
     padding: 0;
     margin: 0;
 
     background: #fafafa;
-    height: calc(100vh - 180px);
 }
 
 .platform-element[data-element=modal] .submit.wrap p {
     padding-top: 60px;
+
     font-size: 1.25em;
+
     text-align: center;
+
     color: #000;
 }
 .platform-element[data-element=modal] .submit.wrap p a,
 .platform-element[data-element=modal] .submit.wrap p span {
-    clear: left;
     float: left;
     width: 100%;
+    clear: left;
 }
 
 .platform-element[data-element=modal] iframe {
-    border: 0;
     position: relative;
 
     padding: 0;
     margin: 0;
+
+    border: 0;
     background: #fff;
 }
 
 @media screen and (min-width:800px) {
     .platform-element[data-element=modal] .submit.wrap {
         width: 80%;
+        height: 280px;
         max-width: 1000px;
         margin: 60px auto;
 
         box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .2);
-        height: 280px;
     }
     .platform-element[data-element=modal] .submit.wrap.form {
         height: calc(100vh - 220px);
@@ -170,9 +176,12 @@
     position: absolute;
     top: 0;
     left: 0;
-    padding: 0 1em;
+
     height: 50px;
+    padding: 0 1em;
+
     line-height: 50px;
+
     cursor: pointer;
 }
 
@@ -265,8 +274,10 @@
 
 .platform-element .comment-body {
     margin: 0 0 .88889em;
-    white-space: pre-line;
+
     font-size: 15px;
+
+    white-space: pre-line;
 }
 
 .platform-element .left {
@@ -483,6 +494,7 @@
 }
 
 .platform-element input,
+.platform-element select,
 .platform-element input[type="text"],
 .platform-element input[type="password"],
 .platform-element input[type="email"],
@@ -508,6 +520,7 @@
     -webkit-appearance: none;
 }
 .platform-element input:focus,
+.platform-element select:focus,
 .platform-element input[type="text"]:focus,
 .platform-element input[type="password"]:focus,
 .platform-element input[type="email"]:focus,
@@ -603,6 +616,8 @@
     margin: 0;
 }
 
+
+
 .platform-element .form-element-wrapper.givenName,
 .platform-element .form-element-wrapper.familyName,
 .platform-element .form-element-wrapper.companyName,
@@ -616,12 +631,38 @@
 .platform-element .form-element-wrapper.title,
 .platform-element .form-element-wrapper.phone,
 .platform-element .form-element-wrapper.fax,
-.platform-element .form-element-wrapper.city {
-    width: 50%;
-}
+.platform-element .form-element-wrapper.city,
 .platform-element .form-element-wrapper.region,
-.platform-element .form-element-wrapper.postalCode {
-    width: 25%;
+.platform-element .form-element-wrapper.countryCode,
+.platform-element .form-element-wrapper.postalCode,
+.platform-element .form-element-wrapper.question {
+    width: 100%;
+}
+
+@media screen and (min-width: 800px) {
+    .platform-element .form-element-wrapper.givenName,
+    .platform-element .form-element-wrapper.familyName,
+    .platform-element .form-element-wrapper.companyName,
+    .platform-element .form-element-wrapper.password,
+    .platform-element .form-element-wrapper.confirmPassword,
+    .platform-element .form-element-wrapper.username,
+    .platform-element .form-element-wrapper.displayName,
+    .platform-element .form-element-wrapper.email,
+    .platform-element .form-element-wrapper.confirmEmail,
+    .platform-element .form-element-wrapper.title,
+    .platform-element .form-element-wrapper.phone,
+    .platform-element .form-element-wrapper.fax,
+    .platform-element .form-element-wrapper.city,
+    .platform-element .form-element-wrapper.region,
+    .platform-element .form-element-wrapper.countryCode,
+    .platform-element .form-element-wrapper.postalCode,
+    .platform-element .form-element-wrapper.question {
+        width: 50%;
+    }
+
+    .platform-element .form-element-wrapper.comments {
+        width: 100%
+    }
 }
 
 .platform-element :disabled {
@@ -649,7 +690,6 @@
 .platform-element .database-form {
     clear: both;
 }
-
 .platform-element .auth0Form > div {
     display: flex;
 
@@ -660,14 +700,16 @@
 }
 
 .platform-element .order-list {
-    list-style-type: none;
     padding-left: 0;
+
+    list-style-type: none;
 }
 
 .platform-element .subscription-active {
-    margin: 1em auto;
     padding: 0 1em 1em;
-    border: 1px solid #EEE;
+    margin: 1em auto;
+
+    border: 1px solid #eee;
 }
 
 @media screen and (max-width: 1200px) {
