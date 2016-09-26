@@ -253,7 +253,7 @@ function CustomerManager()
             var message = error.detail || 'An unknown error occured.';
 
             Debugger.warn('Unable to register customer', errors);
-            EventDispatcher.trigger('CustomerManager.register.failure', [message]);
+            EventDispatcher.trigger('CustomerManager.register.failure', [message, jqXHR]);
         });
         return promise;
 

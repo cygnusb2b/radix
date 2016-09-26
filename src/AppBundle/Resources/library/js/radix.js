@@ -105,7 +105,8 @@
 
     function Forms()
     {
-        this.Inquiry = {{ loadForm('inquiry') }}
+        this.Inquiry  = {{ loadForm('inquiry') }}
+        this.Register = {{ loadForm('register') }}
 
         this.get = function(name) {
             return this[name];

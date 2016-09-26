@@ -123,76 +123,57 @@ function SignInComponent()
 
                 )
             );
-        },
-        verifyConfirmPasswordField: function(e) {
-            var confirmPassword = React.findDOMNode(this.refs.confirmPassword);
-
-            if (!this.refs.confirmPassword.props.value || !this.refs.password.props.value) return;
-            if (e.target.value !== this.refs.password.props.value) {
-                this.triggerMismatchError(confirmPassword, 'Password and Confirm Password must match!');
-            } else {
-                this.clearMismatchError(confirmPassword);
-            }
-        },
-        verifyPasswordField: function(e) {
-            var confirmPassword = React.findDOMNode(this.refs.confirmPassword);
-
-            if (!this.refs.password.props.value || !this.refs.confirmPassword.props.value) return;
-            if (e.target.value !== this.refs.confirmPassword.props.value) {
-                this.triggerMismatchError(confirmPassword, 'Password and Confirm Password must match!');
-            } else {
-                this.clearMismatchError(confirmPassword);
-            }
-        },
-        verifyConfirmEmailField: function(e) {
-            var confirmEmail = React.findDOMNode(this.refs.confirmEmail);
-
-            if (!this.refs.confirmEmail.props.value || !this.refs.email.props.value) return;
-            if (e.target.value !== this.refs.email.props.value) {
-                this.triggerMismatchError(confirmEmail, 'Email and Confirm Email must match!');
-            } else {
-                this.clearMismatchError(confirmEmail);
-            }
-        },
-        verifyEmailField: function(e) {
-            var confirmEmail = React.findDOMNode(this.refs.confirmEmail);
-
-            if (!this.refs.email.props.value || !this.refs.confirmEmail.props.value) return;
-            if (e.target.value !== this.refs.confirmEmail.props.value) {
-                this.triggerMismatchError(confirmEmail, 'Email and Confirm Email must match!');
-            } else {
-                this.clearMismatchError(confirmEmail);
-            }
-        },
-        triggerMismatchError: function(target, message) {
-            target.valid = false;
-            // target.value = '';
-            target.setCustomValidity(message);
-        },
-        clearMismatchError: function(target) {
-            target.valid = true;
-            target.setCustomValidity('');
-            target.checkValidity();
         }
     });
 
     var RegisterContainer = React.createClass({displayName: "RegisterContainer",
+
+        getDefaultProps: function() {
+            return {
+                title: 'Sign Up'
+            };
+        },
+
         getInitialState: function() {
             return {
-                data: {},
-                locked: false
-            }
+                error: null
+            };
         },
+
         componentDidMount: function() {
-            EventDispatcher.subscribe('form.register.lock', function() {
-                this.setState({locked:true});
-                this.forceUpdate();
-            }.bind(this));
-            EventDispatcher.subscribe('form.register.unlock', function() {
-                this.setState({locked:false});
-                this.forceUpdate();
-            }.bind(this));
+            var locker = this._formLock;
+            var error  = this._error;
+
+            EventDispatcher.subscribe('CustomerManager.register.success', function() {
+                locker.unlock();
+            });
+
+            EventDispatcher.subscribe('CustomerManager.register.failure', function (e, parameters, jqXHR) {
+                locker.unlock();
+                error.displayAjaxError(jqXHR);
+            });
         },
+
+        _formData: {},
+
+        handleChange: function(event) {
+            this._formData[event.target.name] = event.target.value;
+        },
+
+        handleSubmit: function(event) {
+            event.preventDefault();
+            Debugger.info('RegisterContainer', 'handleSubmit', this._formData);
+
+            var locker = this._formLock;
+
+            locker.lock();
+
+            var payload = {};
+
+            CustomerManager.databaseRegister(payload);
+
+        },
+
         render: function() {
             // var providerNodes = ServerConfig.values.customer.auth.map(function(key, index) {
             //     if ('auth0' == key) {
@@ -205,19 +186,34 @@ function SignInComponent()
             //     );
             // });
 
-            var locked;
-            if (this.state.locked) {
-                locked = React.createElement('div', {className: 'form-lock'}, React.createElement('i', {className: 'pcfa pcfa-spinner pcfa-5x pcfa-pulse'}));
-            }
             return (
-                React.createElement("div", {className: "register"},
-                    React.createElement("p", {className: "error text-danger"}),
-                    React.createElement("h2", {className: "name"}, "Sign Up"),
-                    // providerNodes,
-                    React.createElement(DatabaseRegister, {key: 0}),
-                    locked
+                React.createElement('div', { className: 'register' },
+                    React.createElement('h2', { className: 'name' }, this.props.title),
+                    React.createElement(Radix.Forms.get('Register'), {
+                        onSubmit    : this.handleSubmit,
+                        onChange    : this.handleChange
+                    }),
+                    React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+                    this._getSignInLink(),
+                    React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
                 )
             );
+        },
+
+        _getSignInLink: function() {
+            return React.createElement('p', {className: 'text-center muted'},
+                'Already have an account? ',
+                React.createElement('a', {href: 'javascript:void(0)', onClick: Radix.SignIn.login}, 'Sign in'),
+                ' .'
+            );
+        },
+
+        _setErrorDisplay: function(ref) {
+            this._error = ref;
+        },
+
+        _setLock: function(ref) {
+            this._formLock = ref;
         }
     });
 
