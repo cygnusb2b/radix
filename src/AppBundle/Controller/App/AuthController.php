@@ -27,7 +27,7 @@ class AuthController extends AbstractAppController
      */
     public function createAction(Request $request)
     {
-        $payload = RequestUtility::extractPayload($request);
+        $payload = RequestUtility::extractPayload($request, false);
 
         // @todo Once form gen is in place, any front-end field validation (such as required, etc) should also be handled (again) on the backend
         // @todo This should be handled by a generic form validation service, that looks at the form in question, reads its validation rules, and validates the incoming data.

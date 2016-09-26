@@ -16,10 +16,11 @@ class RequestUtility
      * Extracts the customer creation payload from the request.
      *
      * @param   Request $request
+     * @param   bool    $flat       Whether to return with/without the data member.
      * @return  array
      * @throws  HttpFriendlyException
      */
-    public static function extractPayload(Request $request)
+    public static function extractPayload(Request $request, $flat = true)
     {
         if (0 !== stripos($request->headers->get('content-type'), 'application/json')) {
             throw new HttpFriendlyException('Invalid request content type. Expected application/json.', 415);
@@ -29,8 +30,10 @@ class RequestUtility
         if (!isset($payload['data'])) {
             throw new HttpFriendlyException('No data member was found in the request payload.', 422);
         }
+
         $payload['data'] = (array) $payload['data'];
-        return $payload;
+
+        return (true == $flat) ? $payload['data'] : $payload;
     }
 
     /**
