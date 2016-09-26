@@ -2,130 +2,6 @@ function SignInComponent()
 {
     var target = 'platformCustomerModal';
 
-    var DatabaseRegister = React.createClass({displayName: "DatabaseRegister",
-        getInitialState: function() {
-            return {
-                errorMessage: null,
-                data: []
-            }
-        },
-
-        handleSubmit: function(e) {
-            e.preventDefault();
-            var payload = {
-                // @todo Eventually the form fields themselves should be namespaced and linked to a model
-                // Example app:customer-account:givenName or app:customer-account:emails[0][value]
-                givenName: React.findDOMNode(this.refs.givenName).value.trim(),
-                familyName: React.findDOMNode(this.refs.familyName).value.trim(),
-                companyName: React.findDOMNode(this.refs.companyName).value.trim(),
-                title: React.findDOMNode(this.refs.title).value.trim(),
-                // displayName: React.findDOMNode(this.refs.displayName).value.trim(),
-
-                emails: [
-                    {
-                        value: React.findDOMNode(this.refs.email).value.trim(),
-                        // confirm: React.findDOMNode(this.refs.confirmEmail).value,
-                        isPrimary: true
-                    }
-                ],
-
-                credentials: {
-                    password: {
-                        value: React.findDOMNode(this.refs.password).value,
-                    }
-                },
-                formData: this._formData
-            };
-
-            if (payload.credentials.password.value) {
-                if (payload.credentials.password.value.length < 4) {
-                    this.setState({errorMessage: 'Password must be at least 4 characters!'});
-                    return false;
-                } else if (payload.credentials.password.value.length > 4096) {
-                    this.setState({errorMessage: 'Password must be less than 4096 characters!'});
-                    return false;
-                }
-            }
-
-            // if (payload.emails[0].value !== payload.emails[0].confirm) {
-            //     this.setState({errorMessage: 'Emails must match!'});
-            //     return false;
-            // }
-
-            CustomerManager.databaseRegister(payload);
-
-            React.findDOMNode(this.refs.password).value = '';
-        },
-
-        componentDidMount: function() {
-            EventDispatcher.subscribe('CustomerManager.register.submit', function() {
-                this.setState({errorMessage: null});
-            }.bind(this));
-
-            EventDispatcher.subscribe('CustomerManager.register.failure', function (e, parameters) {
-                this.setState({errorMessage: parameters});
-            }.bind(this));
-        },
-
-        handleChange: function(event) {
-            console.info('handleChange', event.target.name, event.target.value);
-        },
-
-        _formData: {},
-
-        getValue: function(key)
-        {
-            if (true === this.refs.hasOwnProperty(key)) {
-                return this.refs[key].props.value;
-            }
-            if (true === this._formData.hasOwnProperty(key)) {
-                return this._formData.hasOwnProperty(key);
-            }
-            return null;
-        },
-
-        render: function() {
-            return (
-                React.createElement("form", {className: "databaseForm", onSubmit: this.handleSubmit},
-                    React.createElement("div", {className: ""}
-                        // React.createElement("h4", {className: "text-center name"}, "OR")
-                    ),
-                    React.createElement('fieldset', { className: 'contact-info' },
-                        // React.createElement('legend', null, 'Contact Information'),
-                        React.createElement("div", {className: ""},
-                            Radix.FormModule.get('textField', { name: 'givenName', label: 'First Name', required: true, autofocus: true, autocomplete: false, value: this.getValue('givenName') }),
-                            Radix.FormModule.get('textField', { name: 'familyName', label: 'Last Name', required: true, autocomplete: false, value: this.getValue('familyName') })
-                        ),
-                        React.createElement("div", {className: ""},
-                            Radix.FormModule.get('textField', { type: 'email', name: 'email', label: 'Email Address', required: true, autocomplete: false, value: this.getValue('email') }),
-                            Radix.FormModule.get('textField', { type: 'password', name: 'password', label: 'Password', required: true, autocomplete: false, value: this.getValue('password') })
-                        ),
-                        React.createElement("div", {className: ""},
-                            Radix.FormModule.get('textField', { name: 'companyName', label: 'Company Name', autocomplete: false, value: this.getValue('companyName') }),
-                            Radix.FormModule.get('textField', { name: 'title', label: 'Job Title', autocomplete: false, value: this.getValue('title') })
-                        ),
-                        React.createElement("div", {className: ""},
-                            React.createElement(Radix.Components.get('CountryPostalCode'), { onChange: this.handleChange, postalCode: this.getValue('customer:primaryAddress.postalCode'), countryCode: this.getValue('customer:primaryAddress.countryCode') })
-                        ),
-                        // @todo In this situation, there isn't a customer, so there aren't any answers to extract -- a default customer object would fix this issue!
-                        React.createElement('div', null,
-                            React.createElement(Radix.Components.get('FormQuestion'), { onChange: this.handleChange, tagKeyOrId: 'business-code' }),
-                            React.createElement(Radix.Components.get('FormQuestion'), { onChange: this.handleChange, tagKeyOrId: 'title-code' })
-                        )
-                    ),
-                    React.createElement("p", {className: "error text-danger"}, this.state.errorMessage),
-                    React.createElement("div", {className: ""},
-                        React.createElement("div", {className: ""},
-                            React.createElement("button", {className: "", type: "submit"}, "Sign Up"),
-                            React.createElement("p", {className: "text-center muted"}, "Already have an account? ", React.createElement("a", {href: "javascript:void(0)", onClick: Radix.SignIn.login}, "Sign in"), " .")
-                        )
-                    )
-
-                )
-            );
-        }
-    });
-
     var RegisterContainer = React.createClass({displayName: "RegisterContainer",
 
         getDefaultProps: function() {
@@ -167,6 +43,7 @@ function SignInComponent()
             var locker = this._formLock;
             locker.lock();
 
+            data['submission:referringUrl'] = window.location.protocol + '//' + window.location.host;
             var payload = {
                 data: data
             };

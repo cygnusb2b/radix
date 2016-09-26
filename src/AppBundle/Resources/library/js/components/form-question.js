@@ -60,20 +60,20 @@ React.createClass({ displayName: 'ComponentFormQuestion',
                     options.push(choice.option);
                 }
                 element = React.createElement(Radix.Components.get('FormSelect'), {
-                    name        : question.boundTo + ':answer.' + question._id,
+                    name        : question.boundTo + ':answers.' + question._id,
                     label       : label,
                     options     : options,
                     selected    : answer,
                     onChange    : this.props.onChange,
-                    wrapperClass: question.key
+                    wrapperClass: question.key + ' question'
                 });
                 break;
             case 'textarea':
                 element = React.createElement(Radix.Components.get('FormTextArea'), {
-                    name        : question.boundTo + ':answer.' + question._id,
+                    name        : question.boundTo + ':answers.' + question._id,
                     label       : label,
                     onChange    : this.props.onChange,
-                    wrapperClass: question.key
+                    wrapperClass: question.key + ' question'
                 });
                 break;
             default:

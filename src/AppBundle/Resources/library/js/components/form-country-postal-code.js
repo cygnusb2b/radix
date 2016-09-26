@@ -24,7 +24,7 @@ React.createClass({ displayName: 'ComponentFormCountryPostalCode',
     render: function() {
         return (
             React.createElement('div', null,
-                React.createElement(Radix.Components.get('FormSelectCountry'), { onChange: this.handleCountryChange, selected: this.state.countryCode, wrapperClass: 'country', name: 'customer:primaryAddress.countryCode' }),
+                React.createElement(Radix.Components.get('FormSelectCountry'), { onChange: this.handleCountryChange, selected: this.state.countryCode, wrapperClass: 'countryCode', name: 'customer:primaryAddress.countryCode' }),
                 this._buildDependentElement()
             )
         );
