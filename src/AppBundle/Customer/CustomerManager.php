@@ -144,13 +144,27 @@ class CustomerManager
     }
 
     /**
+     * Gets the cookie names used by the customer.
+     *
+     * @return  array
+     */
+    public function getCookieNames()
+    {
+        return $this->cookieManager->getCookieNames();
+    }
+
+    /**
      * Gets the currently active symfony security user.
      *
      * @return  \Symfony\Component\Security\Core\User\UserInterface
      */
     public function getSecurityUser()
     {
-        $user = $this->tokenStorage->getToken()->getUser();
+        $token = $this->tokenStorage->getToken();
+        if (null === $token) {
+            return;
+        }
+        $user = $token->getUser();
         return $user instanceof Customer ? $user : null;
     }
 

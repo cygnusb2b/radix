@@ -29,9 +29,11 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface
 
     /**
      * {@inheritDoc}
+     * @todo Need to determine how to show default auth object here.
      */
     public function onLogoutSuccess(Request $request)
     {
-       return $this->authManager->createDefaultResponse();
+        $request->attributes->set('destroyCookies', true);
+        return $this->authManager->createDefaultResponse();
     }
 }
