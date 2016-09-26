@@ -15,7 +15,7 @@ interface AuthGeneratorInterface
      * Generates a user auth data hash for the provided user.
      *
      * @param   UserInterface  $user
-     * @return  UserAuth
+     * @return  array
      */
     public function generateFor(UserInterface $user);
 

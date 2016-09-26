@@ -15,7 +15,7 @@ class CalculatedFields
     public static function customerPrimaryAddress(Model $model)
     {
         $buildAddress = function(Model $model) {
-            $fields = ['name', 'companyName', 'street', 'extra', 'city', 'regionCode', 'postalCode', 'countryCode'];
+            $fields = ['name', 'companyName', 'street', 'extra', 'city', 'region', 'regionCode', 'postalCode', 'country', 'countryCode'];
             $object = ['_id'   => $model->getId()];
             foreach ($fields as $key) {
                 $object[$key] = $model->get($key);

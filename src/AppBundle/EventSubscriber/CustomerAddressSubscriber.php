@@ -42,6 +42,7 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @todo    This should add smart logic: use zip to find state, use state to find country (if not set), etc.
      * @param   Model   $model
      */
     private function validateCodes(Model $model)

@@ -28,13 +28,19 @@ class CustomerGenerator implements AuthGeneratorInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @todo    The auth response will likely need to retrieve the customer model and fully serialize it.
      */
     public function generateFor(UserInterface $user)
     {
         $model = $user->getModel();
         return $this->serializer->serialize($model);
+    }
+
+    /**
+     * @return  PublicApiSerializer
+     */
+    public function getSerializer()
+    {
+        return $this->serializer;
     }
 
     /**

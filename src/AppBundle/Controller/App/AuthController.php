@@ -218,9 +218,8 @@ class AuthController extends AbstractAppController
      */
     public function retrieveAction()
     {
-        $token   = $this->getUserToken();
-        $manager = $this->get('app_bundle.security.auth.generator_manager');
-        return $manager->createResponseFor($token->getUser());
+        $manager = $this->get('app_bundle.customer.manager');
+        return $manager->createAuthResponse();
     }
 
     /**

@@ -30,6 +30,7 @@ class CustomerAccountRule extends AbstractRule implements PublicApiRuleInterface
         return [
             'settings'    => true,
             'credentials' => true,
+            'submissions' => true,
         ];
     }
 
