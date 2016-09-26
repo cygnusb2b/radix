@@ -134,12 +134,6 @@ function SignInComponent()
             };
         },
 
-        getInitialState: function() {
-            return {
-                error: null
-            };
-        },
-
         componentDidMount: function() {
             var locker = this._formLock;
             var error  = this._error;
@@ -162,18 +156,39 @@ function SignInComponent()
 
         handleSubmit: function(event) {
             event.preventDefault();
-            Debugger.info('RegisterContainer', 'handleSubmit', this._formData);
+
+            var data = this._formData;
+            Debugger.info('RegisterContainer', 'handleSubmit', data);
+
+            if (false === this._validateSubmit(data)) {
+                return;
+            }
 
             var locker = this._formLock;
-
             locker.lock();
 
             var payload = {
-                data: this._formData
+                data: data
             };
 
             CustomerManager.databaseRegister(payload);
+        },
 
+        _validateSubmit: function(data) {
+            var error = this._error;
+            if (!data['customer:password']) {
+                error.display('The password field is required.');
+                return false;
+            }
+            if (data['customer:password'].length < 4) {
+                error.display('The password must be at least 4 characters long.');
+                return false;
+            }
+            if (data['customer:password'].length > 72) {
+                error.display('The password cannot be longer than 72 characters.');
+                return false;
+            }
+            return true;
         },
 
         render: function() {
