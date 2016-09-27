@@ -31,6 +31,10 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if (null === $model->get('customer')) {
+            throw new HttpFriendlyException('All customer addresses must be assigned to a customer.', 400);
+        }
+
         $this->appendLocalityData($model);
         $this->validateCodes($model);
 

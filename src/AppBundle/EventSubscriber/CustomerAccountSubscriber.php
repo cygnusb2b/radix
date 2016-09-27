@@ -60,12 +60,6 @@ class CustomerAccountSubscriber implements EventSubscriberInterface
                 return;
             }
         }
-        if (null !== $primaryEmail = $model->get('primaryEmail')) {
-            preg_match('/^(.+)@/i', $primaryEmail, $matches);
-            if (isset($matches[1])) {
-                $model->set('displayName', $matches[1]);
-            }
-        }
     }
 
     /**

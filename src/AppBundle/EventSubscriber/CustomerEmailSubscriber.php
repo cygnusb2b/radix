@@ -53,6 +53,7 @@ class CustomerEmailSubscriber implements EventSubscriberInterface
         $model->set('value', ModelUtility::formatEmailAddress($model->get('value')));
 
         $this->handleVerification($model);
+        $this->appendDisplayName($model);
     }
 
     /**
@@ -62,6 +63,22 @@ class CustomerEmailSubscriber implements EventSubscriberInterface
     protected function shouldProcess(Model $model)
     {
         return 'customer-email' === $model->getType();
+    }
+
+    /**
+     * @param   Model   $model
+     */
+    private function appendDisplayName(Model $model)
+    {
+        $account = $model->get('account');
+        if (null !== $account->get('displayName')) {
+            return;
+        }
+        preg_match('/^(.+)@/i', $model->get('value'), $matches);
+        if (isset($matches[1])) {
+            $account->set('displayName', $matches[1]);
+            $account->save();
+        }
     }
 
     /**
