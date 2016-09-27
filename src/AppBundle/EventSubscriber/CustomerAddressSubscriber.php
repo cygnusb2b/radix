@@ -25,11 +25,15 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
      */
     public function preCommit(ModelLifecycleArguments $args)
     {
+
         $model = $args->getModel();
         if (false === $this->shouldProcess($model)) {
             return;
         }
+
+        $this->appendLocalityData($model);
         $this->validateCodes($model);
+
     }
 
     /**
@@ -42,7 +46,29 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @todo    This should add smart logic: use zip to find state, use state to find country (if not set), etc.
+     * @param   Model   $model
+     */
+    private function appendLocalityData(Model $model)
+    {
+        if (null !== $postalCode = $model->get('postalCode')) {
+            $data = LocaleUtility::getLocalityDataFor($postalCode);
+            if (is_array($data)) {
+                list($city, $region, $country) = $data;
+                if ('US' === $country || 'CA' === $country) {
+                    if (null !== $city) {
+                        $model->set('city', $city);
+                    }
+                    if (null !== $region) {
+                        $model->set('regionCode', $region);
+                    }
+                    $countryCode = 'US' === $country ? 'USA' : 'CAN';
+                    $model->set('countryCode', $countryCode);
+                }
+            }
+        }
+    }
+
+    /**
      * @param   Model   $model
      */
     private function validateCodes(Model $model)

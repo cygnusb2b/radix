@@ -10,6 +10,68 @@ namespace AppBundle\Utility;
 class LocaleUtility
 {
     /**
+     * Gets address data from Google's geo-code API for the provided address data.
+     *
+     * @param   string|array    $address
+     * @return  array
+     */
+    public static function getAddressData($address)
+    {
+        if (is_array($address)) {
+            $address = implode(' ', $address);
+        }
+        $address = urlencode($address);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, sprintf('http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=true', $address));
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = @curl_exec($ch);
+        curl_close($ch);
+
+        if (empty($response)) {
+            return [];
+        }
+        $response = @json_decode($response, true);
+        if (!is_array($response) || empty($response)) {
+            return [];
+        }
+        return $response;
+    }
+
+    /**
+     * Gets locality data (city, region, country) for the provided postal code.
+     *
+     * @param   string  $postalCode
+     * @return  array
+     */
+    public static function getLocalityDataFor($postalCode)
+    {
+        $crc  = [null, null, null];
+        $data = self::getAddressData($postalCode);
+
+        if (!isset($data['results'][0]['address_components'])) {
+            return;
+        }
+        foreach ($data['results'][0]['address_components'] as $component) {
+            if (isset($component['types'])) {
+                if (in_array('locality', $component['types'])) {
+                    // City
+                    $crc[0] = $component['long_name'];
+                } else if (in_array('administrative_area_level_1', $component['types'])) {
+                    // State
+                    $crc[1] = $component['short_name'];
+                } else if (in_array('country', $component['types'])) {
+                    // Country
+                    $crc[2] = $component['short_name'];
+                }
+            }
+        }
+        return $crc;
+    }
+
+    /**
      * Gets a list of countries, keyed by ISO 3166-1 alpha-3 code.
      *
      * @return  array
