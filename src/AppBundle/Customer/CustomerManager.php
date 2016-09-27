@@ -7,6 +7,7 @@ use AppBundle\Security\User\Customer;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
@@ -91,6 +92,17 @@ class CustomerManager
     public function createCookiesFor(Model $customer)
     {
         return $this->cookieManager->createCookiesFor($customer);
+    }
+
+    /**
+     * Destroys any customer cookies found in the provided response.
+     *
+     * @param   Response $response
+     * @return  Response
+     */
+    public function destroyCookiesIn(Response $response)
+    {
+        return $this->cookieManager->destroyCookiesIn($response);
     }
 
     /**
@@ -223,5 +235,19 @@ class CustomerManager
         }
         $this->activeIdentity = $model;
         return $this;
+    }
+
+    /**
+     * Sets the cookies for the active customer to the provided response.
+     *
+     * @param   Response $response
+     * @return  Response
+     */
+    public function setCookiesTo(Response $response)
+    {
+        if (null !== $customer = $this->getActiveCustomer()) {
+            $this->cookieManager->setCookiesTo($response, $customer);
+        }
+        return $response;
     }
 }

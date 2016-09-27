@@ -42,16 +42,12 @@ class CustomerSubscriber implements EventSubscriberInterface
      */
     public function handleCustomerCookies(FilterResponseEvent $event)
     {
-        if (null !== $customer = $this->manager->getActiveCustomer()) {
-            $cookies = $this->manager->createCookiesFor($customer);
-            foreach ($cookies as $instance) {
-                $event->getResponse()->headers->setCookie($instance->toCookie());;
-            }
-        }
-        if (true === $event->getRequest()->attributes->get('destroyCookies')) {
-            foreach ($this->manager->getCookieNames() as $name) {
-                $event->getResponse()->headers->clearCookie($name, AccountManager::APP_PATH);
-            }
+        $request  = $event->getRequest();
+        $response = $event->getResponse();
+
+        $this->manager->setCookiesTo($response);
+        if (true === $request->attributes->get('destroyCookies')) {
+            $this->manager->destroyCookiesIn($response);
         }
     }
 }

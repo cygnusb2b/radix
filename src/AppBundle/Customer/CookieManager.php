@@ -2,10 +2,12 @@
 
 namespace AppBundle\Customer;
 
+use AppBundle\Core\AccountManager;
 use AppBundle\Utility\HelperUtility;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Handles customer cookie management.
@@ -64,6 +66,20 @@ class CookieManager
     }
 
     /**
+     * Destroys any customer cookies found in the provided response.
+     *
+     * @param   Response $response
+     * @return  Response
+     */
+    public function destroyCookiesIn(Response $response)
+    {
+        foreach ($this->getCookieNames() as $name) {
+            $response->headers->clearCookie($name, AccountManager::APP_PATH);
+        }
+        return $response;
+    }
+
+    /**
      * Creates the cookie names used by the customer.
      *
      * @return  array
@@ -104,6 +120,22 @@ class CookieManager
             return;
         }
         return $this->createFromRequest(self::VISITOR_COOKIE, self::VISITOR_EXPIRE, $request);
+    }
+
+    /**
+     * Sets cookies to the response for the provided customer.
+     *
+     * @param   Response    $response
+     * @param   Model       $customer
+     * @return  Response
+     */
+    public function setCookiesTo(Response $response, Model $customer)
+    {
+        $cookies = $this->createCookiesFor($customer);
+        foreach ($cookies as $instance) {
+            $response->headers->setCookie($instance->toCookie());;
+        }
+        return $response;
     }
 
     /**
