@@ -3,6 +3,8 @@ customer-address:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { customer: 1 }}
     mixins: [ 'timestampable' ]
     attributes:
         name:

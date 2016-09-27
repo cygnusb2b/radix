@@ -3,6 +3,9 @@ core-application-user:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { application: 1, user: 1 }, options: { unique: true }}
+                - { keys: { user: 1 }}
     mixins: [ 'timestampable' ]
     attributes:
         roles:
