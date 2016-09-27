@@ -3,6 +3,9 @@ question:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { key: 1 }, options: { unique: true }}
+                - { keys: { tags: 1 }}
     mixins: [ 'keyable', 'timestampable', 'soft-deleteable' ]
     attributes:
         allowHtml:

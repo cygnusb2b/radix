@@ -5,6 +5,32 @@ customer:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                -
+                    keys:
+                        "credentials.password.username": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.password.username":
+                                "$exists": true
+                -
+                    keys:
+                        "credentials.social.identifier": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.social.identifier":
+                                "$exists": true
+                -
+                    keys:
+                        email: 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            _type: "customer-identity"
+                - { keys: { _id: 1, _type: 1 }, options: { unique: true }}
+
     mixins: [ 'timestampable', 'soft-deleteable' ]
     attributes:
         givenName:

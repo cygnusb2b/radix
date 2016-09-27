@@ -3,6 +3,8 @@ core-user:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { email: 1 }, options: { unique: true }}
     mixins: [ 'timestampable' ]
     attributes:
         givenName:

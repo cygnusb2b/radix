@@ -5,6 +5,8 @@ customer-answer:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { "customer._id": 1, question:1 }, options: { unique: true } }
     mixins: [ 'timestampable', 'question-answerable' ]
     relationships:
         customer:

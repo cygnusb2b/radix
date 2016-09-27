@@ -3,4 +3,6 @@ question-tag:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { key: 1 }, options: { unique: true }}
     mixins: [ 'keyable', 'timestampable' ]

@@ -3,6 +3,8 @@ question-choice:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { _id: 1, _type: 1 }, options: { unique: true }}
     mixins: [ 'sequenceable', 'timestampable', 'soft-deleteable' ]
     attributes:
         name:

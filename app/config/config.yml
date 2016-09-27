@@ -18,7 +18,7 @@ as3_modlr:
         default:
             type: mongodb
             parameters:
-                host: mongodb://localhost:27017
+                host: mongodb://mongo.platform.as3.io:27017
     search_clients:
         default:
             type: elastic

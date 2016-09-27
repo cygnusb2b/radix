@@ -5,6 +5,10 @@ product:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { key: 1 }, options: { unique: true }}
+                - { keys: { url: 1 }, options: { unique: true }}
+                - { keys: { _id: 1, _type: 1 }, options: { unique: true }}
     mixins: [ 'keyable', 'timestampable' ]
     attributes:
         description:

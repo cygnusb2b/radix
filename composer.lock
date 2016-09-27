@@ -53,16 +53,16 @@
         },
         {
             "name": "as3/modlr",
-            "version": "v0.3.12",
+            "version": "v0.3.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/modlr.git",
-                "reference": "039d4f4843b55901d545d156c2edc238ea8934c0"
+                "reference": "a71f94f0241394c459886cfdc7fad6f4a38bbd31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/modlr/zipball/039d4f4843b55901d545d156c2edc238ea8934c0",
-                "reference": "039d4f4843b55901d545d156c2edc238ea8934c0",
+                "url": "https://api.github.com/repos/as3io/modlr/zipball/a71f94f0241394c459886cfdc7fad6f4a38bbd31",
+                "reference": "a71f94f0241394c459886cfdc7fad6f4a38bbd31",
                 "shasum": ""
             },
             "require": {
@@ -93,7 +93,7 @@
                 }
             ],
             "description": "Simplified PHP library for fast and efficient RESTful API for MongoDB. Designed for use with front end web frameworks such as EmberJS.",
-            "time": "2016-09-21 18:03:19"
+            "time": "2016-09-27 18:03:23"
         },
         {
             "name": "as3/modlr-api-jsonapiorg",
@@ -138,12 +138,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/As3ModlrBundle.git",
-                "reference": "c045686c78bc3bd84cf94ad50e09a4dbdbd6ff31"
+                "reference": "ea88de7d98c80c7866f800db4ea00886c2e73c55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/As3ModlrBundle/zipball/c045686c78bc3bd84cf94ad50e09a4dbdbd6ff31",
-                "reference": "c045686c78bc3bd84cf94ad50e09a4dbdbd6ff31",
+                "url": "https://api.github.com/repos/as3io/As3ModlrBundle/zipball/ea88de7d98c80c7866f800db4ea00886c2e73c55",
+                "reference": "ea88de7d98c80c7866f800db4ea00886c2e73c55",
                 "shasum": ""
             },
             "require": {
@@ -169,7 +169,7 @@
                 }
             ],
             "description": "Symfony bundle for the Modlr REST ODM library.",
-            "time": "2016-05-04 16:07:53"
+            "time": "2016-09-27 18:03:07"
         },
         {
             "name": "as3/modlr-persister-mongodb",
@@ -177,12 +177,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/modlr-persister-mongodb.git",
-                "reference": "30ce3b0a09f783b7326cee1193b44d84bb8434c9"
+                "reference": "274fc30d6095d0e01bf6d01c7477238b867ffce6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/modlr-persister-mongodb/zipball/30ce3b0a09f783b7326cee1193b44d84bb8434c9",
-                "reference": "30ce3b0a09f783b7326cee1193b44d84bb8434c9",
+                "url": "https://api.github.com/repos/as3io/modlr-persister-mongodb/zipball/274fc30d6095d0e01bf6d01c7477238b867ffce6",
+                "reference": "274fc30d6095d0e01bf6d01c7477238b867ffce6",
                 "shasum": ""
             },
             "require": {
@@ -207,7 +207,7 @@
                 }
             ],
             "description": "MongoDB Persister for the Modlr REST library.",
-            "time": "2016-09-21 17:18:01"
+            "time": "2016-09-27 17:36:25"
         },
         {
             "name": "as3/modlr-search-elastic",
