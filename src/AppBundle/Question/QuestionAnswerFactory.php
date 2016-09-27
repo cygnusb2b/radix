@@ -62,6 +62,9 @@ class QuestionAnswerFactory
         $modelType = sprintf('%s-answer-%s', $context, $answerType);
         if ($typeObj->supportsChoices()) {
             $answer = $this->createChoiceAnswer($modelType, $question, $value);
+            if (null === $answer) {
+                return;
+            }
             return $answer->set('question', $question);
         } else {
             $answer = $this->store->create($modelType);

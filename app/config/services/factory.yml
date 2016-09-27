@@ -1,0 +1,29 @@
+services:
+    app_bundle.factory.customer_account:
+        class: AppBundle\Factory\CustomerAccountFactory
+        arguments: [ "@app_bundle.factory.customer_address", "@app_bundle.factory.customer_phone", "@app_bundle.factory.customer_answer", "@app_bundle.factory.customer_credentials", "@app_bundle.factory.customer_email" ]
+
+    app_bundle.factory.customer_address:
+        class: AppBundle\Factory\CustomerAddressFactory
+
+    app_bundle.factory.customer_answer:
+        class: AppBundle\Factory\CustomerAnswerFactory
+        arguments: [ "@app_bundle.question.answer_factory" ]
+
+    app_bundle.factory.customer_credentials:
+        class: AppBundle\Factory\CustomerCredentialsFactory
+        arguments: [ "@app_bundle.factory.customer_credentials_password", "@app_bundle.factory.customer_credentials_social" ]
+
+    app_bundle.factory.customer_credentials_password:
+        class: AppBundle\Factory\CustomerCredentialsPasswordFactory
+        arguments: [ "@security.password_encoder" ]
+
+    app_bundle.factory.customer_credentials_social:
+        class: AppBundle\Factory\CustomerCredentialsSocialFactory
+
+    app_bundle.factory.customer_email:
+        class: AppBundle\Factory\CustomerEmailFactory
+        arguments: [ "@app_bundle.customer.email_verify.token_generator" ]
+
+    app_bundle.factory.customer_phone:
+        class: AppBundle\Factory\CustomerPhoneFactory

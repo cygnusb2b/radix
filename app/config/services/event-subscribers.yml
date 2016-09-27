@@ -7,20 +7,31 @@ services:
 
     app_bundle.event_subscriber.customer_account:
         private: true
-        class: AppBundle\EventSubscriber\CustomerAccountSubscriber
+        class: AppBundle\EventSubscriber\Customer\CustomerAccountSubscriber
+        calls:
+            - [ setContainer, [ "@service_container" ] ]
         tags:
             - { name: as3_modlr.event_subscriber }
 
     app_bundle.event_subscriber.customer_address:
         private: true
-        class: AppBundle\EventSubscriber\CustomerAddressSubscriber
+        class: AppBundle\EventSubscriber\Customer\CustomerAddressSubscriber
+        arguments: [ "@app_bundle.factory.customer_address" ]
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.customer_answer:
+        private: true
+        class: AppBundle\EventSubscriber\Customer\CustomerAnswerSubscriber
+        calls:
+            - [ setContainer, [ "@service_container" ] ]
         tags:
             - { name: as3_modlr.event_subscriber }
 
     app_bundle.event_subscriber.customer_email:
         private: true
-        class: AppBundle\EventSubscriber\CustomerEmailSubscriber
-        arguments: [ "@app_bundle.customer.email_verify.token_generator" ]
+        class: AppBundle\EventSubscriber\Customer\CustomerEmailSubscriber
+        arguments: [ "@app_bundle.factory.customer_email" ]
         tags:
             - { name: as3_modlr.event_subscriber }
 

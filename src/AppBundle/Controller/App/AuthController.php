@@ -27,17 +27,42 @@ class AuthController extends AbstractAppController
      */
     public function createAction(Request $request)
     {
-        // @TODO PHONES AREN'T BEING ADDED!!!!
         $payload = RequestUtility::extractPayload($request, false);
+        $data    = RequestUtility::parsePayloadData($payload['data']);
+
+        $store   = $this->get('as3_modlr.store');
+        $factory = $this->get('app_bundle.factory.customer_account');
+        $factory->setStore($store);
+
+        $customerData = $data['customer'];
+
+        $customer = $factory->create($customerData);
+
+        if (true === $factory->canSave($customer)) {
+            $toSave = $factory->getRelatedModelsFor($customer);
+            foreach ($toSave as $model) {
+                $model->save();
+
+            }
+        }
+
+        // $factory->preValidate($customer);
+
+
+
+
+
+        var_dump(__METHOD__);
+        die();
 
         // @todo Once form gen is in place, any front-end field validation (such as required, etc) should also be handled (again) on the backend
         // @todo This should be handled by a generic form validation service, that looks at the form in question, reads its validation rules, and validates the incoming data.
         // @todo Document how data flows through services, and at each point it's validated: controller -> validation service -> submit handler -> customer handler -> event subscriber
         // For now we'll handle manually in the controller.
-        $this->validatePayload($payload);
+
 
         // Format/validate email.
-        $payload['data']['customer:primaryEmail'] = ModelUtility::formatEmailAddress($payload['data']['customer:primaryEmail']);
+
 
         // At this point, the form is considered valid and can now be passed to the submission manager.
         // @todo The form config should determine which processor should run to handle the submission.
@@ -45,12 +70,12 @@ class AuthController extends AbstractAppController
 
         // Submit order: 1) customer-account 2) customer-email 3) input-submission
 
-        $data = RequestUtility::parsePayloadData($payload['data']);
+
 
         // Services we'll be using...
         $provider       = $this->get('app_bundle.security.user_provider.customer');
         $store          = $this->get('as3_modlr.store');
-        $encoder        = $this->get('security.password_encoder');
+
         $cloner         = $this->get('app_bundle.cloning.model_cloner');
         $answerFactory  = $this->get('app_bundle.question.answer_factory');
 
@@ -95,7 +120,6 @@ class AuthController extends AbstractAppController
                 }
             }
         }
-
 
         // Apply answers
         $answers = [];
@@ -221,26 +245,5 @@ class AuthController extends AbstractAppController
     {
         $manager = $this->get('app_bundle.customer.manager');
         return $manager->createAuthResponse();
-    }
-
-    /**
-     * @todo    This should move into the form/submission validation service.
-     * @param   array   $payload
-     * @throws  ExceptionQueue
-     */
-    private function validatePayload(array $payload)
-    {
-        if (false === HelperUtility::isSetNotEmpty($payload['data'], 'customer:primaryEmail')) {
-            throw new HttpFriendlyException('The email address field is required.', 400);
-        }
-
-        if (false === HelperUtility::isSetNotEmpty($payload['data'], 'customer:password')) {
-            throw new HttpFriendlyException('The password field is required.', 400);
-        }
-
-        $password = $payload['data']['customer:password'];
-        if (strlen($password) < 4 || strlen($password) > 72) {
-            throw new HttpFriendlyException('The password must be between 4 and 72 characters.', 400);
-        }
     }
 }

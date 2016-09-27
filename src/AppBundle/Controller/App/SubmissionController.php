@@ -15,20 +15,26 @@ class SubmissionController extends AbstractAppController
     public function inquiryAction(Request $request)
     {
 
-        var_dump($request->cookies->get('__olya'));
+        $store   = $this->get('as3_modlr.store');
+        $factory = $this->get('app_bundle.factory.customer_account');
+        $factory->setStore($store);
+
+        $payload = RequestUtility::extractPayload($request, false);
+
+
+        var_dump(__METHOD__, $factory);
         die();
+
+        // Services to use
+        $customerManager = $this->get('app_bundle.customer.manager');
+
         // Parse the data into an object...
         $payload = RequestUtility::extractPayload($request, false);
 
         // Validate... @todo Again, this should use a standard form handler to determine what is/isn't required.
-        $this->validateInquiryPayload($payload);
-
-        // Format/validate email.
-        $payload['data']['customer:primaryEmail'] = ModelUtility::formatEmailAddress($payload['data']['customer:primaryEmail']);
+        $payload = $this->formatValidateInquiryPayload($payload);
 
         $data = RequestUtility::parsePayloadData($payload['data']);
-
-        // Determine customer to use.
 
 
         // Create the submission
@@ -37,13 +43,31 @@ class SubmissionController extends AbstractAppController
 
         // Needs to scope the payload. Eventually this should use the raw form submission (which should already be scoped).
         $submission->set('payload', $payload);
-        // $submission->set('customer', $customer);
         $submission->set('sourceKey', 'inquiry');
 
         if (isset($data['submission']['referringUrl'])) {
             $submission->set('referringHost', $data['submission']['referringHost']);
             $submission->set('referringHref', $data['submission']['referringHref']);
         }
+
+        if (null !== $customer = $customerManager->getActiveAccount()) {
+            // A customer account is currently logged in.
+            $submission->set('customer', $customer);
+            // Update customer data.
+            // Save customer and submission.
+        }
+
+        var_dump($customerManager->getActiveAccount());
+        die();
+
+
+
+        // Determine customer to use.
+
+
+
+
+
 
         // $submission->save();
 
@@ -80,7 +104,7 @@ class SubmissionController extends AbstractAppController
      * @param   array   $payload
      * @throws  HttpFriendlyException
      */
-    private function validateInquiryPayload(array $payload)
+    private function formatValidateInquiryPayload(array $payload)
     {
         if (false === HelperUtility::isSetArray($payload, 'meta')) {
             throw new HttpFriendlyException('No meta member was found in the paylod. Unable to process submission.', 422);
@@ -95,8 +119,21 @@ class SubmissionController extends AbstractAppController
             throw new HttpFriendlyException('The inquiry model type and identifier are required', 400);
         }
 
+        $customerManager = $this->get('app_bundle.customer.manager');
+
+        // Validation that should only run for non-logged in users.
+        if (null !== $customer = $customerManager->getActiveAccount()) {
+            if (null !== $customer->get('primaryEmail')) {
+                return $payload;
+            }
+        }
+
         if (false === HelperUtility::isSetNotEmpty($payload['data'], 'customer:primaryEmail')) {
             throw new HttpFriendlyException('The email address field is required.', 400);
         }
+
+        // Format/validate email.
+        $payload['data']['customer:primaryEmail'] = ModelUtility::formatEmailAddress($payload['data']['customer:primaryEmail']);
+        return $payload;
     }
 }
