@@ -32,6 +32,7 @@ class CustomerAccountSubscriber implements EventSubscriberInterface
         }
         $this->appendSettings($model);
         $this->validateCredentials($model);
+        $this->appendDisplayName($model);
     }
 
     /**
@@ -41,6 +42,30 @@ class CustomerAccountSubscriber implements EventSubscriberInterface
     protected function shouldProcess(Model $model)
     {
         return 'customer-account' === $model->getType();
+    }
+
+    /**
+     * @param   Model   $model
+     */
+    private function appendDisplayName(Model $model)
+    {
+        if (null !== $model->get('displayName')) {
+            return;
+        }
+        $credentials = $model->get('credentials');
+        if (null !== $password = $credentials->get('password')) {
+            $username = $password->get('username');
+            if (!empty($username)) {
+                $model->set('displayName', $username);
+                return;
+            }
+        }
+        if (null !== $primaryEmail = $model->get('primaryEmail')) {
+            preg_match('/^(.+)@/i', $primaryEmail, $matches);
+            if (isset($matches[1])) {
+                $model->set('displayName', $matches[1]);
+            }
+        }
     }
 
     /**
