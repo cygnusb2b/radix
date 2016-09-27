@@ -54,6 +54,9 @@ class CustomerAddressSubscriber implements EventSubscriberInterface
      */
     private function appendLocalityData(Model $model)
     {
+        if (false === $model->getState()->is('new')) {
+            return;
+        }
         if (null !== $postalCode = $model->get('postalCode')) {
             $data = LocaleUtility::getLocalityDataFor($postalCode);
             if (is_array($data)) {

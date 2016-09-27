@@ -70,6 +70,9 @@ class CustomerEmailSubscriber implements EventSubscriberInterface
      */
     private function appendDisplayName(Model $model)
     {
+        if (false === $model->getState()->is('new')) {
+            return;
+        }
         $account = $model->get('account');
         if (null !== $account->get('displayName')) {
             return;
