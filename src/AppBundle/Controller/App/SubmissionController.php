@@ -16,6 +16,7 @@ class SubmissionController extends AbstractAppController
     {
         // Retrieve required services.
         $customerFactory    = $this->get('app_bundle.factory.customer.account');
+        $identityFactory    = $this->get('app_bundle.factory.customer.identity');
         $customerManager    = $this->get('app_bundle.customer.manager');
         $submissionFactory  = $this->get('app_bundle.factory.input_submission');
         $serializer         = $this->get('app_bundle.serializer.public_api');
@@ -32,6 +33,10 @@ class SubmissionController extends AbstractAppController
 
         if (null !== $customer = $customerManager->getActiveAccount()) {
             // A customer account is currently logged in.
+            $isIdentity = false;
+
+            // Set the customer factory.
+            $customerFactory = $this->get('app_bundle.factory.customer.account');
 
             // Make sure email isn't updated by this form!
             $payload->getCustomer()->remove('primaryEmail');
@@ -39,33 +44,58 @@ class SubmissionController extends AbstractAppController
             // Update customer data from this submission.
             $customerFactory->apply($customer, $payload->getCustomer()->all());
 
-            $submission->set('customer', $customer);
+        } else {
 
-            // Throw error if unable to update the customer or create submission.
-            if (true !== $result = $customerFactory->canSave($customer)) {
-                $result->throwException();
-            }
-            if (true !== $result = $submissionFactory->canSave($submission)) {
-                $result->throwException();
-            }
+             // A customer account is NOT logged in.
+            $isIdentity = true;
 
-            // Save everything
-            foreach ($customerFactory->getRelatedModelsFor($customer) as $model) {
-                $model->save();
-            }
+            // Set the customer factory.
+            $customerFactory = $this->get('app_bundle.factory.customer.identity');
 
-            foreach ($submissionFactory->getRelatedModelsFor($submission) as $model) {
-                $model->save();
-            }
+            // Attempt to find the identity.
+            $emailAddress = $payload->getCustomer()->get('primaryEmail');
+            $customer = $this->get('as3_modlr.store')->findQuery('customer-identity', ['email' => $emailAddress])->getSingleResult();
 
-            // @todo The serialized customer and submission should be sent to the template for processing.
-            return new JsonResponse(['data' => [
-                // 'customer'   => $serializer->serialize($customer),
-                // 'submission' => $serializer->serialize($submission),
-                'template'   => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
-            ]], 201);
+            if (null === $customer) {
+                // No identity found. Create.
+                $customer = $customerFactory->create($payload->getCustomer()->all());
+            } else {
+                // Update the existing identity.
+                $customerFactory->apply($customer, $payload->getCustomer()->all());
+            }
         }
-        throw new HttpFriendlyException('Submitting an inquiry while not logged in is not implemented yet.', 501);
+
+        // Set the account/identity to the submission.
+        $submission->set('customer', $customer);
+
+        // Throw error if unable to update the customer or create submission.
+        if (true !== $result = $customerFactory->canSave($customer)) {
+            $result->throwException();
+        }
+        if (true !== $result = $submissionFactory->canSave($submission)) {
+            $result->throwException();
+        }
+
+        // Save everything
+        foreach ($customerFactory->getRelatedModelsFor($customer) as $model) {
+            $model->save();
+        }
+
+        foreach ($submissionFactory->getRelatedModelsFor($submission) as $model) {
+            $model->save();
+        }
+
+        if (true === $isIdentity) {
+            // Have to manually set new identity.
+            $customerManager->setActiveIdentity($customer);
+        }
+
+        // @todo The serialized customer and submission should be sent to the template for processing.
+        return new JsonResponse(['data' => [
+            // 'customer'   => $serializer->serialize($customer),
+            // 'submission' => $serializer->serialize($submission),
+            'template'   => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
+        ]], 201);
 
         // If customer logged in...
             // Update the root customer account data with the submission (not email address!!)
@@ -119,9 +149,12 @@ class SubmissionController extends AbstractAppController
             }
         }
 
-        $email = $payload->getCustomer()->get('primaryEmail');
+        $email = ModelUtility::formatEmailAddress($payload->getCustomer()->get('primaryEmail'));
         if (empty($email)) {
             throw new HttpFriendlyException('The email address field is required.', 400);
+        }
+        if (false === ModelUtility::isEmailAddressValid($email)) {
+            throw new HttpFriendlyException('The provided email address is invalid.', 400);
         }
 
         return $payload;

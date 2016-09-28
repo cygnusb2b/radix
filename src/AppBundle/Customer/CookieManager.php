@@ -46,23 +46,48 @@ class CookieManager
      * Creates the cookies for a customer.
      *
      * @param   Model   $customer
+     * @param   bool        $identitySet    Whether the identity was intentionally set.
      * @return  CustomerCookie[]
      * @throws  \InvalidArgumentException
      */
-    public function createCookiesFor(Model $customer)
+    public function createCookiesFor(Model $customer, $identitySet = false)
     {
         if (!isset($this->allowedTypes[$customer->getType()])) {
             throw new \InvalidArgumentException('The model type is not supported as a customer cookie.');
         }
 
-        if ('customer-identity' === $customer->getType()) {
-            throw new \BadMethodCallException('Handling of cookies for identities needs to handle checking for previous session.');
-        }
+        $cookies = [];
 
-        return [
-            new CustomerCookie(self::VISITOR_COOKIE, self::VISITOR_EXPIRE, $customer->getId(), $customer->getType()),
-            new CustomerCookie(self::SESSION_COOKIE, self::SESSION_EXPIRE, $customer->getId(), $customer->getType()),
-        ];
+        if ('customer-identity' === $customer->getType()) {
+
+            if (true == $identitySet) {
+                // Identity was set by the application (not from a previous session cookie).
+                $cookies = [
+                    new CustomerCookie(self::VISITOR_COOKIE, self::VISITOR_EXPIRE, $customer->getId(), $customer->getType()),
+                    new CustomerCookie(self::SESSION_COOKIE, self::SESSION_EXPIRE, $customer->getId(), $customer->getType()),
+                ];
+            } else {
+                $cookies[] = new CustomerCookie(self::VISITOR_COOKIE, self::VISITOR_EXPIRE, $customer->getId(), $customer->getType());
+
+                $session = $this->getSessionCookie();
+                if (null !== $session) {
+                    // Session cookie found.
+                    if ($session->getIdentifier() === $customer->getId()) {
+                        // Session matches identity. Renew the session.
+                        $cookies[] = new CustomerCookie(self::SESSION_COOKIE, self::SESSION_EXPIRE, $customer->getId(), $customer->getType());
+                    } else {
+                        // Flag that the session should be destroyed.
+                        $this->requestStack->getCurrentRequest()->attributes->set('destroySessionCookie', true);
+                    }
+                }
+            }
+        } else {
+            $cookies = [
+                new CustomerCookie(self::VISITOR_COOKIE, self::VISITOR_EXPIRE, $customer->getId(), $customer->getType()),
+                new CustomerCookie(self::SESSION_COOKIE, self::SESSION_EXPIRE, $customer->getId(), $customer->getType()),
+            ];
+        }
+        return $cookies;
     }
 
     /**
@@ -77,6 +102,17 @@ class CookieManager
             $response->headers->clearCookie($name, AccountManager::APP_PATH);
         }
         return $response;
+    }
+
+    /**
+     * Destroys the session cookie.
+     *
+     * @param   Response $response
+     * @return  Response
+     */
+    public function destroySessionCookie(Response $response)
+    {
+        $response->headers->clearCookie(self::SESSION_COOKIE, AccountManager::APP_PATH);
     }
 
     /**
@@ -127,11 +163,12 @@ class CookieManager
      *
      * @param   Response    $response
      * @param   Model       $customer
+     * @param   bool        $identitySet    Whether the identity was intentionally set.
      * @return  Response
      */
-    public function setCookiesTo(Response $response, Model $customer)
+    public function setCookiesTo(Response $response, Model $customer, $identitySet = false)
     {
-        $cookies = $this->createCookiesFor($customer);
+        $cookies = $this->createCookiesFor($customer, $identitySet);
         foreach ($cookies as $instance) {
             $response->headers->setCookie($instance->toCookie());;
         }

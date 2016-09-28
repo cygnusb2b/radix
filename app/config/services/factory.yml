@@ -6,6 +6,7 @@ services:
             - [ addFactory, [ "@app_bundle.factory.customer.address" ] ]
             - [ addFactory, [ "@app_bundle.factory.customer.answer" ] ]
             - [ addFactory, [ "@app_bundle.factory.customer.email" ] ]
+            - [ addFactory, [ "@app_bundle.factory.customer.identity" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_submission" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_answer" ] ]
 
@@ -20,6 +21,10 @@ services:
     app_bundle.factory.customer.answer:
         class: AppBundle\Factory\Customer\CustomerAnswerFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.question.answer_factory" ]
+
+    app_bundle.factory.customer.identity:
+        class: AppBundle\Factory\Customer\CustomerIdentityFactory
+        arguments: [ "@as3_modlr.store", "@app_bundle.factory.customer.address", "@app_bundle.factory.customer.phone", "@app_bundle.factory.customer.answer" ]
 
     app_bundle.factory.customer.credentials:
         class: AppBundle\Factory\Customer\CustomerCredentialsFactory

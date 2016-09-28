@@ -49,5 +49,8 @@ class CustomerSubscriber implements EventSubscriberInterface
         if (true === $request->attributes->get('destroyCookies')) {
             $this->manager->destroyCookiesIn($response);
         }
+        if (true === $request->attributes->get('destroySessionCookie')) {
+            $this->manager->destroySessionCookie($response);
+        }
     }
 }

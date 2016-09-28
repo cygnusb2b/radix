@@ -262,7 +262,7 @@ class CustomerManager
     public function setCookiesTo(Response $response)
     {
         if (null !== $customer = $this->getActiveCustomer()) {
-            $this->cookieManager->setCookiesTo($response, $customer);
+            $this->cookieManager->setCookiesTo($response, $customer, null !== $this->activeIdentity);
         }
         return $response;
     }
