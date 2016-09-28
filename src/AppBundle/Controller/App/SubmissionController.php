@@ -77,18 +77,15 @@ class SubmissionController extends AbstractAppController
         }
 
         // Save everything
-        foreach ($customerFactory->getRelatedModelsFor($customer) as $model) {
-            $model->save();
-        }
-
-        foreach ($submissionFactory->getRelatedModelsFor($submission) as $model) {
-            $model->save();
-        }
+        $customerFactory->save($customer);
+        $submissionFactory->save($submission);
 
         if (true === $isIdentity) {
             // Have to manually set new identity.
             $customerManager->setActiveIdentity($customer);
         }
+
+        // @todo Send email notifications.
 
         // @todo The serialized customer and submission should be sent to the template for processing.
         return new JsonResponse(['data' => [
@@ -96,30 +93,6 @@ class SubmissionController extends AbstractAppController
             // 'submission' => $serializer->serialize($submission),
             'template'   => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
         ]], 201);
-
-        // If customer logged in...
-            // Update the root customer account data with the submission (not email address!!)
-            // Link the submission to the customer account
-
-        // Else customer not logged in...
-            // Attempt to find customer identity... (do not need to check identity session cookie directly because this form has an email address)
-                // Customer identity found in DB using the email address in the submission
-                    // Link submission to the found identity
-                    // Update the root identity data with the submission
-                    // Drop identity cookies (session and visitor)
-
-                // Customer identity not found in DB using the email address in the submission
-                    // Create the identity based on the submission
-                    // Link the submission to the new identity
-                    // Drop identity cookies (session and visitor)
-
-        // Once submission and customer dance complete...
-        // Determine what notifications should be sent
-            // Thank to the customer... (uses the inquiry thank you template)
-            // Notify individuals based on provided notify settings (e.g. sales contact, etc)... (uses the inquiry notify template)
-
-        // Determine what should now appear in the inquiry container... some sort of thank you, related products, etc... ??
-        // Return response for React handling.
     }
 
     /**

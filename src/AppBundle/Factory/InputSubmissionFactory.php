@@ -154,6 +154,21 @@ class InputSubmissionFactory extends AbstractModelFactory implements SubscriberF
     }
 
     /**
+     * Saves the provided submission and all its related models, if valid.
+     *
+     * @param   Model   $submission
+     */
+    public function save(Model $submission)
+    {
+        if (true !== $result = $this->canSave($submission)) {
+            $result->throwException();
+        }
+        foreach ($this->getRelatedModelsFor($submission) as $model) {
+            $model->save();
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function supports(Model $model)

@@ -32,6 +32,7 @@ class AuthController extends AbstractAppController
 
         // Retrieve required services.
         $customerFactory    = $this->get('app_bundle.factory.customer.account');
+        $identityFactory    = $this->get('app_bundle.factory.customer.identity');
         $customerManager    = $this->get('app_bundle.customer.manager');
         $submissionFactory  = $this->get('app_bundle.factory.input_submission');
 
@@ -60,15 +61,21 @@ class AuthController extends AbstractAppController
             $result->throwException();
         }
 
-        // @todo Create an identity if one doesn't exist. Find the identity if it does exist. Do NOT link the existing identity to the account until the email is verified.
-
         // Save everything
-        foreach ($customerFactory->getRelatedModelsFor($customer) as $model) {
-            $model->save();
-        }
+        $customerFactory->save($customer);
+        $submissionFactory->save($submission);
 
-        foreach ($submissionFactory->getRelatedModelsFor($submission) as $model) {
-            $model->save();
+        // @todo Create an identity if one doesn't exist. Find the identity if it does exist. Do NOT link the existing identity to the account until the email is verified.
+        // Attempt to find the identity.
+        $emailAddress = $payload->getCustomer()->get('primaryEmail');
+        $identity = $this->get('as3_modlr.store')->findQuery('customer-identity', ['email' => $emailAddress])->getSingleResult();
+
+        if (null === $identity) {
+            // No identity found. Create.
+            $identity = $identityFactory->create($payload->getCustomer()->all());
+            if (true === $identityFactory->canSave($identity)) {
+                $identityFactory->save($identity);
+            }
         }
 
         // @todo Send email notifications.
