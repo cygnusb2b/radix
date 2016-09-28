@@ -1,7 +1,11 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
+use AppBundle\Factory\AbstractModelFactory;
+use AppBundle\Factory\Error;
+use AppBundle\Factory\ValidationFactoryInterface;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 
 /**
@@ -9,7 +13,7 @@ use As3\Modlr\Models\Model;
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-class CustomerCredentialsSocialFactory extends AbstractModelFactory
+class CustomerCredentialsSocialFactory extends AbstractModelFactory implements ValidationFactoryInterface
 {
     /**
      * Applys a password credential to a customer credentials model.
@@ -25,14 +29,25 @@ class CustomerCredentialsSocialFactory extends AbstractModelFactory
     }
 
     /**
-     * Determines if the credentials embed can be saved.
-     *
-     * @param   Embed   $credentials
-     * @return  true|Error
+     * {@inheritdoc}
      */
-    public function canSave(Embed $credentials)
+    public function canSave(AbstractModel $credentials)
     {
+        return true;
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function postValidate(AbstractModel $credential)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function preValidate(AbstractModel $credential)
+    {
     }
 
     /**

@@ -1,12 +1,15 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
-use As3\Modlr\Models\Model;
+use AppBundle\Factory\Error;
 use AppBundle\Utility\HelperUtility;
+use As3\Modlr\Models\AbstractModel;
+use As3\Modlr\Models\Model;
+use As3\Modlr\Store\Store;
 
 /**
- * Customer factory for creating/updating/upserting customer accounts.
+ * Factory for customer accounts.
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
@@ -25,9 +28,9 @@ class CustomerAccountFactory extends AbstractCustomerFactory
     /**
      * Constructor.
      */
-    public function __construct(CustomerAddressFactory $address, CustomerPhoneFactory $phone, CustomerAnswerFactory $answer, CustomerCredentialsFactory $credentials, CustomerEmailFactory $email)
+    public function __construct(Store $store, CustomerAddressFactory $address, CustomerPhoneFactory $phone, CustomerAnswerFactory $answer, CustomerCredentialsFactory $credentials, CustomerEmailFactory $email)
     {
-        parent::__construct($address, $phone, $answer);
+        parent::__construct($store, $address, $phone, $answer);
         $this->credentials = $credentials;
         $this->email       = $email;
     }
@@ -51,7 +54,10 @@ class CustomerAccountFactory extends AbstractCustomerFactory
         return $account;
     }
 
-    public function canSave(Model $customer)
+    /**
+     * {@ineritdoc}
+     */
+    public function canSave(AbstractModel $customer)
     {
         if (true !== $result = parent::canSave($customer)) {
             return $result;
@@ -104,27 +110,45 @@ class CustomerAccountFactory extends AbstractCustomerFactory
         return $customer;
     }
 
+    /**
+     * Gets the customer credentials factory.
+     *
+     * @return  CustomerCredentialsPasswordFactory
+     */
+    public function getCredentialsFactory()
+    {
+        return $this->credentials;
+    }
+
+    /**
+     * Gets the customer email factory.
+     *
+     * @return  CustomerCredentialsPasswordFactory
+     */
+    public function getEmailFactory()
+    {
+        return $this->email;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getRelatedModelsFor(Model $customer)
     {
         return array_merge(parent::getRelatedModelsFor($customer), $this->getRelatedEmails($customer));
     }
 
     /**
-     * Actions that always run (during save) before validation occurs.
-     *
-     * @param   Model   $customer
+     * {@inheritdoc}
      */
-    public function preValidate(Model $customer)
+    public function postSave(Model $model)
     {
-        $this->appendSettings($customer);
     }
 
     /**
-     * Actions that always run (during save) after validation occurs.
-     *
-     * @param   Model   $customer
+     * {@inheritdoc}
      */
-    public function postValidate(Model $customer)
+    public function postValidate(AbstractModel $customer)
     {
         $credentials = $customer->get('credentials');
 
@@ -141,25 +165,19 @@ class CustomerAccountFactory extends AbstractCustomerFactory
     }
 
     /**
-     * Gets the customer credentials factory.
-     *
-     * @return  CustomerCredentialsPasswordFactory
+     * {@inheritdoc}
      */
-    public function getCredentialsFactory()
+    public function preValidate(AbstractModel $customer)
     {
-        $this->credentials->setStore($this->getStore());
-        return $this->credentials;
+        $this->appendSettings($customer);
     }
 
     /**
-     * Gets the customer email factory.
-     *
-     * @return  CustomerCredentialsPasswordFactory
+     * {@inheritdoc}
      */
-    public function getEmailFactory()
+    public function supports(Model $model)
     {
-        $this->email->setStore($this->getStore());
-        return $this->email;
+        return 'customer-account' === $model->getType();
     }
 
     /**
@@ -196,7 +214,7 @@ class CustomerAccountFactory extends AbstractCustomerFactory
     {
         $emails = [];
         foreach ($this->getStore()->getModelCache()->getAllForType('customer-email') as $email) {
-            if (null === $email->get('customer')) {
+            if (null === $email->get('account')) {
                 continue;
             }
             if ($email->get('account')->getId() === $customer->getId()) {

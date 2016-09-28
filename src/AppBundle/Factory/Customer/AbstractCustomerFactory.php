@@ -1,17 +1,21 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
+use AppBundle\Factory\AbstractModelFactory;
+use AppBundle\Factory\Error;
+use AppBundle\Factory\SubscriberFactoryInterface;
+use AppBundle\Utility\HelperUtility;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
-use AppBundle\Utility\HelperUtility;
 
 /**
  * Abstract customer factory with common operations for both accounts and identities.
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-abstract class AbstractCustomerFactory extends AbstractModelFactory
+abstract class AbstractCustomerFactory extends AbstractModelFactory implements SubscriberFactoryInterface
 {
     /**
      * @var CustomerAddressFactory
@@ -29,12 +33,14 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
     private $phone;
 
     /**
+     * @param   Store                   $store
      * @param   CustomerAddressFactory  $address
      * @param   CustomerPhoneFactory    $phone
      * @param   CustomerAnswerFactory   $answer
      */
-    public function __construct(CustomerAddressFactory $address, CustomerPhoneFactory $phone, CustomerAnswerFactory $answer)
+    public function __construct(Store $store, CustomerAddressFactory $address, CustomerPhoneFactory $phone, CustomerAnswerFactory $answer)
     {
+        parent::__construct($store);
         $this->address = $address;
         $this->phone   = $phone;
         $this->answer  = $answer;
@@ -57,36 +63,24 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
 
         $this->setPrimaryAddress($customer, $attributes);
         $this->setPrimaryPhone($customer, $attributes);
-
         $this->setAnswers($customer, $attributes);
     }
 
-    public function preValidate(Model $customer)
-    {
-
-    }
-
-    public function postValidate(Model $customer)
-    {
-
-    }
-
-    public function save(Model $customer)
-    {
-        if (true !== $result = $this->canSave($customer)) {
-            $result->throwException();
-        }
-        foreach ($this->getRelatedModelsFor($customer) as $model) {
-            $model->save();
-        }
-    }
-
-    public function canSave(Model $customer)
+    /**
+     * {@inheritdoc}
+     */
+    public function canSave(AbstractModel $customer)
     {
         $this->preValidate($customer);
         foreach ($this->getRelatedAddresses($customer) as $address) {
             if (true !== $result = $this->getAddressFactory()->canSave($address)) {
                 // Ensure all addresses can be saved.
+                return $result;
+            }
+        }
+        foreach ($this->getRelatedAnswers($customer) as $answer) {
+            if (true !== $result = $this->getAnswerFactory()->canSave($answer)) {
+                // Ensure all answers can be saved.
                 return $result;
             }
         }
@@ -109,7 +103,8 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
     {
         $customer = $this->createEmptyInstance();
         $customer->set('deleted', false);
-        return $this->apply($customer, $attributes);
+        $this->apply($customer, $attributes);
+        return $customer;
     }
 
     /**
@@ -119,7 +114,6 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
      */
     public function getAddressFactory()
     {
-        $this->address->setStore($this->getStore());
         return $this->address;
     }
 
@@ -130,7 +124,6 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
      */
     public function getAnswerFactory()
     {
-        $this->answer->setStore($this->getStore());
         return $this->answer;
     }
 
@@ -141,13 +134,54 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
      */
     public function getPhoneFactory()
     {
-        $this->phone->setStore($this->getStore());
         return $this->phone;
     }
 
+    /**
+     * Gets all related models for the provided customer (including itself).
+     *
+     * @param   Model   $customer
+     * @return  Model[]
+     */
     public function getRelatedModelsFor(Model $customer)
     {
         return array_merge([$customer], $this->getRelatedAddresses($customer), $this->getRelatedAnswers($customer));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function preValidate(AbstractModel $customer)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function postSave(Model $model)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function postValidate(AbstractModel $customer)
+    {
+    }
+
+    /**
+     * Saves the provided customer and all its related models, if valid.
+     *
+     * @param   Model   $customer
+     */
+    public function save(Model $customer)
+    {
+        if (true !== $result = $this->canSave($customer)) {
+            $result->throwException();
+        }
+        foreach ($this->getRelatedModelsFor($customer) as $model) {
+            $model->save();
+        }
     }
 
     /**
@@ -226,11 +260,15 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
             return;
         }
 
+        $questionIds = [];
         foreach ($attributes['answers'] as $questionId => $answerId) {
             if (!HelperUtility::isMongoIdFormat($questionId)) {
                 continue;
             }
             $questionIds[] = $questionId;
+        }
+        if (empty($questionIds)) {
+            return;
         }
         $criteria  = ['id' => ['$in' => $questionIds]];
         $questions = $this->getStore()->findQuery('question', $criteria);
@@ -285,7 +323,6 @@ abstract class AbstractCustomerFactory extends AbstractModelFactory
         }
 
         // @todo Needs to re-vamped when support is added for multiple phones.
-
         $number       = $attributes['primaryPhone']['number'];
         $primaryPhone = $customer->get('primaryPhone');
 

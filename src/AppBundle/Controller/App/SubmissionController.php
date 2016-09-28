@@ -14,11 +14,10 @@ class SubmissionController extends AbstractAppController
 {
     public function inquiryAction(Request $request)
     {
-
-        $store           = $this->get('as3_modlr.store');
-        $factory         = $this->get('app_bundle.factory.customer_account');
-        $customerManager = $this->get('app_bundle.customer.manager');
-        $factory->setStore($store);
+        // Retrieve required services.
+        $customerFactory    = $this->get('app_bundle.factory.customer.account');
+        $customerManager    = $this->get('app_bundle.customer.manager');
+        $submissionFactory  = $this->get('app_bundle.factory.input_submission');
 
         // Create the payload instance: @todo, parameters should support dot notation and return arrays as parameter instances.
         $payload = RequestPayload::createFrom($request);
@@ -26,74 +25,41 @@ class SubmissionController extends AbstractAppController
         // Validate... @todo Again, this should use a standard form handler to determine what is/isn't required.
         $this->validateInquiryPayload($payload);
 
-
-        $submission = $store->create('input-submission');
-
+        // Create the submission.
+        $submission = $submissionFactory->create($payload);
+        $submission->set('sourceKey', 'inquiry');
 
         if (null !== $customer = $customerManager->getActiveAccount()) {
+            // A customer account is currently logged in.
+
             // Make sure email isn't updated by this form!
             $payload->getCustomer()->remove('primaryEmail');
 
-            // A customer account is currently logged in.
+            // Update customer data from this submission.
+            $customerFactory->apply($customer, $payload->getCustomer()->all());
+
             $submission->set('customer', $customer);
-            // Update customer data.
-            $factory->apply($customer, $payload->getCustomer()->all());
 
-            $factory->save($customer);
+            // Throw error if unable to update the customer or create submission.
+            if (true !== $result = $customerFactory->canSave($customer)) {
+                $result->throwException();
+            }
+            if (true !== $result = $submissionFactory->canSave($submission)) {
+                $result->throwException();
+            }
 
+            // Save everything
+            foreach ($customerFactory->getRelatedModelsFor($customer) as $model) {
+                $model->save();
+            }
 
-            // Save customer and submission.
+            foreach ($submissionFactory->getRelatedModelsFor($submission) as $model) {
+                $model->save();
+            }
+
+            return new JsonResponse(['data' => ['id' => $customer->getId(), 'submission' => $submission->getId()]], 201);
         }
-
-        var_dump(__METHOD__);
-
-        die();
-
-        // Services to use
-
-
-        // Parse the data into an object...
-        $payload = RequestUtility::extractPayload($request, false);
-
-
-
-
-
-
-        // Create the submission
-
-        $submission = $store->create('input-submission');
-
-        // Needs to scope the payload. Eventually this should use the raw form submission (which should already be scoped).
-        $submission->set('payload', $payload);
-        $submission->set('sourceKey', 'inquiry');
-
-        if (isset($data['submission']['referringUrl'])) {
-            $submission->set('referringHost', $data['submission']['referringHost']);
-            $submission->set('referringHref', $data['submission']['referringHref']);
-        }
-
-        if (null !== $customer = $customerManager->getActiveAccount()) {
-            // A customer account is currently logged in.
-            $submission->set('customer', $customer);
-            // Update customer data.
-            // Save customer and submission.
-        }
-
-        var_dump($customerManager->getActiveAccount());
-        die();
-
-
-
-        // Determine customer to use.
-
-
-
-
-
-
-        // $submission->save();
-
+        throw new HttpFriendlyException('Submitting an inquiry while not logged in is not implemented yet.');
 
         // If customer logged in...
             // Update the root customer account data with the submission (not email address!!)
@@ -118,8 +84,6 @@ class SubmissionController extends AbstractAppController
 
         // Determine what should now appear in the inquiry container... some sort of thank you, related products, etc... ??
         // Return response for React handling.
-        var_dump($payload['meta'], $data);
-        die();
     }
 
     /**
@@ -129,6 +93,7 @@ class SubmissionController extends AbstractAppController
      */
     private function validateInquiryPayload(RequestPayload $payload)
     {
+        // @todo Validation rules would need to be handled by a form model.
         $meta = $payload->getMeta();
         if (false === $meta->has('model')) {
             throw new HttpFriendlyException('No meta.model member was found in the payload. Unable to process submission.', 422);

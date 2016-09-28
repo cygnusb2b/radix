@@ -1,8 +1,12 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
+use AppBundle\Factory\AbstractModelFactory;
+use AppBundle\Factory\Error;
+use AppBundle\Factory\ValidationFactoryInterface;
 use AppBundle\Utility\LocaleUtility;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Embed;
 
 /**
@@ -10,8 +14,11 @@ use As3\Modlr\Models\Embed;
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-class CustomerPhoneFactory extends AbstractModelFactory
+class CustomerPhoneFactory extends AbstractModelFactory implements ValidationFactoryInterface
 {
+    /**
+     * @var string[]
+     */
     private $types = ['Work', 'Home', 'Mobile', 'Fax', 'Phone'];
 
     /**
@@ -37,12 +44,9 @@ class CustomerPhoneFactory extends AbstractModelFactory
     }
 
     /**
-     * Determines if the customer address model can be saved.
-     *
-     * @param   Embed   $phone
-     * @return  true|Error
+     * {@inheritdoc}
      */
-    public function canSave(Embed $phone)
+    public function canSave(AbstractModel $phone)
     {
         if (false === $this->supportsEmbed($phone)) {
             return $this->getUnsupportedError();
@@ -59,25 +63,21 @@ class CustomerPhoneFactory extends AbstractModelFactory
     }
 
     /**
-     * Actions that always run (during save) before validation occurs.
-     *
-     * @param   Model   $phone
+     * {@inheritdoc}
      */
-    public function preValidate(Embed $phone)
+    public function postValidate(AbstractModel $phone)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function preValidate(AbstractModel $phone)
     {
         if (null !== $type = $phone->get('phoneType')) {
             $type = ucfirst(strtolower($type));
             $phone->set('phoneType', $type);
         }
-    }
-
-    /**
-     * Actions that always run (during save) after validation occurs.
-     *
-     * @param   Embed   $phone
-     */
-    public function postValidate(Embed $phone)
-    {
     }
 
     /**

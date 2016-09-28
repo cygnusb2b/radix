@@ -1,23 +1,39 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
+use AppBundle\Factory\AbstractModelFactory;
+use AppBundle\Factory\Error;
+use AppBundle\Factory\ValidationFactoryInterface;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Embed;
 use As3\Modlr\Models\Model;
+use As3\Modlr\Store\Store;
 
 /**
  * Factory for customer credentials
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-class CustomerCredentialsFactory extends AbstractModelFactory
+class CustomerCredentialsFactory extends AbstractModelFactory implements ValidationFactoryInterface
 {
+    /**
+     * @var CustomerCredentialsPasswordFactory
+     */
     private $password;
 
+    /**
+     * @var CustomerCredentialsSocialFactory
+     */
     private $social;
 
-    public function __construct(CustomerCredentialsPasswordFactory $password, CustomerCredentialsSocialFactory $social)
+    /**
+     * @param   CustomerCredentialsPasswordFactory  $password
+     * @param   CustomerCredentialsSocialFactory    $social
+     */
+    public function __construct(Store $store, CustomerCredentialsPasswordFactory $password, CustomerCredentialsSocialFactory $social)
     {
+        parent::__construct($store);
         $this->password = $password;
         $this->social   = $social;
     }
@@ -43,23 +59,10 @@ class CustomerCredentialsFactory extends AbstractModelFactory
         return $credentials;
     }
 
-    public function getPasswordFactory()
-    {
-        $this->password->setStore($this->getStore());
-        return $this->password;
-    }
-
-    public function getSocialFactory()
-    {
-        $this->social->setStore($this->getStore());
-        return $this->social;
-    }
-
-    public function preValidate(Embed $credentials)
-    {
-    }
-
-    public function canSave(Embed $credentials)
+    /**
+     * {@interitdoc}
+     */
+    public function canSave(AbstractModel $credentials)
     {
         if (false === $this->supportsEmbed($credentials)) {
             // Ensure this is the correct embed model.
@@ -77,11 +80,37 @@ class CustomerCredentialsFactory extends AbstractModelFactory
         return true;
     }
 
-    public function postValidate(Embed $credentials)
+    /**
+     * @return  CustomerCredentialsPasswordFactory
+     */
+    public function getPasswordFactory()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return  CustomerCredentialsSocialFactory
+     */
+    public function getSocialFactory()
+    {
+        return $this->social;
+    }
+
+    /**
+     * {@interitdoc}
+     */
+    public function postValidate(AbstractModel $credentials)
     {
         if (null !== $password = $credentials->get('password')) {
             $this->getPasswordFactory()->postValidate($password);
         }
+    }
+
+    /**
+     * {@interitdoc}
+     */
+    public function preValidate(AbstractModel $credentials)
+    {
     }
 
     /**

@@ -16,7 +16,7 @@ class Error
 
     private $httpStatusCode;
 
-    public function __construct($reason, $httpStatusCode = 500)
+    public function __construct($reason, $httpStatusCode = 400)
     {
         $this->reason = $reason;
         $this->httpStatusCode = (int) $httpStatusCode;

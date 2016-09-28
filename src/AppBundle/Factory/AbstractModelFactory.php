@@ -6,6 +6,7 @@ use As3\Modlr\Store\Store;
 
 /**
  * Abstract factory for AS3 models.
+ * Must also implement the remaining methods of the subscriber interface.
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
@@ -17,24 +18,18 @@ abstract class AbstractModelFactory
     private $store;
 
     /**
-     * @return  Store
-     * @throws  \RuntimeException
+     * @param   Store   $store
      */
-    public function getStore()
+    public function __construct(Store $store)
     {
-        if (null === $this->store) {
-            throw new \RuntimeException('The Store service was not set to the factory. Unable to continue.');
-        }
-        return $this->store;
+        $this->store = $store;
     }
 
     /**
-     * @param   Store   $store
-     * @return  self
+     * @return  Store
      */
-    public function setStore(Store $store)
+    public function getStore()
     {
-        $this->store = $store;
-        return $this;
+        return $this->store;
     }
 }

@@ -1,8 +1,12 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
+use AppBundle\Factory\AbstractModelFactory;
+use AppBundle\Factory\Error;
+use AppBundle\Factory\SubscriberFactoryInterface;
 use AppBundle\Utility\LocaleUtility;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 
 /**
@@ -10,8 +14,14 @@ use As3\Modlr\Models\Model;
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-class CustomerAddressFactory extends AbstractModelFactory
+class CustomerAddressFactory extends AbstractModelFactory implements SubscriberFactoryInterface
 {
+    /**
+     * Applies attribute key/value data to the provided addresse.
+     *
+     * @param   Model   $address
+     * @param   array   $attributes
+     */
     public function apply(Model $address, array $attributes = [])
     {
         $metadata = $address->getMetadata();
@@ -21,6 +31,19 @@ class CustomerAddressFactory extends AbstractModelFactory
             }
         }
         return $address;
+    }
+
+    /**
+     * {@inheritodc}
+     */
+    public function canSave(AbstractModel $address)
+    {
+        $this->preValidate($address);
+        if (null === $address->get('customer')) {
+            // Ensure a customer has been assigned.
+            return new Error('All customer addresses must be assigned to a customer.');
+        }
+        return true;
     }
 
     /**
@@ -40,36 +63,23 @@ class CustomerAddressFactory extends AbstractModelFactory
     }
 
     /**
-     * Determines if the customer address model can be saved.
-     *
-     * @param   Model   $address
-     * @return  true|Error
+     * {@inheritodc}
      */
-    public function canSave(Model $address)
-    {
-        $this->preValidate($address);
-        if (null === $address->get('customer')) {
-            // Ensure a customer has been assigned.
-            return new Error('All customer addresses must be assigned to a customer.');
-        }
-        return true;
-    }
-
-    /**
-     * Actions that always run (during save) before validation occurs.
-     *
-     * @param   Model   $address
-     */
-    public function preValidate(Model $address)
+    public function preValidate(AbstractModel $address)
     {
     }
 
     /**
-     * Actions that always run (during save) after validation occurs.
-     *
-     * @param   Model   $address
+     * {@inheritdoc}
      */
-    public function postValidate(Model $address)
+    public function postSave(Model $model)
+    {
+    }
+
+    /**
+     * {@inheritodc}
+     */
+    public function postValidate(AbstractModel $address)
     {
         $changeset = $address->getChangeSet();
 
@@ -116,5 +126,13 @@ class CustomerAddressFactory extends AbstractModelFactory
         } else {
             $address->set('country', $countries[$countryCode]);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(Model $model)
+    {
+        return 'customer-address' === $model->getType();
     }
 }

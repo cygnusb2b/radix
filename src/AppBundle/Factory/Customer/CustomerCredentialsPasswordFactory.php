@@ -1,10 +1,15 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
+use AppBundle\Factory\AbstractModelFactory;
+use AppBundle\Factory\Error;
+use AppBundle\Factory\ValidationFactoryInterface;
 use AppBundle\Security\User\Customer;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Embed;
 use As3\Modlr\Models\Model;
+use As3\Modlr\Store\Store;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 
 /**
@@ -12,7 +17,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-class CustomerCredentialsPasswordFactory extends AbstractModelFactory
+class CustomerCredentialsPasswordFactory extends AbstractModelFactory implements ValidationFactoryInterface
 {
     /**
      * @todo Eventually this should be set by an auth schema mechanism.
@@ -34,10 +39,12 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory
     ];
 
     /**
+     * @param   Store               $store
      * @param   UserPasswordEncoder $encoder
      */
-    public function __construct(UserPasswordEncoder $encoder)
+    public function __construct(Store $store, UserPasswordEncoder $encoder)
     {
+        parent::__construct($store);
         $this->encoder = $encoder;
     }
 
@@ -69,17 +76,10 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory
         return $credential;
     }
 
-    public function preValidate(Embed $credential)
-    {
-    }
-
     /**
-     * Determines if the credential embed can be saved.
-     *
-     * @param   Embed   $credential
-     * @return  true|Error
+     * {@inheritdoc}
      */
-    public function canSave(Embed $credential)
+    public function canSave(AbstractModel $credential)
     {
         if (false === $this->supportsEmbed($credential)) {
             // Ensure this is the correct embed model.
@@ -118,11 +118,21 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory
         return true;
     }
 
-    public function postValidate(Embed $credential)
+    /**
+     * {@inheritdoc}
+     */
+    public function postValidate(AbstractModel $credential)
     {
         // Encode password.
         $encoded = $this->encoder->encodePassword(new Customer($this->getStore()->create('customer-account')), $credential->get('value'));
         $credential->set('value', $encoded);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function preValidate(AbstractModel $credential)
+    {
     }
 
     /**

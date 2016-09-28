@@ -1,18 +1,22 @@
 <?php
 
-namespace AppBundle\Factory;
+namespace AppBundle\Factory\Customer;
 
 use AppBundle\Customer\EmailVerifyTokenGenerator;
+use AppBundle\Factory\AbstractModelFactory;
+use AppBundle\Factory\Error;
+use AppBundle\Factory\SubscriberFactoryInterface;
 use AppBundle\Utility\ModelUtility;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
 
 /**
- * Factory for creating/updating/upserting customer emails.
+ * Factory for customer email models.
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-class CustomerEmailFactory extends AbstractModelFactory
+class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFactoryInterface
 {
     /**
      * @todo Eventually this should be set by an auth schema mechanism.
@@ -25,83 +29,19 @@ class CustomerEmailFactory extends AbstractModelFactory
     private $tokenGenerator;
 
     /**
+     * @param   Store                       $store
      * @param   EmailVerifyTokenGenerator   $tokenGenerator
      */
-    public function __construct(EmailVerifyTokenGenerator $tokenGenerator)
+    public function __construct(Store $store, EmailVerifyTokenGenerator $tokenGenerator)
     {
+        parent::__construct($store);
         $this->tokenGenerator = $tokenGenerator;
     }
 
     /**
-     * Creates a new customer account email for the provided customer.
-     *
-     * @param   Model   $account
-     * @param   array   $rootAttributes
-     * @return  Model
+     * {@inheritdoc}
      */
-    public function create(Model $account, $value, $isPrimary = false)
-    {
-        $email = $this->getStore()->create('customer-email');
-
-        $email->set('value', $value);
-        $email->set('isPrimary', $isPrimary);
-        $email->set('account', $account);
-
-        $this->setDefaultVerification($email);
-
-        return $email;
-    }
-
-    /**
-     * Actions that always run (during save) before validation occurs.
-     *
-     * @param   Model   $email
-     */
-    public function preValidate(Model $email)
-    {
-        $this->formatEmailAddress($email);
-
-        if (null === $email->get('verification')) {
-            // Ensure a verification object is always set.
-            $this->setDefaultVerification($email);
-        }
-    }
-
-    /**
-     * Actions that always run (during save) after validation occurs.
-     *
-     * @param   Model   $email
-     */
-    public function postValidate(Model $email)
-    {
-        // Generate and set the JWT token for non-verified emails.
-        $verification = $email->get('verification');
-        if (false === $verification->get('verified')) {
-            $token = $this->tokenGenerator->createFor(
-                $email->get('value'), $email->get('account')->getId()
-            );
-            $verification->set('token', $token);
-        }
-
-        // Append the display name to the customer account, when applicable.
-        $displayName = $email->get('account')->get('displayName');
-        if (true === $email->getState()->is('new') && empty($displayName)) {
-            preg_match('/^(.+)@/i', $email->get('value'), $matches);
-            if (isset($matches[1])) {
-                $account = $email->get('account');
-                $account->set('displayName', $matches[1]);
-                $account->save();
-            }
-        }
-    }
-
-    /**
-     * Determines if the customer email model can be saved.
-     *
-     * @param   Model   $email
-     * @return  true|Error
-     */
-    public function canSave(Model $email)
+    public function canSave(AbstractModel $email)
     {
         $this->preValidate($email);
         if (null === $email->get('account')) {
@@ -128,21 +68,69 @@ class CustomerEmailFactory extends AbstractModelFactory
         return true;
     }
 
-    private function formatEmailAddress(Model $email)
+    /**
+     * Creates a new customer account email for the provided customer account.
+     *
+     * @param   Model   $account
+     * @param   array   $rootAttributes
+     * @return  Model
+     */
+    public function create(Model $account, $value, $isPrimary = false)
     {
-        $value = ModelUtility::formatEmailAddress($email->get('value'));
-        $value = (empty($value)) ? null : $value;
+        $email = $this->getStore()->create('customer-email');
+
         $email->set('value', $value);
+        $email->set('isPrimary', $isPrimary);
+        $email->set('account', $account);
+
+        $this->setDefaultVerification($email);
+        return $email;
     }
 
     /**
-     * Determines if an email address is required.
-     *
-     * @return  bool
+     * {@inheritdoc}
      */
-    private function requiresEmail()
+    public function postSave(Model $model)
     {
-        return self::REQUIRE_EMAIL;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function postValidate(AbstractModel $email)
+    {
+        // Generate and set the JWT token for non-verified emails.
+        $verification = $email->get('verification');
+        if (false === $verification->get('verified')) {
+            $token = $this->tokenGenerator->createFor(
+                $email->get('value'), $email->get('account')->getId()
+            );
+            $verification->set('token', $token);
+        }
+
+        // Append the display name to the customer account, when applicable.
+        $displayName = $email->get('account')->get('displayName');
+        if (true === $email->getState()->is('new') && empty($displayName)) {
+            preg_match('/^(.+)@/i', $email->get('value'), $matches);
+            if (isset($matches[1])) {
+                $account = $email->get('account');
+                $account->set('displayName', $matches[1]);
+                $account->save();
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function preValidate(AbstractModel $email)
+    {
+        $this->formatEmailAddress($email);
+
+        if (null === $email->get('verification')) {
+            // Ensure a verification object is always set.
+            $this->setDefaultVerification($email);
+        }
     }
 
     /**
@@ -163,6 +151,36 @@ class CustomerEmailFactory extends AbstractModelFactory
             // Valid customer.
             return $email->get('account');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(Model $model)
+    {
+        return 'customer-email' === $model->getType();
+    }
+
+    /**
+     * Formats the email address value for the provided email model.
+     *
+     * @param   Model   $email
+     */
+    private function formatEmailAddress(Model $email)
+    {
+        $value = ModelUtility::formatEmailAddress($email->get('value'));
+        $value = (empty($value)) ? null : $value;
+        $email->set('value', $value);
+    }
+
+    /**
+     * Determines if an email address is required.
+     *
+     * @return  bool
+     */
+    private function requiresEmail()
+    {
+        return self::REQUIRE_EMAIL;
     }
 
     /**

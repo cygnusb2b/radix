@@ -3,6 +3,8 @@ input-submission:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { sourceKey: 1 } }
     mixins: [ 'timestampable' ]
     attributes:
         ipFour:

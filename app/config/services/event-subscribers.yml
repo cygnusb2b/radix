@@ -5,40 +5,10 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
-    app_bundle.event_subscriber.customer_account:
+    app_bundle.event_subscriber.model_factories:
         private: true
-        class: AppBundle\EventSubscriber\Customer\CustomerAccountSubscriber
-        calls:
-            - [ setContainer, [ "@service_container" ] ]
-        tags:
-            - { name: as3_modlr.event_subscriber }
-
-    app_bundle.event_subscriber.customer_address:
-        private: true
-        class: AppBundle\EventSubscriber\Customer\CustomerAddressSubscriber
-        arguments: [ "@app_bundle.factory.customer_address" ]
-        tags:
-            - { name: as3_modlr.event_subscriber }
-
-    app_bundle.event_subscriber.customer_answer:
-        private: true
-        class: AppBundle\EventSubscriber\Customer\CustomerAnswerSubscriber
-        calls:
-            - [ setContainer, [ "@service_container" ] ]
-        tags:
-            - { name: as3_modlr.event_subscriber }
-
-    app_bundle.event_subscriber.customer_email:
-        private: true
-        class: AppBundle\EventSubscriber\Customer\CustomerEmailSubscriber
-        arguments: [ "@app_bundle.factory.customer_email" ]
-        tags:
-            - { name: as3_modlr.event_subscriber }
-
-    app_bundle.event_subscriber.input_submission:
-        private: true
-        class: AppBundle\EventSubscriber\InputSubmissionSubscriber
-        arguments: [ "@request_stack", "@app_bundle.data_formatter.mongo_db" ]
+        class: AppBundle\EventSubscriber\ModelFactorySubscriber
+        arguments: [ "@service_container" ]
         tags:
             - { name: as3_modlr.event_subscriber }
 
