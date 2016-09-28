@@ -26,7 +26,7 @@ React.createClass({ displayName: 'FormInquiry',
                 ),
                 React.createElement('div', null,
                     React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, type: 'email', name: 'customer:primaryEmail', wrapperClass: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
-                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, type: 'tel', name: 'customer:primaryPhone', wrapperClass: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
+                    React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, type: 'tel', name: 'customer:primaryPhone.number', wrapperClass: 'phone', label: phoneLabel, value: customer.primaryPhone.number })
                 ),
                 React.createElement('div', null,
                     React.createElement(Radix.Components.get('FormInputText'), { onChange: handleChange, name: 'customer:companyName', wrapperClass: 'companyName', label: 'Company Name', value: customer.companyName }),

@@ -23,7 +23,7 @@ class CustomerAddressSubscriber extends AbstractCustomerSubscriber
      */
     protected function shouldProcess(Model $model)
     {
-        return 0 === stripos($model->getType(), 'customer-answer-');
+        return 'customer-address' === $model->getType();
     }
 
     /**

@@ -12,6 +12,17 @@ use As3\Modlr\Models\Model;
  */
 class CustomerAddressFactory extends AbstractModelFactory
 {
+    public function apply(Model $address, array $attributes = [])
+    {
+        $metadata = $address->getMetadata();
+        foreach ($attributes as $key => $value) {
+            if (true === $metadata->hasAttribute($key)) {
+                $address->set($key, $value);
+            }
+        }
+        return $address;
+    }
+
     /**
      * Creates a new customer address for a customer and applies root attributes
      *
@@ -21,13 +32,9 @@ class CustomerAddressFactory extends AbstractModelFactory
      */
     public function create(Model $customer, array $attributes = [])
     {
-        $address  = $this->getStore()->create('customer-address');
-        $metadata = $address->getMetadata();
-        foreach ($attributes as $key => $value) {
-            if (true === $metadata->hasAttribute($key)) {
-                $address->set($key, $value);
-            }
-        }
+        $address = $this->getStore()->create('customer-address');
+        $this->apply($address, $attributes);
+
         $address->set('customer', $customer);
         return $address;
     }
@@ -64,7 +71,9 @@ class CustomerAddressFactory extends AbstractModelFactory
      */
     public function postValidate(Model $address)
     {
-        if (true === $address->getState()->is('new') && null !== $postalCode = $address->get('postalCode')) {
+        $changeset = $address->getChangeSet();
+
+        if (isset($changeset['attributes']['postalCode']) && null !== $postalCode = $address->get('postalCode')) {
             // Append additional locality data from postal code (city/state/country)
             $data = LocaleUtility::getLocalityDataFor($postalCode);
             if (is_array($data)) {

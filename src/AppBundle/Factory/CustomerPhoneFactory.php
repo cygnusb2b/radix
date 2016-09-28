@@ -13,6 +13,7 @@ use As3\Modlr\Models\Embed;
 class CustomerPhoneFactory extends AbstractModelFactory
 {
     private $types = ['Work', 'Home', 'Mobile', 'Fax', 'Phone'];
+
     /**
      * Creates a new customer address for a customer and applies root attributes
      *
@@ -21,7 +22,7 @@ class CustomerPhoneFactory extends AbstractModelFactory
      * @param   bool    $isPrimary
      * @return  Embed   $phone
      */
-    public function create(Embed $phone, $number, $type = null, $isPrimary = false)
+    public function apply(Embed $phone, $number, $type = null, $isPrimary = false)
     {
         if (false === $this->supportsEmbed($phone)) {
             $this->getUnsupportedError()->throwException();

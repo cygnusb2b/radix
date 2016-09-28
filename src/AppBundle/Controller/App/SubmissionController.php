@@ -5,7 +5,7 @@ namespace AppBundle\Controller\App;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\HelperUtility;
-use AppBundle\Utility\RequestUtility;
+use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,26 +15,49 @@ class SubmissionController extends AbstractAppController
     public function inquiryAction(Request $request)
     {
 
-        $store   = $this->get('as3_modlr.store');
-        $factory = $this->get('app_bundle.factory.customer_account');
+        $store           = $this->get('as3_modlr.store');
+        $factory         = $this->get('app_bundle.factory.customer_account');
+        $customerManager = $this->get('app_bundle.customer.manager');
         $factory->setStore($store);
 
-        $payload = RequestUtility::extractPayload($request, false);
+        // Create the payload instance: @todo, parameters should support dot notation and return arrays as parameter instances.
+        $payload = RequestPayload::createFrom($request);
+
+        // Validate... @todo Again, this should use a standard form handler to determine what is/isn't required.
+        $this->validateInquiryPayload($payload);
 
 
-        var_dump(__METHOD__, $factory);
+        $submission = $store->create('input-submission');
+
+
+        if (null !== $customer = $customerManager->getActiveAccount()) {
+            // Make sure email isn't updated by this form!
+            $payload->getCustomer()->remove('primaryEmail');
+
+            // A customer account is currently logged in.
+            $submission->set('customer', $customer);
+            // Update customer data.
+            $factory->apply($customer, $payload->getCustomer()->all());
+
+            $factory->save($customer);
+
+
+            // Save customer and submission.
+        }
+
+        var_dump(__METHOD__);
+
         die();
 
         // Services to use
-        $customerManager = $this->get('app_bundle.customer.manager');
+
 
         // Parse the data into an object...
         $payload = RequestUtility::extractPayload($request, false);
 
-        // Validate... @todo Again, this should use a standard form handler to determine what is/isn't required.
-        $payload = $this->formatValidateInquiryPayload($payload);
 
-        $data = RequestUtility::parsePayloadData($payload['data']);
+
+
 
 
         // Create the submission
@@ -101,20 +124,17 @@ class SubmissionController extends AbstractAppController
 
     /**
      * @todo    This should move into the form/submission validation service.
-     * @param   array   $payload
+     * @param   RequestPayload   $payload
      * @throws  HttpFriendlyException
      */
-    private function formatValidateInquiryPayload(array $payload)
+    private function validateInquiryPayload(RequestPayload $payload)
     {
-        if (false === HelperUtility::isSetArray($payload, 'meta')) {
-            throw new HttpFriendlyException('No meta member was found in the paylod. Unable to process submission.', 422);
+        $meta = $payload->getMeta();
+        if (false === $meta->has('model')) {
+            throw new HttpFriendlyException('No meta.model member was found in the payload. Unable to process submission.', 422);
         }
 
-        if (false === HelperUtility::isSetArray($payload['meta'], 'model')) {
-            throw new HttpFriendlyException('No meta.model member was found in the paylod. Unable to process submission.', 422);
-        }
-
-        $model = $payload['meta']['model'];
+        $model = $meta->get('model', []);
         if (!HelperUtility::isSetNotEmpty($model, 'type') || !HelperUtility::isSetNotEmpty($model, 'identifier')) {
             throw new HttpFriendlyException('The inquiry model type and identifier are required', 400);
         }
@@ -128,12 +148,11 @@ class SubmissionController extends AbstractAppController
             }
         }
 
-        if (false === HelperUtility::isSetNotEmpty($payload['data'], 'customer:primaryEmail')) {
+        $email = $payload->getCustomer()->get('primaryEmail');
+        if (empty($email)) {
             throw new HttpFriendlyException('The email address field is required.', 400);
         }
 
-        // Format/validate email.
-        $payload['data']['customer:primaryEmail'] = ModelUtility::formatEmailAddress($payload['data']['customer:primaryEmail']);
         return $payload;
     }
 }

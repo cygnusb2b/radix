@@ -186,21 +186,29 @@ class CustomerAccountFactory extends AbstractCustomerFactory
     }
 
     /**
+     * This is needed in order to ensure newly created emails are also accounted for.
+     * Modlr really needs to "automatically" append new inverse models to the owner's collection.
+     *
      * @param   Model   $customer
      * @param   Model[]
      */
     private function getRelatedEmails(Model $customer)
     {
         $emails = [];
-        if (true === $customer->getState()->is('new')) {
-            foreach ($this->getStore()->getModelCache()->getAllForType('customer-email') as $email) {
-                if ($email->get('account')->getId() === $customer->getId()) {
-                    $emails[] = $email;
-                }
+        foreach ($this->getStore()->getModelCache()->getAllForType('customer-email') as $email) {
+            if (null === $email->get('customer')) {
+                continue;
             }
-            return $emails;
+            if ($email->get('account')->getId() === $customer->getId()) {
+                $emails[$email->getId()] = $email;
+            }
         }
-        return $customer->get('emails');
+        foreach ($customer->get('emails') as $email) {
+            if (!isset($emails[$email->getId()])) {
+                $emails[$email->getId()] = $email;
+            }
+        }
+        return $emails;
     }
 
     /**

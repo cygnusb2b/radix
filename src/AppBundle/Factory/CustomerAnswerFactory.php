@@ -28,14 +28,13 @@ class CustomerAnswerFactory extends AbstractModelFactory
     }
 
     /**
-     * Creates a new customer answer for a customer and question.
+     * Applies an answer value to a customer for the provided question.
      *
      * @param   Model   $customer
      * @param   Model   $question
      * @param   mixed   $rawAnswerValue
-     * @return  Model|null
      */
-    public function create(Model $customer, Model $question, $rawAnswerValue)
+    public function apply(Model $customer, Model $question, $rawAnswerValue)
     {
         if ('question' !== $question->getType()) {
             throw new \InvalidArgumentException('The model is not an instance of a `question` model.');
@@ -44,12 +43,31 @@ class CustomerAnswerFactory extends AbstractModelFactory
             return;
         }
 
-        $answer = $this->answerFactory->createAnswerFor('customer', $question, $rawAnswerValue);
-        if (null === $answer) {
-            return;
+        if (true === $customer->getState()->is('new') || 0 === count($customer->get('answers'))) {
+            $answer = $this->answerFactory->createAnswerFor('customer', $question, $rawAnswerValue);
+            if (null === $answer) {
+                return;
+            }
+            $answer->set('customer', $customer);
+        } else {
+
+            $new = $this->answerFactory->createAnswerFor('customer', $question, $rawAnswerValue);
+            foreach ($customer->get('answers') as $current) {
+                if ($current->get('question')->getId() === $question->getId()) {
+                    // Answer currently exists on the customer... determine update or remove.
+                    if (null === $new) {
+                        $current->delete();
+                    } else {
+                        $current->set('value', $new->get('value'));
+                    }
+                    return;
+                }
+            }
+            // Answer doesn't exist on customer, add it.
+            if (null !== $new) {
+                $new->set('customer', $customer);
+            }
         }
-        $answer->set('customer', $customer);
-        return $answer;
     }
 
     /**
