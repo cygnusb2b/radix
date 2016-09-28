@@ -65,7 +65,7 @@ class SubmissionController extends AbstractAppController
                 'template'   => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
             ]], 201);
         }
-        throw new HttpFriendlyException('Submitting an inquiry while not logged in is not implemented yet.');
+        throw new HttpFriendlyException('Submitting an inquiry while not logged in is not implemented yet.', 501);
 
         // If customer logged in...
             // Update the root customer account data with the submission (not email address!!)
