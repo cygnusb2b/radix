@@ -151,6 +151,13 @@ class InputSubmissionFactory extends AbstractModelFactory implements SubscriberF
             $this->appendIpAddress($submission, $request);
             $this->appendRequestDetails($submission, $request);
         }
+
+        // Remove any sensitive customer data.
+        $payload = (array) $submission->get('payload');
+        if (isset($payload['customer']['password'])) {
+            unset($payload['customer']['password']);
+            $submission->set('payload', $payload);
+        }
     }
 
     /**
