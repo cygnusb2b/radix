@@ -245,7 +245,6 @@ function CustomerManager()
             // Success
             customer = response.data;
             EventDispatcher.trigger('CustomerManager.register.success', [response]);
-            EventDispatcher.trigger('CustomerManager.login.success', [response]);
         },
         function(jqXHR) {
             var errors  = jqXHR.errors|| [{}];

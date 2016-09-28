@@ -10,13 +10,23 @@ function SignInComponent()
             };
         },
 
+        getInitialState: function() {
+            return {
+                nextTemplate    : null
+            }
+        },
+
         componentDidMount: function() {
             var locker = this._formLock;
             var error  = this._error;
 
-            EventDispatcher.subscribe('CustomerManager.register.success', function() {
+            EventDispatcher.subscribe('CustomerManager.register.success', function(e, response) {
                 locker.unlock();
-            });
+
+                // Set the next template to display (thank you page, etc).
+                var template = (response.data) ? response.data.template || null : null;
+                this.setState({ nextTemplate: template });
+            }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.register.failure', function (e, parameters, jqXHR) {
                 locker.unlock();
@@ -86,7 +96,8 @@ function SignInComponent()
                     React.createElement('h2', { className: 'name' }, this.props.title),
                     React.createElement(Radix.Forms.get('Register'), {
                         onSubmit    : this.handleSubmit,
-                        onChange    : this.handleChange
+                        onChange    : this.handleChange,
+                        nextTemplate: this.state.nextTemplate
                     }),
                     React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                     this._getSignInLink(),

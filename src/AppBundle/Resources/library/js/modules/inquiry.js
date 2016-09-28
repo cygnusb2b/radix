@@ -12,7 +12,7 @@ function InquiryModule()
 
             EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({ customer : customer });
+                this.setState({ customer : customer, nextTemplate: null });
             }.bind(this));
         },
 
@@ -46,8 +46,9 @@ function InquiryModule()
         getInitialState: function() {
             var customer = this.fillCustomer(CustomerManager.getCustomer());
             return {
-                customer    : customer,
-                error       : null
+                customer        : customer,
+                error           : null,
+                nextTemplate    : null
             }
         },
 
@@ -74,7 +75,16 @@ function InquiryModule()
 
             Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
                 locker.unlock();
-                // Show thank you page??
+
+                // Refresh the customer, if logged in.
+                if (CustomerManager.isLoggedIn()) {
+                    CustomerManager.reloadCustomer();
+                }
+
+                // Set the next template to display (thank you page, etc).
+                var template = (response.data) ? response.data.template || null : null;
+                this.setState({ nextTemplate: template });
+
             }.bind(this), function(jqXHR) {
                 locker.unlock();
                 this._error.displayAjaxError(jqXHR);
@@ -94,9 +104,10 @@ function InquiryModule()
                     this.getAuthElement(),
                     React.createElement('hr'),
                     React.createElement(Radix.Forms.get('Inquiry'), {
-                        customer    : this.state.customer,
-                        onSubmit    : this.handleSubmit,
-                        onChange    : this.handleChange
+                        customer     : this.state.customer,
+                        nextTemplate : this.state.nextTemplate,
+                        onSubmit     : this.handleSubmit,
+                        onChange     : this.handleChange
                     }),
                     React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                     React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

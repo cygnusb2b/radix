@@ -221,6 +221,22 @@ class CustomerManager
     }
 
     /**
+     * Serializes the currently logged in account.
+     * Will use a default, empty model if not logged in.
+     *
+     * @return  array
+     */
+    public function serializeLoggedInAccount()
+    {
+        $user = $this->getSecurityUser();
+        if ($user) {
+            return $this->authGenerator->generateFor($user);
+        }
+        $model = $this->store->create('customer-account');
+        return $this->authGenerator->getSerializer()->serialize($model);
+    }
+
+    /**
      * Sets the active identity.
      * Note: this will set the appropriate identity cookies to the response, if a customer account is not logged in.
      *

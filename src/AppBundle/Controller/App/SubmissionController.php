@@ -18,6 +18,7 @@ class SubmissionController extends AbstractAppController
         $customerFactory    = $this->get('app_bundle.factory.customer.account');
         $customerManager    = $this->get('app_bundle.customer.manager');
         $submissionFactory  = $this->get('app_bundle.factory.input_submission');
+        $serializer         = $this->get('app_bundle.serializer.public_api');
 
         // Create the payload instance: @todo, parameters should support dot notation and return arrays as parameter instances.
         $payload = RequestPayload::createFrom($request);
@@ -57,7 +58,12 @@ class SubmissionController extends AbstractAppController
                 $model->save();
             }
 
-            return new JsonResponse(['data' => ['id' => $customer->getId(), 'submission' => $submission->getId()]], 201);
+            // @todo The serialized customer and submission should be sent to the template for processing.
+            return new JsonResponse(['data' => [
+                // 'customer'   => $serializer->serialize($customer),
+                // 'submission' => $serializer->serialize($submission),
+                'template'   => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
+            ]], 201);
         }
         throw new HttpFriendlyException('Submitting an inquiry while not logged in is not implemented yet.');
 
