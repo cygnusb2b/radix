@@ -10,6 +10,9 @@ function ClientConfig(config)
         modules: {
             inquiry: {
                 target: '.radix-module-inquiry'
+            },
+            emailSubscription: {
+                target: '.radix-module-email-subscription'
             }
         },
 

@@ -105,8 +105,9 @@
 
     function Forms()
     {
-        this.Inquiry  = {{ loadForm('inquiry') }}
-        this.Register = {{ loadForm('register') }}
+        this.EmailSubscription  = {{ loadForm('email-subscription') }}
+        this.Inquiry            = {{ loadForm('inquiry') }}
+        this.Register           = {{ loadForm('register') }}
 
         this.get = function(name) {
             return this[name];
@@ -120,9 +121,10 @@
             Radix.Components    = new Components();
             Radix.Forms         = new Forms();
 
-            Radix.FormModule    = new FormModule(); // @deprecated
-            Radix.SignIn        = new SignInComponent();
-            Radix.InquiryModule = new InquiryModule();
+            Radix.FormModule                = new FormModule(); // @deprecated
+            Radix.SignIn                    = new SignInComponent();
+            Radix.InquiryModule             = new InquiryModule();
+            Radix.EmailSubscriptionModule   = new EmailSubscriptionModule();
 
             // if (true === ServerConfig.values.comments.enabled) {
                 // Radix.Comments = new CommentComponent();
@@ -134,7 +136,7 @@
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['SignIn', 'InquiryModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
+            var componentKeys = ['SignIn', 'InquiryModule', 'EmailSubscriptionModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -206,6 +208,7 @@
     {{ loadModule('form') }}
     {{ loadModule('sign-in') }}
     {{ loadModule('inquiry') }}
+    {{ loadModule('email-subscription') }}
 
     {{ loadFile('ajax') }}
     {{ loadFile('client-config') }}
