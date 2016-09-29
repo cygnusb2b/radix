@@ -224,7 +224,14 @@ class NotificationManager
      */
     private function getNotificationTemplate(Model $submission, $actionKey)
     {
-        return $this->store->findQuery('notification-template', ['sourceKey' => $submission->get('sourceKey'), 'template' => $actionKey])->getSingleResult();
+        $type = 'template-notification';
+        $namespace = $submission->get('sourceKey');
+        $template = $actionKey;
+
+        return $this->store
+            ->findQuery($type, ['_type' => $type, 'namespace' => $namespace, 'template' => $template])
+            ->getSingleResult()
+        ;
     }
 
     /**
@@ -236,6 +243,9 @@ class NotificationManager
      */
     private function getTemplateKey(Model $submission, $actionKey)
     {
-        return sprintf('notification-template/%s/%s.html.twig', $submission->get('sourceKey'), $actionKey);
+        $type = 'template-notification';
+        $namespace = $submission->get('sourceKey');
+        $template = $actionKey;
+        return sprintf('%s/%s/%s.html.twig', $type, $namespace, $template);
     }
 }

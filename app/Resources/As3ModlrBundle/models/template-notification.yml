@@ -1,0 +1,15 @@
+template-notification:
+    entity:
+        extends: template
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        subject:
+            type: string
+        to:
+            type: array
+        cc:
+            type: array
+        bcc:
+            type: array

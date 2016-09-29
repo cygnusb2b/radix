@@ -23,7 +23,7 @@ class TwigDatabaseLoader implements Twig_LoaderInterface
     /**
      * {@inheritdoc}
      *
-     * @param   $name       The template name, e.g: `newsletter-template/customer-account/verify-email`
+     * @param   $name       The template name, e.g: `template-notification/customer-account/verify-email`
      * @return  string|null
      */
     public function getSource($name)
@@ -57,11 +57,11 @@ class TwigDatabaseLoader implements Twig_LoaderInterface
     private function getModel($name)
     {
         try {
-            list($type, $sourceKey, $template) = explode('/', $name, 3);
+            list($type, $namespace, $template) = explode('/', $name, 3);
             $template = str_replace('.html.twig', '', $template);
-            $model = $this->store->findQuery($type, ['sourceKey' => $sourceKey, 'template' => $template])->getSingleResult();
+            $model = $this->store->findQuery($type, ['namespace' => $namespace, 'template' => $template])->getSingleResult();
             if (null === $model) {
-                throw new \Twig_Error_Loader(sprintf('Unable to retrieve "%s" template using key "%s/%s".', $type, $sourceKey, $template));
+                throw new \Twig_Error_Loader(sprintf('Unable to retrieve "%s" template using "%s".', $namespace, $template));
             }
         } catch (\Exception $e) {
             throw new \Twig_Error_Loader(sprintf('Template "%s" is not supported.', $name));
