@@ -23,7 +23,7 @@ class Activate extends CustomerAccount implements NotificationFactoryInterface
             throw new \InvalidArgumentException('Customer email must be present to activate!');
         }
 
-        $args['verificationLink'] = $this->getVerificationLink($args['customer-email'], $submission);
+        $args['verificationLink'] = $this->getVerificationLink($args['customer-email']);
         $app = $args['application'];
         if (null === $template) {
             $args['subject'] = sprintf('Activate your %s account', $app->get('name'));
