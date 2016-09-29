@@ -7,7 +7,13 @@ product:
             db: radix
             schemata:
                 - { keys: { key: 1 }, options: { unique: true }}
-                - { keys: { url: 1 }, options: { unique: true }}
+                -
+                    keys:
+                        url: 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            _type: "product-website"
                 - { keys: { _id: 1, _type: 1 }, options: { unique: true }}
     mixins: [ 'keyable', 'timestampable' ]
     attributes:

@@ -18,6 +18,16 @@ app_bundle_app_auth_submit:
     path: /app/auth
     methods: [ PATCH ]
 
+app_bundle_app_product:
+    path: /app/product/{type}
+    defaults: { _controller: AppBundle:App\Product:all, type: null }
+    methods: [ GET ]
+
+app_bundle_app_product_key_or_id:
+    path: /app/product/{type}/{keyOrId}
+    defaults: { _controller: AppBundle:App\Product:retrieve }
+    methods: [ GET ]
+
 app_bundle_app_question_by_tag:
     path: /app/question/tag/{tagKeyOrId}
     defaults: { _controller: AppBundle:App\Question:retrieveByTag }
