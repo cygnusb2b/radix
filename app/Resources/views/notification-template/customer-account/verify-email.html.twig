@@ -1,0 +1,13 @@
+{% extends 'email.html.twig' %}
+{% block headline %}{{values.get('greeting')}}{% endblock %}
+{% block body %}
+
+    <p>A new email address ({{values.get('customer-email.value')}}) has been added to your account.</p>
+    <p><a href='{{values.get('verificationLink')}}'>Click here to confirm</a> your new email address</a>. This link is valid for the next 24 hours.</p>
+
+    <p>If you think you have received this email in error, please contact us at <a href='mailto:{{values.get('supportEmail')}}'>{{values.get('supportEmail')}}</a>.</p>
+
+    <p>Thanks for using {{values.get('appName')}}!</p>
+
+{% endblock %}
+

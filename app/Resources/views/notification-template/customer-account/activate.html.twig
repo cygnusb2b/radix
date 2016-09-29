@@ -1,0 +1,12 @@
+{% extends 'email.html.twig' %}
+{% block headline %}{{values.get('greeting')}}{% endblock %}
+{% block body %}
+
+    <p>Welcome to {{values.get('appName')}}! To help maintain the security of your account, your email address must be verified. To continue, <a href='{{values.get('verificationLink')}}'>click here to confirm</a> your new email address</a>. This link is valid for the next 24 hours.</p>
+
+    <p>If you think you have received this email in error, please contact us at <a href='mailto:{{values.get('supportEmail')}}'>{{values.get('supportName')}}</a>.</p>
+
+    <p>Thanks for using {{values.get('appName')}}!</p>
+
+{% endblock %}
+

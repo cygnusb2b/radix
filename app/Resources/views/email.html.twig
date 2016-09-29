@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <style type="text/css"> table {width: 630px;margin: 0 auto;} .danger { color: red } body{font-family: sans-serif; color: #333; margin: 0;}h1{font-family: sans-serif; line-height: 58px; margin: 0;}.headline, .footer{border-top: 1px solid #EEE; padding: 1em;}.footer{text-align:center; font-family: monospace; color: #CCC;}</style>
+        <title>{{ values.get('subject') }}</title>
+    </head>
+    <body>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        {% if values.get('appLogo') %}
+                        <img align=center src="{{ values.get('appLogo') }}" alt="{{ values.get('appName') }}"/>
+                        {% else %}
+                        <h1>{{ values.get('appName') }}</h1>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="headline"><h2>
+                        {% block headline %}{% endblock %}</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {% block body %}{% endblock %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="footer">
+                        {% block footer %}
+                        <small>This is an automated message from {{values.get('appName') }}. Please do not reply directly to this email &mdash; direct any inquiries to <a href="mailto:{{ values.get('supportEmail') }}">{{ values.get('supportName') }}</a></small>
+                        {% endblock %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
