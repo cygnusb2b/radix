@@ -1,0 +1,5 @@
+application-settings:
+    embeds:
+        notification:
+            type: one
+            entity: application-settings-notification
