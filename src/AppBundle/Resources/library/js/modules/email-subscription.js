@@ -104,8 +104,7 @@ function EmailSubscriptionModule()
                     this.getAuthElement(),
                     React.createElement('hr'),
                     React.createElement('div', { className: 'email-subscription-wrapper' },
-
-                        React.createElement('div', { className: 'email-deployment-products' }, 'Products here'),
+                        React.createElement(Radix.Components.get('FormProductsEmail')),
                         React.createElement(Radix.Forms.get('EmailSubscription'), {
                             customer     : this.state.customer,
                             nextTemplate : this.state.nextTemplate,

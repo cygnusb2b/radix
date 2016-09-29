@@ -660,6 +660,10 @@
         width: 50%;
     }
 
+    .platform-element .email-subscription-wrapper .form-element-wrapper {
+        width: 100%;
+    }
+
     .platform-element .form-element-wrapper.comments {
         width: 100%
     }

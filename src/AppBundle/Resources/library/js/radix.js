@@ -92,11 +92,14 @@
         this.FormInputText     = {{ loadComponent('form-input-text') }}
         this.FormLabel         = {{ loadComponent('form-label') }}
         this.FormLock          = {{ loadComponent('form-lock') }}
+        this.FormProductsEmail = {{ loadComponent('form-products-email') }}
         this.FormSelect        = {{ loadComponent('form-select') }}
         this.FormSelectCountry = {{ loadComponent('form-select-country') }}
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
         this.FormQuestion      = {{ loadComponent('form-question') }}
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
+
+        this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
 
         this.get = function(name) {
             return this[name];
