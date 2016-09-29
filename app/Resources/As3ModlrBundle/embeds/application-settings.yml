@@ -1,5 +1,11 @@
 application-settings:
     embeds:
-        notification:
+        branding:
             type: one
-            entity: application-settings-notification
+            entity: application-settings-branding
+        notifications:
+            type: one
+            entity: application-settings-notifications
+        support:
+            type: one
+            entity: application-settings-support

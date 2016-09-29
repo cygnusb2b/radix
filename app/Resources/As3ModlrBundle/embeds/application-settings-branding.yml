@@ -1,0 +1,6 @@
+application-settings-branding:
+    attributes:
+        logo:
+            type: string
+        name:
+            type: string

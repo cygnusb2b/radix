@@ -9,13 +9,15 @@ use AppBundle\Core\AccountManager;
 use AppBundle\Serializer\PublicApiSerializer;
 use Swift_Mailer;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use AppBundle\Utility\ModelUtility;
+use AppBundle\Utility\RequestUtility;
 
 /**
  * Handles sending notifications
  *
  * @author Josh Worden <jworden@southcomm.com>
  */
-class Manager
+class NotificationManager
 {
     /**
      * @var     NotificationFactoryInterface
@@ -123,8 +125,7 @@ class Manager
             );
 
         } catch (\Exception $e) {
-            // Notify exception?
-            throw $e;
+            RequestUtility::notifyException($e);
             return false;
         }
     }
@@ -168,30 +169,32 @@ class Manager
         $app = $this->accountManager->getApplication();
         $customer = $submission->get('customer');
 
-        $fromName  = $this->getValue($app, 'settings.notification.noreply.name', $app->get('name'));
-        $fromEmail = $this->getValue($app, 'settings.notification.noreply.email', 'no-reply@radix.as3.io');
-        $cxName = $this->getCustomerName($customer);
-        $cxEmail = $customer->get('primaryEmail');
+        // Global notification settings
+        $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.name')) ? $app->get('name') : $value;
+        $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.email')) ? 'no-reply@radix.as3.io': $value;
+        $args['from']           = [ $fromEmail => $fromName ];
 
         $args['application']    = $app;
         $args['customer']       = $submission->get('customer');
         $args['template']       = $template;
 
-        // Global notification settings
-        $args['from']           = [$fromEmail => $fromName];
-        $args['to']             = null === $cxName ? [$cxEmail] : [$cxEmail => $cxName];
-        $args['greeting']       = null === $cxName ? 'Hello!' : sprintf('Hello, %s!', $customer->get('givenName'));
-        $args['supportName']    = $this->getValue($app, 'settings.notification.support.name', 'Support');
-        $args['supportEmail']   = $this->getValue($app, 'settings.notification.support.email', 'support@radix.as3.io');
-        $args['appName']        = $this->getValue($app, 'settings.notification.name', $app->get('name'));
-        $args['appLogo']        = $this->getValue($app, 'settings.notification.logo');
-
-        // Subject
-        $args['subject']        = sprintf('Notification from %s', $app->get('name'));
-
-        if ($template && $template->get('subject')) {
-            $args['subject'] = $template->get('subject');
+        // Routing
+        if ($template) {
+            foreach (['to', 'cc', 'bcc'] as $field) {
+                if (!empty($template->get($field))) {
+                    $args[$field] = $template->get($field);
+                }
+            }
+            if ($template->get('subject')) {
+                $args['subject'] = $template->get('subject');
+            }
         }
+
+        // Default to if not set by template
+        if (!isset($args['to'])) {
+            $args['to'] = [ $customer->get('primaryEmail') => $customer->get('fullName') ];
+        }
+
         return $args;
     }
 
@@ -210,40 +213,6 @@ class Manager
             }
         }
         return ['values' => new Parameters($args)];
-    }
-
-    /**
-     * @todo remove when object array access for Parameters or modelr dot notation is available.
-     */
-    private function getValue($model, $path, $default = null)
-    {
-        $parts = explode('.', $path);
-        $accessor = array_shift($parts);
-        $value = $model->get($accessor);
-        if (null !== $value && !empty($parts)) {
-            $path = implode('.', $parts);
-            return $this->getValue($value, $path, $default);
-        } elseif (null !== $value) {
-            return $value;
-        }
-        return $default;
-    }
-
-    private function getCustomerName(Model $customer = null)
-    {
-        if ($customer) {
-            $name = '';
-            if ($customer->get('givenName')) {
-                $name = $customer->get('givenName');
-            }
-            if ($customer->get('familyName')) {
-                $name = sprintf('%s %s', $name, $customer->get('familyName'));
-            }
-            $name = trim($name);
-            if ($name) {
-                return $name;
-            }
-        }
     }
 
     /**

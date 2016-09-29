@@ -37,6 +37,20 @@ class RequestUtility
     }
 
     /**
+     * Notifies New Relic of an Exception.
+     *
+     * @param \Exception $exception
+     */
+    public static function notifyException(\Exception $exception)
+    {
+        if (extension_loaded('newrelic')) {
+            newrelic_notice_error($exception->getMessage(), $exception);
+            newrelic_add_custom_parameter('file', $exception->getFile());
+            newrelic_add_custom_parameter('line', $exception->getLine());
+        }
+    }
+
+    /**
      * Parses flat `target:field.path` keys into an associative array.
      *
      * @param   array   $data

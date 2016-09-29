@@ -60,6 +60,11 @@ customer:
             calculated:
                 class: AppBundle\CalculatedFields
                 method: customerPrimaryAddress
+        fullName:
+            type: string
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerFullName
     embeds:
         externalIds:
             type: many

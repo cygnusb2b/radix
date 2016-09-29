@@ -8,10 +8,10 @@
             <tbody>
                 <tr>
                     <td>
-                        {% if values.get('appLogo') %}
-                        <img align=center src="{{ values.get('appLogo') }}" alt="{{ values.get('appName') }}"/>
+                        {% if values.get('application.settings.branding.logo') %}
+                            <img align=center src="{{ values.get('application.settings.branding.logo') }}" alt="{{ values.get('application.settings.branding.name') }}"/>
                         {% else %}
-                        <h1>{{ values.get('appName') }}</h1>
+                            <h1>{{ values.get('application.settings.branding.name') }}</h1>
                         {% endif %}
                     </td>
                 </tr>
@@ -28,7 +28,12 @@
                 <tr>
                     <td class="footer">
                         {% block footer %}
-                        <small>This is an automated message from {{values.get('appName') }}. Please do not reply directly to this email &mdash; direct any inquiries to <a href="mailto:{{ values.get('supportEmail') }}">{{ values.get('supportName') }}</a></small>
+                        <small>
+                            This is an automated message from {{values.get('application.settings.branding.name') }}. Please do not reply directly to this email
+                            {% if values.get('application.settings.support.email') %}
+                                &mdash; direct any inquiries to <a href="mailto:{{ values.get('application.settings.support.email') }}">{{ values.get('application.settings.support.name', values.get('application.settings.support.email')) }}</a>
+                            {% else %}.{% endif %}
+                        </small>
                         {% endblock %}
                     </td>
                 </tr>

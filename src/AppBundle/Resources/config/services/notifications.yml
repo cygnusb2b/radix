@@ -19,7 +19,7 @@ services:
         class: AppBundle\Notifications\NotificationFactory\CustomerAccount\VerifyEmail
 
     app_bundle.notifications.manager:
-        class: AppBundle\Notifications\Manager
+        class: AppBundle\Notifications\NotificationManager
         arguments:
             - "@app_bundle.notification_factory.default"
             - "@as3_modlr.store"
