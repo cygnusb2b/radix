@@ -1,0 +1,10 @@
+services:
+    app_bundle.twig_database_loader:
+        class: AppBundle\Templating\TwigDatabaseLoader
+        arguments: [ "@as3_modlr.store" ]
+
+    app_bundle.twig_chain_loader:
+        class: Twig_Loader_Chain
+        calls:
+            - [ addLoader, [ "@app_bundle.twig_database_loader" ] ]
+            - [ addLoader, [ "@twig.loader" ] ]

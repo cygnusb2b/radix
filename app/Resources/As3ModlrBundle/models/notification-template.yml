@@ -1,0 +1,25 @@
+notification-template:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { key: 1 }, options: { unique: true }}
+    mixins: [ 'timestampable']
+    attributes:
+        name:
+            type: string
+        template:
+            type: string
+        contents:
+            type: string
+        sourceKey:
+            type: string
+        subject:
+            type: string
+        to:
+            type: array
+        cc:
+            type: array
+        bcc:
+            type: array
