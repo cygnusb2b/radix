@@ -36,6 +36,7 @@ assetic:
     use_controller: false
     filters:
         cssrewrite: ~
+    bundles: [ "AppBundle" ]
 
 framework:
     #esi:             ~
