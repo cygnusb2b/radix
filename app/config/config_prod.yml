@@ -19,3 +19,9 @@ monolog:
             level: debug
         console:
             type:  console
+as3_modlr:
+    persisters:
+        default:
+            type: mongodb
+            parameters:
+                host: mongodb://mongo.platform.baseplatform.io:27017?replSet=platform
