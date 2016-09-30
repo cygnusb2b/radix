@@ -15,6 +15,9 @@ services:
         class: AppBundle\Security\Auth\CustomerGenerator
         arguments: [ "@app_bundle.serializer.public_api" ]
 
+    app_bundle.security.auth.schema:
+        class: AppBundle\Security\Auth\AuthSchema
+
     app_bundle.security.authenticator.api:
         parent: app_bundle.security.authenticator.core_user.abstract
         class: AppBundle\Security\Authenticator\ApiAuthenticator

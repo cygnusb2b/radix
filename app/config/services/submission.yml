@@ -1,0 +1,19 @@
+services:
+    app_bundle.submission.manager:
+        class: AppBundle\Submission\SubmissionManager
+        arguments: [ "@app_bundle.factory.input_submission", "@app_bundle.customer.manager" ]
+        calls:
+            - [ addHandler,  [ "@app_bundle.submission.handler.customer_account" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.email_opt_in" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.inquiry" ] ]
+
+    app_bundle.submission.handler.customer_account:
+        class: AppBundle\Submission\Handlers\CustomerAccountHandler
+        arguments: [ "@app_bundle.factory.customer.account" ]
+
+    app_bundle.submission.handler.email_opt_in:
+        class: AppBundle\Submission\Handlers\EmailOptInHandler
+        arguments: [ "@app_bundle.factory.product.email_deployment_optin" ]
+
+    app_bundle.submission.handler.inquiry:
+        class: AppBundle\Submission\Handlers\InquiryHandler

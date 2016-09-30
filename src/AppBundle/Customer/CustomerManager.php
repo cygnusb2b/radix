@@ -2,6 +2,8 @@
 
 namespace AppBundle\Customer;
 
+use AppBundle\Factory\Customer\CustomerAccountFactory as AccountFactory;
+use AppBundle\Factory\Customer\CustomerIdentityFactory as IdentityFactory;
 use AppBundle\Security\Auth\CustomerGenerator;
 use AppBundle\Security\User\Customer;
 use As3\Modlr\Models\Model;
@@ -43,17 +45,20 @@ class CustomerManager
     private $tokenStorage;
 
     /**
-     * @param   Store               $store
+     * @param   AccountFactory      $accountFactory
+     * @param   IdentityFactory     $identityFactory
      * @param   TokenStorage        $tokenStorage
      * @param   CustomerGenerator   $authGenerator
      * @param   CookieManager       $cookieManager
      */
-    public function __construct(Store $store, TokenStorage $tokenStorage, CustomerGenerator $authGenerator, CookieManager $cookieManager)
+    public function __construct(AccountFactory $accountFactory, IdentityFactory $identityFactory, TokenStorage $tokenStorage, CustomerGenerator $authGenerator, CookieManager $cookieManager)
     {
-        $this->store         = $store;
-        $this->tokenStorage  = $tokenStorage;
-        $this->authGenerator = $authGenerator;
-        $this->cookieManager = $cookieManager;
+        $this->store           = $accountFactory->getStore();
+        $this->accountFactory  = $accountFactory;
+        $this->identityFactory = $identityFactory;
+        $this->tokenStorage    = $tokenStorage;
+        $this->authGenerator   = $authGenerator;
+        $this->cookieManager   = $cookieManager;
     }
 
     /**
@@ -78,7 +83,7 @@ class CustomerManager
      */
     public function createDefaultAuthResponse()
     {
-        $model = $this->store->create('customer-account');
+        $model = $this->getStore()->create('customer-account');
         $serialized = $this->authGenerator->getSerializer()->serialize($model);
         return new JsonResponse($serialized);
     }
@@ -103,6 +108,14 @@ class CustomerManager
     public function destroyCookiesIn(Response $response)
     {
         return $this->cookieManager->destroyCookiesIn($response);
+    }
+
+    /**
+     * @return  AccountFactory
+     */
+    public function getAccountFactory()
+    {
+        return $this->accountFactory;
     }
 
     /**
@@ -143,7 +156,7 @@ class CustomerManager
         }
 
         try {
-            $customer = $this->store->find('customer-identity', $cookie->getIdentifier());
+            $customer = $this->getStore()->find('customer-identity', $cookie->getIdentifier());
         } catch (\Exception $e) {
             return;
         }
@@ -176,6 +189,28 @@ class CustomerManager
     }
 
     /**
+     * Gets the appropriate factory for the provided customer.
+     *
+     * @param   Model   $customer
+     * @return  AccountFactory|IdentityFactory
+     */
+    public function getCustomerFactoryFor(Model $customer)
+    {
+        if ('customer-identity' === $customer->getType()) {
+            return $this->getIdentityFactory();
+        }
+        return $this->getAccountFactory();
+    }
+
+    /**
+     * @return  IdentityFactory
+     */
+    public function getIdentityFactory()
+    {
+        return $this->identityFactory;
+    }
+
+    /**
      * Gets the currently active symfony security user.
      *
      * @return  \Symfony\Component\Security\Core\User\UserInterface
@@ -188,6 +223,14 @@ class CustomerManager
         }
         $user = $token->getUser();
         return $user instanceof Customer ? $user : null;
+    }
+
+    /**
+     * @return  Store
+     */
+    public function getStore()
+    {
+        return $this->store;
     }
 
     /**
@@ -232,7 +275,7 @@ class CustomerManager
         if ($user) {
             return $this->authGenerator->generateFor($user);
         }
-        $model = $this->store->create('customer-account');
+        $model = $this->getStore()->create('customer-account');
         return $this->authGenerator->getSerializer()->serialize($model);
     }
 
@@ -265,5 +308,25 @@ class CustomerManager
             $this->cookieManager->setCookiesTo($response, $customer, null !== $this->activeIdentity);
         }
         return $response;
+    }
+
+    /**
+     * Updates or creates an identity (unsaved) for the provided email address with provided attributes.
+     *
+     * @param   string  $emailAddress
+     * @param   array   $attributes
+     * @return  Model
+     */
+    public function upsertIdentityFor($emailAddress, array $attributes = [])
+    {
+        $identity = $this->getStore()->findQuery('customer-identity', ['email' => $emailAddress])->getSingleResult();
+        if (null === $identity) {
+            // No identity found. Create.
+            $identity = $this->identityFactory->create($attributes);
+        } else {
+            // Update the existing identity.
+            $this->identityFactory->apply($identity, $attributes);
+        }
+        return $identity;
     }
 }

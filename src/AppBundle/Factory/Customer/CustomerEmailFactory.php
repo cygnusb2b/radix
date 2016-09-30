@@ -6,6 +6,7 @@ use AppBundle\Customer\EmailVerifyTokenGenerator;
 use AppBundle\Factory\AbstractModelFactory;
 use AppBundle\Factory\Error;
 use AppBundle\Factory\SubscriberFactoryInterface;
+use AppBundle\Security\Auth\AuthSchema;
 use AppBundle\Utility\ModelUtility;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
@@ -19,9 +20,9 @@ use As3\Modlr\Store\Store;
 class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFactoryInterface
 {
     /**
-     * @todo Eventually this should be set by an auth schema mechanism.
+     * @var AuthSchema
      */
-    const REQUIRE_EMAIL = true;
+    private $authSchema;
 
     /**
      * @var EmailVerifyTokenGenerator
@@ -32,10 +33,11 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
      * @param   Store                       $store
      * @param   EmailVerifyTokenGenerator   $tokenGenerator
      */
-    public function __construct(Store $store, EmailVerifyTokenGenerator $tokenGenerator)
+    public function __construct(Store $store, EmailVerifyTokenGenerator $tokenGenerator, AuthSchema $authSchema)
     {
         parent::__construct($store);
         $this->tokenGenerator = $tokenGenerator;
+        $this->authSchema     = $authSchema;
     }
 
     /**
@@ -50,7 +52,7 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
         }
 
         $value = $email->get('value');
-        if (true === $this->requiresEmail() && empty($value)) {
+        if (true === $this->authSchema->requiresEmail() && empty($value)) {
             // Ensure email address is set.
             return new Error('The email address field is required.', 400);
         }
@@ -171,16 +173,6 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
         $value = ModelUtility::formatEmailAddress($email->get('value'));
         $value = (empty($value)) ? null : $value;
         $email->set('value', $value);
-    }
-
-    /**
-     * Determines if an email address is required.
-     *
-     * @return  bool
-     */
-    private function requiresEmail()
-    {
-        return self::REQUIRE_EMAIL;
     }
 
     /**
