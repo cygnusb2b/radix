@@ -1,0 +1,20 @@
+template:
+    entity:
+        abstract: true
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { _type: 1, namespace: 1, template: 1 }, options: { unique: true }}
+
+    mixins: [ 'timestampable', 'soft-deleteable' ]
+    attributes:
+        name:
+            type: string
+        namespace:
+            type: string
+        template:
+            type: string
+        contents:
+            type: string

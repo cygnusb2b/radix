@@ -1,0 +1,8 @@
+application-settings-support:
+    attributes:
+        email:
+            type: string
+        name:
+            type: string
+        phone:
+            type: string

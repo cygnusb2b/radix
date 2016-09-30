@@ -1,2 +1,3 @@
 imports:
     - { resource: services/import.yml }
+    - { resource: services/notifications.yml }

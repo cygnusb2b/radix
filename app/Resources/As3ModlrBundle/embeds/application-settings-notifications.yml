@@ -1,0 +1,6 @@
+application-settings-notifications:
+    attributes:
+        email:
+            type: string
+        name:
+            type: string

@@ -121,4 +121,25 @@ class CalculatedFields
         }
         return $password->get('username');
     }
+
+    /**
+     * Calculates the full name of a customer
+     *
+     * @param   Model   $model
+     * @return  string|null
+     */
+    public static function customerFullName(Model $model)
+    {
+        $name = '';
+        if ($model->get('givenName')) {
+            $name = $model->get('givenName');
+        }
+        if ($model->get('familyName')) {
+            $name = sprintf('%s %s', $name, $model->get('familyName'));
+        }
+        $name = trim($name);
+        if (!empty($name)) {
+            return $name;
+        }
+    }
 }

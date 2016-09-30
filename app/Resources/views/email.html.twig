@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <style type="text/css"> table {width: 630px;margin: 0 auto;} .danger { color: red } body{font-family: sans-serif; color: #333; margin: 0;}h1{font-family: sans-serif; line-height: 58px; margin: 0;}.headline, .footer{border-top: 1px solid #EEE; padding: 1em;}.footer{text-align:center; font-family: monospace; color: #CCC;}</style>
+        <title>{{ values.get('subject') }}</title>
+    </head>
+    <body>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        {% if values.get('application.settings.branding.logo') %}
+                            <img align=center src="{{ values.get('application.settings.branding.logo') }}" alt="{{ values.get('application.settings.branding.name') }}"/>
+                        {% else %}
+                            <h1>{{ values.get('application.settings.branding.name') }}</h1>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="headline"><h2>
+                        {% block headline %}{% endblock %}</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {% block body %}{% endblock %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="footer">
+                        {% block footer %}
+                        <small>
+                            This is an automated message from {{values.get('application.settings.branding.name') }}. Please do not reply directly to this email
+                            {% if values.get('application.settings.support.email') %}
+                                &mdash; direct any inquiries to <a href="mailto:{{ values.get('application.settings.support.email') }}">{{ values.get('application.settings.support.name', values.get('application.settings.support.email')) }}</a>
+                            {% else %}.{% endif %}
+                        </small>
+                        {% endblock %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

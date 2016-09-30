@@ -22,3 +22,7 @@ core-application:
             entity: core-application-user
             inverse: true
             field: user
+    embeds:
+        settings:
+            type: one
+            entity: application-settings

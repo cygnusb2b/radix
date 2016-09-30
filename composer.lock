@@ -286,16 +286,16 @@
         },
         {
             "name": "as3/parameters",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/parameters.git",
-                "reference": "9e1311cde7c4a72fc60b633deb2eba910ec08a96"
+                "reference": "45c518232aa6770182ff777d3f6e808e2bad28cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/parameters/zipball/9e1311cde7c4a72fc60b633deb2eba910ec08a96",
-                "reference": "9e1311cde7c4a72fc60b633deb2eba910ec08a96",
+                "url": "https://api.github.com/repos/as3io/parameters/zipball/45c518232aa6770182ff777d3f6e808e2bad28cb",
+                "reference": "45c518232aa6770182ff777d3f6e808e2bad28cb",
                 "shasum": ""
             },
             "require": {
@@ -318,7 +318,7 @@
                 }
             ],
             "description": "Common parameter bag classes and parameter formatting/definitions.",
-            "time": "2016-09-09 15:33:48"
+            "time": "2016-09-29 16:29:04"
         },
         {
             "name": "as3/symfony-data-importer",

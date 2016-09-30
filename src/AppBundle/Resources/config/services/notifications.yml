@@ -1,0 +1,32 @@
+services:
+    app_bundle.twig_database_loader:
+        class: AppBundle\Templating\TwigDatabaseLoader
+        arguments: [ "@as3_modlr.store" ]
+
+    app_bundle.twig_chain_loader:
+        class: Twig_Loader_Chain
+        calls:
+            - [ addLoader, [ "@app_bundle.twig_database_loader" ] ]
+            - [ addLoader, [ "@twig.loader" ] ]
+
+    app_bundle.notification_factory.default:
+        class: AppBundle\Notifications\NotificationFactory\DefaultFactory
+
+    app_bundle.notification_factory.customer_account.activate:
+        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\Activate
+
+    app_bundle.notification_factory.customer_account.verify_email:
+        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\VerifyEmail
+
+    app_bundle.notifications.manager:
+        class: AppBundle\Notifications\NotificationManager
+        arguments:
+            - "@app_bundle.notification_factory.default"
+            - "@as3_modlr.store"
+            - "@mailer"
+            - "@templating"
+            - "@app_bundle.core.account_manager"
+            - "@app_bundle.serializer.public_api"
+        calls:
+            - [ addFactory, ["@app_bundle.notification_factory.customer_account.activate"]]
+            - [ addFactory, ["@app_bundle.notification_factory.customer_account.verify_email"]]
