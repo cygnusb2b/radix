@@ -18,6 +18,11 @@ app_bundle_app_auth_submit:
     path: /app/auth
     methods: [ PATCH ]
 
+app_bundle_app_optins_email_deployment:
+    path: /app/opt-ins/email-deployment/{emailAddress}
+    defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
+    methods: [ GET ]
+
 app_bundle_app_product:
     path: /app/product/{type}
     defaults: { _controller: AppBundle:App\Product:all, type: null }
@@ -37,6 +42,11 @@ app_bundle_app_question:
     path: /app/question/{keyOrId}
     defaults: { _controller: AppBundle:App\Question:retrieve }
     methods: [ GET ]
+# @todo Submission routes should be consolidated into one.
+app_bundle_app_submission_product_email_optin:
+    path: /app/submission/product-email-deployment-optin
+    defaults: { _controller: AppBundle:App\Submission:productEmailDeploymentOptin }
+    methods: [ POST ]
 
 app_bundle_app_submission_inquiry:
     path: /app/submission/inquiry

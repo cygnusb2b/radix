@@ -53,3 +53,7 @@ services:
     app_bundle.factory.input_submission:
         class: AppBundle\Factory\InputSubmissionFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.factory.input_answer", "@request_stack", "@app_bundle.data_formatter.mongo_db" ]
+
+    app_bundle.factory.product.email_deployment_optin:
+        class: AppBundle\Factory\ProductEmailDeploymentOptinFactory
+        arguments: [ "@as3_modlr.store" ]

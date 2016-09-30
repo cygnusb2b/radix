@@ -92,6 +92,7 @@
         this.FormInputText     = {{ loadComponent('form-input-text') }}
         this.FormLabel         = {{ loadComponent('form-label') }}
         this.FormLock          = {{ loadComponent('form-lock') }}
+        this.FormProductEmail  = {{ loadComponent('form-product-email') }}
         this.FormProductsEmail = {{ loadComponent('form-products-email') }}
         this.FormRadios        = {{ loadComponent('form-radios') }}
         this.FormSelect        = {{ loadComponent('form-select') }}

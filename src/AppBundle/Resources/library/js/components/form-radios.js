@@ -34,6 +34,7 @@ React.createClass({ displayName: 'ComponentFormRadios',
             option = Utils.isObject(option) ? option : {};
             var value = option.value || null;
             var optionProps = {
+                name     : this.props.name,
                 type     : 'radio',
                 value    : value,
                 disabled : this.props.disabled,
@@ -53,10 +54,7 @@ React.createClass({ displayName: 'ComponentFormRadios',
     },
 
     handleChange: function(event) {
-        console.info('ComponentFormRadios', event.target.value);
-
         this.setState({ value: event.target.value });
-
         if (Utils.isFunction(this.props.onChange)) {
             this.props.onChange(event);
         }
@@ -65,7 +63,7 @@ React.createClass({ displayName: 'ComponentFormRadios',
     render: function() {
         var label = this.props.label || Utils.titleize(this.props.name);
         return (
-            React.createElement(Radix.Components.get('FormFieldWrapper'), { name: this.props.name, className: this.props.wrapperClass },
+            React.createElement(Radix.Components.get('FormFieldWrapper'), { className: this.props.wrapperClass },
                 React.createElement(Radix.Components.get('FormLabel'), { id: this.props.id, value: label }),
                 React.createElement('div', this.getGroupProps(),
                     this.getOptions()

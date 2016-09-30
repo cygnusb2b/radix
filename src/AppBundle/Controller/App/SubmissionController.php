@@ -12,6 +12,147 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SubmissionController extends AbstractAppController
 {
+    public function productEmailDeploymentOptinAction(Request $request)
+    {
+        // Retrieve required services.
+        $customerFactory    = $this->get('app_bundle.factory.customer.account');
+        $identityFactory    = $this->get('app_bundle.factory.customer.identity');
+        $customerManager    = $this->get('app_bundle.customer.manager');
+        $submissionFactory  = $this->get('app_bundle.factory.input_submission');
+        $serializer         = $this->get('app_bundle.serializer.public_api');
+
+        $optinFactory       = $this->get('app_bundle.factory.product.email_deployment_optin');
+
+        // Hooks
+        // onValidate, onBeforeSave, onCanSave, onSave, onPostSave
+
+        // Create the payload instance
+        $payload = RequestPayload::createFrom($request);
+
+        // Validate... @todo Again, this should use a standard form handler to determine what is/isn't required.
+        $this->validateOptinPayload($payload);
+
+        // Create the submission.
+        $submission = $submissionFactory->create($payload);
+        $submission->set('sourceKey', 'product-email-deployment-optin');
+
+        // Update/create optins.
+
+        if (null !== $customer = $customerManager->getActiveAccount()) {
+            $emailAddress = $customer->get('primaryEmail');
+        } else {
+            $emailAddress = ModelUtility::formatEmailAddress($payload->getCustomer()->get('primaryEmail'));
+        }
+
+        $productIds  = [];
+        $optIns       = $payload->getSubmission()->getAsArray('optIns');
+        foreach ($optIns as $productId => $status) {
+            $productIds[] = $productId;
+        }
+
+        $optInModels = [];
+        if (!empty($productIds)) {
+            $criteria = ['email' => $emailAddress, 'product' => ['$in' => $productIds]];
+            $models   = $optinFactory->getStore()->findQuery('product-email-deployment-optin', $criteria);
+            foreach ($models as $model) {
+                // Handle updates.
+                // if (null === $model->get('product')) {
+                //     continue;
+                // }
+                $model->set('optedIn', $optIns[$model->get('product')->getId()]);
+                $optInModels[] = $model;
+                unset($optIns[$model->get('product')->getId()]);
+            }
+
+            // Find remaining products and create optins.
+            $products = $optinFactory->getStore()->findQuery('product-email-deployment', ['id' => ['$in' => array_keys($optIns)]]);
+            foreach ($products as $product) {
+                $optInModels[] = $optinFactory->create($emailAddress, $optIns[$product->getId()], $product);
+            }
+        }
+
+
+
+        // Now do the standard dance.
+
+        if (null !== $customer = $customerManager->getActiveAccount()) {
+            // A customer account is currently logged in.
+            $isIdentity = false;
+
+            // Set the customer factory.
+            $customerFactory = $this->get('app_bundle.factory.customer.account');
+
+            // Make sure email isn't updated by this form!
+            $payload->getCustomer()->remove('primaryEmail');
+
+            // Update customer data from this submission.
+            $customerFactory->apply($customer, $payload->getCustomer()->all());
+
+        } else {
+
+             // A customer account is NOT logged in.
+            $isIdentity = true;
+
+            // Set the customer factory.
+            $customerFactory = $this->get('app_bundle.factory.customer.identity');
+
+            // Attempt to find the identity.
+            $emailAddress = $payload->getCustomer()->get('primaryEmail');
+            $customer = $this->get('as3_modlr.store')->findQuery('customer-identity', ['email' => $emailAddress])->getSingleResult();
+
+            if (null === $customer) {
+                // No identity found. Create.
+                $customer = $customerFactory->create($payload->getCustomer()->all());
+            } else {
+                // Update the existing identity.
+                $customerFactory->apply($customer, $payload->getCustomer()->all());
+            }
+        }
+
+        // Set the account/identity to the submission.
+        $submission->set('customer', $customer);
+
+        // Throw error if unable to update the customer or create submission.
+        if (true !== $result = $customerFactory->canSave($customer)) {
+            $result->throwException();
+        }
+        if (true !== $result = $submissionFactory->canSave($submission)) {
+            $result->throwException();
+        }
+
+        foreach ($optInModels as $optin) {
+            if (true !== $result = $optinFactory->canSave($optin)) {
+                $result->throwException();
+            }
+        }
+
+        // Save everything
+        $customerFactory->save($customer);
+        $submissionFactory->save($submission);
+        foreach ($optInModels as $optin) {
+            $optin->save();
+        }
+
+        if (true === $isIdentity) {
+            // Have to manually set new identity.
+            $customerManager->setActiveIdentity($customer);
+        }
+
+        // @todo Send email notifications.
+
+        // @todo The serialized customer and submission should be sent to the template for processing.
+        return new JsonResponse(['data' => [
+            // 'customer'   => $serializer->serialize($customer),
+            // 'submission' => $serializer->serialize($submission),
+            'template'   => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
+        ]], 201);
+
+
+
+        var_dump(__METHOD__, $optInModels);
+        die();
+    }
+
     public function inquiryAction(Request $request)
     {
         // Retrieve required services.
@@ -21,7 +162,7 @@ class SubmissionController extends AbstractAppController
         $submissionFactory  = $this->get('app_bundle.factory.input_submission');
         $serializer         = $this->get('app_bundle.serializer.public_api');
 
-        // Create the payload instance: @todo, parameters should support dot notation and return arrays as parameter instances.
+        // Create the payload instance
         $payload = RequestPayload::createFrom($request);
 
         // Validate... @todo Again, this should use a standard form handler to determine what is/isn't required.
@@ -113,6 +254,33 @@ class SubmissionController extends AbstractAppController
             throw new HttpFriendlyException('The inquiry model type and identifier are required', 400);
         }
 
+        $customerManager = $this->get('app_bundle.customer.manager');
+
+        // Validation that should only run for non-logged in users.
+        if (null !== $customer = $customerManager->getActiveAccount()) {
+            if (null !== $customer->get('primaryEmail')) {
+                return $payload;
+            }
+        }
+
+        $email = ModelUtility::formatEmailAddress($payload->getCustomer()->get('primaryEmail'));
+        if (empty($email)) {
+            throw new HttpFriendlyException('The email address field is required.', 400);
+        }
+        if (false === ModelUtility::isEmailAddressValid($email)) {
+            throw new HttpFriendlyException('The provided email address is invalid.', 400);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @todo    This should move into the form/submission validation service.
+     * @param   RequestPayload   $payload
+     * @throws  HttpFriendlyException
+     */
+    private function validateOptinPayload(RequestPayload $payload)
+    {
         $customerManager = $this->get('app_bundle.customer.manager');
 
         // Validation that should only run for non-logged in users.

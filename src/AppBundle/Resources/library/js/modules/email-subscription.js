@@ -7,12 +7,12 @@ function EmailSubscriptionModule()
         componentDidMount: function() {
             EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({ customer : customer });
+                this.setState({ customer : customer, error: null });
             }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({ customer : customer, nextTemplate: null });
+                this.setState({ customer : customer, nextTemplate: null, error: null });
             }.bind(this));
         },
 
@@ -34,12 +34,7 @@ function EmailSubscriptionModule()
 
         getDefaultProps: function() {
             return {
-                title  : 'Manage Email Subscriptions',
-                model  : {},
-                notify : {
-                    enabled : false,
-                    email   : null
-                }
+                title  : 'Manage Email Subscriptions'
             };
         },
 
@@ -64,13 +59,9 @@ function EmailSubscriptionModule()
             this._formData['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
             this._formData['submission:referringHref'] = window.location.href;
 
-            var sourceKey = 'email-subscription';
+            var sourceKey = 'product-email-deployment-optin';
             var payload   = {
-                data: this._formData,
-                meta: {
-                    model  : this.props.model,
-                    notify : this.props.notify
-                }
+                data: this._formData
             };
 
             Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
@@ -78,12 +69,14 @@ function EmailSubscriptionModule()
 
                 // Refresh the customer, if logged in.
                 if (CustomerManager.isLoggedIn()) {
-                    CustomerManager.reloadCustomer();
+                    CustomerManager.reloadCustomer().then(function() {
+                        EventDispatcher.trigger('CustomerManager.customer.loaded');
+                    });
                 }
 
                 // Set the next template to display (thank you page, etc).
                 var template = (response.data) ? response.data.template || null : null;
-                this.setState({ nextTemplate: template });
+                this.setState({ nextTemplate: template, error: null });
 
             }.bind(this), function(jqXHR) {
                 locker.unlock();
@@ -98,25 +91,34 @@ function EmailSubscriptionModule()
         },
 
         render: function() {
-            return (
-                React.createElement('div', { className: 'platform-element' },
-                    React.createElement('h2', null, this.props.title),
-                    this.getAuthElement(),
-                    React.createElement('hr'),
-                    React.createElement('div', { className: 'email-subscription-wrapper' },
-                        React.createElement(Radix.Components.get('FormProductsEmail')),
-                        React.createElement(Radix.Forms.get('EmailSubscription'), {
-                            customer     : this.state.customer,
-                            nextTemplate : this.state.nextTemplate,
-                            onSubmit     : this.handleSubmit,
-                            onChange     : this.handleChange
-                        })
+            var element;
+            if (this.state.nextTemplate) {
+                element = React.createElement('div', { dangerouslySetInnerHTML: { __html: this.state.nextTemplate } });
+            } else {
+                element = this._getContents();
+            }
+            return (element);
+        },
 
-                    ),
-                    React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-                    React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
-                )
-            )
+        _getContents: function() {
+            return React.createElement('div', { className: 'platform-element' },
+                React.createElement('h2', null, this.props.title),
+                this.getAuthElement(),
+                React.createElement('hr'),
+                React.createElement('div', { className: 'email-subscription-wrapper' },
+                    React.createElement(Radix.Components.get('FormProductsEmail'), {
+                        onChange : this.handleChange
+                    }),
+                    React.createElement(Radix.Forms.get('EmailSubscription'), {
+                        customer     : this.state.customer,
+                        nextTemplate : this.state.nextTemplate,
+                        onSubmit     : this.handleSubmit,
+                        onChange     : this.handleChange
+                    })
+                ),
+                React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+                React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+            );
         },
 
         _setErrorDisplay: function(ref) {

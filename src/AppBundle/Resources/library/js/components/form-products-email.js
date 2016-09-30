@@ -27,26 +27,15 @@ React.createClass({ displayName: 'FormProductsEmail',
 
     render: function() {
         var Products = this.state.products.map(function(product, index) {
-            // @todo, this should be a FormProductEmail item that includes the email deployment component.
-            return React.createElement(Radix.Components.get('ProductEmailDeployment'), {
+            return React.createElement(Radix.Components.get('FormProductEmail'), {
                 key         : index,
-                id          : product._id,
+                productId   : product._id,
                 productKey  : product.key,
-                name        : product.name,
-                description : product.description
+                productName : product.name,
+                description : product.description,
+                onChange    : this.props.onChange
             });
-        });
-        var options = [
-            { label: 'Yes', value: 'true' },
-            { label: 'No', value: 'false' }
-        ];
-        return (
-            React.createElement('div', { className: 'form-products-email' },
-                React.createElement(Radix.Components.get('FormRadios'), { name: 'product-email-deployment:opt-in', label: 'Subscribe', options: options } ),
-                // React.createElement(Radix.Components.get('FormRadio'), { name: 'test', label: 'Yes', value: 'yes' }),
-                // React.createElement(Radix.Components.get('FormRadio'), { name: 'foo',  label: 'No',  value: 'no' }),
-                Products
-            )
-        );
+        }.bind(this));
+        return (React.createElement('div', { className: 'form-products-email' }, Products));
     },
 });
