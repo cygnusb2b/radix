@@ -46,6 +46,17 @@ function Utils()
         return(out);
     }
 
+    this.parseQueryString = function(str)
+    {
+        str = (str || document.location.search).replace(/(^\?)/,'');
+        if (!str) {
+            return {};
+        }
+        return str.split('&').map(function(n) {
+            return n = n.split("="), this[n[0]] = window.decodeURIComponent(n[1]), this
+        }.bind({}))[0];
+    }
+
     this.parseDataAttributes = function(element)
     {
         var formatValue = function(value)

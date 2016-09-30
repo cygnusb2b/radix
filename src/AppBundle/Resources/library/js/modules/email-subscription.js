@@ -110,7 +110,7 @@ function EmailSubscriptionModule()
                 React.createElement('div', { className: 'email-subscription-wrapper' },
                     React.createElement(Radix.Components.get('FormProductsEmail'), {
                         onChange : this.handleChange,
-                        optIns   : this._getPrimaryOptIns()
+                        optIns   : this._getOptInsFor(this.state.customer.primaryEmail)
                     }),
                     React.createElement(Radix.Forms.get('EmailSubscription'), {
                         customer     : this.state.customer,
