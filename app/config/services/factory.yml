@@ -11,45 +11,61 @@ services:
             - [ addFactory, [ "@app_bundle.factory.input_answer" ] ]
 
     app_bundle.factory.customer.account:
+        private: true
         class: AppBundle\Factory\Customer\CustomerAccountFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.factory.customer.address", "@app_bundle.factory.customer.phone", "@app_bundle.factory.customer.answer", "@app_bundle.factory.customer.credentials", "@app_bundle.factory.customer.email" ]
 
     app_bundle.factory.customer.address:
+        private: true
         class: AppBundle\Factory\Customer\CustomerAddressFactory
         arguments: [ "@as3_modlr.store" ]
 
     app_bundle.factory.customer.answer:
+        private: true
         class: AppBundle\Factory\Customer\CustomerAnswerFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.question.answer_factory" ]
 
     app_bundle.factory.customer.identity:
+        private: true
         class: AppBundle\Factory\Customer\CustomerIdentityFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.factory.customer.address", "@app_bundle.factory.customer.phone", "@app_bundle.factory.customer.answer" ]
 
     app_bundle.factory.customer.credentials:
+        private: true
         class: AppBundle\Factory\Customer\CustomerCredentialsFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.factory.customer.credentials_password", "@app_bundle.factory.customer.credentials_social" ]
 
     app_bundle.factory.customer.credentials_password:
+        private: true
         class: AppBundle\Factory\Customer\CustomerCredentialsPasswordFactory
-        arguments: [ "@as3_modlr.store", "@security.password_encoder" ]
+        arguments: [ "@as3_modlr.store", "@security.password_encoder", "@app_bundle.security.auth.schema" ]
 
     app_bundle.factory.customer.credentials_social:
+        private: true
         class: AppBundle\Factory\Customer\CustomerCredentialsSocialFactory
         arguments: [ "@as3_modlr.store" ]
 
     app_bundle.factory.customer.email:
+        private: true
         class: AppBundle\Factory\Customer\CustomerEmailFactory
-        arguments: [ "@as3_modlr.store", "@app_bundle.customer.email_verify.token_generator" ]
+        arguments: [ "@as3_modlr.store", "@app_bundle.customer.email_verify.token_generator", "@app_bundle.security.auth.schema" ]
 
     app_bundle.factory.customer.phone:
+        private: true
         class: AppBundle\Factory\Customer\CustomerPhoneFactory
         arguments: [ "@as3_modlr.store" ]
 
     app_bundle.factory.input_answer:
+        private: true
         class: AppBundle\Factory\InputAnswerFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.question.answer_factory" ]
 
     app_bundle.factory.input_submission:
+        private: true
         class: AppBundle\Factory\InputSubmissionFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.factory.input_answer", "@request_stack", "@app_bundle.data_formatter.mongo_db" ]
+
+    app_bundle.factory.product.email_deployment_optin:
+        private: true
+        class: AppBundle\Factory\ProductEmailDeploymentOptinFactory
+        arguments: [ "@as3_modlr.store" ]

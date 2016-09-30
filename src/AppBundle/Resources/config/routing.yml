@@ -1,10 +1,4 @@
 # FRONT-END APPLICATION ROUTES #
-
-app_bundle_app_auth_create:
-    path: /app/auth
-    defaults: { _controller: AppBundle:App\Auth:create }
-    methods: [ POST ]
-
 app_bundle_app_auth_destory:
     path: /app/auth/destroy
     methods: [ GET ]
@@ -16,7 +10,12 @@ app_bundle_app_auth_retrieve:
 
 app_bundle_app_auth_submit:
     path: /app/auth
-    methods: [ PATCH ]
+    methods: [ POST ]
+
+app_bundle_app_optins_email_deployment:
+    path: /app/opt-ins/email-deployment/{emailAddress}
+    defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
+    methods: [ GET ]
 
 app_bundle_app_product:
     path: /app/product/{type}
@@ -37,10 +36,10 @@ app_bundle_app_question:
     path: /app/question/{keyOrId}
     defaults: { _controller: AppBundle:App\Question:retrieve }
     methods: [ GET ]
-
-app_bundle_app_submission_inquiry:
-    path: /app/submission/inquiry
-    defaults: { _controller: AppBundle:App\Submission:inquiry }
+# @todo Submission routes should be consolidated into one.
+app_bundle_submission:
+    path: /app/submission/{sourceKey}
+    defaults: { _controller: AppBundle:App\Submission:index }
     methods: [ POST ]
 
 app_bundle_app_util_country_options:

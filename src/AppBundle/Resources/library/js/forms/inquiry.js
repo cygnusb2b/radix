@@ -5,21 +5,13 @@ React.createClass({ displayName: 'FormInquiry',
         return {
             customer    : {},
             model       : {},
-            nextTemplate: null,
             onSubmit    : function(event) { Debugger.error('Nothing handled the form submit.')  },
             onChange    : function(event) { Debugger.error('Nothing handled the field change.') }
         }
     },
 
     render: function() {
-        var element;
-        if (this.props.nextTemplate) {
-            element = React.createElement('div', { dangerouslySetInnerHTML: { __html: this.props.nextTemplate } });
-        } else {
-            element = this._getForm();
-        }
-
-        return (element)
+        return (this._getForm())
     },
 
     _getForm: function() {

@@ -5,6 +5,7 @@ namespace AppBundle\Factory\Customer;
 use AppBundle\Factory\AbstractModelFactory;
 use AppBundle\Factory\Error;
 use AppBundle\Factory\ValidationFactoryInterface;
+use AppBundle\Security\Auth\AuthSchema;
 use AppBundle\Security\User\Customer;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Embed;
@@ -20,10 +21,9 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 class CustomerCredentialsPasswordFactory extends AbstractModelFactory implements ValidationFactoryInterface
 {
     /**
-     * @todo Eventually this should be set by an auth schema mechanism.
+     * @var AuthSchema
      */
-    const REQUIRE_USERNAME = false;
-    const USERNAME_MIN     = '4';
+    private $authSchema;
 
     /**
      * @var UserPasswordEncoder
@@ -42,10 +42,11 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory implements
      * @param   Store               $store
      * @param   UserPasswordEncoder $encoder
      */
-    public function __construct(Store $store, UserPasswordEncoder $encoder)
+    public function __construct(Store $store, UserPasswordEncoder $encoder, AuthSchema $authSchema)
     {
         parent::__construct($store);
-        $this->encoder = $encoder;
+        $this->encoder    = $encoder;
+        $this->authSchema = $authSchema;
     }
 
     /**
@@ -101,9 +102,9 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory implements
         }
 
         $username = $credential->get('username');
-        if (true === $this->requiresUsername() && strlen($username) < self::USERNAME_MIN) {
+        if (true === $this->authSchema->requiresUsername() && strlen($username) < $this->authSchema->minUsernameLength()) {
             // Ensure username is minimum length.
-            return new Error(sprintf('The username must be set an be at least %s characters long.', self::USERNAME_MIN), 400);
+            return new Error(sprintf('The username must be set an be at least %s characters long.', $this->authSchema->minUsernameLength()), 400);
         }
 
         if (!empty($username)) {
@@ -160,16 +161,6 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory implements
     private function getUnsupportedError()
     {
         return new Error('The provided embed model is not supported. Expected an instance of `customer-credential-password`');
-    }
-
-    /**
-     * Determines if a username is required on the credentials.
-     *
-     * @return  bool
-     */
-    private function requiresUsername()
-    {
-        return self::REQUIRE_USERNAME;
     }
 
     /**

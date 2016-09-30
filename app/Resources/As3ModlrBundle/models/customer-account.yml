@@ -12,6 +12,16 @@ customer-account:
         roles:
             type: array
             defaultValue: [ USER ]
+        optIns:
+            type: array
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerAccountOptIns
+        primaryOptIns:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerAccountPrimaryOptIns
         primaryEmail:
             type: string
             calculated:

@@ -153,7 +153,9 @@ class CustomerAccountFactory extends AbstractCustomerFactory
         $credentials = $customer->get('credentials');
 
         // Ensures the credentials are processed (encode the password, etc).
-        $this->getCredentialsFactory()->postValidate($credentials);
+        if (true === $customer->getState()->is('new')) {
+            $this->getCredentialsFactory()->postValidate($credentials);
+        }
 
         // Set the display name from the user name, if applicable.
         if (null === $customer->get('displayName') && null !== $password = $credentials->get('password')) {

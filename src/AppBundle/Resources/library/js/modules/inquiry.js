@@ -7,12 +7,12 @@ function InquiryModule()
         componentDidMount: function() {
             EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({ customer : customer });
+                this.setState({ customer : customer, error: null });
             }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({ customer : customer, nextTemplate: null });
+                this.setState({ customer : customer, nextTemplate: null, error: null });
             }.bind(this));
         },
 
@@ -78,12 +78,14 @@ function InquiryModule()
 
                 // Refresh the customer, if logged in.
                 if (CustomerManager.isLoggedIn()) {
-                    CustomerManager.reloadCustomer();
+                    CustomerManager.reloadCustomer().then(function() {
+                        EventDispatcher.trigger('CustomerManager.customer.loaded');
+                    });
                 }
 
                 // Set the next template to display (thank you page, etc).
                 var template = (response.data) ? response.data.template || null : null;
-                this.setState({ nextTemplate: template });
+                this.setState({ nextTemplate: template, error: null });
 
             }.bind(this), function(jqXHR) {
                 locker.unlock();
@@ -97,22 +99,31 @@ function InquiryModule()
             this._formData[event.target.name] = event.target.value;
         },
 
+
         render: function() {
-            return (
-                React.createElement('div', { className: 'platform-element' },
-                    React.createElement('h2', null, this.props.title),
-                    this.getAuthElement(),
-                    React.createElement('hr'),
-                    React.createElement(Radix.Forms.get('Inquiry'), {
-                        customer     : this.state.customer,
-                        nextTemplate : this.state.nextTemplate,
-                        onSubmit     : this.handleSubmit,
-                        onChange     : this.handleChange
-                    }),
-                    React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-                    React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
-                )
-            )
+            var element;
+            if (this.state.nextTemplate) {
+                element = React.createElement('div', { dangerouslySetInnerHTML: { __html: this.state.nextTemplate } });
+            } else {
+                element = this._getContents();
+            }
+            return (element);
+        },
+
+        _getContents: function() {
+            return React.createElement('div', { className: 'platform-element' },
+                React.createElement('h2', null, this.props.title),
+                this.getAuthElement(),
+                React.createElement('hr'),
+                React.createElement(Radix.Forms.get('Inquiry'), {
+                    customer     : this.state.customer,
+                    nextTemplate : this.state.nextTemplate,
+                    onSubmit     : this.handleSubmit,
+                    onChange     : this.handleChange
+                }),
+                React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+                React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+            );
         },
 
         _setErrorDisplay: function(ref) {

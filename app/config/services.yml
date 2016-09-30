@@ -5,6 +5,7 @@ imports:
     - { resource: services/factory.yml }
     - { resource: services/question-types.yml }
     - { resource: services/security.yml }
+    - { resource: services/submission.yml }
 
 parameters: ~
 
