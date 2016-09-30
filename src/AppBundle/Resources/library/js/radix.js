@@ -93,6 +93,7 @@
         this.FormLabel         = {{ loadComponent('form-label') }}
         this.FormLock          = {{ loadComponent('form-lock') }}
         this.FormProductsEmail = {{ loadComponent('form-products-email') }}
+        this.FormRadios        = {{ loadComponent('form-radios') }}
         this.FormSelect        = {{ loadComponent('form-select') }}
         this.FormSelectCountry = {{ loadComponent('form-select-country') }}
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}

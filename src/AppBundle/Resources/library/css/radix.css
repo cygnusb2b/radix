@@ -493,8 +493,8 @@
     color: #323a45;
 }
 
-.platform-element input,
 .platform-element select,
+.platform-element input[type="tel"],
 .platform-element input[type="text"],
 .platform-element input[type="password"],
 .platform-element input[type="email"],

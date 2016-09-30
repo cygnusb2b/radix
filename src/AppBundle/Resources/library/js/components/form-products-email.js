@@ -36,6 +36,17 @@ React.createClass({ displayName: 'FormProductsEmail',
                 description : product.description
             });
         });
-        return (React.createElement('div', { className: 'form-products-email' }, Products));
+        var options = [
+            { label: 'Yes', value: 'true' },
+            { label: 'No', value: 'false' }
+        ];
+        return (
+            React.createElement('div', { className: 'form-products-email' },
+                React.createElement(Radix.Components.get('FormRadios'), { name: 'product-email-deployment:opt-in', label: 'Subscribe', options: options } ),
+                // React.createElement(Radix.Components.get('FormRadio'), { name: 'test', label: 'Yes', value: 'yes' }),
+                // React.createElement(Radix.Components.get('FormRadio'), { name: 'foo',  label: 'No',  value: 'no' }),
+                Products
+            )
+        );
     },
 });
