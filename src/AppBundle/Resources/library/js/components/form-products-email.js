@@ -13,7 +13,7 @@ React.createClass({ displayName: 'FormProductsEmail',
 
     getDefaultProps: function() {
         return {
-            optIns  : [],
+            optIns  : {},
             onChange: null
         };
     },
@@ -33,9 +33,14 @@ React.createClass({ displayName: 'FormProductsEmail',
                 productKey  : product.key,
                 productName : product.name,
                 description : product.description,
-                onChange    : this.props.onChange
+                onChange    : this.props.onChange,
+                optedIn     : this._isOptedIn(product._id)
             });
         }.bind(this));
         return (React.createElement('div', { className: 'form-products-email' }, Products));
     },
+
+    _isOptedIn: function(productId) {
+        return (this.props.optIns.hasOwnProperty(productId) && true === this.props.optIns[productId]);
+    }
 });

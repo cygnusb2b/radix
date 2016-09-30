@@ -219,7 +219,7 @@ function CustomerManager()
             var promise = Ajax.send('/app/auth/destroy', 'GET');
                 promise.then(function (response) {
                 // Success
-                customer = getDefaultCustomerObject();
+                customer = response.data;
                 EventDispatcher.trigger('CustomerManager.logout.success', [response]);
                 EventDispatcher.trigger('CustomerManager.customer.unloaded');
             },

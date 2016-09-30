@@ -8,6 +8,7 @@ function EmailSubscriptionModule()
             EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
                 this.setState({ customer : customer, error: null });
+
             }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
@@ -101,13 +102,15 @@ function EmailSubscriptionModule()
         },
 
         _getContents: function() {
+
             return React.createElement('div', { className: 'platform-element' },
                 React.createElement('h2', null, this.props.title),
                 this.getAuthElement(),
                 React.createElement('hr'),
                 React.createElement('div', { className: 'email-subscription-wrapper' },
                     React.createElement(Radix.Components.get('FormProductsEmail'), {
-                        onChange : this.handleChange
+                        onChange : this.handleChange,
+                        optIns   : this._getPrimaryOptIns()
                     }),
                     React.createElement(Radix.Forms.get('EmailSubscription'), {
                         customer     : this.state.customer,
@@ -119,6 +122,20 @@ function EmailSubscriptionModule()
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
             );
+        },
+
+        _getPrimaryOptIns: function() {
+            return this.state.customer.primaryOptIns.products;
+        },
+
+        _getOptInsFor: function(email) {
+            for (var i = 0; i < this.state.customer.optIns.length; i++) {
+                var optIn = this.state.customer.optIns[i];
+                if (email === optIn.address) {
+                    return optIn.products;
+                }
+            }
+            return {};
         },
 
         _setErrorDisplay: function(ref) {
