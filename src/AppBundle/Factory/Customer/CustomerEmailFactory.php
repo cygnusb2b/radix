@@ -145,7 +145,7 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
     {
         // Try email address
         $criteria = [
-            'value'    => strtolower($emailAddress),
+            'value'    => ModelUtility::formatEmailAddress($emailAddress),
             'verification.verified' => true,
         ];
         $email = $this->getStore()->findQuery('customer-email', $criteria)->getSingleResult();

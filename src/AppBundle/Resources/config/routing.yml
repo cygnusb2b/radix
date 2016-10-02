@@ -12,6 +12,16 @@ app_bundle_app_auth_submit:
     path: /app/auth
     methods: [ POST ]
 
+app_bundle_app_auth_verify_email:
+    path: /app/auth/verify-email
+    defaults: { _controller: AppBundle:App\Auth:verifyEmail }
+    methods: [ GET ]
+
+    app_bundle_app_auth_verify_email_send:
+    path: /app/auth/verify-email/send
+    defaults: { _controller: AppBundle:App\Auth:sendVerifyEmail }
+    methods: [ GET ]
+
 app_bundle_app_optins_email_deployment:
     path: /app/opt-ins/email-deployment/{emailAddress}
     defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
