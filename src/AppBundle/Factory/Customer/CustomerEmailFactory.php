@@ -62,17 +62,19 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
             return new Error(sprintf('The provided email address `%s` is invalid.', $value), 400);
         }
 
-        // @todo If email is new: check if another verified email already exists - if yes, throw error
-        // If email is not new
-            // If verified state is moving from true to false
-            // If verified state is moving from false to true
-            // If verified state has not changed, but the email value has
-            // If verified state and value are unchanged: do nothing
+        // If email is new: check if another verified email already exists.
+        // If email.value or email.verification.verified has changed, get for another email where it is not itself.
+        $changeset       = $email->getChangeSet();
+        $verifyChangeSet = $email->get('verification')->getChangeSet();
+        $existing = null;
+        if ($email->getState()->is('new') || $email->get('verification')->getState()->is('new')) {
+            $existing = $this->retrieveCustomerViaEmailAddress($value);
+        } elseif (isset($changeset['attributes']['value']) || isset($verifyChangeSet['attributes']['verified'])) {
+            $existing = $this->retrieveCustomerViaEmailAddress($value, $email->getId());
+        }
 
-        if (false === $email->get('verification')->get('verified')) {
-            if (null !== $this->retrieveCustomerViaEmailAddress($value)) {
-                return new Error(sprintf('The email address `%s` is already in use by another account.', $value), 400);
-            }
+        if (null !== $existing) {
+            return new Error(sprintf('The email address `%s` is already in use by another account.', $value), 400);
         }
         return true;
     }
@@ -146,16 +148,21 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
     /**
      * Retrieves a customer account based on a verified email address.
      *
-     * @param   string  $emailAddress
+     * @param   string      $emailAddress
+     * @param   string|null $emailId
      * @return  Model|null
      */
-    public function retrieveCustomerViaEmailAddress($emailAddress)
+    public function retrieveCustomerViaEmailAddress($emailAddress, $emailId = null)
     {
         // Try email address
         $criteria = [
             'value'    => ModelUtility::formatEmailAddress($emailAddress),
             'verification.verified' => true,
         ];
+        if (!empty($emailId)) {
+            $criteria['id'] = ['$ne' => $emailId];
+        }
+
         $email = $this->getStore()->findQuery('customer-email', $criteria)->getSingleResult();
         if (null !== $email && null !== $email->get('account') && false === $email->get('account')->get('deleted')) {
             // Valid customer.
