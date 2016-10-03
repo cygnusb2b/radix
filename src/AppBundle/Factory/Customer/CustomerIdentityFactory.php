@@ -18,17 +18,6 @@ class CustomerIdentityFactory extends AbstractCustomerFactory
     /**
      * {@ineritdoc}
      */
-    public function apply(Model $customer, array $attributes = [])
-    {
-        if (isset($attributes['primaryEmail'])) {
-            $attributes['email'] = $attributes['primaryEmail'];
-        }
-        parent::apply($customer, $attributes);
-    }
-
-    /**
-     * {@ineritdoc}
-     */
     public function canSave(AbstractModel $customer)
     {
         if (true !== $result = parent::canSave($customer)) {
@@ -37,7 +26,7 @@ class CustomerIdentityFactory extends AbstractCustomerFactory
 
         $this->preValidate($customer);
 
-        $value = $customer->get('email');
+        $value = $customer->get('primaryEmail');
         if (empty($value)) {
             // Ensure email address is set.
             return new Error('The email address field is required.', 400);
@@ -65,8 +54,8 @@ class CustomerIdentityFactory extends AbstractCustomerFactory
     public function preValidate(AbstractModel $customer)
     {
         // Format email address.
-        $email = ModelUtility::formatEmailAddress($customer->get('email'));
-        $customer->set('email', $email);
+        $email = ModelUtility::formatEmailAddress($customer->get('primaryEmail'));
+        $customer->set('primaryEmail', $email);
     }
 
     /**

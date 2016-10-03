@@ -7,5 +7,5 @@ customer-email-verification:
             type: string # The verification token. Used when verifying an email.
         completedDate:
             type: date # The date the verification was completed
-        sentDate:
-            type: date # The date the verification was sent
+        generatedDate:
+            type: date # The date the verification token was generated

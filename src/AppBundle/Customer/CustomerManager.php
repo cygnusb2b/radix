@@ -6,11 +6,16 @@ use AppBundle\Factory\Customer\CustomerAccountFactory as AccountFactory;
 use AppBundle\Factory\Customer\CustomerIdentityFactory as IdentityFactory;
 use AppBundle\Security\Auth\CustomerGenerator;
 use AppBundle\Security\User\Customer;
+use AppBundle\Utility\ModelUtility;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\Security\Http\SecurityEvents;
 
 /**
  * Common customer management functions.
@@ -35,6 +40,11 @@ class CustomerManager
     private $cookieManager;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @var Store
      */
     private $store;
@@ -45,13 +55,14 @@ class CustomerManager
     private $tokenStorage;
 
     /**
-     * @param   AccountFactory      $accountFactory
-     * @param   IdentityFactory     $identityFactory
-     * @param   TokenStorage        $tokenStorage
-     * @param   CustomerGenerator   $authGenerator
-     * @param   CookieManager       $cookieManager
+     * @param   AccountFactory              $accountFactory
+     * @param   IdentityFactory             $identityFactory
+     * @param   TokenStorage                $tokenStorage
+     * @param   CustomerGenerator           $authGenerator
+     * @param   CookieManager               $cookieManager
+     * @param   EventDispatcherInterface    $eventDispatcher
      */
-    public function __construct(AccountFactory $accountFactory, IdentityFactory $identityFactory, TokenStorage $tokenStorage, CustomerGenerator $authGenerator, CookieManager $cookieManager)
+    public function __construct(AccountFactory $accountFactory, IdentityFactory $identityFactory, TokenStorage $tokenStorage, CustomerGenerator $authGenerator, CookieManager $cookieManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->store           = $accountFactory->getStore();
         $this->accountFactory  = $accountFactory;
@@ -59,6 +70,7 @@ class CustomerManager
         $this->tokenStorage    = $tokenStorage;
         $this->authGenerator   = $authGenerator;
         $this->cookieManager   = $cookieManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -264,6 +276,27 @@ class CustomerManager
     }
 
     /**
+     * Interactively logs in a customer account.
+     *
+     * @param   Model   $account
+     * @return  Customer
+     */
+    public function login(Model $account)
+    {
+        $user  = new Customer($account);
+        $token = new PostAuthenticationGuardToken(
+            $user,
+            'app',
+            $user->getRoles()
+        );
+        $this->tokenStorage->setToken($token);
+
+        $event = new InteractiveLoginEvent($this->cookieManager->getRequestStack()->getCurrentRequest(), $token);
+        $this->eventDispatcher->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $event);
+        return $user;
+    }
+
+    /**
      * Serializes the currently logged in account.
      * Will use a default, empty model if not logged in.
      *
@@ -315,11 +348,26 @@ class CustomerManager
      *
      * @param   string  $emailAddress
      * @param   array   $attributes
-     * @return  Model
+     * @return  Model|null
      */
     public function upsertIdentityFor($emailAddress, array $attributes = [])
     {
-        $identity = $this->getStore()->findQuery('customer-identity', ['email' => $emailAddress])->getSingleResult();
+        if (empty($emailAddress)) {
+            $identity = $this->getActiveIdentity();
+            if (null === $identity) {
+                return;
+            }
+
+            // Determine if this can update the identity.
+            $session = $this->cookieManager->getSessionCookie();
+            if (null !== $session && $session->getIdentifier() === $identity->getId()) {
+                $this->identityFactory->apply($identity, $attributes);
+                return $identity;
+            }
+            return;
+        }
+
+        $identity = $this->getStore()->findQuery('customer-identity', ['primaryEmail' => $emailAddress])->getSingleResult();
         if (null === $identity) {
             // No identity found. Create.
             $identity = $this->identityFactory->create($attributes);

@@ -40,7 +40,7 @@ app_bundle_app_question:
 app_bundle_submission:
     path: /app/submission/{sourceKey}
     defaults: { _controller: AppBundle:App\Submission:index }
-    methods: [ POST ]
+    methods: [ GET, POST ]
 
 app_bundle_app_util_country_options:
     path: /app/util/country-options

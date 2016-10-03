@@ -15,7 +15,7 @@ abstract class CustomerAccount
     {
         $request = Request::createFromGlobals();
         return sprintf(
-            '%s/verify-email?token=%s',
+            '%s/app/submission/customer-email.verify-submit?submission:token=%s',
             $request->getSchemeAndHttpHost(),
             $customerEmail->get('verification')->get('token')
         );

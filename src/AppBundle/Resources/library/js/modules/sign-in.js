@@ -43,12 +43,16 @@ function SignInComponent()
         handleSubmit: function(event) {
             event.preventDefault();
 
+            var error  = this._error;
+            error.clear();
+
             var data = this._formData;
             Debugger.info('RegisterContainer', 'handleSubmit', data);
 
             if (false === this._validateSubmit(data)) {
                 return;
             }
+
 
             var locker = this._formLock;
             locker.lock();

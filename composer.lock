@@ -177,12 +177,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/modlr-persister-mongodb.git",
-                "reference": "274fc30d6095d0e01bf6d01c7477238b867ffce6"
+                "reference": "7f7474d1996167d3b03a72ead42c0662166506a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/modlr-persister-mongodb/zipball/274fc30d6095d0e01bf6d01c7477238b867ffce6",
-                "reference": "274fc30d6095d0e01bf6d01c7477238b867ffce6",
+                "url": "https://api.github.com/repos/as3io/modlr-persister-mongodb/zipball/7f7474d1996167d3b03a72ead42c0662166506a3",
+                "reference": "7f7474d1996167d3b03a72ead42c0662166506a3",
                 "shasum": ""
             },
             "require": {
@@ -207,7 +207,7 @@
                 }
             ],
             "description": "MongoDB Persister for the Modlr REST library.",
-            "time": "2016-09-27 17:36:25"
+            "time": "2016-10-03 19:28:18"
         },
         {
             "name": "as3/modlr-search-elastic",

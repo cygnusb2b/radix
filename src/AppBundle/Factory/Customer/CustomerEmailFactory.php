@@ -62,10 +62,19 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
             return new Error(sprintf('The provided email address `%s` is invalid.', $value), 400);
         }
 
-        if (false === $email->get('verification')->get('verified')) {
-            if (null !== $this->retrieveCustomerViaEmailAddress($value)) {
-                return new Error(sprintf('The email address `%s` is already in use by another account.', $value), 400);
-            }
+        // If email is new: check if another verified email already exists.
+        // If email.value or email.verification.verified has changed, get for another email where it is not itself.
+        $changeset       = $email->getChangeSet();
+        $verifyChangeSet = $email->get('verification')->getChangeSet();
+        $existing = null;
+        if ($email->getState()->is('new') || $email->get('verification')->getState()->is('new')) {
+            $existing = $this->retrieveCustomerViaEmailAddress($value);
+        } elseif (isset($changeset['attributes']['value']) || isset($verifyChangeSet['attributes']['verified'])) {
+            $existing = $this->retrieveCustomerViaEmailAddress($value, $email->getId());
+        }
+
+        if (null !== $existing) {
+            return new Error(sprintf('The email address `%s` is already in use by another account.', $value), 400);
         }
         return true;
     }
@@ -103,11 +112,12 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
     {
         // Generate and set the JWT token for non-verified emails.
         $verification = $email->get('verification');
-        if (false === $verification->get('verified')) {
+        if (false === $verification->get('verified') && null === $verification->get('token')) {
             $token = $this->tokenGenerator->createFor(
                 $email->get('value'), $email->get('account')->getId()
             );
             $verification->set('token', $token);
+            $verification->set('generatedDate', new \DateTime());
         }
 
         // Append the display name to the customer account, when applicable.
@@ -138,16 +148,21 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
     /**
      * Retrieves a customer account based on a verified email address.
      *
-     * @param   string  $emailAddress
+     * @param   string      $emailAddress
+     * @param   string|null $emailId
      * @return  Model|null
      */
-    public function retrieveCustomerViaEmailAddress($emailAddress)
+    public function retrieveCustomerViaEmailAddress($emailAddress, $emailId = null)
     {
         // Try email address
         $criteria = [
-            'value'    => strtolower($emailAddress),
+            'value'    => ModelUtility::formatEmailAddress($emailAddress),
             'verification.verified' => true,
         ];
+        if (!empty($emailId)) {
+            $criteria['id'] = ['$ne' => $emailId];
+        }
+
         $email = $this->getStore()->findQuery('customer-email', $criteria)->getSingleResult();
         if (null !== $email && null !== $email->get('account') && false === $email->get('account')->get('deleted')) {
             // Valid customer.

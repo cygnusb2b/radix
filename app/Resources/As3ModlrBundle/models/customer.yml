@@ -24,7 +24,7 @@ customer:
                                 "$exists": true
                 -
                     keys:
-                        email: 1
+                        primaryEmail: 1
                     options:
                         unique: true
                         partialFilterExpression:

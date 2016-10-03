@@ -129,6 +129,14 @@ class CookieManager
     }
 
     /**
+     * @return  RequestStack
+     */
+    public function getRequestStack()
+    {
+        return $this->requestStack;
+    }
+
+    /**
      * Gets a session cookie (if present/valid) from a request (or the current request if not specified).
      *
      * @param   Request|null    $request

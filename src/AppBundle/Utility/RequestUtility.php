@@ -22,6 +22,13 @@ class RequestUtility
      */
     public static function extractPayload(Request $request, $flat = true)
     {
+
+        if ('GET' === $request->getMethod()) {
+            $payload = [];
+            $payload['data'] = $request->query->all();
+            return (true == $flat) ? $payload['data'] : $payload;
+        }
+
         if (0 !== stripos($request->headers->get('content-type'), 'application/json')) {
             throw new HttpFriendlyException('Invalid request content type. Expected application/json.', 415);
         }

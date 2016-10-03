@@ -11,14 +11,14 @@ class HttpFriendlySerializer
     /**
      * @var bool
      */
-    private $showMeta;
+    private $showExceptionMeta;
 
     /**
-     * @param   bool    $showMeta
+     * @param   bool    $showExceptionMeta
      */
-    public function __construct($showMeta = false)
+    public function __construct($showExceptionMeta = false)
     {
-        $this->enableMeta($showMeta);
+        $this->enableExceptionMeta($showExceptionMeta);
     }
 
     /**
@@ -63,14 +63,15 @@ class HttpFriendlySerializer
     }
 
     /**
-     * Enables/disables displaying meta details in the response.
+     * Enables/disables displaying internal exception meta details in the response.
+     * Will not affect any meta directly set to the HttpFriendlyException.
      *
      * @param   bool    $bit
      * @return  self
      */
-    public function enableMeta($bit = true)
+    public function enableExceptionMeta($bit = true)
     {
-        $this->showMeta = (bool) $bit;
+        $this->showExceptionMeta = (bool) $bit;
         return $this;
     }
 
@@ -90,27 +91,30 @@ class HttpFriendlySerializer
                 'status'    => (string) $exception->getStatusCode(),
                 'title'     => $exception->getMessage(),
                 'detail'    => $exception->getDetail(),
+                'meta'      => $exception->getMeta()->toArray(),
             ];
         } elseif ($exception instanceof HttpExceptionInterface) {
             $error = [
                 'status'    => (string) $exception->getStatusCode(),
                 'title'     => Response::$statusTexts[$exception->getStatusCode()],
                 'detail'    => $exception->getMessage(),
+                'meta'      => [],
             ];
         } else {
             $error = [
                 'status'    => '500',
                 'title'     => get_class($exception),
                 'detail'    => $exception->getMessage(),
+                'meta'      => [],
             ];
         }
-        if (true === $this->showMeta) {
-            $error['meta'] = [
+        if (true === $this->showExceptionMeta) {
+            $error['meta'] = array_merge($error['meta'], [
                 'message'   => $exception->getMessage(),
                 'file'      => $exception->getFile(),
                 'line'      => $exception->getLine(),
                 'trace'     => $exception->getTrace(),
-            ];
+            ]);
         }
         return $error;
     }

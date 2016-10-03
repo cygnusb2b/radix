@@ -2,11 +2,12 @@
 
 namespace AppBundle\Customer;
 
+use AppBundle\Exception\HttpFriendlyException;
+use AppBundle\Utility\ModelUtility;
 use Lcobucci\JWT\Builder as JWTBuilder;
 use Lcobucci\JWT\Parser as JWTParser;
 use Lcobucci\JWT\Signer\Hmac\Sha256 as JWTSigner;
 use Lcobucci\JWT\ValidationData;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * Generates (and parses) JWT tokens for email verification purposes.
@@ -96,7 +97,8 @@ class EmailVerifyTokenGenerator
      */
     public function parseFor($token, $emailAddress, $customerId)
     {
-        $token = $this->parser->parse($token);
+        $token        = $this->parser->parse($token);
+        $emailAddress = ModelUtility::formatEmailAddress($emailAddress);
 
         $rules = new ValidationData();
         $rules->setIssuer(self::ISSUER);
@@ -104,11 +106,26 @@ class EmailVerifyTokenGenerator
         $rules->setId((string) $customerId);
 
         if (false === $token->validate($rules)) {
-            throw new AuthenticationException('Invalid token.');
+            throw $this->createExceptionFor($emailAddress, $customerId);
         }
         if (false === $token->verify($this->signer, $this->secret)) {
-            throw new AuthenticationException('Invalid token.');
+            throw $this->createExceptionFor($emailAddress, $customerId);
         }
         return $token;
+    }
+
+    /**
+     * Creates the invalid token exception.
+     *
+     * @param   string  $emailAddress
+     * @param   string  $customerId
+     * @return  HttpFriendlyException
+     */
+    private function createExceptionFor($emailAddress, $customerId)
+    {
+        return new HttpFriendlyException('The provided token is either invalid or has expired.', 403, [
+            'email'     => $emailAddress,
+            'customer'  => $customerId,
+        ]);
     }
 }

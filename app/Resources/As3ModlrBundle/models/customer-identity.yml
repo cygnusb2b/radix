@@ -5,7 +5,7 @@ customer-identity:
             key: mongodb
             db: radix
     attributes:
-        email:
+        primaryEmail:
             type: string
         lastSeen:
             type: date
