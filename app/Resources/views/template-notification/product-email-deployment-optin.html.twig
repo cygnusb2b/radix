@@ -1,0 +1,19 @@
+{% extends 'email.html.twig' %}
+
+{% block headline %}Subscription preferences updated{% endblock %}
+
+{% block body %}
+
+    <p>Per your request, your subscription preferences have been updated. Please note that changes may take 5-10 business days to take effect.</p>
+
+    <p>The changes you requested are listed below:</p>
+
+    <ul>
+    {% for deployment in values.get('modifiedSubscriptions') %}
+        <li>{{deployment.name}} - <strong>{{deployment.status}}</strong></li>
+    {% endfor %}
+    </ul>
+
+    <p>Thanks for using {{values.get('application.settings.branding.name')}}!</p>
+
+{% endblock %}

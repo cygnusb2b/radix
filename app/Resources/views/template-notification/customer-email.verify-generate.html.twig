@@ -10,7 +10,7 @@
 
 {% block body %}
 
-    <p>A new email address ({{values.get('customer-email.value')}}) has been added to your account.</p>
+    <p>A new email address ({{values.get('verificationEmail')}}) has been added to your account.</p>
     <p><a href='{{values.get('verificationLink')}}'>Click here to confirm</a> your new email address</a>. This link is valid for the next 24 hours.</p>
 
     <p>If you think you have received this email in error, please contact us at <a href='mailto:{{ values.get('application.settings.support.email') }}'>{{ values.get('application.settings.support.name', values.get('application.settings.support.email')) }}</a>.</p>

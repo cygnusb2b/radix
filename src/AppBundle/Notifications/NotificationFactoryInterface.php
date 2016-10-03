@@ -15,19 +15,19 @@ interface NotificationFactoryInterface
      * Configures a Notification instance from the submission
      *
      * @param   Model   $submission     An `input-submission`
-     * @param   string  $actionKey      The action key
+     * @param   Model   $template       A `template` model
+     * @param   array   $args           Template arguments
      *
      * @return  Notification
      */
-    public function generate(Model $submission, $actionKey, Model $template = null, array $args);
+    public function generate(Model $submission, Model $template = null, array $args);
 
     /**
      * Determines if this handler supports the passed submission and action
      *
      * @param   Model   $submission     The submission
-     * @param   string  $actionKey      The action key
      *
      * @return  boolean
      */
-    public function supports(Model $submission, $actionKey, Model $template = null);
+    public function supports(Model $submission, Model $template = null);
 }

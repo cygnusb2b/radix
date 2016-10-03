@@ -57,9 +57,9 @@ class TwigDatabaseLoader implements Twig_LoaderInterface
     private function getModel($name)
     {
         try {
-            list($type, $namespace, $template) = explode('/', $name, 3);
+            list($type, $template) = explode('/', $name, 3);
             $template = str_replace('.html.twig', '', $template);
-            $model = $this->store->findQuery($type, ['namespace' => $namespace, 'template' => $template])->getSingleResult();
+            $model = $this->store->findQuery($type, ['deleted' => false, 'template' => $template])->getSingleResult();
             if (null === $model) {
                 throw new \Twig_Error_Loader(sprintf('Unable to retrieve "%s" template using "%s".', $namespace, $template));
             }
