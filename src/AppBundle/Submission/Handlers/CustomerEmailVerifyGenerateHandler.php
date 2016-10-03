@@ -95,9 +95,9 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
         if (empty($emailAddress)) {
             throw new HttpFriendlyException('No email address was provided. Unable to send verification email.', 400);
         }
-        $model = $this->emailFactory->retrieveCustomerViaEmailAddress($emailAddress);
-        if (null !== $model) {
-            throw new HttpFriendlyException(sprintf('The email address "%s" is already verified.', $model->get('value')), 400);
+        $customer = $this->emailFactory->retrieveCustomerViaEmailAddress($emailAddress);
+        if (null !== $customer) {
+            throw new HttpFriendlyException(sprintf('The email address "%s" is already verified.', $emailAddress), 400);
         }
 
         $model = $this->retrieveUnverifiedEmailModelFor($emailAddress, $customerId);
