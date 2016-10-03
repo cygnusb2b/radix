@@ -62,6 +62,13 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
             return new Error(sprintf('The provided email address `%s` is invalid.', $value), 400);
         }
 
+        // @todo If email is new: check if another verified email already exists - if yes, throw error
+        // If email is not new
+            // If verified state is moving from true to false
+            // If verified state is moving from false to true
+            // If verified state has not changed, but the email value has
+            // If verified state and value are unchanged: do nothing
+
         if (false === $email->get('verification')->get('verified')) {
             if (null !== $this->retrieveCustomerViaEmailAddress($value)) {
                 return new Error(sprintf('The email address `%s` is already in use by another account.', $value), 400);
@@ -103,11 +110,12 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
     {
         // Generate and set the JWT token for non-verified emails.
         $verification = $email->get('verification');
-        if (false === $verification->get('verified')) {
+        if (false === $verification->get('verified') && null === $verification->get('token')) {
             $token = $this->tokenGenerator->createFor(
                 $email->get('value'), $email->get('account')->getId()
             );
             $verification->set('token', $token);
+            $verification->set('generatedDate', new \DateTime());
         }
 
         // Append the display name to the customer account, when applicable.

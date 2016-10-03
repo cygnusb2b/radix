@@ -5,7 +5,7 @@ services:
 
     app_bundle.customer.manager:
         class: AppBundle\Customer\CustomerManager
-        arguments: [ "@app_bundle.factory.customer.account", "@app_bundle.factory.customer.identity", "@security.token_storage", "@app_bundle.security.auth.generator.customer", "@app_bundle.customer.cookie_manager" ]
+        arguments: [ "@app_bundle.factory.customer.account", "@app_bundle.factory.customer.identity", "@security.token_storage", "@app_bundle.security.auth.generator.customer", "@app_bundle.customer.cookie_manager", "@event_dispatcher" ]
 
     app_bundle.customer.subscriber:
         private: true

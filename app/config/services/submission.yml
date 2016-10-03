@@ -4,12 +4,22 @@ services:
         arguments: [ "@app_bundle.factory.input_submission", "@app_bundle.customer.manager" ]
         calls:
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_account" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_submit" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_generate" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.email_opt_in" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.inquiry" ] ]
 
     app_bundle.submission.handler.customer_account:
         class: AppBundle\Submission\Handlers\CustomerAccountHandler
         arguments: [ "@app_bundle.factory.customer.account" ]
+
+    app_bundle.submission.handler.customer_email.verify_generate:
+        class: AppBundle\Submission\Handlers\CustomerEmailVerifyGenerateHandler
+        arguments: [ "@app_bundle.factory.customer.email" ]
+
+    app_bundle.submission.handler.customer_email.verify_submit:
+        class: AppBundle\Submission\Handlers\CustomerEmailVerifySubmitHandler
+        arguments: [ "@app_bundle.customer.email_verify.token_generator", "@app_bundle.customer.manager" ]
 
     app_bundle.submission.handler.email_opt_in:
         class: AppBundle\Submission\Handlers\EmailOptInHandler

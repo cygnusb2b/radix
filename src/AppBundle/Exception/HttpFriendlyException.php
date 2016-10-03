@@ -2,12 +2,18 @@
 
 namespace AppBundle\Exception;
 
+use As3\Parameters\Parameters;
 use Symfony\Component\HttpFoundation\Response;
 
 use \Exception;
 
 class HttpFriendlyException extends Exception
 {
+    /**
+     * @var Parameters
+     */
+    private $meta;
+
     /**
      * @var int
      */
@@ -24,7 +30,7 @@ class HttpFriendlyException extends Exception
      * @param   int             $code
      * @param   Exception|null  $exception
      */
-    public function __construct($detail, $statusCode, $code = 0, Exception $previous = null)
+    public function __construct($detail, $statusCode, array $meta = [], $code = 0, Exception $previous = null)
     {
         $codes      = Response::$statusTexts;
         $statusCode = (int) $statusCode;
@@ -36,6 +42,15 @@ class HttpFriendlyException extends Exception
 
         $this->setDetail($detail);
         $this->statusCode = $statusCode;
+        $this->meta       = new Parameters($meta);
+    }
+
+    /**
+     * @return  Parameters
+     */
+    public function getMeta()
+    {
+        return $this->meta;
     }
 
     /**

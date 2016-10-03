@@ -39,7 +39,7 @@ class CustomerAccountHandler implements SubmissionHandlerInterface
 
         // Create the new account and override the identity set by the manager.
         $this->newAccount = $this->accountFactory->create($payload->getCustomer()->all());
-        $submission->set('account', $this->newAccount);
+        $submission->set('customer', $this->newAccount);
     }
 
     /**

@@ -68,15 +68,17 @@ class SubmissionManager
         $submission = $this->createSubmission($sourceKey, $payload);
 
         // Do the customer/submission "dance."
-        $customer        = $this->determineCustomer($submission, $payload);
-        $customerFactory = $this->customerManager->getCustomerFactoryFor($customer);
-        $submission->set('customer', $customer);
+        $customer = $this->determineCustomer($submission, $payload);
+        if (null !== $customer) {
+            $customerFactory = $this->customerManager->getCustomerFactoryFor($customer);
+            $submission->set('customer', $customer);
+        }
 
         // Send the before save hook to allow the handler to perform additional logic.
         $this->callHookFor($sourceKey, 'beforeSave', [$payload, $submission]);
 
         // Throw error if unable to save the customer or the submission.
-        if (true !== $result = $customerFactory->canSave($customer)) {
+        if (null !== $customer && true !== $result = $customerFactory->canSave($customer)) {
             $result->throwException();
         }
         if (true !== $result = $this->submissionFactory->canSave($submission)) {
@@ -87,19 +89,21 @@ class SubmissionManager
         $this->callHookFor($sourceKey, 'canSave', []);
 
         // Save the customer and submission
-        $customerFactory->save($customer);
+        if (null !== $customer) {
+            $customerFactory->save($customer);
+        }
         $this->submissionFactory->save($submission);
 
         // Send the save hook for additional saving.
         $this->callHookFor($sourceKey, 'save', []);
 
         // Set the active identity, if applicable.
-        if ('customer-identity' === $customer->getType()) {
+        if (null !== $customer && 'customer-identity' === $customer->getType()) {
             $this->customerManager->setActiveIdentity($customer);
         }
 
         // Handle email notifications.
-        $this->sendNotificationFor($sourceKey, $submission, $customer);
+        // $this->sendNotificationFor($sourceKey, $submission, $customer);
 
         // Determine template / next step to load.
         return $this->returnResponseFor($sourceKey, $customer);
@@ -142,7 +146,7 @@ class SubmissionManager
      * @todo    Will need to determine how to get the identity if an email isn't provided with the submission.
      * @param   Model           $submission
      * @param   RequestPayload  $payload
-     * @return  Model           The appropriate customer for the submission.
+     * @return  Model|null      The appropriate customer for the submission.
      */
     private function determineCustomer(Model $submission, RequestPayload $payload)
     {
@@ -155,9 +159,8 @@ class SubmissionManager
             $this->customerManager->getAccountFactory()->apply($customer, $payload->getCustomer()->all());
             return $customer;
         }
-        // Customer is not logged in. Create/update the identity.
+        // Customer is not logged in. Create/update the identity, if possible.
         $emailAddress = $payload->getCustomer()->get('primaryEmail');
-        // @todo If the submission does not include an email, will need to use identity session cookie to determine if an identity should be upserted.
         return $this->customerManager->upsertIdentityFor($emailAddress, $payload->getCustomer()->all());
     }
 
