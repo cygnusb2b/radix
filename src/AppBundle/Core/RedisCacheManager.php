@@ -8,7 +8,7 @@ use Snc\RedisBundle\Client\Phpredis\Client;
 class RedisCacheManager
 {
     /**
-     * @var Client[]
+     * @var Redis[]
      */
     private $clients = [];
 
@@ -16,9 +16,9 @@ class RedisCacheManager
      * Adds a Redis client.
      *
      * @param   string  $name
-     * @param   Clinet  $client
+     * @param   Redis   $client
      */
-    public function addClient($name, Client $client)
+    public function addClient($name, Redis $client)
     {
         $this->clients[$name] = $client;
         return $this;
@@ -45,7 +45,7 @@ class RedisCacheManager
     /**
      * Gets all registered Redis clients.
      *
-     * @return  Client[]
+     * @return  Redis[]
      */
     public function getClients()
     {
