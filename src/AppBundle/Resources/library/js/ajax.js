@@ -32,6 +32,7 @@ function Ajax()
             var xhr = new XMLHttpRequest();
 
             headers['Content-Type']  = 'application/json';
+            headers['X-Requested-With'] = 'XMLHttpRequest';
             headers['X-Radix-AppId'] = ClientConfig.values.appId;
 
             xhr.open(method, url, true);
