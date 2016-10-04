@@ -39,7 +39,7 @@ function Debugger(enabled)
      */
     function dispatch(method, passed)
     {
-        if (true === enabled) {
+        if (true === enabled || 'error' === method) {
             var args = ['COMPONENTS DEBUGGER:'];
             for (var i = 0; i < passed.length; i++)  {
                 var n = i + 1;

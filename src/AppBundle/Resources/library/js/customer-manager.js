@@ -6,7 +6,7 @@ function CustomerManager()
         EventDispatcher.trigger('CustomerManager.customer.loaded');
     });
 
-    EventDispatcher.subscribe('ready', function() {
+    EventDispatcher.subscribe('appLoaded', function() {
         this.init();
     }.bind(this));
 
@@ -16,8 +16,7 @@ function CustomerManager()
             EventDispatcher.trigger('CustomerManager.customer.loaded');
             EventDispatcher.trigger('CustomerManager.init');
         }, function () {
-            Debugger.error('Unable to retrieve a customer.');
-            EventDispatcher.trigger('CustomerManager.init');
+            Debugger.error('Backed customer retrieval failed.');
         });
     }
 
