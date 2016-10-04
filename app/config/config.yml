@@ -56,8 +56,9 @@ framework:
     trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-        handler_id:  session.handler.native_file
-        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+        # handler_id:  session.handler.native_file
+        # save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+        handler_id: snc_redis.session.handler
     fragments:       ~
     http_method_override: true
     assets: ~
@@ -88,6 +89,19 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+
+snc_redis:
+    clients:
+        default:
+            type: phpredis
+            alias: default
+            dsn: redis://redis.platform.as3.io/8
+            options:
+                connection_persistent: true
+    session:
+        client: default
+        prefix: ':session:'
+        ttl: 86400
 
 # Swiftmailer Configuration
 swiftmailer:

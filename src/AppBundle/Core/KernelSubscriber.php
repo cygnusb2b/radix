@@ -3,9 +3,9 @@
 namespace AppBundle\Core;
 
 use AppBundle\Cors\CorsDefinition;
+use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Exception\HttpFriendlySerializer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -17,14 +17,6 @@ use Symfony\Component\Security\Http\HttpUtils;
 class KernelSubscriber implements EventSubscriberInterface
 {
     /**
-     * Route names that do NOT need to check for the existence of the app id.
-     * Some examples may include: the initial management login page, auth checks/submits, etc.
-     *
-     * @var array
-     */
-    private $excludeRoutes = [];
-
-    /**
      * @var HttpUtils
      */
     private $httpUtils;
@@ -35,11 +27,14 @@ class KernelSubscriber implements EventSubscriberInterface
     private $manager;
 
     /**
-     * Route names to not redirect if app id present in query string.
-     *
-     * @var array
+     * @var ApplicationQuery
      */
-    private $noRedirectRoutes = [];
+    private $query;
+
+    /**
+     * @var RedisCacheManager
+     */
+    private $redisManager;
 
     /**
      * @var HttpFriendlySerializer
@@ -47,22 +42,19 @@ class KernelSubscriber implements EventSubscriberInterface
     private $serializer;
 
     /**
-     * @var ApplicationQuery
-     */
-    private $query;
-
-    /**
      * @param   AccountManager          $manager
      * @param   ApplicationQuery        $query
      * @param   HttpUtils               $httpUtils
      * @param   HttpFriendlySerializer  $serializer
+     * @param   RedisCacheManager       $cacheManager
      */
-    public function __construct(AccountManager $manager, ApplicationQuery $query, HttpUtils $httpUtils, HttpFriendlySerializer $serializer)
+    public function __construct(AccountManager $manager, ApplicationQuery $query, HttpUtils $httpUtils, HttpFriendlySerializer $serializer, RedisCacheManager $redisManager)
     {
-        $this->manager    = $manager;
-        $this->query      = $query;
-        $this->httpUtils  = $httpUtils;
-        $this->serializer = $serializer;
+        $this->manager      = $manager;
+        $this->query        = $query;
+        $this->httpUtils    = $httpUtils;
+        $this->redisManager = $redisManager;
+        $this->serializer   = $serializer;
     }
 
     /**
@@ -85,27 +77,10 @@ class KernelSubscriber implements EventSubscriberInterface
 
     public function appendKey(FilterResponseEvent $event)
     {
+        if (!$event->isMasterRequest()) {
+            return;
+        }
         $event->getResponse()->headers->set(AccountManager::USING_PARAM, $this->manager->getCompositeKey());
-    }
-
-    /**
-     * @param   string  $routeName
-     * @return  self
-     */
-    public function addExcludeRoute($routeName)
-    {
-        $this->excludeRoutes[$routeName] = true;
-        return $this;
-    }
-
-    /**
-     * @param   string  $routeName
-     * @return  self
-     */
-    public function addNoRedirectRoute($routeName)
-    {
-        $this->noRedirectRoutes[$routeName] = true;
-        return $this;
     }
 
     /**
@@ -119,7 +94,7 @@ class KernelSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $context = $this->manager->extractContextFrom($request);
 
-        if (!$event->isMasterRequest() || false === $this->shouldProcess($request, $context)) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
@@ -129,14 +104,8 @@ class KernelSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $param        = AccountManager::PUBLIC_KEY_PARAM;
-        $publicKey    = $this->manager->extractPublicKeyFrom($request);
-        $sessionParam = $this->manager->getSessionKeyFor($request);
-
-        if (empty($publicKey)) {
-            // Attempt to find key in session.
-            $publicKey = $request->getSession()->get($sessionParam);
-        }
+        $param     = AccountManager::PUBLIC_KEY_PARAM;
+        $publicKey = $this->manager->extractPublicKeyFrom($request);
 
         if (empty($publicKey)) {
             $this->handleEmptyApp($context);
@@ -144,6 +113,7 @@ class KernelSubscriber implements EventSubscriberInterface
         }
 
         $application = $this->query->retrieveByPublicKey($publicKey);
+
         if (null === $application) {
             $this->handleEmptyApp($context);
             return;
@@ -152,29 +122,25 @@ class KernelSubscriber implements EventSubscriberInterface
         // Set the application model to the manager.
         $this->manager->setApplication($application);
 
-        // Set the public key to the session.
-        $request->getSession()->set($sessionParam, $publicKey);
-
-        if (null !== $redirect = $this->getRedirectUrl($request)) {
-            // Redirect.
-            $event->setResponse(new RedirectResponse($redirect));
-            return;
-        }
+        // Set the appropriate redis cache prefix.
+        $this->redisManager->appendApplicationPrefix($this->manager->getCompositeKey());
     }
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         $request  = $event->getRequest();
         $response = $event->getResponse();
-        $context  = $this->manager->extractContextFrom($request);
 
-        if (!$event->isMasterRequest() || false === $this->shouldProcess($request, $context)) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
         $exception  = $event->getException();
         $status     = $this->serializer->extractStatusCode($exception);
         $serialized = $this->serializer->queueToJson([$exception]);
+        if (!is_string($serialized)) {
+            throw $exception;
+        }
 
         $response = $response ?: new Response();
 
@@ -188,30 +154,6 @@ class KernelSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Gets a redirect url for the provided request, if applicable.
-     *
-     * @param   Request $request
-     * @return  string|null
-     */
-    private function getRedirectUrl(Request $request)
-    {
-        $param = AccountManager::PUBLIC_KEY_PARAM;
-        if ('GET' !== $request->getMethod() || false === $request->query->has($param)) {
-            return;
-        }
-
-        foreach ($this->noRedirectRoutes as $name => $enabled) {
-            if (true === $this->httpUtils->checkRequestPath($request, $name)) {
-                return;
-            }
-        }
-
-        $request->query->remove($param);
-        $new = Request::create($request->getPathInfo(), $request->getMethod(), $request->query->all(), $request->cookies->all(), [], $request->server->all());
-        return $new->getUri();
-    }
-
-    /**
      * Handles an empty application condition.
      *
      * @param   string  $context
@@ -221,7 +163,7 @@ class KernelSubscriber implements EventSubscriberInterface
     {
         $this->manager->allowDbOperations(false);
         if ('application' === $context) {
-            throw new \RuntimeException('No application was defined or found. Operations terminated.');
+            throw new HttpFriendlyException('No application was defined or found. Operations terminated.', 400);
         }
     }
 
@@ -239,25 +181,5 @@ class KernelSubscriber implements EventSubscriberInterface
         }
         $origin = $request->headers->get('Origin');
         return 'OPTIONS' === $request->getMethod() && !empty($origin);
-    }
-
-    /**
-     * Determines if the subscriber should process data.
-     *
-     * @param   Request $request
-     * @param   string  $context
-     * @return  bool
-     */
-    private function shouldProcess(Request $request, $context)
-    {
-        if ('application' === $context) {
-            return true;
-        }
-        foreach ($this->excludeRoutes as $name => $enabled) {
-            if (true === $this->httpUtils->checkRequestPath($request, $name)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

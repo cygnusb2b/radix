@@ -39,7 +39,8 @@
         "as3/symfony-data-importer": "dev-master",
         "natxet/CssMin": "^3.0",
         "linkorb/jsmin-php": "^1.0",
-        "aol/transformers": "^3"
+        "aol/transformers": "^3",
+        "snc/redis-bundle": "^2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

@@ -28,6 +28,10 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.core.redis_cache_manager:
+        private: true
+        class: AppBundle\Core\RedisCacheManager
+
     app_bundle.core.subscriber.console:
         private: true
         class: AppBundle\Core\ConsoleSubscriber
@@ -38,12 +42,9 @@ services:
     app_bundle.core.subscriber.kernel:
         private: true
         class: AppBundle\Core\KernelSubscriber
-        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.core.application_query", "@security.http_utils", "@app_bundle.exception.http_serializer" ]
+        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.core.application_query", "@security.http_utils", "@app_bundle.exception.http_serializer", "@app_bundle.core.redis_cache_manager" ]
         tags:
             - { name: kernel.event_subscriber }
-        calls:
-            - [ addNoRedirectRoute, [ "app_bundle_lib" ] ]
-            - [ addNoRedirectRoute, [ "app_bundle_lib_min" ] ]
 
     app_bundle.cors.listener:
         private: true

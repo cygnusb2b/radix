@@ -14,6 +14,11 @@ class ConsoleSubscriber implements EventSubscriberInterface
     private $manager;
 
     /**
+     * @var RedisCacheManager
+     */
+    private $redisManager;
+
+    /**
      * @var array
      */
     private $skip = [
@@ -28,9 +33,11 @@ class ConsoleSubscriber implements EventSubscriberInterface
     private $query;
 
     /**
-     * @param   AccountManager  $manager
+     * @param   AccountManager      $manager
+     * @param   ApplicationQuery    $query
+     * @param   RedisCacheManager   $redisManager
      */
-    public function __construct(AccountManager $manager, ApplicationQuery $query)
+    public function __construct(AccountManager $manager, ApplicationQuery $query, RedisCacheManager $redisManager)
     {
         $this->manager = $manager;
         $this->query   = $query;
@@ -43,7 +50,7 @@ class ConsoleSubscriber implements EventSubscriberInterface
     {
         return [
             ConsoleEvents::COMMAND => [
-                ['loadApplication'], // 7 Ensures that this runs right after the firewall.
+                ['loadApplication'],
             ]
         ];
     }
@@ -75,5 +82,8 @@ class ConsoleSubscriber implements EventSubscriberInterface
         }
 
         $this->manager->setApplication($application);
+
+        // Set the appropriate redis cache prefix.
+        $this->redisManager->appendApplicationPrefix($this->manager->getCompositeKey());
     }
 }

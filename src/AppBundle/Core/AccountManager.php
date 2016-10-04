@@ -106,18 +106,6 @@ class AccountManager
     }
 
     /**
-     * Gets the sesssion key for the provided request.
-     *
-     * @param   Request $request
-     * @return  string
-     */
-    public function getSessionKeyFor(Request $request)
-    {
-        $context = $this->extractContextFrom($request);
-        return sprintf('%s:%s', $context, self::PUBLIC_KEY_PARAM);
-    }
-
-    /**
      * @return  bool
      */
     public function hasApplication()
