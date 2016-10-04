@@ -117,6 +117,9 @@ class KernelSubscriber implements EventSubscriberInterface
 
         // Set the appropriate redis cache prefix.
         $this->redisManager->appendApplicationPrefix($this->manager->getCompositeKey());
+
+        // Remove the param from the query string.
+        $request->query->remove($param);
     }
 
     public function onKernelException(GetResponseForExceptionEvent $event)
