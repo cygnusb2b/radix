@@ -41,9 +41,6 @@ class LibraryController extends AbstractAppController
         if (true == $minify) {
             $this->minify($response, $format);
         }
-
-        // Append the build version to the Vary
-        $response->setVary(AccountManager::BUILD_PARAM, false);
         return $response;
     }
 
