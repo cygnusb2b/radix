@@ -3,6 +3,7 @@
 namespace AppBundle\Notifications\NotificationFactory;
 
 use As3\Modlr\Models\Model;
+use AppBundle\Core\AccountManager;
 use AppBundle\Utility\ModelUtility;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,13 +13,15 @@ trait CustomerTrait
      * @param   Model   $customerEmail
      * @param   Model   $submission
      */
-    protected function getVerificationLink(Model $customerEmail)
+    protected function getVerificationLink(Model $customerEmail, Model $application)
     {
         $request = Request::createFromGlobals();
         return sprintf(
-            '%s/app/submission/customer-email.verify-submit?token=%s',
+            '%s/app/submission/customer-email.verify-submit?submission:token=%s&%s=%s',
             $request->getSchemeAndHttpHost(),
-            $customerEmail->get('verification')->get('token')
+            $customerEmail->get('verification')->get('token'),
+            AccountManager::PUBLIC_KEY_PARAM,
+            $application->get('publicKey')
         );
     }
 
@@ -46,10 +49,13 @@ trait CustomerTrait
      * @param   Model   $submission
      * @return  Model   $email
      */
-    private function getCustomerEmail(Model $submission)
+    private function getCustomerEmail(Model $submission, $value)
     {
         foreach ($submission->get('customer')->get('emails') as $email) {
-            return $email;
+            if ($value === $email->get('value')) {
+                return $email;
+            }
         }
+        throw new \RuntimeException(sprintf('Could not find email for customer %s', $submission->get('customer')->getId()));
     }
 }
