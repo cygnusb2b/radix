@@ -41,6 +41,7 @@ class ConsoleSubscriber implements EventSubscriberInterface
     {
         $this->manager = $manager;
         $this->query   = $query;
+        $this->redisManager   = $redisManager;
     }
 
     /**
