@@ -31,4 +31,4 @@ monolog:
         #    level:  info
 
 swiftmailer:
-   delivery_address: solocommand@gmail.com
+   delivery_address: developer@southcomm.com

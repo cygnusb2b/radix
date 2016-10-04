@@ -3,14 +3,11 @@
 namespace AppBundle\Notifications;
 
 use As3\Modlr\Models\Model;
-use As3\Modlr\Store\Store;
-use As3\Parameters\Parameters;
 use AppBundle\Core\AccountManager;
-use AppBundle\Serializer\PublicApiSerializer;
-use Swift_Mailer;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use AppBundle\Templating\TemplateLoader;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestUtility;
+use Swift_Mailer;
 
 /**
  * Handles sending notifications
@@ -40,36 +37,22 @@ class NotificationManager
     private $mailer;
 
     /**
-     * @var PublicApiSerializer
+     * @var TemplateLoader
      */
-    private $serializer;
-
-    /**
-     * @var Store
-     */
-    private $store;
-
-    /**
-     * @var EngineInterface
-     */
-    private $templating;
+    private $templateLoader;
 
     /**
      * @param   NotificationFactory $factory
-     * @param   Store               $store
      * @param   Swift_Mailer        $mailer
-     * @param   EngineInterface     $templating
+     * @param   TemplateLoader      $templateLoader
      * @param   AccountManager      $accountManager
-     * @param   PublicApiSerializer $serializer
      */
-    public function __construct(NotificationFactoryInterface $factory, Store $store, Swift_Mailer $mailer, EngineInterface $templating, AccountManager $accountManager, PublicApiSerializer $serializer)
+    public function __construct(NotificationFactoryInterface $factory, Swift_Mailer $mailer, TemplateLoader $templateLoader, AccountManager $accountManager)
     {
         $this->defaultFactory = $factory;
-        $this->store = $store;
         $this->mailer = $mailer;
-        $this->templating = $templating;
+        $this->templateLoader = $templateLoader;
         $this->accountManager = $accountManager;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -88,28 +71,27 @@ class NotificationManager
      * @param   string  $actionKey      The action key (template name)
      * @return  boolean                 If the notification was sent
      */
-    public function sendNotificationFor(Model $submission, $actionKey, array $args = [])
+    public function sendNotificationFor(Model $submission)
     {
         $factory        = $this->defaultFactory;
-        $template       = $this->getNotificationTemplate($submission, $actionKey);
-        $templateKey    = $this->getTemplateKey($submission, $actionKey);
+        $template       = $this->getTemplate($submission);
+        $templateKey    = $this->getTemplateKey($submission);
 
         foreach ($this->factories as $handler) {
-            if (true === $handler->supports($submission, $actionKey, $template)) {
+            if (true === $handler->supports($submission, $template)) {
                 $factory = $handler;
                 break;
             }
         }
 
-        if (false === $factory->supports($submission, $actionKey, $template)) {
+        if (false === $factory->supports($submission, $template)) {
             return false;
         }
 
         try {
-            $args = $this->inject($args, $submission, $template);
-            $notification = $factory->generate($submission, $actionKey, $template, $args);
-            $sz = $this->serialize($notification->getArgs());
-            $contents = $this->templating->render($templateKey, $sz);
+            $args = $this->inject($submission, $template);
+            $notification = $factory->generate($submission, $template, $args);
+            $contents = $this->templateLoader->render($templateKey, $notification->getArgs());
 
             if (empty($contents)) {
                 return false;
@@ -128,6 +110,72 @@ class NotificationManager
             RequestUtility::notifyException($e);
             return false;
         }
+    }
+
+    /**
+     * Returns the `notification-template`
+     *
+     * @param   Model   $submission
+     * @param   string  $actionKey
+     * @return  Model|null
+     */
+    private function getTemplate(Model $submission)
+    {
+        return $this->templateLoader->getTemplateModel('template-notification', $submission->get('sourceKey'));
+    }
+
+    /**
+     * Returns the namespaced template name for the specified submission
+     *
+     * @param   Model   $submission     The submission
+     * @return  string
+     */
+    private function getTemplateKey(Model $submission)
+    {
+        return TemplateLoader::getTemplateKey('template-notification', $submission->get('sourceKey'));
+    }
+
+    /**
+     * Injects required parameters for notification and templateLoader
+     *
+     * @param   Model   $submission
+     * @param   array   $args
+     * @return  array
+     */
+    private function inject(Model $submission, Model $template = null)
+    {
+        $args = [];
+        $app = $this->accountManager->getApplication();
+        $customer = $submission->get('customer');
+
+        // Global notification settings
+        $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.name')) ? $app->get('name') : $value;
+        $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.email')) ? 'no-reply@radix.as3.io': $value;
+        $args['from']           = [ $fromEmail => $fromName ];
+
+        $args['application']    = $app;
+        $args['submission']     = $submission;
+        $args['customer']       = $submission->get('customer');
+        $args['template']       = $template;
+
+        // Routing
+        if ($template) {
+            foreach (['to', 'cc', 'bcc'] as $field) {
+                if (!empty($template->get($field))) {
+                    $args[$field] = $template->get($field);
+                }
+            }
+            if ($template->get('subject')) {
+                $args['subject'] = $template->get('subject');
+            }
+        }
+
+        // Default to if not set by template
+        if (!isset($args['to'])) {
+            $args['to'] = [ $customer->get('primaryEmail') => $customer->get('fullName') ];
+        }
+
+        return $args;
     }
 
     /**
@@ -155,97 +203,5 @@ class NotificationManager
 
         $instance = $this->mailer->send($message);
         return $instance;
-    }
-
-    /**
-     * Injects required parameters for notification and templating
-     *
-     * @param   Model   $submission
-     * @param   array   $args
-     * @return  array
-     */
-    private function inject(array $args, Model $submission, Model $template = null)
-    {
-        $app = $this->accountManager->getApplication();
-        $customer = $submission->get('customer');
-
-        // Global notification settings
-        $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.name')) ? $app->get('name') : $value;
-        $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.email')) ? 'no-reply@radix.as3.io': $value;
-        $args['from']           = [ $fromEmail => $fromName ];
-
-        $args['application']    = $app;
-        $args['customer']       = $submission->get('customer');
-        $args['template']       = $template;
-
-        // Routing
-        if ($template) {
-            foreach (['to', 'cc', 'bcc'] as $field) {
-                if (!empty($template->get($field))) {
-                    $args[$field] = $template->get($field);
-                }
-            }
-            if ($template->get('subject')) {
-                $args['subject'] = $template->get('subject');
-            }
-        }
-
-        // Default to if not set by template
-        if (!isset($args['to'])) {
-            $args['to'] = [ $customer->get('primaryEmail') => $customer->get('fullName') ];
-        }
-
-        return $args;
-    }
-
-    /**
-     * Serializes template args
-     *
-     * @param   Model   $submission
-     * @param   array   $args
-     * @return  Parameters
-     */
-    private function serialize(array $args)
-    {
-        foreach ($args as $k => $v) {
-            if ($v instanceof Model) {
-                $args[$k] = $this->serializer->serialize($v)['data'];
-            }
-        }
-        return ['values' => new Parameters($args)];
-    }
-
-    /**
-     * Returns the `notification-template`
-     *
-     * @param   Model   $submission
-     * @param   string  $actionKey
-     * @return  Model|null
-     */
-    private function getNotificationTemplate(Model $submission, $actionKey)
-    {
-        $type = 'template-notification';
-        $namespace = $submission->get('sourceKey');
-        $template = $actionKey;
-
-        return $this->store
-            ->findQuery($type, ['_type' => $type, 'namespace' => $namespace, 'template' => $template])
-            ->getSingleResult()
-        ;
-    }
-
-    /**
-     * Returns the namespaced template name for the specified submission
-     *
-     * @param   Model   $submission     The submission
-     * @param   string  $actionKey      The action key
-     * @return  string
-     */
-    private function getTemplateKey(Model $submission, $actionKey)
-    {
-        $type = 'template-notification';
-        $namespace = $submission->get('sourceKey');
-        $template = $actionKey;
-        return sprintf('%s/%s/%s.html.twig', $type, $namespace, $template);
     }
 }

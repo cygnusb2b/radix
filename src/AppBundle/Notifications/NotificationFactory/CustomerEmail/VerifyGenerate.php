@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Notifications\NotificationFactory\CustomerAccount;
+namespace AppBundle\Notifications\NotificationFactory\CustomerEmail;
 
 use As3\Modlr\Models\Model;
 use AppBundle\Notifications\Notification;
@@ -12,7 +12,7 @@ use AppBundle\Notifications\NotificationFactoryInterface;
  *
  * @author Josh Worden <jworden@southcomm.com>
  */
-class Activate implements NotificationFactoryInterface
+class VerifyGenerate implements NotificationFactoryInterface
 {
     use CustomerTrait;
 
@@ -23,7 +23,8 @@ class Activate implements NotificationFactoryInterface
     {
         $email = $this->getCustomerEmail($submission, $submission->get('payload')->customer['primaryEmail']);
         $args['verificationLink'] = $this->getVerificationLink($email, $args['application']);
-        $args['subject'] = $this->appendFallbackSubject($args, 'Activate your %s account');
+        $args['verificationEmail'] = $email->get('value');
+        $args['subject'] = $this->appendFallbackSubject($args, 'Verify your email for %s');
         return new Notification($args);
     }
 
@@ -33,7 +34,7 @@ class Activate implements NotificationFactoryInterface
     public function supports(Model $submission, Model $template = null)
     {
         $customer = $submission->get('customer');
-        if ('customer-account' === $submission->get('sourceKey') && null !== $customer) {
+        if ('customer-email.verify-generate' === $submission->get('sourceKey') && null !== $customer) {
             if ('customer-identity' !== $customer->getType() && null !== $customer->get('primaryEmail')) {
                 return true;
             }

@@ -20,7 +20,7 @@ class RedisCacheManagerPass implements CompilerPassInterface
         $managerDef = $container->getDefinition('app_bundle.core.redis_cache_manager');
         foreach ($container->getDefinitions() as $id => $definition) {
             if (0 === stripos($id, $prefix)) {
-                $name = str_replace($prefx, '', $id);
+                $name = str_replace($prefix, '', $id);
                 $managerDef->addMethodCall('addClient', [$name, new Reference($id)]);
             }
         }

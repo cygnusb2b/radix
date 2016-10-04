@@ -18,7 +18,7 @@ class DefaultFactory implements NotificationFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function generate(Model $submission, $actionKey, Model $template = null, array $args)
+    public function generate(Model $submission, Model $template = null, array $args)
     {
         if (!isset($args['subject'])) {
             $app = $args['application'];
@@ -29,10 +29,13 @@ class DefaultFactory implements NotificationFactoryInterface
     }
 
     /**
+     * A database-level template MUST be defined for custom notifications to send.
+     *
      * {@inheritdoc}
      */
-    public function supports(Model $submission, $actionKey, Model $template = null)
+    public function supports(Model $submission, Model $template = null)
     {
-        return null !== $template;
+        $customer = $submission->get('customer');
+        return null !== $template && null !== $customer && null !== $customer->get('primaryEmail');
     }
 }
