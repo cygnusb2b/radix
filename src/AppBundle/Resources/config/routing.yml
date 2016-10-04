@@ -17,6 +17,11 @@ app_bundle_app_optins_email_deployment:
     defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
     methods: [ GET ]
 
+app_bundle_app_init:
+    path: /app/init
+    defaults: { _controller: AppBundle:App\Init:default }
+    methods: [ GET ]
+
 app_bundle_app_product:
     path: /app/product/{type}
     defaults: { _controller: AppBundle:App\Product:all, type: null }
