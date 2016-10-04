@@ -42,7 +42,7 @@ services:
     app_bundle.core.subscriber.kernel:
         private: true
         class: AppBundle\Core\KernelSubscriber
-        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.core.application_query", "@security.http_utils", "@app_bundle.exception.http_serializer", "@app_bundle.core.redis_cache_manager" ]
+        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.core.application_query", "@security.http_utils", "@app_bundle.core.redis_cache_manager" ]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -59,10 +59,6 @@ services:
     app_bundle.definitions.factory:
         class: AppBundle\Definitions\DefinitionFactory
         arguments: [ "@app_bundle.question.type_manager" ]
-
-    app_bundle.exception.http_serializer:
-        class: AppBundle\Exception\HttpFriendlySerializer
-        arguments: [ "%kernel.debug%" ]
 
     app_bundle.input.submission_manager:
         class: AppBundle\Input\SubmissionManager

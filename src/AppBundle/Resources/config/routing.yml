@@ -1,5 +1,5 @@
 # FRONT-END APPLICATION ROUTES #
-app_bundle_app_auth_destory:
+app_bundle_app_auth_destroy:
     path: /app/auth/destroy
     methods: [ GET ]
 

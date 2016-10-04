@@ -4,7 +4,6 @@ namespace AppBundle\Core;
 
 use AppBundle\Cors\CorsDefinition;
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Exception\HttpFriendlySerializer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,24 +36,17 @@ class KernelSubscriber implements EventSubscriberInterface
     private $redisManager;
 
     /**
-     * @var HttpFriendlySerializer
-     */
-    private $serializer;
-
-    /**
      * @param   AccountManager          $manager
      * @param   ApplicationQuery        $query
      * @param   HttpUtils               $httpUtils
-     * @param   HttpFriendlySerializer  $serializer
      * @param   RedisCacheManager       $cacheManager
      */
-    public function __construct(AccountManager $manager, ApplicationQuery $query, HttpUtils $httpUtils, HttpFriendlySerializer $serializer, RedisCacheManager $redisManager)
+    public function __construct(AccountManager $manager, ApplicationQuery $query, HttpUtils $httpUtils, RedisCacheManager $redisManager)
     {
         $this->manager      = $manager;
         $this->query        = $query;
         $this->httpUtils    = $httpUtils;
         $this->redisManager = $redisManager;
-        $this->serializer   = $serializer;
     }
 
     /**
@@ -128,29 +120,14 @@ class KernelSubscriber implements EventSubscriberInterface
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
-        $request  = $event->getRequest();
-        $response = $event->getResponse();
-
-        if (!$event->isMasterRequest()) {
-            return;
+        $request    = $event->getRequest();
+        $attributes = $request->attributes;
+        if (null === $attributes->get('_format')) {
+            // Assume a JSON format if not set.
+            $attributes->set('_format', 'json');
         }
-
-        $exception  = $event->getException();
-        $status     = $this->serializer->extractStatusCode($exception);
-        $serialized = $this->serializer->queueToJson([$exception]);
-        if (!is_string($serialized)) {
-            throw $exception;
-        }
-
-        $response = $response ?: new Response();
-
-        $response->setStatusCode($status);
-        $response->setContent($serialized);
-        $response->headers->set('content-type', 'application/json');
-
-        $event->setResponse($response);
-
-        return $response;
+        // Let the standard Symfony exception formatting take over...
+        return;
     }
 
     /**
