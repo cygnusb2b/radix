@@ -11,16 +11,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class CustomerSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var CustomerManager
+     * @var AccountManager
      */
-    private $manager;
+    private $accountManager;
 
     /**
-     * @param   CustomerManager     $manager
+     * @var CustomerManager
      */
-    public function __construct(CustomerManager $manager)
+    private $customerManager;
+
+    /**
+     * @param   AccountManager      $accountManager
+     * @param   CustomerManager     $customerManager
+     */
+    public function __construct(AccountManager $accountManager, CustomerManager $customerManager)
     {
-        $this->manager = $manager;
+        $this->accountManager  = $accountManager;
+        $this->customerManager = $customerManager;
     }
 
     /**
@@ -43,14 +50,25 @@ class CustomerSubscriber implements EventSubscriberInterface
     public function handleCustomerCookies(FilterResponseEvent $event)
     {
         $request  = $event->getRequest();
+        $context  = $this->accountManager->extractContextFrom($request);
+
+        if ('application' !== $context) {
+            return;
+        }
+
+        $path = $request->getPathInfo();
+        if ('GET' === $request->getMethod() && 0 !== stripos($request->getPathInfo(), '/app/auth')) {
+            return;
+        }
+
         $response = $event->getResponse();
 
-        $this->manager->setCookiesTo($response);
+        $this->customerManager->setCookiesTo($response);
         if (true === $request->attributes->get('destroyCookies')) {
-            $this->manager->destroyCookiesIn($response);
+            $this->customerManager->destroyCookiesIn($response);
         }
         if (true === $request->attributes->get('destroySessionCookie')) {
-            $this->manager->destroySessionCookie($response);
+            $this->customerManager->destroySessionCookie($response);
         }
     }
 }

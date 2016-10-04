@@ -10,7 +10,7 @@ services:
     app_bundle.customer.subscriber:
         private: true
         class: AppBundle\Customer\CustomerSubscriber
-        arguments: [ "@app_bundle.customer.manager" ]
+        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.customer.manager" ]
         tags:
             - { name: kernel.event_subscriber }
 
