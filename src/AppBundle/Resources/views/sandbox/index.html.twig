@@ -44,10 +44,10 @@
             <div class="card">
                 <div class="card-header">Libraries</div>
                 <div class="card-block">
-                    <p class="card-text">URLs based on the <code>host</code> and <code>appId</code> config properties.</p>
+                    <p class="card-text">URLs based on the <code>host</code> config property.</p>
                     <div class="alert alert-info" role="alert">
                         {% for type, props in libraries %}
-                            <pre><small><samp>{{type}}: {{props.display}}</samp></small></pre>
+                            <pre><small><samp>{{type}}: {{props.url}}</samp></small></pre>
                         {% endfor %}
                     </div>
                 </div>
