@@ -21,9 +21,9 @@ class SandboxController extends AbstractController
     private function getInitConfig(Request $request)
     {
         $config = [
-            'appId' => '97b09a4b-8eb8-475f-b72f-19d0f2073256',
-            'host'  => 'dev.radix.vehicleservicepros.com',
-            'debug' => true,
+            'appId'  => '97b09a4b-8eb8-475f-b72f-19d0f2073256',
+            'host'   => 'http://dev.radix.vehicleservicepros.com',
+            'debug'  => true,
         ];
 
         $query = $request->query->all();
@@ -40,7 +40,7 @@ class SandboxController extends AbstractController
         $config = $this->getInitConfig($request);
         $libraries = [];
         foreach (['js', 'css'] as $extension) {
-            $url = sprintf('http://%s/lib/radix.%s', $config['host'], $extension);
+            $url = sprintf('%s/lib/radix.%s', $config['host'], $extension);
             $libraries[$extension] = ['url' => $url];
         }
         return $libraries;
