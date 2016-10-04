@@ -16,6 +16,7 @@ services:
 
     app_bundle.core.account_manager:
         class: AppBundle\Core\AccountManager
+        arguments: [ "%framework_version%" ]
 
     app_bundle.core.application_query:
         class: AppBundle\Core\ApplicationQuery

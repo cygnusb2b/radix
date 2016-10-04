@@ -9,6 +9,7 @@ class AccountManager
 {
     const PUBLIC_KEY_PARAM = 'x-radix-appid';
     const USING_PARAM      = 'X-Radix-Using';
+    const BUILD_PARAM      = 'X-Radix-Build';
     const ENV_KEY          = 'APP';
     const APP_PATH         = '/app';
 
@@ -16,6 +17,11 @@ class AccountManager
      * @var Model|null
      */
     private $account;
+
+    /**
+     * @var string
+     */
+    private $buildKey;
 
     /**
      * @var bool
@@ -26,6 +32,11 @@ class AccountManager
      * @var Model|null
      */
     private $application;
+
+    public function __construct($buildKey)
+    {
+        $this->buildKey = $buildKey;
+    }
 
     /**
      * Sets whether database operations are allowed.
@@ -80,6 +91,14 @@ class AccountManager
     public function getApplication()
     {
         return $this->application;
+    }
+
+    /**
+     * @return  string
+     */
+    public function getBuildKey()
+    {
+        return $this->buildKey;
     }
 
 

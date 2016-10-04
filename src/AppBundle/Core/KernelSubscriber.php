@@ -73,6 +73,7 @@ class KernelSubscriber implements EventSubscriberInterface
             return;
         }
         $event->getResponse()->headers->set(AccountManager::USING_PARAM, $this->manager->getCompositeKey());
+        $event->getResponse()->headers->set(AccountManager::BUILD_PARAM, $this->manager->getBuildKey());
     }
 
     /**
