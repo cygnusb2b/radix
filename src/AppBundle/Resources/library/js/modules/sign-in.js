@@ -113,8 +113,7 @@ function SignInComponent()
         _getSignInLink: function() {
             return React.createElement('p', {className: 'text-center muted'},
                 'Already have an account? ',
-                React.createElement('a', {href: 'javascript:void(0)', onClick: Radix.SignIn.login}, 'Sign in'),
-                ' .'
+                React.createElement('a', {href: 'javascript:void(0)', onClick: Radix.SignIn.login}, 'Sign in')
             );
         },
 
@@ -228,23 +227,42 @@ function SignInComponent()
                                 "p",
                                 {className: "text-center muted"},
                                 "Need an account? ",
-                                React.createElement("a", {href: "javascript:void(0)", onClick: Radix.SignIn.register}, "Sign up!"),
-                                React.createElement("br"),
-                                React.createElement("a", {href: "javascript:void(0)", onClick: Radix.SignIn.reset}, "Forgot your password?")
+                                React.createElement("a", {href: "javascript:void(0)", onClick: Radix.SignIn.register}, "Sign up!")
+                                // React.createElement("br"),
+                                // React.createElement("a", {href: "javascript:void(0)", onClick: Radix.SignIn.reset}, "Forgot your password?")
                             ),
                             React.createElement("hr"),
-                            React.createElement('p', {className: 'support text-center muted'},
-                                'Having problems logging in? Contact our customer support team: ',
-                                React.createElement("br"),
-                                // React.createElement('a', { href: 'tel:+1' + ServerConfig.values.notifications.support.phone}, ServerConfig.values.notifications.support.phone),
-                                ' or ',
-                                // React.createElement('a', { href: 'mailto:' + ServerConfig.values.notifications.support.email }, ServerConfig.values.notifications.support.email),
-                                '.'
-                            )
+                            this._getSupportElement()
                         )
                     )
                 )
             );
+        },
+
+        _getSupportElement: function() {
+            var support = Application.settings.support || {};
+            if (!support.email && !support.phone) {
+                return;
+            }
+
+            var phoneElement;
+            if (support.phone) {
+                phoneElement = React.createElement('span', null, ' phone: ',
+                    React.createElement('a', { href: 'tel:+1' + support.phone}, support.phone)
+                );
+            }
+            var emailElement;
+            if (support.email) {
+                emailElement = React.createElement('span', null, ' email: ',
+                    React.createElement('a', { href: 'mailto:' + support.email }, support.email)
+                );
+            }
+
+            return React.createElement('p', {className: 'support text-center muted'},
+                'Having problems logging in? Contact our customer support team...',
+                React.createElement('br'),
+                emailElement, phoneElement
+            )
         }
     });
 
