@@ -56,12 +56,15 @@ class TwigDatabaseLoader implements Twig_LoaderInterface
      */
     private function getModel($name)
     {
+        if (false === stripos($name, '/') || 0 !== stripos($name, 'template')) {
+            throw new \Twig_Error_Loader(sprintf('Template "%s" is not supported.', $name));
+        }
         try {
             list($type, $template) = explode('/', $name, 3);
             $template = str_replace('.html.twig', '', $template);
             $model = $this->store->findQuery($type, ['deleted' => false, 'template' => $template])->getSingleResult();
             if (null === $model) {
-                throw new \Twig_Error_Loader(sprintf('Unable to retrieve "%s" template using "%s".', $namespace, $template));
+                throw new \Twig_Error_Loader(sprintf('Unable to retrieve "%s" template.', $template));
             }
         } catch (\Exception $e) {
             throw new \Twig_Error_Loader(sprintf('Template "%s" is not supported.', $name));
