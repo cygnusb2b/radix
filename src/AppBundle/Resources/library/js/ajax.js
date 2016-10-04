@@ -26,7 +26,7 @@ function Ajax()
         }
         method = method || 'POST';
         headers = 'object' === typeof headers ? headers : {};
-        var url =  'http://' + ClientConfig.values.host + endpoint;
+        var url =  ClientConfig.values.host + endpoint;
 
         return new RSVP.Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();

@@ -13,6 +13,7 @@
     var Callbacks       = new Callbacks();
     var Utils           = new Utils();
 
+    var Application = {};
     var Components;
     var Forms;
     var ClientConfig;
@@ -36,6 +37,18 @@
         ClientConfig = new ClientConfig(config);
         if (true === ClientConfig.valid()) {
             Debugger.info('Configuration initialized and valid.');
+
+            EventDispatcher.subscribe('ready', function() {
+                // Get the application, then fire the init event.
+                Ajax.send('/app/init', 'GET').then(function(response) {
+                    Application = response.data;
+                    Debugger.info('Application loaded', Application);
+                    EventDispatcher.trigger('appLoaded');
+                }, function(jqXHR) {
+                    Debugger.error('Unable to load the backend application instance.')
+                });
+            });
+
             ComponentLoader = new ComponentLoader();
             CustomerManager = new CustomerManager();
             LibraryLoader   = new LibraryLoader();
@@ -121,7 +134,7 @@
 
     function ComponentLoader()
     {
-        EventDispatcher.subscribe('ready', function() {
+        EventDispatcher.subscribe('appLoaded', function() {
 
             Radix.Components    = new Components();
             Radix.Forms         = new Forms();
@@ -199,7 +212,7 @@
                     }
                     count = count + 1;
                     if (count >= libraries.length) {
-                        EventDispatcher.trigger('ready')
+                        EventDispatcher.trigger('ready');
                     }
                 }).fail(function() {
                     Debugger.error('Required library could not be loaded!');

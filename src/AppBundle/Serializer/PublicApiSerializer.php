@@ -337,6 +337,8 @@ class PublicApiSerializer
      */
     private function setRules()
     {
+        $this->addRule(new Rules\CoreAccountRule());
+        $this->addRule(new Rules\CoreApplicationRule());
         $this->addRule(new Rules\CustomerAccountRule());
         $this->addRule(new Rules\QuestionRule());
         return $this;

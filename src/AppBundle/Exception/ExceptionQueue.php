@@ -4,6 +4,9 @@ namespace AppBundle\Exception;
 
 use \Exception;
 
+/**
+ * @todo    This class needs to be updated to support internal Symfony exception handling.
+ */
 class ExceptionQueue extends Exception
 {
     /**

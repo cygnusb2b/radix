@@ -162,5 +162,7 @@ class CorsListener implements EventSubscriberInterface
         foreach ($this->definition->getStandardHeaders($origin) as $key => $value) {
             $response->headers->set($key, $value);
         }
+        // Append Origin to the Vary
+        $response->setVary('Origin', false);
     }
 }

@@ -5,6 +5,7 @@ namespace AppBundle\Controller\App;
 use \CssMin;
 use \DateTime;
 use \JSMin;
+use AppBundle\Core\AccountManager;
 use AppBundle\Security\User\Customer;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
