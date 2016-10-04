@@ -16,7 +16,13 @@ class InitController extends AbstractAppController
     public function defaultAction()
     {
         $manager    = $this->get('app_bundle.core.account_manager');
-        $serialized = $this->get('app_bundle.serializer.public_api')->serialize($manager->getApplication());
-        return new JsonResponse($serialized);
+        $app        = $manager->getApplication();
+
+        $updated    = $app->get('updatedDate') ?: new \DateTime();
+        $serialized = $this->get('app_bundle.serializer.public_api')->serialize($app);
+
+        $response = new JsonResponse($serialized);
+        $response->setLastModified($updated);
+        return $response;
     }
 }
