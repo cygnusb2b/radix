@@ -193,7 +193,6 @@ class CorsDefinition
         return [
             'Access-Control-Allow-Origin'       => $origin,
             'Access-Control-Allow-Credentials'  => $this->areCredentialsAllowed() ? 'true' : 'false',
-            'Vary'                              => 'Origin',
         ];
     }
 

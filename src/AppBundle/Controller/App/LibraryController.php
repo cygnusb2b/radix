@@ -5,6 +5,7 @@ namespace AppBundle\Controller\App;
 use \CssMin;
 use \DateTime;
 use \JSMin;
+use AppBundle\Core\AccountManager;
 use AppBundle\Security\User\Customer;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,6 +41,9 @@ class LibraryController extends AbstractAppController
         if (true == $minify) {
             $this->minify($response, $format);
         }
+
+        // Append the build version to the Vary
+        $response->setVary(AccountManager::BUILD_PARAM, false);
         return $response;
     }
 
