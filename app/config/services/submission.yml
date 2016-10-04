@@ -1,7 +1,7 @@
 services:
     app_bundle.submission.manager:
         class: AppBundle\Submission\SubmissionManager
-        arguments: [ "@app_bundle.factory.input_submission", "@app_bundle.customer.manager" ]
+        arguments: [ "@app_bundle.factory.input_submission", "@app_bundle.customer.manager", "@app_bundle.notifications.manager" ]
         calls:
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_account" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_submit" ] ]

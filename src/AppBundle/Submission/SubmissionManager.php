@@ -4,6 +4,7 @@ namespace AppBundle\Submission;
 
 use AppBundle\Customer\CustomerManager;
 use AppBundle\Factory\InputSubmissionFactory;
+use AppBundle\Notifications\NotificationManager;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,6 +22,11 @@ class SubmissionManager
     private $handlers = [];
 
     /**
+     * @var NotificationManager
+     */
+    private $notificationManager;
+
+    /**
      * @var InputSubmissionFactory
      */
     private $submissionFactory;
@@ -28,11 +34,13 @@ class SubmissionManager
     /**
      * @param   InputSubmissionFactory  $submissionFactory
      * @param   CustomerManager         $customerManager
+     * @param   NotificationManager     $notificationManager
      */
-    public function __construct(InputSubmissionFactory $submissionFactory, CustomerManager $customerManager)
+    public function __construct(InputSubmissionFactory $submissionFactory, CustomerManager $customerManager, NotificationManager $notificationManager)
     {
-        $this->submissionFactory = $submissionFactory;
-        $this->customerManager   = $customerManager;
+        $this->submissionFactory   = $submissionFactory;
+        $this->customerManager     = $customerManager;
+        $this->notificationManager = $notificationManager;
     }
 
     /**
@@ -102,8 +110,8 @@ class SubmissionManager
             $this->customerManager->setActiveIdentity($customer);
         }
 
-        // Handle email notifications.
-        // $this->sendNotificationFor($sourceKey, $submission, $customer);
+        // Send email notifications.
+        $this->notificationManager->sendNotificationFor($submission);
 
         // Determine template / next step to load.
         return $this->returnResponseFor($sourceKey, $customer);

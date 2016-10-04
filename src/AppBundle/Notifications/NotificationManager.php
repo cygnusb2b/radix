@@ -149,8 +149,12 @@ class NotificationManager
         $customer = $submission->get('customer');
 
         // Global notification settings
-        $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.name')) ? $app->get('name') : $value;
-        $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notification.noreply.email')) ? 'no-reply@radix.as3.io': $value;
+        $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.name')) ? ModelUtility::getModelValueFor($app, 'settings.branding.name') : $value;
+        if (empty($fromName)) {
+            $fromName = $app->get('name');
+        }
+
+        $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.email')) ? 'no-reply@radix.as3.io': $value;
         $args['from']           = [ $fromEmail => $fromName ];
 
         $args['application']    = $app;
