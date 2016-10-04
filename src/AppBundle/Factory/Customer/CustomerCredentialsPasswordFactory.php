@@ -107,7 +107,8 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory implements
             return new Error(sprintf('The username must be set an be at least %s characters long.', $this->authSchema->minUsernameLength()), 400);
         }
 
-        if (!empty($username)) {
+        $changeset = $credential->getChangeSet();
+        if (!empty($username) && ($credential->getState()->is('new') || isset($changeset['attributes']['username']))) {
             if (false !== stripos($username, '@')) {
                 return new Error('Usernames cannot contain the @ symbol.', 400);
             }
