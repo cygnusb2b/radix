@@ -38,13 +38,16 @@ React.createClass({ displayName: 'ComponentFormRadios',
                 name     : this.props.name,
                 type     : 'radio',
                 value    : value,
+                id       : value+'-'+this.props.name,
                 disabled : this.props.disabled,
                 checked  : this.state.value === value,
                 onChange : this.handleChange,
                 ref      : this.props.ref
             };
             var label = option.label || 'Label';
-            return React.createElement('input', optionProps, label);
+            return React.createElement('input', optionProps,
+                React.createElement('label', { htmlFor: value+'-'+this.props.name }, label)
+            )
         }.bind(this));
     },
 
