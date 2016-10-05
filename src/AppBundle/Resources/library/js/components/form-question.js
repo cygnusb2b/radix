@@ -28,6 +28,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
             tagKeyOrId : null,
             answers    : [],
             onChange   : null,
+            fieldRef   : null
         };
     },
 
@@ -65,15 +66,18 @@ React.createClass({ displayName: 'ComponentFormQuestion',
                     options     : options,
                     selected    : answer,
                     onChange    : this.props.onChange,
-                    wrapperClass: question.key + ' question'
+                    wrapperClass: question.key + ' question',
+                    ref         : this.props.fieldRef
                 });
                 break;
             case 'textarea':
                 element = React.createElement(Radix.Components.get('FormTextArea'), {
                     name        : question.boundTo + ':answers.' + question._id,
+                    value       : answer,
                     label       : label,
                     onChange    : this.props.onChange,
-                    wrapperClass: question.key + ' question'
+                    wrapperClass: question.key + ' question',
+                    ref         : this.props.fieldRef
                 });
                 break;
             default:

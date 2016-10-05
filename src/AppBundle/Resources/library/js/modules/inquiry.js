@@ -55,23 +55,31 @@ function InquiryModule()
         handleSubmit: function(event) {
             event.preventDefault();
 
-            Debugger.info('InquiryModule', 'handleSubmit');
+
 
             var locker = this._formLock;
 
             locker.lock();
 
-            this._formData['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
-            this._formData['submission:referringHref'] = window.location.href;
+            var data = {};
+            for (var name in this._formRefs) {
+                var ref = this._formRefs[name];
+                data[name] = ref.state.value;
+            }
+
+            data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
+            data['submission:referringHref'] = window.location.href;
 
             var sourceKey = 'inquiry';
             var payload   = {
-                data: this._formData,
+                data: data,
                 meta: {
                     model  : this.props.model,
                     notify : this.props.notify
                 }
             };
+
+            Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
 
             Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
                 locker.unlock();
@@ -93,10 +101,20 @@ function InquiryModule()
             }.bind(this));
         },
 
+        // @todo This is no longer needed, thanks to _formRefs
         _formData: {},
 
+        _formRefs: {},
+
+        // @todo This is no longer needed, due to handleFieldRef
         handleChange: function(event) {
             this._formData[event.target.name] = event.target.value;
+        },
+
+        handleFieldRef: function(input) {
+            if (input) {
+                this._formRefs[input.props.name] = input;
+            }
         },
 
 
@@ -119,7 +137,8 @@ function InquiryModule()
                     customer     : this.state.customer,
                     nextTemplate : this.state.nextTemplate,
                     onSubmit     : this.handleSubmit,
-                    onChange     : this.handleChange
+                    onChange     : this.handleChange,
+                    fieldRef     : this.handleFieldRef
                 }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

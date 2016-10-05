@@ -1,4 +1,4 @@
-React.createClass({ displayName: 'ComponentFormTextArea',
+React.createClass({ displayName: 'ComponentFormInputHidden',
 
     componentWillReceiveProps: function(props) {
         // Handle the selected value.
@@ -13,15 +13,9 @@ React.createClass({ displayName: 'ComponentFormTextArea',
         return {
             className    : 'form-element-field',
             name         : 'unknown',
-            disabled     : false,
-            required     : false,
-            autocomplete : false,
-            readonly     : false,
+            type         : 'hidden',
             value        : null,
-            label        : null,
-            placeholder  : null,
             onChange     : null,
-            wrapperClass : null,
             ref          : null
         };
     },
@@ -35,17 +29,14 @@ React.createClass({ displayName: 'ComponentFormTextArea',
     getInputProps: function() {
         var props = {
             id          : 'form-element-field-' + this.props.name,
-            value       : this.state.value || "",
+            value       : this.state.value,
+            type        : this.props.type,
             name        : this.props.name,
             className   : this.props.className,
-            placeholder : this.props.placeholder,
             onChange    : this.handleChange,
             disabled    : this.props.disabled,
-            required    : this.props.required,
-            readOnly    : this.props.readonly,
             ref         : this.props.ref
         };
-        if (false === this.props.autocomplete) props.autoComplete = 'off';
         return props;
     },
 
@@ -57,12 +48,8 @@ React.createClass({ displayName: 'ComponentFormTextArea',
     },
 
     render: function() {
-        var label = this.props.label || Utils.titleize(this.props.name);
         return (
-            React.createElement(Radix.Components.get('FormFieldWrapper'), { name: this.props.name, className: this.props.wrapperClass },
-                React.createElement(Radix.Components.get('FormLabel'), { id: this.props.id, value: label }),
-                React.createElement('textarea', this.getInputProps())
-            )
+            React.createElement('input', this.getInputProps())
         )
     }
 });
