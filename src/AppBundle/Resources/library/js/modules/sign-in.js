@@ -12,7 +12,8 @@ function SignInComponent()
 
         getInitialState: function() {
             return {
-                nextTemplate    : null
+                nextTemplate    : null,
+                verify          : null
             }
         },
 
@@ -23,9 +24,10 @@ function SignInComponent()
             EventDispatcher.subscribe('CustomerManager.register.success', function(e, response) {
                 locker.unlock();
 
-                // Set the next template to display (thank you page, etc).
-                var template = (response.data) ? response.data.template || null : null;
-                this.setState({ nextTemplate: template });
+                var verify = {
+                    emailAddress: this._formData['customer:primaryEmail'],
+                };
+                this.setState({ verify: verify });
             }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.register.failure', function (e, parameters, jqXHR) {
@@ -95,9 +97,9 @@ function SignInComponent()
             //     );
             // });
 
-            return (
-                React.createElement('div', { className: 'register' },
-                    React.createElement('h2', { className: 'name' }, this.props.title),
+            var elements;
+            if (!this.state.verify) {
+                elements = React.createElement('div', null,
                     React.createElement(Radix.Forms.get('Register'), {
                         onSubmit    : this.handleSubmit,
                         onChange    : this.handleChange,
@@ -106,6 +108,18 @@ function SignInComponent()
                     React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                     this._getSignInLink(),
                     React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+                );
+            } else {
+                elements = React.createElement('div', null,
+                    React.createElement(Radix.Components.get('RegisterVerify'), {
+                        emailAddress: this.state.verify.emailAddress
+                    })
+                );
+            }
+            return (
+                React.createElement('div', { className: 'register' },
+                    React.createElement('h2', { className: 'name' }, this.props.title),
+                    elements
                 )
             );
         },

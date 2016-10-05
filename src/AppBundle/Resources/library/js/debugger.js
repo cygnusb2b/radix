@@ -40,7 +40,7 @@ function Debugger(enabled)
     function dispatch(method, passed)
     {
         if (true === enabled || 'error' === method) {
-            var args = ['COMPONENTS DEBUGGER:'];
+            var args = ['RADIX DEBUGGER:'];
             for (var i = 0; i < passed.length; i++)  {
                 var n = i + 1;
                 args[n] = passed[i];
