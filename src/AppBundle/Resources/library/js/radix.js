@@ -116,11 +116,16 @@
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
         this.ParseQueryString  = {{ loadComponent('parse-query-string') }}
         this.RegisterVerify    = {{ loadComponent('register-verify') }}
+        this.ActionVerifyEmail = {{ loadComponent('action-verify-email') }}
 
         this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
 
         this.get = function(name) {
             return this[name];
+        }
+
+        this.has = function(name) {
+            return 'undefined' !== typeof this.get(name);
         }
     }
 
@@ -147,6 +152,7 @@
             Radix.InquiryModule             = new InquiryModule();
             Radix.EmailSubscriptionModule   = new EmailSubscriptionModule();
             Radix.QueryStringModule         = new QueryStringModule();
+            Radix.ActionHandlerModule       = new ActionHandlerModule();
 
             // if (true === ServerConfig.values.comments.enabled) {
                 // Radix.Comments = new CommentComponent();
@@ -158,7 +164,7 @@
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['SignIn', 'InquiryModule', 'EmailSubscriptionModule', 'QueryStringModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
+            var componentKeys = ['SignIn', 'InquiryModule', 'EmailSubscriptionModule', 'QueryStringModule', 'ActionHandlerModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -227,6 +233,7 @@
         loadLibraries();
     }
 
+    {{ loadModule('action-handler') }}
     {{ loadModule('form') }}
     {{ loadModule('sign-in') }}
     {{ loadModule('inquiry') }}

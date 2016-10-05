@@ -46,6 +46,11 @@ function Utils()
         return(out);
     }
 
+    this.ucFirst = function(str)
+    {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     this.parseQueryString = function(str, scoped)
     {
         str = (str || document.location.search).replace(/(^\?)/,'');
