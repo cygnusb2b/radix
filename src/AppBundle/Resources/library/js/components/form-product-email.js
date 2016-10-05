@@ -14,25 +14,26 @@ React.createClass({ displayName: 'FormProductEmail',
 
     render: function() {
         var options = [
-            { label: 'Yes', value: 'true' },
-            { label: 'No', value: 'false' }
+            { label: 'No', value: 'false' },
+            { label: 'Yes', value: 'true' }
         ];
         var optedIn = (this.props.optedIn) ? 'true' : 'false';
         return (
             React.createElement('div', { className: 'form-product-email' },
-                React.createElement(Radix.Components.get('ProductEmailDeployment'), {
-                    id          : this.props.productId,
-                    productKey  : this.props.productKey,
-                    name        : this.props.productName,
-                    description : this.props.description
-                }),
                 React.createElement(Radix.Components.get('FormRadios'), {
                     name     : 'submission:optIns.' + this.props.productId,
                     label    : 'Subscribe',
                     selected : optedIn,
                     options  : options,
+                    className: 'form-element-field toggle',
                     onChange : this.props.onChange,
                     ref      : this.props.fieldRef
+                }),
+                React.createElement(Radix.Components.get('ProductEmailDeployment'), {
+                    id          : this.props.productId,
+                    productKey  : this.props.productKey,
+                    name        : this.props.productName,
+                    description : this.props.description
                 })
             )
         );
