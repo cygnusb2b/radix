@@ -32,9 +32,10 @@ class ResponseCache
         return $this->addStandardHeaders($response, $modified, $ttl);
     }
 
-    public function addStandardHeaders(Response $response, DateTime $modified, $ttl = 600)
+    public function addStandardHeaders(Response $response, DateTime $modified = null, $ttl = 600)
     {
-        $expires = new DateTime();
+        $modified = $modified ?: new DateTime();
+        $expires  = new DateTime();
         $expires->setTimestamp($expires->getTimestamp() + $ttl);
 
         return $response
