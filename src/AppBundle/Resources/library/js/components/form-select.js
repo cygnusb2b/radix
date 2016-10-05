@@ -30,7 +30,8 @@ React.createClass({ displayName: 'ComponentFormSelect',
             selected    : null,
             options     : [],
             onChange    : null,
-            wrapperClass: null
+            wrapperClass: null,
+            ref         : null,
         };
     },
 
@@ -58,7 +59,8 @@ React.createClass({ displayName: 'ComponentFormSelect',
             name      : this.props.name,
             className : this.props.className,
             onChange  : this.handleChange,
-            disabled  : this.props.disabled
+            disabled  : this.props.disabled,
+            ref       : this.props.ref
         };
     },
 

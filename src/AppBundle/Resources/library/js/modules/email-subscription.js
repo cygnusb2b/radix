@@ -8,7 +8,6 @@ function EmailSubscriptionModule()
             EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
                 this.setState({ customer : customer, error: null });
-
             }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
@@ -51,19 +50,25 @@ function EmailSubscriptionModule()
         handleSubmit: function(event) {
             event.preventDefault();
 
-            Debugger.info('EmailSubscriptionModule', 'handleSubmit');
-
             var locker = this._formLock;
 
             locker.lock();
 
-            this._formData['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
-            this._formData['submission:referringHref'] = window.location.href;
+            var data = {};
+            for (var name in this._formRefs) {
+                var ref = this._formRefs[name];
+                data[name] = ref.state.value;
+            }
+
+            data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
+            data['submission:referringHref'] = window.location.href;
 
             var sourceKey = 'product-email-deployment-optin';
             var payload   = {
-                data: this._formData
+                data: data
             };
+
+            Debugger.info('EmailSubscriptionModule', 'handleSubmit', sourceKey, payload);
 
             Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
                 locker.unlock();
@@ -85,10 +90,12 @@ function EmailSubscriptionModule()
             }.bind(this));
         },
 
-        _formData: {},
+        _formRefs: {},
 
-        handleChange: function(event) {
-            this._formData[event.target.name] = event.target.value;
+        handleFieldRef: function(input) {
+            if (input) {
+                this._formRefs[input.props.name] = input;
+            }
         },
 
         render: function() {
@@ -109,14 +116,14 @@ function EmailSubscriptionModule()
                 React.createElement('hr'),
                 React.createElement('div', { className: 'email-subscription-wrapper' },
                     React.createElement(Radix.Components.get('FormProductsEmail'), {
-                        onChange : this.handleChange,
+                        fieldRef : this.handleFieldRef,
                         optIns   : this._getOptInsFor(this.state.customer.primaryEmail)
                     }),
                     React.createElement(Radix.Forms.get('EmailSubscription'), {
                         customer     : this.state.customer,
                         nextTemplate : this.state.nextTemplate,
                         onSubmit     : this.handleSubmit,
-                        onChange     : this.handleChange
+                        fieldRef     : this.handleFieldRef
                     })
                 ),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),

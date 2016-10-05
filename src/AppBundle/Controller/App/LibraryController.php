@@ -17,7 +17,7 @@ class LibraryController extends AbstractAppController
     /**
      * Sets the max age and calcs the expiration of the library response.
      */
-    const TTL = 7200;
+    const TTL = 1800;
 
     /**
      * Retrieves a library file.

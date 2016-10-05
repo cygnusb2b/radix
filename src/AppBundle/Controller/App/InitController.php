@@ -13,10 +13,15 @@ class InitController extends AbstractAppController
      *
      * @return  JsonResponse
      */
-    public function defaultAction()
+    public function defaultAction(Request $request)
     {
         $manager    = $this->get('app_bundle.core.account_manager');
-        $serialized = $this->get('app_bundle.serializer.public_api')->serialize($manager->getApplication());
-        return new JsonResponse($serialized);
+        $app        = $manager->getApplication();
+        $serialized = $this->get('app_bundle.serializer.public_api')->serialize($app);
+        $caching    = $this->get('app_bundle.caching.response_cache');
+        $response   = new JsonResponse($serialized);
+
+        $caching->addStandardHeaders($response, $app->get('updatedDate'), 300);
+        return $response;
     }
 }

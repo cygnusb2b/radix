@@ -91,7 +91,7 @@ app_bundle_auth_user_submit:
 
 app_bundle_test_app:
     path: /sandbox
-    defaults: { _controller: AppBundle:Sandbox:index }
+    defaults: { _controller: AppBundle:Sandbox:index, _format: html }
 
 # MANAGE EMBER ROUTE #
 

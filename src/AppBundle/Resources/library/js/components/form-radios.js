@@ -19,7 +19,8 @@ React.createClass({ displayName: 'ComponentFormRadios',
             selected     : null,
             options      : [],
             onChange     : null,
-            wrapperClass : null
+            wrapperClass : null,
+            ref          : null
         };
     },
 
@@ -39,7 +40,8 @@ React.createClass({ displayName: 'ComponentFormRadios',
                 value    : value,
                 disabled : this.props.disabled,
                 checked  : this.state.value === value,
-                onChange : this.handleChange
+                onChange : this.handleChange,
+                ref      : this.props.ref
             };
             var label = option.label || 'Label';
             return React.createElement('input', optionProps, label);

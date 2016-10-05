@@ -17,7 +17,8 @@ React.createClass({ displayName: 'ComponentFormSelectCountry',
             label       : 'Country',
             selected    : null,
             onChange    : null,
-            wrapperClass: null
+            wrapperClass: null,
+            fieldRef    : null,
         };
     },
 
@@ -43,7 +44,8 @@ React.createClass({ displayName: 'ComponentFormSelectCountry',
             onChange    : this.props.onChange,
             selected    : this.props.selected,
             options     : this.state.options,
-            wrapperClass: this.props.wrapperClass
+            wrapperClass: this.props.wrapperClass,
+            ref         : this.props.fieldRef
         });
     }
 });

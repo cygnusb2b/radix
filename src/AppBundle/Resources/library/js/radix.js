@@ -102,6 +102,7 @@
         this.CountryPostalCode = {{ loadComponent('form-country-postal-code') }}
         this.FormErrors        = {{ loadComponent('form-errors') }}
         this.FormFieldWrapper  = {{ loadComponent('form-field-wrapper') }}
+        this.FormInputHidden   = {{ loadComponent('form-input-hidden') }}
         this.FormInputText     = {{ loadComponent('form-input-text') }}
         this.FormLabel         = {{ loadComponent('form-label') }}
         this.FormLock          = {{ loadComponent('form-lock') }}
