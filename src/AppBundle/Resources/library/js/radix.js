@@ -114,6 +114,7 @@
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
         this.FormQuestion      = {{ loadComponent('form-question') }}
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
+        this.ParseQueryString  = {{ loadComponent('parse-query-string') }}
         this.RegisterVerify    = {{ loadComponent('register-verify') }}
 
         this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
@@ -145,6 +146,7 @@
             Radix.SignIn                    = new SignInComponent();
             Radix.InquiryModule             = new InquiryModule();
             Radix.EmailSubscriptionModule   = new EmailSubscriptionModule();
+            Radix.QueryStringModule         = new QueryStringModule();
 
             // if (true === ServerConfig.values.comments.enabled) {
                 // Radix.Comments = new CommentComponent();
@@ -156,7 +158,7 @@
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['SignIn', 'InquiryModule', 'EmailSubscriptionModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
+            var componentKeys = ['SignIn', 'InquiryModule', 'EmailSubscriptionModule', 'QueryStringModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -228,6 +230,7 @@
     {{ loadModule('form') }}
     {{ loadModule('sign-in') }}
     {{ loadModule('inquiry') }}
+    {{ loadModule('query-string') }}
     {{ loadModule('email-subscription') }}
 
     {{ loadFile('ajax') }}

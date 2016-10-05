@@ -46,14 +46,22 @@ function Utils()
         return(out);
     }
 
-    this.parseQueryString = function(str)
+    this.parseQueryString = function(str, scoped)
     {
         str = (str || document.location.search).replace(/(^\?)/,'');
         if (!str) {
             return {};
         }
         return str.split('&').map(function(n) {
-            return n = n.split("="), this[n[0]] = window.decodeURIComponent(n[1]), this
+            n         = n.split("=");
+            var key   = window.decodeURIComponent(n[0]);
+            var value = window.decodeURIComponent(n[1]);
+            if (!scoped) {
+                return this[key] = value, this;
+            }
+            var parts = key.split('.');
+            if ('radix' !== parts[0] || !parts[1]) return this;
+            return this[parts[1]] = value, this;
         }.bind({}))[0];
     }
 
