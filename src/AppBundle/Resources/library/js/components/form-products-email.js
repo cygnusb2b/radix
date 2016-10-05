@@ -14,7 +14,6 @@ React.createClass({ displayName: 'FormProductsEmail',
     getDefaultProps: function() {
         return {
             optIns      : {},
-            onChange    : null,
             fieldRef    : function(input) { Debugger.error('Nothing handled the field reference.'); }
         };
     },
@@ -34,7 +33,6 @@ React.createClass({ displayName: 'FormProductsEmail',
                 productKey  : product.key,
                 productName : product.name,
                 description : product.description,
-                onChange    : this.props.onChange,
                 fieldRef    : this.props.fieldRef,
                 optedIn     : this._isOptedIn(product._id)
             });

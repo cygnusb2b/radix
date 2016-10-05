@@ -99,15 +99,7 @@ function InquiryModule()
             }.bind(this));
         },
 
-        // @todo This is no longer needed, thanks to _formRefs
-        _formData: {},
-
         _formRefs: {},
-
-        // @todo This is no longer needed, due to handleFieldRef
-        handleChange: function(event) {
-            this._formData[event.target.name] = event.target.value;
-        },
 
         handleFieldRef: function(input) {
             if (input) {
@@ -135,7 +127,6 @@ function InquiryModule()
                     customer     : this.state.customer,
                     nextTemplate : this.state.nextTemplate,
                     onSubmit     : this.handleSubmit,
-                    onChange     : this.handleChange,
                     fieldRef     : this.handleFieldRef
                 }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
