@@ -114,6 +114,7 @@
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
         this.FormQuestion      = {{ loadComponent('form-question') }}
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
+        this.RegisterVerify    = {{ loadComponent('register-verify') }}
 
         this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
 
