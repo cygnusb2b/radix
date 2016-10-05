@@ -754,6 +754,7 @@
 
     border: none;
     border-radius: 10px;
+    background: #b0afaf;
 
     -webkit-appearance: none;
        -moz-appearance: none;
@@ -787,7 +788,6 @@
 
     border-radius: 20px;
     background: #fff;
-    box-shadow: 0 1px 3px rgba(10,10,10,.4);
 }
 .platform-element  input[type="checkbox,"]:checked,
 .platform-element  input[type="radio"]:checked {
@@ -821,6 +821,9 @@
 
     border-radius: 10px 0 0 10px;
     background: #86d993;
+}
+.platform-element .toggle input[type="radio"]:checked {
+    background: #b0afaf;
 }
 .platform-element .toggle input[type="radio"]::after {
     -webkit-transform: translateX(20px);
