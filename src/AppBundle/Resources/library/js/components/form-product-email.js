@@ -7,7 +7,8 @@ React.createClass({ displayName: 'FormProductEmail',
             productKey  : null,
             productName : null,
             description : null,
-            onChange    : null
+            onChange    : null,
+            fieldRef    : null
         };
     },
 
@@ -30,7 +31,8 @@ React.createClass({ displayName: 'FormProductEmail',
                     label    : 'Subscribe',
                     selected : optedIn,
                     options  : options,
-                    onChange : this.props.onChange
+                    onChange : this.props.onChange,
+                    ref      : this.props.fieldRef
                 })
             )
         );

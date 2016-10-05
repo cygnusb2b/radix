@@ -55,8 +55,6 @@ function InquiryModule()
         handleSubmit: function(event) {
             event.preventDefault();
 
-
-
             var locker = this._formLock;
 
             locker.lock();
