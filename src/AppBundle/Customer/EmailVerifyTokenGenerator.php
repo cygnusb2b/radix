@@ -106,10 +106,10 @@ class EmailVerifyTokenGenerator
         $rules->setId((string) $customerId);
 
         if (false === $token->validate($rules)) {
-            throw $this->createExceptionFor();
+            throw $this->createExceptionFor($emailAddress, $customerId);
         }
         if (false === $token->verify($this->signer, $this->secret)) {
-            throw $this->createExceptionFor();
+            throw $this->createExceptionFor($emailAddress, $customerId);
         }
         return $token;
     }
@@ -117,11 +117,15 @@ class EmailVerifyTokenGenerator
     /**
      * Creates the invalid token exception.
      *
+     * @param   string  $emailAddress
+     * @param   string  $customerId
      * @return  HttpFriendlyException
      */
-    private function createExceptionFor()
+    private function createExceptionFor($emailAddress, $customerId)
     {
-        // @todo Meta was removed from the exception. As such, resending the request should use the token.
-        return new HttpFriendlyException('The provided token is either invalid or has expired.', 403);
+        return new HttpFriendlyException(sprintf('The verification code for "%s" is either invalid or has expired.', $emailAddress), 403, [
+            'email'     => $emailAddress,
+            'customer'  => $customerId,
+        ]);
     }
 }

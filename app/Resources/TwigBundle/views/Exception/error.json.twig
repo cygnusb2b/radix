@@ -1,3 +1,3 @@
 {% set detail = status_code >= 400 and status_code < 500 ? exception.message : 'A fatal, internal error occurred. Please try again.' %}
 
-{{ { 'errors': [{ 'status': status_code, 'title': status_text, 'detail': detail, 'meta': {} } ] }|json_encode|raw }}
+{{ { 'errors': [{ 'status': status_code, 'title': status_text, 'detail': detail, 'meta': meta } ] }|json_encode|raw }}

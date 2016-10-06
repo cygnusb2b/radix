@@ -28,10 +28,24 @@ React.createClass({ displayName: 'ComponentFormErrors',
         }
     },
 
+    getStatusCodeFrom: function(jqXHR) {
+        if (jqXHR.errors && jqXHR.errors.length) {
+            return jqXHR.errors[0].status;
+        }
+        return 500;
+    },
+
+    getMeta: function(jqXHR) {
+        if (jqXHR.errors && jqXHR.errors.length) {
+            return jqXHR.errors[0].meta;
+        }
+        return {};
+    },
+
     render: function() {
         var element = React.createElement('div');
         if (this.state.message) {
-            element = React.createElement('p', { className: 'error text-danger' }, this.state.message)
+            element = React.createElement('p', { className: 'alert-danger alert', role: 'alert' }, React.createElement('strong', null, 'Oh snap! '), this.state.message)
         }
         return (element)
     }

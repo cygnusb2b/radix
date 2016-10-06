@@ -117,6 +117,7 @@
         this.ParseQueryString  = {{ loadComponent('parse-query-string') }}
         this.RegisterVerify    = {{ loadComponent('register-verify') }}
         this.ActionVerifyEmail = {{ loadComponent('action-verify-email') }}
+        this.ResendVerifyEmail = {{ loadComponent('resend-verify-email') }}
 
         this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
 

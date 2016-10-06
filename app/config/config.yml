@@ -67,6 +67,7 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    exception_controller:  app_bundle.exception_controller.app:showAction
 
 # Doctrine Configuration
 doctrine:

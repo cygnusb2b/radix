@@ -6,10 +6,6 @@ function ActionHandlerModule()
 
     this.module = React.createClass({ displayName: 'ActionHandlerModule',
 
-        componentDidMount: function() {
-
-        },
-
         render: function() {
             var name = this._getComponentName();
             var element;

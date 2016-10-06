@@ -61,6 +61,10 @@ services:
         class: AppBundle\Definitions\DefinitionFactory
         arguments: [ "@app_bundle.question.type_manager" ]
 
+    app_bundle.exception_controller.app:
+        class: AppBundle\Controller\App\ExceptionController
+        arguments: ['@twig', '%kernel.debug%']
+
     app_bundle.input.submission_manager:
         class: AppBundle\Input\SubmissionManager
         arguments: [ "@app_bundle.question.answer_factory" ]
