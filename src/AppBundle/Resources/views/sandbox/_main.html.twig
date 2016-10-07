@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-xl-12">
+        <div class="jumbotron">
+            <h1 class="display-3">Welcome to Radix</h1>
+            <p>This is a sandbox page for testing and developing the Radix front-end application. It is only available on <strong>development</strong> environments.</p>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Configuration</div>
+            <div class="card-block">
+                <p class="card-text">Override by setting the keys in the query string, a la <code>?appId={some-app-id}</code></p>
+                <div class="alert alert-info" role="alert">
+                    <pre><samp>{{ initConfig|json_encode(constant('JSON_PRETTY_PRINT')) }}</samp></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Libraries</div>
+            <div class="card-block">
+                <p class="card-text">URLs based on the <code>host</code> config property.</p>
+                <div class="alert alert-info" role="alert">
+                    {% for type, props in libraries %}
+                        <pre><small><samp>{{type}}: {{props.url}}</samp></small></pre>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

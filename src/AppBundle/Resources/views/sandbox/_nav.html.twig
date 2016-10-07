@@ -1,0 +1,34 @@
+<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
+    <div class="container">
+        <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#primary-navigation" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+        <div class="collapse navbar-toggleable-xs" id="primary-navigation">
+            <a class='navbar-brand' href="/sandbox">Radix Sandbox</a>
+            <ul class="nav navbar-nav">
+                {% for item in navigation %}
+                    {% set active = item.active ? 'active' : '' %}
+                    {% if item.children is empty %}
+                        <li class="nav-item {{ active }}">
+                            <a class="nav-link" href="{{ item.path }}">{{ item.label }}</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item dropdown {{ active }}">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{{ item.path }}" role="button">{{ item.label }}</a>
+                            <div class="dropdown-menu">
+                                {% for child in item.children %}
+                                    {% set childActive = child.active ? 'active' : '' %}
+                                    <a class="dropdown-item {{ childActive }}" href="{{ child.path }}">{{ child.label }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endif %}
+
+                {% endfor %}
+            </ul>
+            <ul class="nav navbar-nav pull-xs-right">
+                <li class="nav-item platform-login"><a class="nav-link" href="/">Login</a></li>
+                <li class="nav-item platform-logout"><a class="nav-link" href="/">Logout</a></li>
+                <li class="nav-item platform-register"><a class="nav-link" href="/">Register</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>

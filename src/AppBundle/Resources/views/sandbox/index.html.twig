@@ -3,77 +3,13 @@
 {% block title %}Radix Sandbox{% endblock %}
 
 {% block body %}
-<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
-    <div class="container">
-        <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#primary-navigation" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-        <div class="collapse navbar-toggleable-xs" id="primary-navigation">
-            <a class='navbar-brand' href="/app">Radix Sandbox</a>
-            <ul class="nav navbar-nav pull-xs-right">
-                <li class="nav-item platform-login"><a class="nav-link" href="/">Login</a></li>
-                <li class="nav-item platform-logout"><a class="nav-link" href="/">Logout</a></li>
-                <li class="nav-item platform-register"><a class="nav-link" href="/">Register</a></li>
-                <li class="nav-item">Item</li>
-            </ul>
-        </div>
-    </div>
-</nav>
+
+{% include '@AppBundle/Resources/views/sandbox/_nav.html.twig' %}
 
 <div class="container">
-    <div class="row">
-        <div class="col-xl-12">
-            <div class="jumbotron">
-                <h1 class="display-3">Welcome to Radix</h1>
-                <p>This is a sandbox page for testing and developing the Radix front-end application. It is only available on <strong>development</strong> environments.</p>
-            </div>
-
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">Configuration</div>
-                <div class="card-block">
-                    <p class="card-text">Override by setting the keys in the query string, a la <code>?appId={some-app-id}</code></p>
-                    <div class="alert alert-info" role="alert">
-                        <pre><samp>{{ initConfig|json_encode(constant('JSON_PRETTY_PRINT')) }}</samp></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">Libraries</div>
-                <div class="card-block">
-                    <p class="card-text">URLs based on the <code>host</code> config property.</p>
-                    <div class="alert alert-info" role="alert">
-                        {% for type, props in libraries %}
-                            <pre><small><samp>{{type}}: {{props.url}}</samp></small></pre>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">Inquiry Test</div>
-                <div class="radix-module-inquiry card-block" data-model-identifier="10096440" data-model-type="content-product">
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">Email Deployment Subscription Test</div>
-                <div class="radix-module-email-subscription card-block">
-
-                </div>
-            </div>
-        </div>
-    </div>
+    {% block container %}
+        {% include '@AppBundle/Resources/views/sandbox/_main.html.twig' %}
+    {% endblock %}
 </div>
 
 {% endblock %}

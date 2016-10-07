@@ -113,8 +113,8 @@ class SubmissionManager
         // Send email notifications.
         $this->notificationManager->sendNotificationFor($submission);
 
-        // Determine template / next step to load.
-        return $this->returnResponseFor($sourceKey, $customer);
+        // Return the response.
+        return $this->callHookFor($sourceKey, 'createResponseFor', [$submission]);
     }
 
     /**
@@ -170,50 +170,5 @@ class SubmissionManager
         // Customer is not logged in. Create/update the identity, if possible.
         $emailAddress = $payload->getCustomer()->get('primaryEmail');
         return $this->customerManager->upsertIdentityFor($emailAddress, $payload->getCustomer()->all());
-    }
-
-    /**
-     * Returns the appropriate response for the submission.
-     *
-     * @todo    This needs to be re-worked significantly - once we get templating unburied from notifications.
-     * @todo    Should this return a response object, or...
-     * @param   string  $sourceKey
-     * @param   Model   $customer
-     * @return  JsonResponse
-     */
-    private function returnResponseFor($sourceKey, Model $customer)
-    {
-        if ('customer-account' === $sourceKey) {
-            $contents = '
-                <div class="card card-block">
-
-                  <h2 class="card-title">Thank you for signing up!</h2>
-
-                  <p class="alert alert-info" role="alert">Before you can log in, you must <strong>verify</strong> your email address.</p>
-
-                  <p class="card-text">Please check the inbox for <strong>' . $customer->get('primaryEmail') . '</strong> and click the link provided in the verification email.</p>
-                  <p class="card-text">The verification email was sent from <i>Sender Name Here <small>&lt;no-reply@domain.com&gt;</small></i> with a subject line of <i>Subject Line Here</i></p>
-                  <p class="card-text">If you\'re having trouble finding the email, you may resend the verification to your address or contact our support team.</p>
-                  <a href="#" class="btn btn-info">Resend Verification Email</a>
-                </div>
-            ';
-            return new JsonResponse(['data' => [
-                'template'  => $contents
-            ]], 201);
-        } else {
-            // @todo The serialized customer and submission should be sent to the template for processing.
-            return new JsonResponse(['data' => [
-                // 'customer'   => $serializer->serialize($customer),
-                // 'submission' => $serializer->serialize($submission),
-                'template'   => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
-            ]], 201);
-        }
-    }
-
-    private function sendNotificationFor($sourceKey, Model $submission, Model $customer)
-    {
-        // if ('customer-account' === $sourceKey) {
-        //     $this->notificationManager->
-        // }
     }
 }

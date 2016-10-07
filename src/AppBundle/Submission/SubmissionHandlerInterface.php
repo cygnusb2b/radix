@@ -26,6 +26,14 @@ interface SubmissionHandlerInterface
     public function canSave();
 
     /**
+     * Creates the response for the submission.
+     *
+     * @param   Model   $submission
+     * @return  \Symfony\Component\HttpFoundation\Response
+     */
+    public function createResponseFor(Model $submission);
+
+    /**
      * Gets the source key this handler processes.
      *
      * @return  string

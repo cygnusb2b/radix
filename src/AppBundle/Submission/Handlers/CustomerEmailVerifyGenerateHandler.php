@@ -10,6 +10,7 @@ use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
 {
@@ -62,6 +63,16 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
         if (true !== $result = $this->emailFactory->canSave($this->emailModel)) {
             $result->throwException();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createResponseFor(Model $submission)
+    {
+        return new JsonResponse([
+            'data' => []
+        ], 201);
     }
 
     /**

@@ -3,21 +3,69 @@
 namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SandboxController extends AbstractController
 {
-    public function indexAction(Request $request)
+    /**
+     * Displays sandbox pages. This is only available on dev environments.
+     *
+     * @param   string  $path
+     * @param   Request $request
+     * @return  Response
+     */
+    public function indexAction($path, Request $request)
     {
         if ('dev' !== $this->getParameter('kernel.environment')) {
             throw $this->createNotFoundException();
         }
 
-        return $this->render('@AppBundle/Resources/views/sandbox/index.html.twig', [
-            'initConfig' => $this->getInitConfig($request),
-            'libraries'   => $this->getLibraries($request),
+        $template = (empty($path)) ? 'index' : $path;
+        return $this->render(sprintf('@AppBundle/Resources/views/sandbox/%s.html.twig', $template), [
+            'initConfig'    => $this->getInitConfig($request),
+            'libraries'     => $this->getLibraries($request),
+            'navigation'    => $this->buildNavigation($request),
         ]);
     }
 
+    /**
+     * Builds the top-level sandbox navigation
+     *
+     * @param   Request $request
+     * @return  array
+     */
+    private function buildNavigation(Request $request)
+    {
+        $nav = [
+            ['label' => 'Inquiry', 'path' => '/inquiry', 'children' => []],
+            ['label' => 'Email Subs', 'path' => '/email-subscriptions', 'children' => []],
+            ['label' => 'Action Handlers', 'path' => '#', 'children' => [
+                ['label' => 'Inline', 'path' => '/action-inline'],
+                ['label' => 'Modal', 'path' => '/action-modal'],
+            ]],
+            ['label' => 'Utilities', 'path' => '#', 'children' => [
+                ['label' => 'Query Parser', 'path' => '/query-parser'],
+            ]],
+        ];
+        $path = $request->getPathInfo();
+        foreach ($nav as &$item) {
+            $item['active'] = ($item['path'] === $path) ? true : false;
+            foreach ($item['children'] as &$child) {
+                $child['active'] = ($child['path'] === $path) ? true : false;
+                if ($child['active']) {
+                    $item['active'] = true;
+                }
+            }
+        }
+        return $nav;
+    }
+
+    /**
+     * Gets the library initialization config.
+     *
+     * @param   Request $request
+     * @return  array
+     */
     private function getInitConfig(Request $request)
     {
         $config = [
@@ -35,6 +83,12 @@ class SandboxController extends AbstractController
         return $config;
     }
 
+    /**
+     * Gets the associated Radix libraries (js/css).
+     *
+     * @param   Request $request
+     * @return  array
+     */
     private function getLibraries(Request $request)
     {
         $config = $this->getInitConfig($request);

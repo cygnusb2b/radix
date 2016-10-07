@@ -1,0 +1,16 @@
+{% extends '@AppBundle/Resources/views/sandbox/index.html.twig' %}
+
+{% block container %}
+
+{% include '@AppBundle/Resources/views/sandbox/_actions.html.twig' %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">Action Handler Test <small>(note: a valid query string action must be present to render)</small></div>
+            <div class="radix-module-action-handler card-block" data-query=""></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

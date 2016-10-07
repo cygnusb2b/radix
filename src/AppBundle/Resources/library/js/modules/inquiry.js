@@ -79,7 +79,7 @@ function InquiryModule()
 
             Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
 
-            Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
+            Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
                 locker.unlock();
 
                 // Refresh the customer, if logged in.
