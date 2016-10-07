@@ -8,6 +8,7 @@ use AppBundle\Submission\SubmissionHandlerInterface;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class EmailOptInHandler implements SubmissionHandlerInterface
 {
@@ -54,6 +55,18 @@ class EmailOptInHandler implements SubmissionHandlerInterface
                 $result->throwException();
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createResponseFor(Model $submission)
+    {
+        return new JsonResponse([
+            'data' => [
+                'template'  => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
+            ]
+        ], 201);
     }
 
     /**

@@ -8,6 +8,7 @@ use AppBundle\Submission\SubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CustomerAccountHandler implements SubmissionHandlerInterface
 {
@@ -50,6 +51,19 @@ class CustomerAccountHandler implements SubmissionHandlerInterface
         if (true !== $result = $this->accountFactory->canSave($this->newAccount)) {
             $result->throwException();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createResponseFor(Model $submission)
+    {
+        return new JsonResponse([
+            'data' => [
+                'customer'  => $submission->get('customer')->getId(),
+                'email'     => $submission->get('customer')->get('primaryEmail'),
+            ]
+        ], 201);
     }
 
     /**

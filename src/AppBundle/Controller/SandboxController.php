@@ -37,14 +37,14 @@ class SandboxController extends AbstractController
     private function buildNavigation(Request $request)
     {
         $nav = [
-            ['label' => 'Inquiry', 'path' => '/sandbox/inquiry', 'children' => []],
-            ['label' => 'Email Subs', 'path' => '/sandbox/email-subscriptions', 'children' => []],
+            ['label' => 'Inquiry', 'path' => '/inquiry', 'children' => []],
+            ['label' => 'Email Subs', 'path' => '/email-subscriptions', 'children' => []],
             ['label' => 'Action Handlers', 'path' => '#', 'children' => [
-                ['label' => 'Inline', 'path' => '/sandbox/action-inline'],
-                ['label' => 'Modal', 'path' => '/sandbox/action-modal'],
+                ['label' => 'Inline', 'path' => '/action-inline'],
+                ['label' => 'Modal', 'path' => '/action-modal'],
             ]],
             ['label' => 'Utilities', 'path' => '#', 'children' => [
-                ['label' => 'Query Parser', 'path' => '/sandbox/query-parser'],
+                ['label' => 'Query Parser', 'path' => '/query-parser'],
             ]],
         ];
         $path = $request->getPathInfo();

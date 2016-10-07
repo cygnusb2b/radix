@@ -12,7 +12,6 @@ function SignInComponent()
 
         getInitialState: function() {
             return {
-                nextTemplate    : null,
                 verify          : null
             }
         },
@@ -25,7 +24,8 @@ function SignInComponent()
                 locker.unlock();
 
                 var verify = {
-                    emailAddress: this._formData['customer:primaryEmail'],
+                    emailAddress : response.data.email,
+                    customerId   : response.data.customer
                 };
                 this.setState({ verify: verify });
             }.bind(this));
@@ -111,9 +111,7 @@ function SignInComponent()
                 );
             } else {
                 elements = React.createElement('div', null,
-                    React.createElement(Radix.Components.get('RegisterVerify'), {
-                        emailAddress: this.state.verify.emailAddress
-                    })
+                    React.createElement(Radix.Components.get('RegisterVerify'), this.state.verify)
                 );
             }
             return (

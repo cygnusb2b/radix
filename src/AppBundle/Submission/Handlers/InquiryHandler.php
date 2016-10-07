@@ -8,6 +8,7 @@ use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class InquiryHandler implements SubmissionHandlerInterface
 {
@@ -25,6 +26,18 @@ class InquiryHandler implements SubmissionHandlerInterface
     public function canSave()
     {
 
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createResponseFor(Model $submission)
+    {
+        return new JsonResponse([
+            'data' => [
+                'template'  => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
+            ]
+        ], 201);
     }
 
     /**
