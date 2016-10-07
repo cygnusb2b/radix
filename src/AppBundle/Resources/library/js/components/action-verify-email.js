@@ -1,5 +1,9 @@
 React.createClass({ displayName: 'ComponentActionVerifyEmail',
 
+    componentDidMount: function() {
+        this.verify();
+    },
+
     getDefaultProps: function() {
         return {
             token: null
@@ -15,7 +19,9 @@ React.createClass({ displayName: 'ComponentActionVerifyEmail',
         };
     },
 
-    verify: function() {
+    verify: function(event) {
+        if (event) event.preventDefault();
+
         var locker = this._formLock;
         var error  = this._error;
 

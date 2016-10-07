@@ -6,31 +6,29 @@ function ActionHandlerModule()
 
     this.module = React.createClass({ displayName: 'ActionHandlerModule',
 
+        getDefaultProps: function() {
+            return {
+                componentName: null,
+            };
+        },
+
         render: function() {
-            var name = this._getComponentName();
+            var name = this.props.componentName;
             var element;
             if (Radix.Components.has(name)) {
                 element = React.createElement(Radix.Components.get(name), this.props);
             } else {
-                Debugger.error('No action handler found for ' + this.props.action);
+                element = React.createElement('div');
             }
             return (React.createElement('div', { className: 'platform-element' }, element));
         },
-
-        _getComponentName: function() {
-            var name = 'Action';
-            var parts = this.props.action.split('-');
-            for (var i = 0; i < parts.length; i++) {
-                name = name + Utils.ucFirst(parts[i]);
-            }
-            return name;
-        }
-
     });
 
     this.getProps = function() {
-        var jqObj = this.getTarget();
-        return Utils.parseQueryString(window.location.search, true);
+        var props = Utils.parseQueryString(window.location.search, true);
+        var name  = this.getComponentNameFor(props.action);
+        props['componentName'] = (Radix.Components.has(name)) ? name : null;
+        return props;
     },
 
     this.getTarget = function() {
@@ -39,23 +37,34 @@ function ActionHandlerModule()
     },
 
     this.propsAreValid = function(props) {
-        return (props.action) ? true : false;
+        return (props.componentName) ? true : false;
     },
 
     this.render = function() {
-        var jqObj = this.getTarget();
-        if (!jqObj) {
-            // Element not present.
-            Debugger.info('ActionHandlerModule', 'No target element found on page. Skipping render.');
-            return;
-        }
 
         var props = this.getProps();
-        if (this.propsAreValid(props)) {
-            React.render(
-                React.createElement(this.module, props),
-                jqObj[0]
-            );
+        if (false === this.propsAreValid(props)) {
+            Debugger.error('ActionHandlerModule', 'No action found in query string, or action key is invalid. Skipping render');
         }
+
+        var element = React.createElement(this.module, props)
+        var jqObj   = this.getTarget();
+        if (jqObj) {
+            // Render to the in-line element.
+            React.render(element, jqObj[0]);
+        } else {
+            // Use the modal.
+            Radix.ModalModule.modal.setState({ contents: element });
+            Radix.ModalModule.modal.show();
+        }
+    }
+
+    this.getComponentNameFor = function(key) {
+        var name = 'Action';
+        var parts = key.split('-');
+        for (var i = 0; i < parts.length; i++) {
+            name = name + Utils.ucFirst(parts[i]);
+        }
+        return name;
     }
 }
