@@ -13,9 +13,9 @@ React.createClass({ displayName: 'ComponentActionVerifyEmail',
     getInitialState: function() {
         return {
             successful: false,
+            sending: true,
             canResend: false,
-            meta: {},
-            error: null
+            meta: {}
         };
     },
 
@@ -49,10 +49,11 @@ React.createClass({ displayName: 'ComponentActionVerifyEmail',
                 EventDispatcher.trigger('CustomerManager.customer.loaded');
             });
 
-            this.setState({ successful: true, error: null });
+            this.setState({ successful: true, sending: false });
 
         }.bind(this), function(jqXHR) {
             locker.unlock();
+            this.setState({ sending: false });
             var meta = this._error.getMeta(jqXHR);
             if (403 === this._error.getStatusCodeFrom(jqXHR)) {
                 this.setState({ canResend: true, meta: meta });
@@ -68,9 +69,9 @@ React.createClass({ displayName: 'ComponentActionVerifyEmail',
                 emailAddress : this.state.meta.email,
                 customerId   : this.state.meta.customer
             });
-        } else if (!this.state.successful) {
-            resend = React.createElement('button', { type: 'button', onClick: this.verify }, 'Verify');
-        } else {
+        } else if (this.state.sending) {
+            resend = React.createElement('p', null, 'Verifying...');
+        } else if (this.state.successful) {
             resend = React.createElement('p', { className: 'alert-success alert', role: 'alert' },
                 React.createElement('strong', null, 'Success!'), ' Your email address is now verified and you\'re logged in.'
             );

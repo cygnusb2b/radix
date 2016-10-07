@@ -13,15 +13,13 @@ trait CustomerTrait
      * @param   Model   $customerEmail
      * @param   Model   $submission
      */
-    protected function getVerificationLink(Model $customerEmail, Model $application)
+    protected function getVerificationLink(Model $submission, Model $customerEmail, Model $application)
     {
         $request = Request::createFromGlobals();
         return sprintf(
-            '%s/app/submission/customer-email.verify-submit?submission:token=%s&%s=%s',
-            $request->getSchemeAndHttpHost(),
-            $customerEmail->get('verification')->get('token'),
-            AccountManager::PUBLIC_KEY_PARAM,
-            $application->get('publicKey')
+            '%s?radix.action=verify-email&radix.token=%s',
+            $submission->get('referringHost'),
+            $customerEmail->get('verification')->get('token')
         );
     }
 
