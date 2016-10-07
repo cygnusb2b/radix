@@ -90,11 +90,11 @@ app_bundle_auth_user_submit:
     path: /auth/user/submit
 
 app_bundle_sandbox:
-    path: /sandbox
+    path: /
     defaults: { _controller: AppBundle:Sandbox:index, path: null, _format: html }
 
-app_bundle_sandbox_sub_pages:
-    path: /sandbox/{path}
+app_bundle_sandbox_sections:
+    path: /{path}
     defaults: { _controller: AppBundle:Sandbox:index, _format: html }
 
 # MANAGE EMBER ROUTE #
