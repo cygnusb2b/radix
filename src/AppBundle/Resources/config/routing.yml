@@ -41,7 +41,7 @@ app_bundle_app_question:
     path: /app/question/{keyOrId}
     defaults: { _controller: AppBundle:App\Question:retrieve }
     methods: [ GET ]
-# @todo Submission routes should be consolidated into one.
+
 app_bundle_submission:
     path: /app/submission/{sourceKey}
     defaults: { _controller: AppBundle:App\Submission:index }
@@ -89,8 +89,12 @@ app_bundle_auth_user_retrieve:
 app_bundle_auth_user_submit:
     path: /auth/user/submit
 
-app_bundle_test_app:
+app_bundle_sandbox:
     path: /sandbox
+    defaults: { _controller: AppBundle:Sandbox:index, path: null, _format: html }
+
+app_bundle_sandbox_sub_pages:
+    path: /sandbox/{path}
     defaults: { _controller: AppBundle:Sandbox:index, _format: html }
 
 # MANAGE EMBER ROUTE #
