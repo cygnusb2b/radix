@@ -22,6 +22,7 @@ class VerifyGenerate implements NotificationFactoryInterface
     public function generate(Model $submission, Model $template = null, array $args)
     {
         $email = $this->getCustomerEmail($submission, $submission->get('payload')->customer['primaryEmail']);
+        $email->reload();
         $args['verificationLink'] = $this->getVerificationLink($submission, $email, $args['application']);
         $args['verificationEmail'] = $email->get('value');
         $args['subject'] = $this->appendFallbackSubject($args, 'Verify your email for %s');
