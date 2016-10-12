@@ -28,7 +28,7 @@ services:
     app_bundle.security.authenticator.customer:
         private: true
         class: AppBundle\Security\Authenticator\CustomerAuthenticator
-        arguments: [ "@as3_modlr.api.adapter", "@security.http_utils", "@security.encoder_factory", "@app_bundle.security.auth.generator_manager" ]
+        arguments: [ "@as3_modlr.api.adapter", "@security.http_utils", "@security.encoder_factory", "@app_bundle.security.auth.generator_manager", "@app_bundle.security.encoder.legacy_encoder_manager" ]
         calls:
             - [ addRoute, [ "app_bundle_app_auth_submit" ] ]
 
@@ -42,6 +42,16 @@ services:
     app_bundle.security.authenticator.core_user.abstract:
         private: true
         abstract: true
+
+    app_bundle.security.encoder.legacy_encoder_manager:
+        private: true
+        class: AppBundle\Security\Encoder\LegacyEncoderManager
+        calls:
+            - [ addEncoder, [ "@app_bundle.security.encoder.legacy.merrick" ] ]
+
+    app_bundle.security.encoder.legacy.merrick:
+        private: true
+        class: AppBundle\Security\Encoder\MerrickPasswordEncoder
 
     app_bundle.security.jwt.generator_manager:
         private: true
