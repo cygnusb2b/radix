@@ -13,6 +13,7 @@ class Customer implements AdvancedUserInterface, Serializable
     private $familyName;
     private $givenName;
     private $locked = true;
+    private $mechanism;
     private $password;
     private $roles = [];
     private $salt;
@@ -33,9 +34,10 @@ class Customer implements AdvancedUserInterface, Serializable
         if (null !== $credentials && null !== $password = $credentials->get('password')) {
             $this->password   = $password->get('value');
             $this->salt       = $password->get('salt');
+            $this->mechanism  = $password->get('mechanism');
             $this->username   = $customer->getId();
-        }
 
+        }
         if (null !== $settings = $customer->get('settings')) {
             $this->locked  = $settings->get('locked');
             $this->enabled = $settings->get('enabled');
@@ -51,6 +53,11 @@ class Customer implements AdvancedUserInterface, Serializable
     public function getGivenName()
     {
         return $this->givenName;
+    }
+
+    public function getMechanism()
+    {
+        return $this->mechanism;
     }
 
     public function getModel()
@@ -141,6 +148,7 @@ class Customer implements AdvancedUserInterface, Serializable
             $this->username,
             $this->locked,
             $this->enabled,
+            $this->mechanism
         ]);
     }
 
@@ -154,7 +162,8 @@ class Customer implements AdvancedUserInterface, Serializable
             $this->salt,
             $this->username,
             $this->locked,
-            $this->enabled
+            $this->enabled,
+            $this->mechanism
         ) = unserialize($serialized);
     }
 

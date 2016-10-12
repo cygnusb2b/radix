@@ -4,6 +4,7 @@ namespace AppBundle\Security\Authenticator;
 
 use AppBundle\Utility\RequestUtility;
 use AppBundle\Security\Auth\AuthGeneratorManager;
+use AppBundle\Security\Encoder\LegacyEncoderManager;
 use AppBundle\Security\User\CustomerProvider;
 use As3\Modlr\Api\AdapterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,16 +33,23 @@ class CustomerAuthenticator extends AbstractCoreAuthenticator
     private $encoderFactory;
 
     /**
+     * @var LegacyEncoderManager
+     */
+    private $legacyEncoders;
+
+    /**
      * @param   AdapterInterface        $adapter
      * @param   HttpUtils               $httpUtils
      * @param   EncoderFactory          $encoderFactory
      * @param   AuthGeneratorManager    $authManager
+     * @param   LegacyEncoderManager    $legacyEncoders
      */
-    public function __construct(AdapterInterface $adapter, HttpUtils $httpUtils, EncoderFactory $encoderFactory, AuthGeneratorManager $authManager)
+    public function __construct(AdapterInterface $adapter, HttpUtils $httpUtils, EncoderFactory $encoderFactory, AuthGeneratorManager $authManager, LegacyEncoderManager $legacyEncoders)
     {
         parent::__construct($adapter, $httpUtils);
         $this->authManager    = $authManager;
         $this->encoderFactory = $encoderFactory;
+        $this->legacyEncoders = $legacyEncoders;
     }
 
     /**
@@ -54,14 +62,38 @@ class CustomerAuthenticator extends AbstractCoreAuthenticator
             throw new BadCredentialsException('The presented password cannot be empty.');
         }
 
-        // @todo Need to add support for the encoding mechanism.
-        // $user->getMechanism() === 'platform' ... or instantiate a different user class if the mechanism is different?
+        $mechanism = $user->getMechanism();
+        if (empty($mechanism) || LegacyEncoderManager::CORE_MECHANISM === $mechanism) {
+            // Default password encoder.
+            return $this->encoderFactory->getEncoder($user)->isPasswordValid(
+                $user->getPassword(),
+                $credentials[$passField],
+                $user->getSalt()
+            );
+        }
 
-        return $this->encoderFactory->getEncoder($user)->isPasswordValid(
+        // Try an alternative/legacy encoding mechanism.
+        if (null === $encoder = $this->legacyEncoders->getEncoder($mechanism)) {
+            throw new AuthenticationServiceException(sprintf('The password mechanism `%s` is not registered.', $mechanism));
+        }
+        $valid = $encoder->isPasswordValid(
             $user->getPassword(),
             $credentials[$passField],
             $user->getSalt()
         );
+
+        if (true === $valid) {
+            // Update customer to core mechanism.
+            $model   = $user->getModel();
+            $encoded = $this->encoderFactory->getEncoder($user)->encodePassword($credentials[$passField], null);
+            $model->get('credentials')->get('password')
+                ->set('mechanism', LegacyEncoderManager::CORE_MECHANISM)
+                ->set('value', $encoded)
+                ->set('salt', null)
+            ;
+            $model->save();
+        }
+        return $valid;
     }
 
     /**
@@ -82,16 +114,16 @@ class CustomerAuthenticator extends AbstractCoreAuthenticator
     /**
      * {@inheritdoc}
      */
-    protected function extractCredentials(Request $request)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return RequestUtility::extractPayload($request);
+        return $this->authManager->createResponseFor($token->getUser());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    protected function extractCredentials(Request $request)
     {
-        return $this->authManager->createResponseFor($token->getUser());
+        return RequestUtility::extractPayload($request);
     }
 }
