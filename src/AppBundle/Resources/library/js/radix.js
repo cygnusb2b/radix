@@ -100,6 +100,7 @@
     function Components()
     {
         this.ModalLink         = {{ loadComponent('modal-link') }}
+        this.ModalLinkLogin    = {{ loadComponent('modal-link-login') }}
         this.CountryPostalCode = {{ loadComponent('form-country-postal-code') }}
         this.FormErrors        = {{ loadComponent('form-errors') }}
         this.FormFieldWrapper  = {{ loadComponent('form-field-wrapper') }}
@@ -115,6 +116,7 @@
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
         this.FormQuestion      = {{ loadComponent('form-question') }}
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
+        this.Login             = {{ loadComponent('login') }}
         this.Modal             = {{ loadComponent('modal') }}
         this.ParseQueryString  = {{ loadComponent('parse-query-string') }}
         this.RegisterVerify    = {{ loadComponent('register-verify') }}
@@ -137,6 +139,7 @@
         this.EmailSubscription  = {{ loadForm('email-subscription') }}
         this.Inquiry            = {{ loadForm('inquiry') }}
         this.Register           = {{ loadForm('register') }}
+        this.Login              = {{ loadForm('login') }}
 
         this.get = function(name) {
             return this[name];

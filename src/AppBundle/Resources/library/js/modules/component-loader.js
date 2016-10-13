@@ -13,8 +13,8 @@ function ComponentLoaderModule()
                 required     : [  ],
                 usesChildren : true
             },
-            RegisterVerify : {
-                allowed      : [ 'emailAddress' ],
+            ModalLinkLogin : {
+                allowed      : [ 'tagName', 'className', 'label', 'title' ],
                 required     : [  ],
                 usesChildren : false
             }
