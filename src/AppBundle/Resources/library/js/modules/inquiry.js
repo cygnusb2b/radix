@@ -7,12 +7,12 @@ function InquiryModule()
         componentDidMount: function() {
             EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({ customer : customer, error: null });
+                this.setState({ customer : customer });
             }.bind(this));
 
             EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
                 var customer = this.fillCustomer(CustomerManager.getCustomer());
-                this.setState({ customer : customer, nextTemplate: null, error: null });
+                this.setState({ customer : customer, nextTemplate: null });
             }.bind(this));
         },
 
@@ -47,7 +47,6 @@ function InquiryModule()
             var customer = this.fillCustomer(CustomerManager.getCustomer());
             return {
                 customer        : customer,
-                error           : null,
                 nextTemplate    : null
             }
         },
@@ -56,7 +55,9 @@ function InquiryModule()
             event.preventDefault();
 
             var locker = this._formLock;
+            var error  = this._error;
 
+            error.clear();
             locker.lock();
 
             var data = {};
@@ -91,11 +92,11 @@ function InquiryModule()
 
                 // Set the next template to display (thank you page, etc).
                 var template = (response.data) ? response.data.template || null : null;
-                this.setState({ nextTemplate: template, error: null });
+                this.setState({ nextTemplate: template });
 
             }.bind(this), function(jqXHR) {
                 locker.unlock();
-                this._error.displayAjaxError(jqXHR);
+                error.displayAjaxError(jqXHR);
             }.bind(this));
         },
 
