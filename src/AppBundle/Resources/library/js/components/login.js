@@ -96,7 +96,7 @@ React.createClass({ displayName: 'ComponentLogin',
                 // React.createElement('br'),
                 // React.createElement('a', {href: 'javascript:void(0)', onClick: Radix.SignIn.reset}, 'Forgot your password?')
             ),
-            // @todo Append the global support component here.
+            React.createElement(Radix.Components.get('ContactSupport'), { opening: 'Having trouble logging in?' }),
             React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
             React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
         );

@@ -99,6 +99,7 @@
      */
     function Components()
     {
+        this.ContactSupport    = {{ loadComponent('contact-support') }}
         this.ModalLink         = {{ loadComponent('modal-link') }}
         this.ModalLinkLogin    = {{ loadComponent('modal-link-login') }}
         this.CountryPostalCode = {{ loadComponent('form-country-postal-code') }}

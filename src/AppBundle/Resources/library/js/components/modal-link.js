@@ -34,8 +34,9 @@ React.createClass({ displayName: 'ComponentModalLink',
     },
 
     handleClick: function(event) {
-        Debugger.info('ComponentModalLink', 'handleClick()', this);
         event.preventDefault();
+
+        Debugger.info('ComponentModalLink', 'handleClick()', this);
 
         Radix.ModalModule.modal.setState({ contents: this.props.contents });
         Radix.ModalModule.modal.show();
