@@ -91,11 +91,9 @@ React.createClass({ displayName: 'ComponentLogin',
                 fieldRef : this.handleFieldRef
             }),
             React.createElement('p', { className: 'text-center muted' }, 'Need an account? ',
-                // @todo This should use the register modal link component!!
-                React.createElement('a', { href: 'javascript:void(0)', onClick: Radix.SignIn.register }, 'Sign up!')
-                // React.createElement('br'),
-                // React.createElement('a', {href: 'javascript:void(0)', onClick: Radix.SignIn.reset}, 'Forgot your password?')
+                React.createElement(Radix.Components.get('ModalLinkRegister'), { label: 'Sign up!' })
             ),
+            // @todo Add reset password here!
             React.createElement(Radix.Components.get('ContactSupport'), { opening: 'Having trouble logging in?' }),
             React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
             React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

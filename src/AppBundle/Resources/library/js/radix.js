@@ -102,6 +102,7 @@
         this.ContactSupport    = {{ loadComponent('contact-support') }}
         this.ModalLink         = {{ loadComponent('modal-link') }}
         this.ModalLinkLogin    = {{ loadComponent('modal-link-login') }}
+        this.ModalLinkRegister = {{ loadComponent('modal-link-register') }}
         this.CountryPostalCode = {{ loadComponent('form-country-postal-code') }}
         this.FormErrors        = {{ loadComponent('form-errors') }}
         this.FormFieldWrapper  = {{ loadComponent('form-field-wrapper') }}
@@ -118,6 +119,7 @@
         this.FormQuestion      = {{ loadComponent('form-question') }}
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
         this.Login             = {{ loadComponent('login') }}
+        this.Register          = {{ loadComponent('register') }}
         this.Modal             = {{ loadComponent('modal') }}
         this.ParseQueryString  = {{ loadComponent('parse-query-string') }}
         this.RegisterVerify    = {{ loadComponent('register-verify') }}

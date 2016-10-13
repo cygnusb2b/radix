@@ -17,6 +17,11 @@ function ComponentLoaderModule()
                 allowed      : [ 'tagName', 'className', 'label', 'title' ],
                 required     : [  ],
                 usesChildren : false
+            },
+            ModalLinkRegister : {
+                allowed      : [ 'tagName', 'className', 'label', 'title' ],
+                required     : [  ],
+                usesChildren : false
             }
         };
     }

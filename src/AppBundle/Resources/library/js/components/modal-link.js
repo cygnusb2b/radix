@@ -49,10 +49,15 @@ React.createClass({ displayName: 'ComponentModalLink',
             return (React.createElement('span'));
         }
 
-        return (React.createElement(this.props.tagName, {
+        var props = {
             style     : { cursor: 'pointer' },
             className : this.props.className,
             onClick   : this.handleClick
-        }, this.props.label));
+        };
+        if ('a' === this.props.tagName) {
+            props['href'] = 'javascript:void(0);';
+        }
+
+        return (React.createElement(this.props.tagName, props, this.props.label));
     }
 });
