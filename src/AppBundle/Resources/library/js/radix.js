@@ -99,6 +99,7 @@
      */
     function Components()
     {
+        this.ModalLink         = {{ loadComponent('modal-link') }}
         this.CountryPostalCode = {{ loadComponent('form-country-postal-code') }}
         this.FormErrors        = {{ loadComponent('form-errors') }}
         this.FormFieldWrapper  = {{ loadComponent('form-field-wrapper') }}
@@ -150,6 +151,8 @@
             Radix.Forms         = new Forms();
 
             Radix.ModalModule               = new ModalModule();
+            Radix.ComponentLoader           = new ComponentLoaderModule();
+
             Radix.FormModule                = new FormModule(); // @deprecated
             Radix.SignIn                    = new SignInComponent();
             Radix.InquiryModule             = new InquiryModule();
@@ -167,7 +170,7 @@
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['ModalModule', 'SignIn', 'InquiryModule', 'EmailSubscriptionModule', 'QueryStringModule', 'ActionHandlerModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
+            var componentKeys = ['ModalModule', 'ComponentLoader', 'SignIn', 'InquiryModule', 'EmailSubscriptionModule', 'QueryStringModule', 'ActionHandlerModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -237,6 +240,8 @@
     }
 
     {{ loadModule('modal') }}
+    {{ loadModule('component-loader') }}
+
     {{ loadModule('action-handler') }}
     {{ loadModule('form') }}
     {{ loadModule('sign-in') }}
