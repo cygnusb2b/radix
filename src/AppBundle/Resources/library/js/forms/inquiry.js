@@ -4,7 +4,6 @@ React.createClass({ displayName: 'FormInquiry',
     getDefaultProps: function() {
         return {
             customer    : {},
-            model       : {},
             onSubmit    : function(event) { Debugger.error('Nothing handled the form submit.');     },
             fieldRef    : function(input) { Debugger.error('Nothing handled the field reference.'); }
         }

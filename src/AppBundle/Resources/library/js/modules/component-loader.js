@@ -8,6 +8,11 @@ function ComponentLoaderModule()
      */
     function propertyMapping() {
         return {
+            Inquiry : {
+                allowed      : [ 'title', 'modelType', 'modelIdentifier', 'className', 'enableNotify', 'notifyEmail' ],
+                required     : [ 'modelType', 'modelIdentifier' ],
+                usesChildren : false
+            },
             LinkLogout : {
                 allowed      : [ 'tagName', 'wrappingTag', 'wrappingClass', 'className', 'label', 'prefix', 'suffix' ],
                 required     : [  ],
@@ -46,6 +51,10 @@ function ComponentLoaderModule()
         }
 
         var props = parsePropsFrom(name, jqObj);
+        if (false === props) {
+            return;
+        }
+
         Debugger.info('ComponentLoaderModule loadComponentFor()', name, props);
         return React.createElement(component, props);
     }
@@ -75,11 +84,19 @@ function ComponentLoaderModule()
             }
         }
 
+        for (var i = 0; i < mapping.required.length; i++) {
+            var key = mapping.required[i];
+            if (!props.hasOwnProperty(key) || !props[key]) {
+                Debugger.error('ComponentLoaderModule', componentName, 'A required property was not found. Unable to load component. Expected:', key);
+                return false;
+            }
+        }
+
         if (mapping.usesChildren) {
             var children = jqObj.children('ins.radix');
             if (!children.length) {
-                Debugger.error('ComponentLoaderModule', componentName, 'Requires that a child component element be present to render properly but none was found.');
-                return props;
+                Debugger.error('ComponentLoaderModule', componentName, 'Requires that a child component element be present to render properly but none was found. Unable to load component.');
+                return false;
             }
             var childComponent = loadComponentFor(children.eq(0));
             if (childComponent) {
@@ -89,6 +106,8 @@ function ComponentLoaderModule()
                 Debugger.error('ComponentLoaderModule', componentName, 'Requires a child component class but none was found.');
             }
         }
+
+
 
         return props;
     }

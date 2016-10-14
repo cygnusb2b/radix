@@ -64,7 +64,7 @@ React.createClass({ displayName: 'ComponentCustomerBoundLink',
         if (this.props.prefix || this.props.suffix) {
             return (
                 React.createElement(this.props.wrappingTag, { className: this.props.wrappingClass },
-                    this.props.prefix, link, this.props.suffix
+                    this.props.prefix, ' ', link, ' ', this.props.suffix
                 )
             );
         }

@@ -119,6 +119,7 @@
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
         this.FormQuestion      = {{ loadComponent('form-question') }}
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
+        this.Inquiry           = {{ loadComponent('inquiry') }}
         this.LinkLogout        = {{ loadComponent('link-logout') }}
         this.Login             = {{ loadComponent('login') }}
         this.Register          = {{ loadComponent('register') }}
@@ -161,9 +162,6 @@
             Radix.ModalModule               = new ModalModule();
             Radix.ComponentLoader           = new ComponentLoaderModule();
 
-            Radix.FormModule                = new FormModule(); // @deprecated
-            Radix.SignIn                    = new SignInComponent();
-            Radix.InquiryModule             = new InquiryModule();
             Radix.EmailSubscriptionModule   = new EmailSubscriptionModule();
             Radix.QueryStringModule         = new QueryStringModule();
             Radix.ActionHandlerModule       = new ActionHandlerModule();
@@ -178,7 +176,7 @@
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['ModalModule', 'ComponentLoader', 'SignIn', 'InquiryModule', 'EmailSubscriptionModule', 'QueryStringModule', 'ActionHandlerModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
+            var componentKeys = ['ModalModule', 'ComponentLoader', 'EmailSubscriptionModule', 'QueryStringModule', 'ActionHandlerModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -251,9 +249,6 @@
     {{ loadModule('component-loader') }}
 
     {{ loadModule('action-handler') }}
-    {{ loadModule('form') }}
-    {{ loadModule('sign-in') }}
-    {{ loadModule('inquiry') }}
     {{ loadModule('query-string') }}
     {{ loadModule('email-subscription') }}
 
