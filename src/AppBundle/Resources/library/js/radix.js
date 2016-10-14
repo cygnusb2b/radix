@@ -162,18 +162,17 @@
     {
         EventDispatcher.subscribe('appLoaded', function() {
 
-            Radix.Components    = new Components();
-            Radix.Forms         = new Forms();
+            Radix.Components = new Components();
+            Radix.Forms      = new Forms();
 
-            Radix.ModalModule         = new ModalModule();
-            Radix.ComponentLoader     = new ComponentLoaderModule();
-            Radix.QueryStringModule   = new QueryStringModule();
+            Radix.ModalModule     = new ModalModule();
+            Radix.ComponentLoader = new ComponentLoaderModule();
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['ModalModule', 'ComponentLoader', 'QueryStringModule'];
-            for (var i = 0; i < componentKeys.length; i++) {
-                var key = componentKeys[i];
+            var keys = ['ModalModule', 'ComponentLoader'];
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
                 if (true === Utils.isDefined(Radix[key])) {
                     Radix[key].render();
                 }
@@ -207,7 +206,6 @@
             libraries = [
                 '//cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
                 'http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js',
-                '//checkout.stripe.com/checkout.js',
                 '//cdn.auth0.com/w2/auth0-6.js'
             ];
 
@@ -242,7 +240,6 @@
 
     {{ loadModule('modal') }}
     {{ loadModule('component-loader') }}
-    {{ loadModule('query-string') }}
 
     {{ loadFile('ajax') }}
     {{ loadFile('client-config') }}

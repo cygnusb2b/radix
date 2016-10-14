@@ -46,7 +46,12 @@ function ComponentLoaderModule()
                 allowed      : [ 'tagName', 'wrappingTag', 'wrappingClass', 'className', 'label', 'prefix', 'suffix', 'title' ],
                 required     : [  ],
                 usesChildren : false
-            }
+            },
+            ParseQueryString : {
+                allowed      : [ 'className', 'query' ],
+                required     : [  ],
+                usesChildren : false
+            },
         };
     }
 
