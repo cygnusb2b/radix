@@ -105,7 +105,6 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
                     }),
                     React.createElement(Radix.Forms.get('EmailSubscription'), {
                         customer     : this.state.customer,
-                        nextTemplate : this.state.nextTemplate,
                         onSubmit     : this.handleSubmit,
                         fieldRef     : this.handleFieldRef
                     })
