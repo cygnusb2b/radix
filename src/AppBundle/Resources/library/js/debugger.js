@@ -1,8 +1,16 @@
-function Debugger(enabled)
+function Debugger(enabled, level)
 {
     init();
 
+    var level   = level || 'error';
     var enabled = Boolean(enabled) || false;
+
+    var levels = {
+        log   : 0,
+        info  : 1,
+        warn  : 2,
+        error : 3
+    };
 
     this.enable = function() {
         enabled = true;
@@ -34,12 +42,21 @@ function Debugger(enabled)
         return this;
     }
 
+    this.setLevel = function(value) {
+        level = value;
+        return this;
+    }
+
+    function getLevelIndex() {
+        return levels.hasOwnProperty(level) ? levels[level] : -1;
+    }
+
     /**
      *
      */
     function dispatch(method, passed)
     {
-        if (true === enabled || 'error' === method) {
+        if (true === enabled && levels[method] >= getLevelIndex()) {
             var args = ['RADIX DEBUGGER:'];
             for (var i = 0; i < passed.length; i++)  {
                 var n = i + 1;

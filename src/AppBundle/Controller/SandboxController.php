@@ -69,9 +69,10 @@ class SandboxController extends AbstractController
     private function getInitConfig(Request $request)
     {
         $config = [
-            'appId'  => '97b09a4b-8eb8-475f-b72f-19d0f2073256',
-            'host'   => 'http://dev.radix.vehicleservicepros.com',
-            'debug'  => true,
+            'appId'    => '97b09a4b-8eb8-475f-b72f-19d0f2073256',
+            'host'     => 'http://dev.radix.vehicleservicepros.com',
+            'debug'    => true,
+            'logLevel' => 'log'
         ];
 
         $query = $request->query->all();

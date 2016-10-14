@@ -3,52 +3,20 @@ function ClientConfig(config)
     config = 'object' === typeof config ? config : {};
 
     var defaults = {
-        debug: false,
-        host: null,
-        appId: null,
-
-        modules: {
-            inquiry: {
-                target: '.radix-module-inquiry'
-            },
-            emailSubscription: {
-                target: '.radix-module-email-subscription'
-            }
-        },
-
-        // -------///
-
-        bindTarget: null,
-        loginTitle: 'Log In',
-        registerTitle: 'Sign Up',
-        comments: {
-            bindTarget: 'platformComments',
-            detachedCount: {
-                bindTarget: 'platformCommentsCount'
-            }
-        },
-        targets: {
-            loginButton: '.platform-login',
-            registerButton: '.platform-register',
-            logoutButton: '.platform-logout',
-            reviewContainer: 'platformReviews',
-            inquiryContainer: 'platformInquiry',
-            guidrSubmit: '.guidr-submit'
-        },
-        reviewIdentifier: null,
-        callbacks: {
-            checkAuth: undefined
-        },
-        streamTitle: null,
-        streamUrl: null
+        debug    : false,
+        host     : null,
+        appId    : null,
+        logLevel : 'info'
     };
 
     $.extend(defaults, config);
     this.values = defaults;
 
-    if (config.debug) {
+    if (this.values.debug) {
         Radix.setDebug(this.values.debug);
     }
+    Radix.setDebugLevel(this.values.logLevel)
+
     Debugger.info('Config', this.values);
 
     this.valid = function() {

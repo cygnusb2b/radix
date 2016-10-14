@@ -71,6 +71,11 @@
         return Radix;
     };
 
+    Radix.setDebugLevel = function(level) {
+        Debugger.setLevel(level);
+        return Radix;
+    };
+
     function Callbacks()
     {
 
