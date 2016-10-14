@@ -55,10 +55,10 @@ function Ajax()
             }
 
             if (payload) {
-                Debugger.info('Sending XHR request', method, url, headers, payload);
+                Debugger.log('Sending XHR request', method, url, headers, payload);
                 xhr.send(JSON.stringify(payload));
             } else {
-                Debugger.info('Sending XHR request', method, url, headers);
+                Debugger.log('Sending XHR request', method, url, headers);
                 xhr.send();
             }
         });

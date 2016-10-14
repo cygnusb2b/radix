@@ -12,7 +12,7 @@ React.createClass({ displayName: 'ComponentModalLoginLink',
     },
 
     render: function() {
-        Debugger.info('ComponentModalLoginLink', 'render()', this);
+        Debugger.log('ComponentModalLoginLink', 'render()', this);
 
         if (!this.state.visible) {
             return (React.createElement('span'));

@@ -8,6 +8,11 @@ function ComponentLoaderModule()
      */
     function propertyMapping() {
         return {
+            EmailSubscriptions : {
+                allowed      : [ 'title', 'className' ],
+                required     : [  ],
+                usesChildren : false
+            },
             Inquiry : {
                 allowed      : [ 'title', 'modelType', 'modelIdentifier', 'className', 'enableNotify', 'notifyEmail' ],
                 required     : [ 'modelType', 'modelIdentifier' ],

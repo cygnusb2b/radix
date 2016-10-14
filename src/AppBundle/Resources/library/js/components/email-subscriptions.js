@@ -1,15 +1,4 @@
-React.createClass({ displayName: 'ComponentInquiry',
-
-    getDefaultProps: function() {
-        return {
-            title           : 'Request More Information',
-            className       : null,
-            modelType       : null,
-            modelIdentifier : null,
-            enableNotify    : false,
-            notifyEmail     : null,
-        };
-    },
+React.createClass({ displayName: 'ComponentEmailSubscriptions',
 
     componentDidMount: function() {
         EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
@@ -21,10 +10,17 @@ React.createClass({ displayName: 'ComponentInquiry',
         }.bind(this));
     },
 
+    getDefaultProps: function() {
+        return {
+            title     : 'Manage Email Subscriptions',
+            className : null,
+        };
+    },
+
     getInitialState: function() {
         return {
-            customer        : CustomerManager.getCustomer(),
-            nextTemplate    : null
+            customer     : CustomerManager.getCustomer(),
+            nextTemplate : null
         }
     },
 
@@ -46,24 +42,14 @@ React.createClass({ displayName: 'ComponentInquiry',
         data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
         data['submission:referringHref'] = window.location.href;
 
-        var sourceKey = 'inquiry';
+        var sourceKey = 'product-email-deployment-optin';
         var payload   = {
-            data: data,
-            meta: {
-                model  : {
-                    type       : this.props.modelType,
-                    identifier : this.props.modelIdentifier
-                },
-                notify : {
-                    enabled : this.props.enableNotify,
-                    email   : this.props.notifyEmail
-                }
-            }
+            data: data
         };
 
-        Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
+        Debugger.info('EmailSubscriptionModule', 'handleSubmit', sourceKey, payload);
 
-        Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
+        Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
             locker.unlock();
 
             // Refresh the customer, if logged in.
@@ -79,8 +65,8 @@ React.createClass({ displayName: 'ComponentInquiry',
 
         }.bind(this), function(jqXHR) {
             locker.unlock();
-            error.displayAjaxError(jqXHR);
-        });
+            this._error.displayAjaxError(jqXHR);
+        }.bind(this));
     },
 
     _formRefs: {},
@@ -92,13 +78,14 @@ React.createClass({ displayName: 'ComponentInquiry',
     },
 
     render: function() {
-        Debugger.log('ComponentInquiry', 'render()', this);
+        Debugger.log('ComponentEmailSubscriptions', 'render()', this);
 
         var className = 'platform-element';
         if (this.props.className) {
             className = className + ' ' + this.props.className;
         }
         var elements;
+
         if (this.state.nextTemplate) {
             elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate } });
         } else {
@@ -111,16 +98,33 @@ React.createClass({ displayName: 'ComponentInquiry',
                     suffix        : 'to speed up this request.'
                 }),
                 React.createElement('hr'),
-                React.createElement(Radix.Forms.get('Inquiry'), {
-                    customer     : this.state.customer,
-                    onSubmit     : this.handleSubmit,
-                    fieldRef     : this.handleFieldRef
-                }),
+                React.createElement('div', { className: 'email-subscription-wrapper' },
+                    React.createElement(Radix.Components.get('FormProductsEmail'), {
+                        fieldRef : this.handleFieldRef,
+                        optIns   : this._getOptInsFor(this.state.customer.primaryEmail)
+                    }),
+                    React.createElement(Radix.Forms.get('EmailSubscription'), {
+                        customer     : this.state.customer,
+                        nextTemplate : this.state.nextTemplate,
+                        onSubmit     : this.handleSubmit,
+                        fieldRef     : this.handleFieldRef
+                    })
+                ),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
             );
         }
         return (elements);
+    },
+
+    _getOptInsFor: function(email) {
+        for (var i = 0; i < this.state.customer.optIns.length; i++) {
+            var optIn = this.state.customer.optIns[i];
+            if (email === optIn.address) {
+                return optIn.products;
+            }
+        }
+        return {};
     },
 
     _setErrorDisplay: function(ref) {

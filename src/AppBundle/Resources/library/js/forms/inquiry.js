@@ -14,7 +14,6 @@ React.createClass({ displayName: 'FormInquiry',
     },
 
     _getForm: function() {
-        var handleChange = this.props.onChange;
         var customer     = this.props.customer;
         var disableEmail = (customer._id) ? true : false;
         var phoneType    = customer.primaryPhone.phoneType || 'Phone';

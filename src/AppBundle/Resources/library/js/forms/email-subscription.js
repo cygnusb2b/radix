@@ -4,7 +4,6 @@ React.createClass({ displayName: 'FormEmailSubscription',
     getDefaultProps: function() {
         return {
             customer    : {},
-            model       : {},
             onSubmit    : function(event) { Debugger.error('Nothing handled the form submit.');     },
             fieldRef    : function(input) { Debugger.error('Nothing handled the field reference.'); }
         }
@@ -15,7 +14,6 @@ React.createClass({ displayName: 'FormEmailSubscription',
     },
 
     _getForm: function() {
-        var handleChange = this.props.onChange;
         var customer     = this.props.customer;
         var disableEmail = (customer._id) ? true : false;
         var phoneType    = customer.primaryPhone.phoneType || 'Phone';
