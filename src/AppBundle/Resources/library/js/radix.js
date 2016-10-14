@@ -132,8 +132,8 @@
         this.Modal              = {{ loadComponent('modal') }}
         this.ParseQueryString   = {{ loadComponent('parse-query-string') }}
         this.RegisterVerify     = {{ loadComponent('register-verify') }}
-        this.ActionVerifyEmail  = {{ loadComponent('action-verify-email') }}
         this.ResendVerifyEmail  = {{ loadComponent('resend-verify-email') }}
+        this.VerifyEmail        = {{ loadComponent('verify-email') }}
 
         this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
 
@@ -168,11 +168,10 @@
             Radix.ModalModule         = new ModalModule();
             Radix.ComponentLoader     = new ComponentLoaderModule();
             Radix.QueryStringModule   = new QueryStringModule();
-            Radix.ActionHandlerModule = new ActionHandlerModule();
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['ModalModule', 'ComponentLoader', 'QueryStringModule', 'ActionHandlerModule'];
+            var componentKeys = ['ModalModule', 'ComponentLoader', 'QueryStringModule'];
             for (var i = 0; i < componentKeys.length; i++) {
                 var key = componentKeys[i];
                 if (true === Utils.isDefined(Radix[key])) {
@@ -243,7 +242,6 @@
 
     {{ loadModule('modal') }}
     {{ loadModule('component-loader') }}
-    {{ loadModule('action-handler') }}
     {{ loadModule('query-string') }}
 
     {{ loadFile('ajax') }}

@@ -39,10 +39,7 @@ class SandboxController extends AbstractController
         $nav = [
             ['label' => 'Inquiry', 'path' => '/inquiry', 'children' => []],
             ['label' => 'Email Subs', 'path' => '/email-subscriptions', 'children' => []],
-            ['label' => 'Action Handlers', 'path' => '#', 'children' => [
-                ['label' => 'Inline', 'path' => '/action-inline'],
-                ['label' => 'Modal', 'path' => '/action-modal'],
-            ]],
+            ['label' => 'Action Handlers', 'path' => '/action-handlers', 'children' => []],
             ['label' => 'Utilities', 'path' => '#', 'children' => [
                 ['label' => 'Query Parser', 'path' => '/query-parser'],
             ]],
