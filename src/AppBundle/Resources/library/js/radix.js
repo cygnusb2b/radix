@@ -99,6 +99,7 @@
      */
     function Components()
     {
+        this.CustomerBoundLink = {{ loadComponent('customer-bound-link') }}
         this.ContactSupport    = {{ loadComponent('contact-support') }}
         this.ModalLink         = {{ loadComponent('modal-link') }}
         this.ModalLinkLogin    = {{ loadComponent('modal-link-login') }}
@@ -118,6 +119,7 @@
         this.FormSelectOption  = {{ loadComponent('form-select-option') }}
         this.FormQuestion      = {{ loadComponent('form-question') }}
         this.FormTextArea      = {{ loadComponent('form-textarea') }}
+        this.LinkLogout        = {{ loadComponent('link-logout') }}
         this.Login             = {{ loadComponent('login') }}
         this.Register          = {{ loadComponent('register') }}
         this.Modal             = {{ loadComponent('modal') }}

@@ -3,61 +3,43 @@ React.createClass({ displayName: 'ComponentModalLink',
     getDefaultProps: function() {
         return {
             tagName       : 'a',
+            wrappingTag   : 'p',
+            wrappingClass : null,
             className     : null,
             label         : 'Link',
+            prefix        : null,
+            suffix        : null,
             contents      : null,
             showLoggedIn  : true,
             showLoggedOut : true
         };
     },
 
-    getInitialState: function() {
-        var visible;
-        if (CustomerManager.isLoggedIn()) {
-            visible = this.props.showLoggedIn;
-        } else {
-            visible = this.props.showLoggedOut;
-        }
-        return {
-            visible: visible
-        };
-    },
-
-    componentDidMount: function() {
-        EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
-            this.setState({ visible: this.props.showLoggedIn });
-        }.bind(this));
-
-        EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
-            this.setState({ visible: this.props.showLoggedOut });
-        }.bind(this));
-    },
-
     handleClick: function(event) {
         event.preventDefault();
 
-        Debugger.info('ComponentModalLink', 'handleClick()', this);
+        Debugger.log('ComponentModalLink', 'handleClick()', this);
 
         Radix.ModalModule.modal.setState({ contents: this.props.contents });
         Radix.ModalModule.modal.show();
     },
 
     render: function() {
-        Debugger.info('ComponentModalLink', 'render()', this);
+        Debugger.log('ComponentModalLink', 'render()', this);
 
-        if (!this.state.visible) {
-            return (React.createElement('span'));
-        }
-
-        var props = {
-            style     : { cursor: 'pointer' },
-            className : this.props.className,
-            onClick   : this.handleClick
-        };
-        if ('a' === this.props.tagName) {
-            props['href'] = 'javascript:void(0);';
-        }
-
-        return (React.createElement(this.props.tagName, props, this.props.label));
+        return (
+            React.createElement(Radix.Components.get('CustomerBoundLink'), {
+                tagName       : this.props.tagName,
+                wrappingTag   : this.props.wrappingTag,
+                wrappingClass : this.props.wrappingClass,
+                className     : this.props.className,
+                label         : this.props.label,
+                prefix        : this.props.prefix,
+                suffix        : this.props.suffix,
+                showLoggedIn  : this.props.showLoggedIn,
+                showLoggedOut : this.props.showLoggedOut,
+                onClick       : this.handleClick
+            })
+        );
     }
 });

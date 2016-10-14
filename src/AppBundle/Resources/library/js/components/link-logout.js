@@ -1,4 +1,4 @@
-React.createClass({ displayName: 'ComponentModalLinkLogin',
+React.createClass({ displayName: 'ComponentLinkLogout',
 
     getDefaultProps: function() {
         return {
@@ -6,21 +6,20 @@ React.createClass({ displayName: 'ComponentModalLinkLogin',
             wrappingTag   : 'p',
             wrappingClass : null,
             className     : null,
-            label         : 'Login',
+            label         : 'Logout',
             prefix        : null,
-            suffix        : null,
-            title         : 'Log In'
+            suffix        : null
         };
     },
 
-    onSuccess: function() {
-        Radix.ModalModule.modal.hide();
+    handleClick: function() {
+        CustomerManager.logout();
     },
 
     render: function() {
-        Debugger.log('ComponentModalLinkLogin', 'render()', this);
+        Debugger.log('ComponentLinkLogout', 'render()', this);
         return (
-            React.createElement(Radix.Components.get('ModalLink'), {
+            React.createElement(Radix.Components.get('CustomerBoundLink'), {
                 tagName       : this.props.tagName,
                 wrappingTag   : this.props.wrappingTag,
                 wrappingClass : this.props.wrappingClass,
@@ -28,11 +27,8 @@ React.createClass({ displayName: 'ComponentModalLinkLogin',
                 label         : this.props.label,
                 prefix        : this.props.prefix,
                 suffix        : this.props.suffix,
-                showLoggedIn  : false,
-                contents      : React.createElement(Radix.Components.get('Login'), {
-                    title     : this.props.title,
-                    onSuccess : this.onSuccess
-                })
+                showLoggedOut : false,
+                onClick       : this.handleClick
             })
         )
     }

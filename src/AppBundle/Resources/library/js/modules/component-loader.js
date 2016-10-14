@@ -8,18 +8,23 @@ function ComponentLoaderModule()
      */
     function propertyMapping() {
         return {
+            LinkLogout : {
+                allowed      : [ 'tagName', 'wrappingTag', 'wrappingClass', 'className', 'label', 'prefix', 'suffix' ],
+                required     : [  ],
+                usesChildren : false
+            },
             ModalLink : {
-                allowed      : [ 'tagName', 'className', 'label', 'showLoggedIn', 'showLoggedOut' ],
+                allowed      : [ 'tagName', 'wrappingTag', 'wrappingClass', 'className', 'label', 'prefix', 'suffix', 'showLoggedIn', 'showLoggedOut' ],
                 required     : [  ],
                 usesChildren : true
             },
             ModalLinkLogin : {
-                allowed      : [ 'tagName', 'className', 'label', 'title' ],
+                allowed      : [ 'tagName', 'wrappingTag', 'wrappingClass', 'className', 'label', 'prefix', 'suffix', 'title' ],
                 required     : [  ],
                 usesChildren : false
             },
             ModalLinkRegister : {
-                allowed      : [ 'tagName', 'className', 'label', 'title' ],
+                allowed      : [ 'tagName', 'wrappingTag', 'wrappingClass', 'className', 'label', 'prefix', 'suffix', 'title' ],
                 required     : [  ],
                 usesChildren : false
             }
