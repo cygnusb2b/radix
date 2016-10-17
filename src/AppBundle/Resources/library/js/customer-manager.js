@@ -145,51 +145,6 @@ function CustomerManager()
         );
     }
 
-    this.generateDatabaseReset = function(parameters) {
-        EventDispatcher.trigger('CustomerManager.reset.generate');
-        var promise = Ajax.send('/reset/generate', 'POST', parameters);
-        promise.then(function(response) {
-            // Debugger.info('Generated reset code:', parameters.code);
-            EventDispatcher.trigger('form.reset.unlock');
-            EventDispatcher.trigger('CustomerManager.reset.generate.success');
-        }, function(error) {
-            Debugger.warn('Generate failed', error);
-            EventDispatcher.trigger('form.reset.unlock');
-            EventDispatcher.trigger('CustomerManager.reset.generate.failure');
-        });
-        return promise;
-    }
-
-    this.databaseResetCheck = function(parameters) {
-        EventDispatcher.trigger('CustomerManager.reset.check');
-        var promise = Ajax.send('/reset/check', 'POST', parameters);
-        promise.then(function(response) {
-            Debugger.info('Check passed');
-            EventDispatcher.trigger('form.reset.unlock');
-            EventDispatcher.trigger('CustomerManager.reset.check.success');
-        }, function(error) {
-            Debugger.warn('Check failed', error);
-            EventDispatcher.trigger('form.reset.unlock');
-            EventDispatcher.trigger('CustomerManager.reset.check.failure', [error]);
-        });
-        return promise;
-    }
-
-    this.databaseReset = function(parameters) {
-        EventDispatcher.trigger('CustomerManager.reset.submit');
-        var promise = Ajax.send('/reset', 'POST', parameters);
-        promise.then(function(response) {
-            Debugger.info('Reset code matched, proceed to reset pw screen.');
-            EventDispatcher.trigger('form.reset.unlock');
-            EventDispatcher.trigger('CustomerManager.reset.success');
-        }, function(error) {
-            Debugger.error('Reset failed!', error);
-            EventDispatcher.trigger('form.reset.unlock');
-            EventDispatcher.trigger('CustomerManager.reset.failure', [error]);
-        });
-        return promise;
-    }
-
     this.databaseLogin = function(payload) {
         EventDispatcher.trigger('CustomerManager.login.submit');
         return login(payload);
@@ -231,6 +186,7 @@ function CustomerManager()
                 Debugger.warn('Unable to logout customer', errors);
                 EventDispatcher.trigger('CustomerManager.logout.failure', [message]);
             });
+            return promise;
 
         } else {
             Debugger.warn('Tried to logout, already logged out.');

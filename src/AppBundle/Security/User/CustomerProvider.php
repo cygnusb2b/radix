@@ -77,7 +77,7 @@ class CustomerProvider implements UserProviderInterface
             // Currently pending email verification.
             throw new CustomUserMessageAuthenticationException('This account is awaiting email verificaton. Please check your email and click the verification link.');
         }
-        throw new UsernameNotFoundException('Unable to retrieve customer via email or username');
+        throw new UsernameNotFoundException('No account found for the provided email address or username');
     }
 
     /**

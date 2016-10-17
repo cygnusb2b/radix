@@ -1,7 +1,7 @@
-React.createClass({ displayName: 'ComponentLogin',
+React.createClass({ displayName: 'ComponentResetPasswordGenerate',
     getDefaultProps: function() {
         return {
-            title     : 'Log In',
+            title     : 'Reset Password',
             onSuccess : null,
             onFailure : null
         }
@@ -28,33 +28,30 @@ React.createClass({ displayName: 'ComponentLogin',
             data[name] = ref.state.value;
         }
 
+        data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
+        data['submission:referringHref'] = window.location.href;
+
+        var sourceKey = 'customer-account.reset-password-generate';
         var payload   = {
             data: data
         };
 
-        Debugger.info('ComponentLogin', 'handleSubmit()', payload);
+        Debugger.info('ComponentResetPasswordGenerate', 'handleSubmit', sourceKey, payload);
 
-        CustomerManager.databaseLogin(payload).then(function(response) {
+        Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
             locker.unlock();
+            this.setState({ succeeded: true });
 
-            if (Utils.isFunction(this.props.onSuccess)) {
-                this.props.onSuccess(response);
-            }
-
-        }.bind(this), function(response) {
+        }.bind(this), function(jqXHR) {
             locker.unlock();
-            error.displayAjaxError(response);
-
-            if (Utils.isFunction(this.props.onFailure)) {
-                this.props.onFailure(response);
-            }
-
-        }.bind(this));
+            error.displayAjaxError(jqXHR);
+        });
     },
 
     getInitialState: function() {
         return {
-            loggedIn: CustomerManager.isLoggedIn()
+            loggedIn  : CustomerManager.isLoggedIn(),
+            succeeded : false
         }
     },
 
@@ -80,20 +77,24 @@ React.createClass({ displayName: 'ComponentLogin',
 
     _getLoggedInElements: function() {
         return React.createElement('div', null,
-            React.createElement('h5', null, 'You are currently logged in.')
+            React.createElement('h5', null, 'You are currently logged in. You may visit your profile to change your password.')
         );
     },
 
     _getLoggedOutElements: function() {
-        return React.createElement('div', null,
-            React.createElement(Radix.Forms.get('Login'), {
+        var elements;
+        if (this.state.succeeded) {
+            elements = React.createElement('p', { className: 'alert-success alert', role: 'alert' }, 'The password reset email was successfully sent. Please ensure to check your span folders.');
+        } else {
+            elements = React.createElement(Radix.Forms.get('ResetPasswordGenerate'), {
                 onSubmit : this.handleSubmit,
                 fieldRef : this.handleFieldRef
-            }),
-            React.createElement('p', { className: 'text-center muted' }, 'Need an account? ',
-                React.createElement(Radix.Components.get('ModalLinkRegister'), { label: 'Sign up!' })
-            ),
-            React.createElement(Radix.Components.get('ModalLinkResetPasswordGenerate')),
+            });
+        }
+
+        return React.createElement('div', null,
+            React.createElement('p', null, 'To reset your password, enter your email address or username. A reset email will be sent to the primary email address on your account. Once the email arrives in your inbox, click the link provided to complete the reset process.'),
+            elements,
             React.createElement(Radix.Components.get('ContactSupport'), { opening: 'Having trouble logging in?' }),
             React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
             React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

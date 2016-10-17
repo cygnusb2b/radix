@@ -120,7 +120,7 @@ class CustomerEmailVerifySubmitHandler implements SubmissionHandlerInterface
         if (true === $model->get('verification')->get('verified')) {
             throw new HttpFriendlyException(sprintf('The email address "%s" is already verified.', $model->get('value')), 400);
         }
-        $this->tokenGenerator->parseFor($token, $model->get('value'), $model->get('account')->getId());
+        $this->tokenGenerator->parseFor($token, $model->get('account')->getId(), ['emailAddress' => $model->get('value')]);
 
         // Set the email model for further processing.
         $this->emailModel = $model;

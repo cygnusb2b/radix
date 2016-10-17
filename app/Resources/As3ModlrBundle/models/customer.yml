@@ -24,6 +24,14 @@ customer:
                                 "$exists": true
                 -
                     keys:
+                        "credentials.password.resetCode": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.password.resetCode":
+                                "$exists": true
+                -
+                    keys:
                         primaryEmail: 1
                     options:
                         unique: true

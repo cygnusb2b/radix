@@ -104,38 +104,41 @@
      */
     function Components()
     {
-        this.CustomerBoundLink      = {{ loadComponent('customer-bound-link') }}
-        this.ContactSupport         = {{ loadComponent('contact-support') }}
-        this.EmailSubscriptions     = {{ loadComponent('email-subscriptions') }}
-        this.ModalLink              = {{ loadComponent('modal-link') }}
-        this.ModalLinkLogin         = {{ loadComponent('modal-link-login') }}
-        this.ModalLinkLoginVerbose  = {{ loadComponent('modal-link-login-verbose') }}
-        this.ModalLinkRegister      = {{ loadComponent('modal-link-register') }}
-        this.CountryPostalCode      = {{ loadComponent('form-country-postal-code') }}
-        this.FormErrors             = {{ loadComponent('form-errors') }}
-        this.FormFieldWrapper       = {{ loadComponent('form-field-wrapper') }}
-        this.FormInputHidden        = {{ loadComponent('form-input-hidden') }}
-        this.FormInputText          = {{ loadComponent('form-input-text') }}
-        this.FormLabel              = {{ loadComponent('form-label') }}
-        this.FormLock               = {{ loadComponent('form-lock') }}
-        this.FormProductEmail       = {{ loadComponent('form-product-email') }}
-        this.FormProductsEmail      = {{ loadComponent('form-products-email') }}
-        this.FormRadios             = {{ loadComponent('form-radios') }}
-        this.FormSelect             = {{ loadComponent('form-select') }}
-        this.FormSelectCountry      = {{ loadComponent('form-select-country') }}
-        this.FormSelectOption       = {{ loadComponent('form-select-option') }}
-        this.FormQuestion           = {{ loadComponent('form-question') }}
-        this.FormTextArea           = {{ loadComponent('form-textarea') }}
-        this.Inquiry                = {{ loadComponent('inquiry') }}
-        this.LinkLogout             = {{ loadComponent('link-logout') }}
-        this.Login                  = {{ loadComponent('login') }}
-        this.Register               = {{ loadComponent('register') }}
-        this.Modal                  = {{ loadComponent('modal') }}
-        this.ParseQueryString       = {{ loadComponent('parse-query-string') }}
-        this.RegisterVerify         = {{ loadComponent('register-verify') }}
-        this.ResendVerifyEmail      = {{ loadComponent('resend-verify-email') }}
-        this.VerifyEmail            = {{ loadComponent('verify-email') }}
-        this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
+        this.CustomerBoundLink              = {{ loadComponent('customer-bound-link') }}
+        this.ContactSupport                 = {{ loadComponent('contact-support') }}
+        this.EmailSubscriptions             = {{ loadComponent('email-subscriptions') }}
+        this.ModalLink                      = {{ loadComponent('modal-link') }}
+        this.ModalLinkLogin                 = {{ loadComponent('modal-link-login') }}
+        this.ModalLinkLoginVerbose          = {{ loadComponent('modal-link-login-verbose') }}
+        this.ModalLinkRegister              = {{ loadComponent('modal-link-register') }}
+        this.ModalLinkResetPasswordGenerate = {{ loadComponent('modal-link-reset-password-generate') }}
+        this.CountryPostalCode              = {{ loadComponent('form-country-postal-code') }}
+        this.FormErrors                     = {{ loadComponent('form-errors') }}
+        this.FormFieldWrapper               = {{ loadComponent('form-field-wrapper') }}
+        this.FormInputHidden                = {{ loadComponent('form-input-hidden') }}
+        this.FormInputText                  = {{ loadComponent('form-input-text') }}
+        this.FormLabel                      = {{ loadComponent('form-label') }}
+        this.FormLock                       = {{ loadComponent('form-lock') }}
+        this.FormProductEmail               = {{ loadComponent('form-product-email') }}
+        this.FormProductsEmail              = {{ loadComponent('form-products-email') }}
+        this.FormRadios                     = {{ loadComponent('form-radios') }}
+        this.FormSelect                     = {{ loadComponent('form-select') }}
+        this.FormSelectCountry              = {{ loadComponent('form-select-country') }}
+        this.FormSelectOption               = {{ loadComponent('form-select-option') }}
+        this.FormQuestion                   = {{ loadComponent('form-question') }}
+        this.FormTextArea                   = {{ loadComponent('form-textarea') }}
+        this.Inquiry                        = {{ loadComponent('inquiry') }}
+        this.LinkLogout                     = {{ loadComponent('link-logout') }}
+        this.Login                          = {{ loadComponent('login') }}
+        this.Register                       = {{ loadComponent('register') }}
+        this.Modal                          = {{ loadComponent('modal') }}
+        this.ParseQueryString               = {{ loadComponent('parse-query-string') }}
+        this.RegisterVerify                 = {{ loadComponent('register-verify') }}
+        this.ResendVerifyEmail              = {{ loadComponent('resend-verify-email') }}
+        this.ResetPassword                  = {{ loadComponent('reset-password') }}
+        this.ResetPasswordGenerate          = {{ loadComponent('reset-password-generate') }}
+        this.VerifyEmail                    = {{ loadComponent('verify-email') }}
+        this.ProductEmailDeployment         = {{ loadComponent('product-email-deployment') }}
 
         this.get = function(name) {
             return this[name];
@@ -148,10 +151,12 @@
 
     function Forms()
     {
-        this.EmailSubscription  = {{ loadForm('email-subscription') }}
-        this.Inquiry            = {{ loadForm('inquiry') }}
-        this.Register           = {{ loadForm('register') }}
-        this.Login              = {{ loadForm('login') }}
+        this.EmailSubscription      = {{ loadForm('email-subscription') }}
+        this.Inquiry                = {{ loadForm('inquiry') }}
+        this.Register               = {{ loadForm('register') }}
+        this.ResetPasswordGenerate  = {{ loadForm('reset-password-generate') }}
+        this.ResetPassword          = {{ loadForm('reset-password') }}
+        this.Login                  = {{ loadForm('login') }}
 
         this.get = function(name) {
             return this[name];

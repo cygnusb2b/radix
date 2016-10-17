@@ -2,6 +2,10 @@ function ComponentLoaderModule()
 {
     function actionMapping() {
         return {
+            ResetPassword : {
+                allowed      : [ 'token' ],
+                required     : [ 'token' ]
+            },
             VerifyEmail : {
                 allowed      : [ 'token' ],
                 required     : [ 'token' ]

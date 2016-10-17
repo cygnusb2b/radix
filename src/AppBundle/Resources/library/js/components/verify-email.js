@@ -70,10 +70,10 @@ React.createClass({ displayName: 'ComponentVerifyEmail',
                 customerId   : this.state.meta.customer
             });
         } else if (this.state.sending) {
-            resend = React.createElement('p', null, 'Verifying...');
+            resend = React.createElement('p', { className: 'alert-info alert', role: 'alert' }, React.createElement('strong', null, 'One moment please.'), ' Verifying...');
         } else if (this.state.successful) {
             resend = React.createElement('p', { className: 'alert-success alert', role: 'alert' },
-                React.createElement('strong', null, 'Success!'), ' Your email address is now verified and you\'re logged in.'
+                React.createElement('strong', null, 'Success!'), ' Your email address is now verified and you\'ve been logged in.'
             );
         }
         return (

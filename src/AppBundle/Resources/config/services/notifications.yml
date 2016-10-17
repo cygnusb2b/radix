@@ -17,15 +17,27 @@ services:
             - "@app_bundle.serializer.public_api"
 
     app_bundle.notification_factory.default:
+        private: true
         class: AppBundle\Notifications\NotificationFactory\DefaultFactory
 
     app_bundle.notification_factory.customer_account.activate:
+        private: true
         class: AppBundle\Notifications\NotificationFactory\CustomerAccount\Activate
 
+    app_bundle.notification_factory.customer_account.reset_password:
+        private: true
+        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\ResetPassword
+
+    app_bundle.notification_factory.customer_account.reset_password_generate:
+        private: true
+        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\ResetPasswordGenerate
+
     app_bundle.notification_factory.customer_email.verify_generate:
+        private: true
         class: AppBundle\Notifications\NotificationFactory\CustomerEmail\VerifyGenerate
 
     app_bundle.notification_factory.product_email_deployment.opt_in:
+        private: true
         class: AppBundle\Notifications\NotificationFactory\ProductEmailDeployment\OptIn
 
     app_bundle.notifications.manager:
@@ -36,6 +48,8 @@ services:
             - "@app_bundle.templating.template_loader"
             - "@app_bundle.core.account_manager"
         calls:
-            - [ addFactory, ["@app_bundle.notification_factory.customer_account.activate"]]
-            - [ addFactory, ["@app_bundle.notification_factory.customer_email.verify_generate"]]
-            - [ addFactory, ["@app_bundle.notification_factory.product_email_deployment.opt_in"]]
+            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.activate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.reset_password" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.reset_password_generate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.customer_email.verify_generate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.product_email_deployment.opt_in" ] ]

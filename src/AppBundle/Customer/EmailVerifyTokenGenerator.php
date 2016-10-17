@@ -5,8 +5,6 @@ namespace AppBundle\Customer;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Utility\ModelUtility;
 use Lcobucci\JWT\Builder as JWTBuilder;
-use Lcobucci\JWT\Parser as JWTParser;
-use Lcobucci\JWT\Signer\Hmac\Sha256 as JWTSigner;
 use Lcobucci\JWT\ValidationData;
 
 /**
@@ -14,118 +12,56 @@ use Lcobucci\JWT\ValidationData;
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-class EmailVerifyTokenGenerator
+class EmailVerifyTokenGenerator extends AbstractTokenGenerator
 {
-    const ISSUER = 'radix-application';
-    const TTL = 86400;
-
     /**
-     * @var JWTBuilder
+     * {@inheritdoc}
      */
-    private $builder;
-
-    /**
-     * @var JWTParser
-     */
-    private $parser;
-
-    /**
-     * @var string
-     */
-    private $secret;
-
-    /**
-     * @var JWTSigner
-     */
-    private $signer;
-
-    /**
-     * @param   string  $secret
-     */
-    public function __construct($secret)
+    protected function applyParametersToBuilder(JWTBuilder $builder, array $parameters)
     {
-        if (empty($secret)) {
-            throw new \InvalidArgumentException('The token secret cannot be empty.');
-        }
-
-        $this->builder = new JWTBuilder();
-        $this->parser  = new JWTParser();
-        $this->secret  = $secret;
-        $this->signer  = new JWTSigner();
-    }
-
-    /**
-     * Creates a JWT token string for the provided email address and customer id.
-     *
-     * @param   string  $token
-     * @param   string  $emailAddress
-     * @return  string
-     */
-    public function createFor($emailAddress, $customerId)
-    {
-        $now     = time();
-        $expires = $now + self::TTL;
-
-        $jwt = $this->builder
-            ->setIssuer(self::ISSUER)
-            ->setSubject($emailAddress)
-            ->setId($customerId)
-            ->setExpiration($expires)
-            ->setIssuedAt($now)
-            ->sign($this->signer, $this->secret)
-            ->getToken()
-        ;
-        return (string) $jwt;
+        $emailAddress = $this->extractEmailAddressFrom($parameters);
+        $builder->setSubject($emailAddress);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAudienceKey()
+    protected function applyParametersToRules(ValidationData $rules, array $parameters)
     {
-        return 'core-user';
-    }
-
-    /**
-     * Parses a JWT string for the provided email address and customer account id.
-     *
-     * @param   string  $token
-     * @param   string  $emailAddress
-     * @param   string  $customerId
-     * @return  \Lcobucci\JWT\Parser\Token
-     * @throws  AuthenticationException
-     */
-    public function parseFor($token, $emailAddress, $customerId)
-    {
-        $token        = $this->parser->parse($token);
-        $emailAddress = ModelUtility::formatEmailAddress($emailAddress);
-
-        $rules = new ValidationData();
-        $rules->setIssuer(self::ISSUER);
+        $emailAddress = $this->extractEmailAddressFrom($parameters);
         $rules->setSubject($emailAddress);
-        $rules->setId((string) $customerId);
-
-        if (false === $token->validate($rules)) {
-            throw $this->createExceptionFor($emailAddress, $customerId);
-        }
-        if (false === $token->verify($this->signer, $this->secret)) {
-            throw $this->createExceptionFor($emailAddress, $customerId);
-        }
-        return $token;
     }
 
     /**
-     * Creates the invalid token exception.
+     * Creates an exception on token validation failure.
      *
-     * @param   string  $emailAddress
      * @param   string  $customerId
+     * @param   array   $parameters
      * @return  HttpFriendlyException
      */
-    private function createExceptionFor($emailAddress, $customerId)
+    protected function createExceptionFor($customerId, array $parameters)
     {
+        $emailAddress = $this->extractEmailAddressFrom($parameters);
         return new HttpFriendlyException(sprintf('The verification code for "%s" is either invalid or has expired.', $emailAddress), 403, [
             'email'     => $emailAddress,
             'customer'  => $customerId,
         ]);
+    }
+
+    /**
+     * Extracts the email address from the provided token parameters.
+     *
+     * @param   array   $parameters
+     * @return  string
+     * @throws  \InvalidArgumentException
+     */
+    private function extractEmailAddressFrom(array $parameters)
+    {
+        $email = isset($parameters['emailAddress']) ? $parameters['emailAddress'] : null;
+        $email = ModelUtility::formatEmailAddress($email);
+        if (empty($email)) {
+            throw new \InvalidArgumentException('No email address found in the token parameters.');
+        }
+        return $email;
     }
 }

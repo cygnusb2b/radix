@@ -3,6 +3,7 @@
 namespace AppBundle\Submission;
 
 use AppBundle\Customer\CustomerManager;
+use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Factory\InputSubmissionFactory;
 use AppBundle\Notifications\NotificationManager;
 use AppBundle\Utility\RequestPayload;
@@ -58,9 +59,14 @@ class SubmissionManager
      *
      * @param   string          $sourceKey
      * @param   RequestPayload  $payload
+     * @return  JsonResponse
+     * @throws  HttpFriendlyException
      */
     public function processFor($sourceKey, RequestPayload $payload)
     {
+        if (!isset($this->handlers[$sourceKey])) {
+            throw new HttpFriendlyException(sprintf('No submission handler found for "%s"', $sourceKey), 404);
+        }
         // Send the validate always hook.
         $this->callHookFor($sourceKey, 'validateAlways', [$payload]);
 
