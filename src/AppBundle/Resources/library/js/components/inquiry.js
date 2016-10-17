@@ -104,12 +104,7 @@ React.createClass({ displayName: 'ComponentInquiry',
         } else {
             elements = React.createElement('div', { className: className },
                 React.createElement('h2', null, this.props.title),
-                React.createElement(Radix.Components.get('ModalLinkLogin'), {
-                    wrappingClass : 'muted',
-                    prefix        : 'If you already have an account, you can',
-                    label         : 'login',
-                    suffix        : 'to speed up this request.'
-                }),
+                React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
                 React.createElement('hr'),
                 React.createElement(Radix.Forms.get('Inquiry'), {
                     customer     : this.state.customer,
