@@ -53,16 +53,16 @@
         },
         {
             "name": "as3/modlr",
-            "version": "0.3.14",
+            "version": "0.3.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/modlr.git",
-                "reference": "776a98d16367c8804b13c74d62918e82bdccc775"
+                "reference": "cfd01ca3bbfb09438c3e55e56a51ec0b293307da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/modlr/zipball/776a98d16367c8804b13c74d62918e82bdccc775",
-                "reference": "776a98d16367c8804b13c74d62918e82bdccc775",
+                "url": "https://api.github.com/repos/as3io/modlr/zipball/cfd01ca3bbfb09438c3e55e56a51ec0b293307da",
+                "reference": "cfd01ca3bbfb09438c3e55e56a51ec0b293307da",
                 "shasum": ""
             },
             "require": {
@@ -93,7 +93,7 @@
                 }
             ],
             "description": "Simplified PHP library for fast and efficient RESTful API for MongoDB. Designed for use with front end web frameworks such as EmberJS.",
-            "time": "2016-09-27 20:21:43"
+            "time": "2016-10-17 17:14:59"
         },
         {
             "name": "as3/modlr-api-jsonapiorg",
@@ -252,12 +252,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/omeda-sdk.git",
-                "reference": "bd507c698083105df39b4ea4add62fade6e3a7b3"
+                "reference": "afdbc2a44b5ae98e0f0c4cd6645289235f0ff10e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/bd507c698083105df39b4ea4add62fade6e3a7b3",
-                "reference": "bd507c698083105df39b4ea4add62fade6e3a7b3",
+                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/afdbc2a44b5ae98e0f0c4cd6645289235f0ff10e",
+                "reference": "afdbc2a44b5ae98e0f0c4cd6645289235f0ff10e",
                 "shasum": ""
             },
             "require": {
@@ -282,7 +282,7 @@
                 }
             ],
             "description": "Provides Omeda API client functionality and SDK tools.",
-            "time": "2016-09-13 16:44:47"
+            "time": "2016-10-12 18:10:04"
         },
         {
             "name": "as3/parameters",

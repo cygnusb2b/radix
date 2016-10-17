@@ -111,7 +111,7 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
      */
     public function save()
     {
-        $this->customerFactory->save($this->customerModel);
+        $this->customerModel->save();
     }
 
     /**
