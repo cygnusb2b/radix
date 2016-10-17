@@ -14,6 +14,15 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    app_bundle.customer.email_verify.token_generator:
-        class: AppBundle\Customer\EmailVerifyTokenGenerator
+    app_bundle.customer.abstract_token_generator:
+        abstract: true
+        class: AppBundle\Customer\AbstractTokenGenerator
         arguments: [ "%secret%" ]
+
+    app_bundle.customer.email_verify.token_generator:
+        parent: app_bundle.customer.abstract_token_generator
+        class: AppBundle\Customer\EmailVerifyTokenGenerator
+
+    app_bundle.customer.password_resent.token_generator:
+        parent: app_bundle.customer.abstract_token_generator
+        class: AppBundle\Customer\ResetPasswordTokenGenerator

@@ -114,7 +114,7 @@ class CustomerEmailFactory extends AbstractModelFactory implements SubscriberFac
         $verification = $email->get('verification');
         if (false === $verification->get('verified') && null === $verification->get('token')) {
             $token = $this->tokenGenerator->createFor(
-                $email->get('value'), $email->get('account')->getId()
+                $email->get('account')->getId(), ['emailAddress' => $email->get('value')]
             );
             $verification->set('token', $token);
             $verification->set('generatedDate', new \DateTime());
