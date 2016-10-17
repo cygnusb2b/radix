@@ -4,6 +4,7 @@ services:
         arguments: [ "@app_bundle.factory.input_submission", "@app_bundle.customer.manager", "@app_bundle.notifications.manager" ]
         calls:
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_account" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.customer_account.password_reset" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_account.password_reset_generate" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_submit" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_generate" ] ]
@@ -13,6 +14,10 @@ services:
     app_bundle.submission.handler.customer_account:
         class: AppBundle\Submission\Handlers\CustomerAccountHandler
         arguments: [ "@app_bundle.factory.customer.account" ]
+
+    app_bundle.submission.handler.customer_account.password_reset:
+        class: AppBundle\Submission\Handlers\CustomerAccountResetPasswordHandler
+        arguments: [ "@app_bundle.customer.password_reset.token_generator", "@app_bundle.customer.manager" ]
 
     app_bundle.submission.handler.customer_account.password_reset_generate:
         class: AppBundle\Submission\Handlers\CustomerAccountResetPasswordGenerateHandler

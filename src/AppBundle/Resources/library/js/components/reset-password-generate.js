@@ -50,7 +50,8 @@ React.createClass({ displayName: 'ComponentResetPasswordGenerate',
 
     getInitialState: function() {
         return {
-            loggedIn: CustomerManager.isLoggedIn()
+            loggedIn  : CustomerManager.isLoggedIn(),
+            succeeded : false
         }
     },
 
@@ -81,12 +82,19 @@ React.createClass({ displayName: 'ComponentResetPasswordGenerate',
     },
 
     _getLoggedOutElements: function() {
-        return React.createElement('div', null,
-            React.createElement('p', null, 'To reset your password, enter your email address or username. A reset email will be sent to the primary email address on your account. Once the email arrives in your inbox, click the link provided to complete the reset process.'),
-            React.createElement(Radix.Forms.get('ResetPasswordGenerate'), {
+        var elements;
+        if (this.state.succeeded) {
+            elements = React.createElement('p', { className: 'alert-success alert', role: 'alert' }, 'The password reset email was successfully sent. Please ensure to check your span folders.');
+        } else {
+            elements = React.createElement(Radix.Forms.get('ResetPasswordGenerate'), {
                 onSubmit : this.handleSubmit,
                 fieldRef : this.handleFieldRef
-            }),
+            });
+        }
+
+        return React.createElement('div', null,
+            React.createElement('p', null, 'To reset your password, enter your email address or username. A reset email will be sent to the primary email address on your account. Once the email arrives in your inbox, click the link provided to complete the reset process.'),
+            elements,
             React.createElement(Radix.Components.get('ContactSupport'), { opening: 'Having trouble logging in?' }),
             React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
             React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

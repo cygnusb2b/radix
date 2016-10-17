@@ -15,7 +15,8 @@ React.createClass({ displayName: 'ComponentResetPassword',
         return {
             verifying    : true,
             verified     : false,
-            primaryEmail : null
+            primaryEmail : null,
+            succeeded    : false,
         };
     },
 
@@ -44,6 +45,19 @@ React.createClass({ displayName: 'ComponentResetPassword',
         };
 
         Debugger.info('ComponentResetPassword', 'handleSubmit()', sourceKey, payload);
+
+        Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
+            locker.unlock();
+            this.setState({ succeeded: true });
+
+            CustomerManager.reloadCustomer().then(function() {
+                EventDispatcher.trigger('CustomerManager.customer.loaded');
+            });
+
+        }.bind(this), function(jqXHR) {
+            locker.unlock();
+            error.displayAjaxError(jqXHR);
+        }.bind(this));
     },
 
     verifyToken: function() {
@@ -85,15 +99,21 @@ React.createClass({ displayName: 'ComponentResetPassword',
         if (this.state.verifying) {
             elements = React.createElement('p', { className: 'alert-info alert', role: 'alert' }, React.createElement('strong', null, 'One moment please.'), ' Verifying password reset link...');
         } else if (this.state.verified) {
-            // Show form
-            elements = React.createElement('div', null,
-                React.createElement('p', { className: 'alert-info alert', role: 'alert' }, 'Reseting password for ', React.createElement('strong', null, this.state.primaryEmail), '.'),
-                React.createElement(Radix.Forms.get('ResetPassword'), {
-                    onSubmit : this.handleSubmit,
-                    fieldRef : this.handleFieldRef
-                })
-            );
+            if (this.state.succeeded) {
+                // Show success.
+                elements = React.createElement('p', { className: 'alert-success alert', role: 'alert' }, 'Password successfully reset for ', React.createElement('strong', null, this.state.primaryEmail), '. You are now logged in.');
+            } else {
+                // Show form.
+                elements = React.createElement('div', null,
+                    React.createElement('p', { className: 'alert-info alert', role: 'alert' }, 'Reseting password for ', React.createElement('strong', null, this.state.primaryEmail), '.'),
+                    React.createElement(Radix.Forms.get('ResetPassword'), {
+                        onSubmit : this.handleSubmit,
+                        fieldRef : this.handleFieldRef
+                    })
+                );
+            }
         }
+
         return (
             React.createElement('div', null,
                 React.createElement('h2', null, this.props.title),
