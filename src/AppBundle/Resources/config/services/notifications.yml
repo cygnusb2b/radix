@@ -22,6 +22,9 @@ services:
     app_bundle.notification_factory.customer_account.activate:
         class: AppBundle\Notifications\NotificationFactory\CustomerAccount\Activate
 
+    app_bundle.notification_factory.customer_account.reset_password_generate:
+        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\ResetPasswordGenerate
+
     app_bundle.notification_factory.customer_email.verify_generate:
         class: AppBundle\Notifications\NotificationFactory\CustomerEmail\VerifyGenerate
 
@@ -36,6 +39,7 @@ services:
             - "@app_bundle.templating.template_loader"
             - "@app_bundle.core.account_manager"
         calls:
-            - [ addFactory, ["@app_bundle.notification_factory.customer_account.activate"]]
-            - [ addFactory, ["@app_bundle.notification_factory.customer_email.verify_generate"]]
-            - [ addFactory, ["@app_bundle.notification_factory.product_email_deployment.opt_in"]]
+            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.activate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.reset_password_generate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.customer_email.verify_generate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.product_email_deployment.opt_in" ] ]

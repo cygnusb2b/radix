@@ -82,7 +82,7 @@ React.createClass({ displayName: 'ComponentResetPasswordGenerate',
 
     _getLoggedOutElements: function() {
         return React.createElement('div', null,
-            React.createElement('p', null, 'To reset your password, enter your email address or username. A reset email will be sent to the email address(es) on your account. Once the email arrives in your inbox, click the link provided to complete the reset process.'),
+            React.createElement('p', null, 'To reset your password, enter your email address or username. A reset email will be sent to the primary email address on your account. Once the email arrives in your inbox, click the link provided to complete the reset process.'),
             React.createElement(Radix.Forms.get('ResetPasswordGenerate'), {
                 onSubmit : this.handleSubmit,
                 fieldRef : this.handleFieldRef

@@ -10,12 +10,24 @@ use Symfony\Component\HttpFoundation\Request;
 trait CustomerTrait
 {
     /**
+     * @param   Model   $submission
+     * @param   Model   $account
+     */
+    protected function getPasswordResetLink(Model $submission, Model $account)
+    {
+        return sprintf(
+            '%s?radix.action=ResetPassword&radix.token=%s',
+            $submission->get('referringHost'),
+            $account->get('credentials')->get('password')->get('resetCode')
+        );
+    }
+
+    /**
      * @param   Model   $customerEmail
      * @param   Model   $submission
      */
     protected function getVerificationLink(Model $submission, Model $customerEmail, Model $application)
     {
-        $request = Request::createFromGlobals();
         return sprintf(
             '%s?radix.action=VerifyEmail&radix.token=%s',
             $submission->get('referringHost'),
