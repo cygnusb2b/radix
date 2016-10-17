@@ -186,6 +186,7 @@ function CustomerManager()
                 Debugger.warn('Unable to logout customer', errors);
                 EventDispatcher.trigger('CustomerManager.logout.failure', [message]);
             });
+            return promise;
 
         } else {
             Debugger.warn('Tried to logout, already logged out.');

@@ -12,6 +12,11 @@ app_bundle_app_auth_submit:
     path: /app/auth
     methods: [ POST ]
 
+app_bundle_app_auth_verify_reset_token:
+    path: /app/auth/verify-reset-token/{token}
+    defaults: { _controller: AppBundle:App\Auth:verifyResetToken }
+    methods: [ GET ]
+
 app_bundle_app_optins_email_deployment:
     path: /app/opt-ins/email-deployment/{emailAddress}
     defaults: { _controller: AppBundle:App\OptIn:emailDeployment }

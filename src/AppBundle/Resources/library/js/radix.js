@@ -135,6 +135,7 @@
         this.ParseQueryString               = {{ loadComponent('parse-query-string') }}
         this.RegisterVerify                 = {{ loadComponent('register-verify') }}
         this.ResendVerifyEmail              = {{ loadComponent('resend-verify-email') }}
+        this.ResetPassword                  = {{ loadComponent('reset-password') }}
         this.ResetPasswordGenerate          = {{ loadComponent('reset-password-generate') }}
         this.VerifyEmail                    = {{ loadComponent('verify-email') }}
         this.ProductEmailDeployment         = {{ loadComponent('product-email-deployment') }}
@@ -154,6 +155,7 @@
         this.Inquiry                = {{ loadForm('inquiry') }}
         this.Register               = {{ loadForm('register') }}
         this.ResetPasswordGenerate  = {{ loadForm('reset-password-generate') }}
+        this.ResetPassword          = {{ loadForm('reset-password') }}
         this.Login                  = {{ loadForm('login') }}
 
         this.get = function(name) {
