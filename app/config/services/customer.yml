@@ -23,6 +23,6 @@ services:
         parent: app_bundle.customer.abstract_token_generator
         class: AppBundle\Customer\EmailVerifyTokenGenerator
 
-    app_bundle.customer.password_resent.token_generator:
+    app_bundle.customer.password_reset.token_generator:
         parent: app_bundle.customer.abstract_token_generator
         class: AppBundle\Customer\ResetPasswordTokenGenerator

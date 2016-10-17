@@ -22,11 +22,6 @@ abstract class AbstractTokenGenerator
     const TTL      = 86400;
 
     /**
-     * @var JWTBuilder
-     */
-    protected $builder;
-
-    /**
      * @var JWTParser
      */
     protected $parser;
@@ -49,8 +44,6 @@ abstract class AbstractTokenGenerator
         if (empty($secret)) {
             throw new \InvalidArgumentException('The token secret cannot be empty.');
         }
-
-        $this->builder = new JWTBuilder();
         $this->parser  = new JWTParser();
         $this->secret  = $secret;
         $this->signer  = new JWTSigner();
@@ -65,9 +58,9 @@ abstract class AbstractTokenGenerator
      */
     public function createFor($customerId, array $parameters)
     {
-        $token = $this->createBasicTokenFor($customerId);
-        $this->applyParametersToToken($token, $parameters);
-        return $token;
+        $builder = $this->createBuilderFor($customerId);
+        $this->applyParametersToBuilder($builder, $parameters);
+        return $builder->sign($this->signer, $this->secret)->getToken();
     }
 
     /**
@@ -93,46 +86,42 @@ abstract class AbstractTokenGenerator
     }
 
     /**
+     * Applies parameters to a JWT token object.
+     *
+     * @param   JWTBuilder  $builder
+     * @param   array       $parameters
+     * @throws  \InvalidArgumentException   If parameters are missing or malformed.
+     */
+    protected abstract function applyParametersToBuilder(JWTBuilder $builder, array $parameters);
+
+    /**
      * Applies parameters to a set of validation rules.
      *
      * @param   ValidationData  $rules
      * @param   array           $parameters
-     * @return  ValidationData
      * @throws  \InvalidArgumentException   If parameters are missing or malformed.
      */
     protected abstract function applyParametersToRules(ValidationData $rules, array $parameters);
 
     /**
-     * Applies parameters to a JWT token object.
-     *
-     * @param   JWTToken    $token
-     * @param   array       $parameters
-     * @return  JWTToken
-     * @throws  \InvalidArgumentException   If parameters are missing or malformed.
-     */
-    protected abstract function applyParametersToToken(JWTToken $token, array $parameters);
-
-    /**
-     * Creates a basic JWT object for the provided customer id.
+     * Creates a new JWT builder for the provided customer id.
      *
      * @param   string  $customerId
-     * @return  JWTToken
      */
-    protected function createBasicTokenFor($customerId)
+    protected function createBuilderFor($customerId)
     {
         $now     = time();
         $expires = $now + self::TTL;
 
-        $jwt = $this->builder
+        $builder = new JWTBuilder();
+        $builder
             ->setIssuer(self::ISSUER)
             ->setAudience(self::AUDIENCE)
             ->setId((string) $customerId)
             ->setExpiration($expires)
             ->setIssuedAt($now)
-            ->sign($this->signer, $this->secret)
-            ->getToken()
         ;
-        return $jwt;
+        return $builder;
     }
 
     /**

@@ -4,8 +4,8 @@ namespace AppBundle\Customer;
 
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Utility\ModelUtility;
+use Lcobucci\JWT\Builder as JWTBuilder;
 use Lcobucci\JWT\ValidationData;
-use Lcobucci\JWT\Token as JWTToken;
 
 /**
  * Generates (and parses) JWT tokens for password reset purposes.
@@ -17,17 +17,15 @@ class ResetPasswordTokenGenerator extends AbstractTokenGenerator
     /**
      * {@inheritdoc}
      */
-    protected function applyParametersToRules(ValidationData $rules, array $parameters)
+    protected function applyParametersToBuilder(JWTBuilder $builder, array $parameters)
     {
-        return $rules;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function applyParametersToToken(JWTToken $token, array $parameters)
+    protected function applyParametersToRules(ValidationData $rules, array $parameters)
     {
-        return $token;
     }
 
     /**

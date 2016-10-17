@@ -4,8 +4,8 @@ namespace AppBundle\Customer;
 
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Utility\ModelUtility;
+use Lcobucci\JWT\Builder as JWTBuilder;
 use Lcobucci\JWT\ValidationData;
-use Lcobucci\JWT\Token as JWTToken;
 
 /**
  * Generates (and parses) JWT tokens for email verification purposes.
@@ -17,21 +17,19 @@ class EmailVerifyTokenGenerator extends AbstractTokenGenerator
     /**
      * {@inheritdoc}
      */
-    protected function applyParametersToRules(ValidationData $rules, array $parameters)
+    protected function applyParametersToBuilder(JWTBuilder $builder, array $parameters)
     {
         $emailAddress = $this->extractEmailAddressFrom($parameters);
-        $rules->setSubject($emailAddress);
-        return $rules;
+        $builder->setSubject($emailAddress);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function applyParametersToToken(JWTToken $token, array $parameters)
+    protected function applyParametersToRules(ValidationData $rules, array $parameters)
     {
         $emailAddress = $this->extractEmailAddressFrom($parameters);
-        $token->setSubject($emailAddress);
-        return $token;
+        $rules->setSubject($emailAddress);
     }
 
     /**
