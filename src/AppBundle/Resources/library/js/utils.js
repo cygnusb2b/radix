@@ -46,6 +46,11 @@ function Utils()
         return(out);
     }
 
+    this.lcFirst = function(str)
+    {
+        return str.charAt(0).toLowerCase() + str.slice(1);
+    }
+
     this.ucFirst = function(str)
     {
         return str.charAt(0).toUpperCase() + str.slice(1);

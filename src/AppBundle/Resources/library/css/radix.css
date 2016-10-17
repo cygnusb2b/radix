@@ -1,5 +1,11 @@
 @import "//s3.amazonaws.com/cygnusimages/base/components/pcfa.min.css";
 /* apply a natural box layout model to all elements, but allowing components to change */
+
+/* Ensure inline components are standard */
+ins {
+    text-decoration: inherit;
+}
+
 .pcfa {
     line-height: inherit;
 }

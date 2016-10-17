@@ -1,4 +1,4 @@
-React.createClass({ displayName: 'ComponentActionVerifyEmail',
+React.createClass({ displayName: 'ComponentVerifyEmail',
 
     componentDidMount: function() {
         this.verify();

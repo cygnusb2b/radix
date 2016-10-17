@@ -246,7 +246,7 @@ function CustomerManager()
             EventDispatcher.trigger('CustomerManager.register.success', [response]);
         },
         function(jqXHR) {
-            var errors  = jqXHR.errors|| [{}];
+            var errors  = jqXHR.errors || [{}];
             var error   = errors[0];
             var message = error.detail || 'An unknown error occured.';
 

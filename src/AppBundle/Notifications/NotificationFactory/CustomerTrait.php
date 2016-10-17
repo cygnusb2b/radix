@@ -17,7 +17,7 @@ trait CustomerTrait
     {
         $request = Request::createFromGlobals();
         return sprintf(
-            '%s?radix.action=verify-email&radix.token=%s',
+            '%s?radix.action=VerifyEmail&radix.token=%s',
             $submission->get('referringHost'),
             $customerEmail->get('verification')->get('token')
         );

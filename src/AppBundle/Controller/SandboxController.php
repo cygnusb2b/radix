@@ -39,10 +39,7 @@ class SandboxController extends AbstractController
         $nav = [
             ['label' => 'Inquiry', 'path' => '/inquiry', 'children' => []],
             ['label' => 'Email Subs', 'path' => '/email-subscriptions', 'children' => []],
-            ['label' => 'Action Handlers', 'path' => '#', 'children' => [
-                ['label' => 'Inline', 'path' => '/action-inline'],
-                ['label' => 'Modal', 'path' => '/action-modal'],
-            ]],
+            ['label' => 'Action Handlers', 'path' => '/action-handlers', 'children' => []],
             ['label' => 'Utilities', 'path' => '#', 'children' => [
                 ['label' => 'Query Parser', 'path' => '/query-parser'],
             ]],
@@ -69,9 +66,10 @@ class SandboxController extends AbstractController
     private function getInitConfig(Request $request)
     {
         $config = [
-            'appId'  => '97b09a4b-8eb8-475f-b72f-19d0f2073256',
-            'host'   => 'http://dev.radix.vehicleservicepros.com',
-            'debug'  => true,
+            'appId'    => '97b09a4b-8eb8-475f-b72f-19d0f2073256',
+            'host'     => 'http://dev.radix.vehicleservicepros.com',
+            'debug'    => true,
+            'logLevel' => 'log'
         ];
 
         $query = $request->query->all();

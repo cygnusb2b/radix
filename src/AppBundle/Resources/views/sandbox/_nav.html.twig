@@ -2,7 +2,7 @@
     <div class="container">
         <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#primary-navigation" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
         <div class="collapse navbar-toggleable-xs" id="primary-navigation">
-            <a class='navbar-brand' href="/sandbox">Radix Sandbox</a>
+            <a class='navbar-brand' href="/">Radix Sandbox</a>
             <ul class="nav navbar-nav">
                 {% for item in navigation %}
                     {% set active = item.active ? 'active' : '' %}
@@ -25,9 +25,9 @@
                 {% endfor %}
             </ul>
             <ul class="nav navbar-nav pull-xs-right">
-                <li class="nav-item platform-login"><a class="nav-link" href="/">Login</a></li>
-                <li class="nav-item platform-logout"><a class="nav-link" href="/">Logout</a></li>
-                <li class="nav-item platform-register"><a class="nav-link" href="/">Register</a></li>
+                <li class="nav-item"><ins class="radix" data-component="ModalLinkLogin" data-prop-tag-name="a" data-prop-class-name="nav-link"></ins></li>
+                <li class="nav-item"><ins class="radix" data-component="LinkLogout" data-prop-tag-name="a" data-prop-class-name="nav-link"></ins></li>
+                <li class="nav-item"><ins class="radix" data-component="ModalLinkRegister" data-prop-tag-name="a" data-prop-class-name="nav-link"></ins></li>
             </ul>
         </div>
     </div>

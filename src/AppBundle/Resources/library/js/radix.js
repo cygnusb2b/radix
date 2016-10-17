@@ -17,7 +17,7 @@
     var Components;
     var Forms;
     var ClientConfig;
-    var ComponentLoader;
+    var ModuleLoader;
     var CustomerManager;
     var LibraryLoader;
 
@@ -49,7 +49,7 @@
                 });
             });
 
-            ComponentLoader = new ComponentLoader();
+            ModuleLoader    = new ModuleLoader();
             CustomerManager = new CustomerManager();
             LibraryLoader   = new LibraryLoader();
         } else {
@@ -68,6 +68,11 @@
     Radix.setDebug = function(bit) {
         bit = Boolean(bit);
         if (true === bit) { Debugger.enable(); } else { Debugger.disable(); }
+        return Radix;
+    };
+
+    Radix.setDebugLevel = function(level) {
+        Debugger.setLevel(level);
         return Radix;
     };
 
@@ -99,27 +104,37 @@
      */
     function Components()
     {
-        this.CountryPostalCode = {{ loadComponent('form-country-postal-code') }}
-        this.FormErrors        = {{ loadComponent('form-errors') }}
-        this.FormFieldWrapper  = {{ loadComponent('form-field-wrapper') }}
-        this.FormInputHidden   = {{ loadComponent('form-input-hidden') }}
-        this.FormInputText     = {{ loadComponent('form-input-text') }}
-        this.FormLabel         = {{ loadComponent('form-label') }}
-        this.FormLock          = {{ loadComponent('form-lock') }}
-        this.FormProductEmail  = {{ loadComponent('form-product-email') }}
-        this.FormProductsEmail = {{ loadComponent('form-products-email') }}
-        this.FormRadios        = {{ loadComponent('form-radios') }}
-        this.FormSelect        = {{ loadComponent('form-select') }}
-        this.FormSelectCountry = {{ loadComponent('form-select-country') }}
-        this.FormSelectOption  = {{ loadComponent('form-select-option') }}
-        this.FormQuestion      = {{ loadComponent('form-question') }}
-        this.FormTextArea      = {{ loadComponent('form-textarea') }}
-        this.Modal             = {{ loadComponent('modal') }}
-        this.ParseQueryString  = {{ loadComponent('parse-query-string') }}
-        this.RegisterVerify    = {{ loadComponent('register-verify') }}
-        this.ActionVerifyEmail = {{ loadComponent('action-verify-email') }}
-        this.ResendVerifyEmail = {{ loadComponent('resend-verify-email') }}
-
+        this.CustomerBoundLink      = {{ loadComponent('customer-bound-link') }}
+        this.ContactSupport         = {{ loadComponent('contact-support') }}
+        this.EmailSubscriptions     = {{ loadComponent('email-subscriptions') }}
+        this.ModalLink              = {{ loadComponent('modal-link') }}
+        this.ModalLinkLogin         = {{ loadComponent('modal-link-login') }}
+        this.ModalLinkLoginVerbose  = {{ loadComponent('modal-link-login-verbose') }}
+        this.ModalLinkRegister      = {{ loadComponent('modal-link-register') }}
+        this.CountryPostalCode      = {{ loadComponent('form-country-postal-code') }}
+        this.FormErrors             = {{ loadComponent('form-errors') }}
+        this.FormFieldWrapper       = {{ loadComponent('form-field-wrapper') }}
+        this.FormInputHidden        = {{ loadComponent('form-input-hidden') }}
+        this.FormInputText          = {{ loadComponent('form-input-text') }}
+        this.FormLabel              = {{ loadComponent('form-label') }}
+        this.FormLock               = {{ loadComponent('form-lock') }}
+        this.FormProductEmail       = {{ loadComponent('form-product-email') }}
+        this.FormProductsEmail      = {{ loadComponent('form-products-email') }}
+        this.FormRadios             = {{ loadComponent('form-radios') }}
+        this.FormSelect             = {{ loadComponent('form-select') }}
+        this.FormSelectCountry      = {{ loadComponent('form-select-country') }}
+        this.FormSelectOption       = {{ loadComponent('form-select-option') }}
+        this.FormQuestion           = {{ loadComponent('form-question') }}
+        this.FormTextArea           = {{ loadComponent('form-textarea') }}
+        this.Inquiry                = {{ loadComponent('inquiry') }}
+        this.LinkLogout             = {{ loadComponent('link-logout') }}
+        this.Login                  = {{ loadComponent('login') }}
+        this.Register               = {{ loadComponent('register') }}
+        this.Modal                  = {{ loadComponent('modal') }}
+        this.ParseQueryString       = {{ loadComponent('parse-query-string') }}
+        this.RegisterVerify         = {{ loadComponent('register-verify') }}
+        this.ResendVerifyEmail      = {{ loadComponent('resend-verify-email') }}
+        this.VerifyEmail            = {{ loadComponent('verify-email') }}
         this.ProductEmailDeployment = {{ loadComponent('product-email-deployment') }}
 
         this.get = function(name) {
@@ -136,40 +151,28 @@
         this.EmailSubscription  = {{ loadForm('email-subscription') }}
         this.Inquiry            = {{ loadForm('inquiry') }}
         this.Register           = {{ loadForm('register') }}
+        this.Login              = {{ loadForm('login') }}
 
         this.get = function(name) {
             return this[name];
         }
     }
 
-    function ComponentLoader()
+    function ModuleLoader()
     {
         EventDispatcher.subscribe('appLoaded', function() {
 
-            Radix.Components    = new Components();
-            Radix.Forms         = new Forms();
+            Radix.Components = new Components();
+            Radix.Forms      = new Forms();
 
-            Radix.ModalModule               = new ModalModule();
-            Radix.FormModule                = new FormModule(); // @deprecated
-            Radix.SignIn                    = new SignInComponent();
-            Radix.InquiryModule             = new InquiryModule();
-            Radix.EmailSubscriptionModule   = new EmailSubscriptionModule();
-            Radix.QueryStringModule         = new QueryStringModule();
-            Radix.ActionHandlerModule       = new ActionHandlerModule();
-
-            // if (true === ServerConfig.values.comments.enabled) {
-                // Radix.Comments = new CommentComponent();
-                // Radix.Reviews = new ReviewComponent();
-            // }
-            // if (true === ServerConfig.values.subscriptions.component.enabled) {
-                // Radix.Subscriptions = new SubscriptionsComponent();
-            // }
+            Radix.ModalModule     = new ModalModule();
+            Radix.ComponentLoader = new ComponentLoaderModule();
         });
 
         EventDispatcher.subscribe('CustomerManager.init', function() {
-            var componentKeys = ['ModalModule', 'SignIn', 'InquiryModule', 'EmailSubscriptionModule', 'QueryStringModule', 'ActionHandlerModule']; //, 'Comments', 'Reviews', 'Subscriptions', 'Inquiry'];
-            for (var i = 0; i < componentKeys.length; i++) {
-                var key = componentKeys[i];
+            var keys = ['ModalModule', 'ComponentLoader'];
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
                 if (true === Utils.isDefined(Radix[key])) {
                     Radix[key].render();
                 }
@@ -203,7 +206,6 @@
             libraries = [
                 '//cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
                 'http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js',
-                '//checkout.stripe.com/checkout.js',
                 '//cdn.auth0.com/w2/auth0-6.js'
             ];
 
@@ -237,12 +239,7 @@
     }
 
     {{ loadModule('modal') }}
-    {{ loadModule('action-handler') }}
-    {{ loadModule('form') }}
-    {{ loadModule('sign-in') }}
-    {{ loadModule('inquiry') }}
-    {{ loadModule('query-string') }}
-    {{ loadModule('email-subscription') }}
+    {{ loadModule('component-loader') }}
 
     {{ loadFile('ajax') }}
     {{ loadFile('client-config') }}
