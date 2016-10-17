@@ -125,9 +125,12 @@ class CustomerCredentialsPasswordFactory extends AbstractModelFactory implements
      */
     public function postValidate(AbstractModel $credential)
     {
-        // Encode password.
-        $encoded = $this->encoder->encodePassword(new Customer($this->getStore()->create('customer-account')), $credential->get('value'));
-        $credential->set('value', $encoded);
+        $changeset = $credential->getChangeSet();
+        if (true === $credential->getState()->is('new') || isset($changeset['attributes']['value'])) {
+            // Encode password.
+            $encoded = $this->encoder->encodePassword(new Customer($this->getStore()->create('customer-account')), $credential->get('value'));
+            $credential->set('value', $encoded);
+        }
     }
 
     /**
