@@ -23,6 +23,15 @@ Router.map(function() {
     });
     this.route('identities');
 
+    this.route('customer', function() {
+        this.route('accounts', function() {
+            this.route('edit', { path: '/edit/:id' });
+        });
+        this.route('identities', function() {
+            this.route('edit', { path: '/edit/:id' });
+        });
+    });
+
     // @todo This will eventually need to be fed by the enabled integration partners.
     // Should likely be an interface for turning on/off.
     this.route('integrations', function() {
@@ -47,7 +56,7 @@ Router.map(function() {
         this.route('integrations', function() {
             this.route('create');
             this.route('edit', { path: '/edit/:id' });
-        })
+        });
     });
 });
 
