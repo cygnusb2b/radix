@@ -1,0 +1,12 @@
+{{#if session.isAuthenticated}}
+    {{ember-selectize
+      content=apps
+      selection=selectedApp
+      optionValuePath="id"
+      optionLabelPath="fullName"
+      highlight=false
+      hideSelected=true
+      closeAfterSelect=true
+      select-item=(action 'selectApp')
+      placeholder="Manage application..."}}
+{{/if}}

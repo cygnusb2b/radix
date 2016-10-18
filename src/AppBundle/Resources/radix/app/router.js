@@ -7,6 +7,13 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+    this.route('login');
+
+    this.route('user', function() {
+        this.route('settings');
+        this.route('select-app');
+    });
+
     this.route('modeling', function() {
         this.route('models', function() {
             this.route('create');

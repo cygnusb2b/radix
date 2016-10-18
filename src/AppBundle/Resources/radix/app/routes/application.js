@@ -1,9 +1,5 @@
 import Ember from 'ember';
+import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
 
-export default Ember.Route.extend({
-    actions: {
-        error: function(error) {
-            console.warn('route error handling needed', error);
-        }
-    }
+export default Ember.Route.extend(ApplicationRouteMixin, {
 });
