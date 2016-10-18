@@ -9,7 +9,7 @@ export default Base.extend({
 
     authorize: function(sessionData, block) {
         const token     = sessionData['token'];
-        const publicKey = this.get('session.data.selectedApp.key');
+        const publicKey = this.get('session.data.application.key');
 
         if (!isEmpty(token)) {
             block('Authorization', `Bearer ${token}`);
