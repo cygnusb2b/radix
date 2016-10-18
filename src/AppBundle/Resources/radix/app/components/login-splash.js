@@ -13,13 +13,13 @@ export default Component.extend({
         authenticate: function() {
             let loading = this.get('loading');
 
-            loading.toggle();
+            loading.show();
             this.set('errorMessage', null);
             let { username, password } = this.getProperties('username', 'password');
             this.get('session')
                 .authenticate('authenticator:core', username, password)
                 .catch((error) => this.set('errorMessage', error.detail || null))
-                .finally(() => loading.toggle())
+                .finally(() => loading.hide())
             ;
         }
     }

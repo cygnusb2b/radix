@@ -7,6 +7,8 @@ export default Route.extend(ApplicationRouteMixin, {
 
     userManager: service(),
 
+    loading: service(),
+
     session: service('session'),
 
     beforeModel: function() {
@@ -26,6 +28,7 @@ export default Route.extend(ApplicationRouteMixin, {
 
     actions: {
         refreshApp: function() {
+            this.get('loading').show();
             this.refresh();
         }
     },

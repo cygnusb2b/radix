@@ -23,18 +23,18 @@ export default Button.extend({
     loading: Ember.inject.service('loading'),
 
     click: function() {
-        this.get('loading').toggle();
+        this.get('loading').show();
 
         let _this = this;
         let model = this.get('model');
 
         // @todo Handle model validation here
         model.save().then(function() {
-            _this.get('loading').toggle();
+            _this.get('loading').hide();
             _this._redirectToRoute();
         }, function() {
             // @todo Handle errors globally??
-            _this.get('loading').toggle();
+            _this.get('loading').hide();
         });
     },
 

@@ -99,7 +99,7 @@ export default Ember.Component.extend({
             let completed = 0;
             let error     = false;
 
-            this.get('loading').toggle();
+            this.get('loading').show();
 
             changed.forEach(function(model) {
                 if (true === error) {
@@ -109,13 +109,13 @@ export default Ember.Component.extend({
                 model.save().then(function() {
                     completed++;
                     if (completed === total) {
-                        _this.get('loading').toggle();
+                        _this.get('loading').hide();
                         _this.toggleProperty('recompute');
                     }
                 }, function() {
                     // @todo Handle errors globally?
                     error = true;
-                    _this.get('loading').toggle();
+                    _this.get('loading').hide();
                 });
             });
         },
