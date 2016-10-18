@@ -14,6 +14,17 @@ class AccountManager
     const APP_PATH         = '/app';
 
     /**
+     * Origins that are considered global.
+     * Is used for determining CORs access and management user access.
+     *
+     * @var array
+     */
+    private static $globalOrigins = [
+        'http://radix.as3.io',
+        'http://*.radix.as3.io',
+    ];
+
+    /**
      * @var Model|null
      */
     private $account;
@@ -101,7 +112,6 @@ class AccountManager
         return $this->buildKey;
     }
 
-
     /**
      * @return  string|null
      */
@@ -122,6 +132,19 @@ class AccountManager
             return;
         }
         return sprintf('%s-%s', $this->account->get('key'), $this->application->get('key'));
+    }
+
+    /**
+     * Origins that are considered global.
+     * Is used for determining CORs access and management user access.
+     *
+     * @see     \AppBundle\Cors\CorsListener::onKernelResponse()
+     * @see     \AppBundle\Security\User\CoreUser::setOrigin()
+     * @return  array
+     */
+    public static function getGlobalOrigins()
+    {
+        return self::$globalOrigins;
     }
 
     /**

@@ -25,13 +25,13 @@ export default Button.extend({
         let confirmValue = this.get('confirmValue');
 
         this.get('confirm').delete(model, confirmValue, function() {
-            _this.get('loading').toggle();
+            _this.get('loading').show();
                 model.destroyRecord().then(function() {
-                    _this.get('loading').toggle();
+                    _this.get('loading').hide();
                     _this._redirectToRoute();
             }, function() {
                 // @todo Handle errors globally??
-                _this.get('loading').toggle();
+                _this.get('loading').hide();
             });
         });
     },

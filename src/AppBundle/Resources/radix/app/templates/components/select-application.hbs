@@ -1,0 +1,15 @@
+{{#if session.isAuthenticated}}
+    {{#if canSelect}}
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button">
+            {{session.data.application.name}}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-left">
+            {{#each toSelect as |app|}}
+                <a class="dropdown-item" {{action 'changeApp' app}}>{{app.name}}</a>
+            {{/each}}
+        </div>
+    {{else}}
+        <span class="nav-link">{{session.data.application.name}}</span>
+    {{/if}}
+{{/if}}

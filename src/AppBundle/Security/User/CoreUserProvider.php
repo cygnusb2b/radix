@@ -3,8 +3,11 @@
 namespace AppBundle\Security\User;
 
 use As3\Modlr\Store\Store;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,6 +16,11 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class CoreUserProvider implements UserProviderInterface
 {
     /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
      * @var Store
      */
     private $store;
@@ -20,9 +28,10 @@ class CoreUserProvider implements UserProviderInterface
     /**
      * @param   Store   $store
      */
-    public function __construct(Store $store)
+    public function __construct(Store $store, RequestStack $requestStack)
     {
-        $this->store = $store;
+        $this->store        = $store;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -42,9 +51,16 @@ class CoreUserProvider implements UserProviderInterface
             if (null === $model) {
                 throw new UsernameNotFoundException('No user found.');
             }
-            return new CoreUser($model);
+
+            $user = new CoreUser($model);
+            $user->setOrigin($this->requestStack->getMasterRequest()->getSchemeAndHttpHost());
+            if (empty($user->getApplications())) {
+                throw new InsufficientAuthenticationException('No applications are available for this user.');
+            }
+            return $user;
+
         } catch (\Exception $e) {
-            if ($e instanceof UsernameNotFoundException) {
+            if ($e instanceof AuthenticationException) {
                 throw $e;
             }
             throw new AuthenticationServiceException('An internal error occurred when retrieving the user.', 0, $e);

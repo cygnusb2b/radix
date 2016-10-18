@@ -1,0 +1,16 @@
+{{#if session.isAuthenticated}}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button"><i class="ion-ios-gear" title="User Options" aria-label="User Options"></i></a>
+        <div class="dropdown-menu dropdown-menu-right">
+
+            {{#link-to 'user.settings' class='dropdown-item' title="User Settings"}}
+                <i class="ion-person"></i> {{userManager.user.givenName}} {{userManager.user.familyName}}
+            {{/link-to}}
+
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" title="Logout" {{action 'logout'}}>
+                <i class="ion-log-out"></i> Logout
+            </a>
+        </div>
+    </li>
+{{/if}}

@@ -11,7 +11,7 @@ export default Ember.Route.extend({
         let _this = this;
         let criteria = {};
 
-        this.get('loading').toggle();
+        this.get('loading').show();
 
         return this.store.query('demographic', {
             page: {
@@ -25,10 +25,10 @@ export default Ember.Route.extend({
             },
             sort: "-createdDate,name",
         }).then(function(results) {
-            _this.get('loading').toggle();
+            _this.get('loading').hide();
             return results;
         }, function() {
-            _this.get('loading').toggle();
+            _this.get('loading').hide();
         });
     },
 

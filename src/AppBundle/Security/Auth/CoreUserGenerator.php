@@ -48,25 +48,14 @@ class CoreUserGenerator implements AuthGeneratorInterface
     public function generateFor(UserInterface $user)
     {
         $data = [
+            'id'            => $user->getIdentifier(),
             'username'      => $user->getUserName(),
             'givenName'     => $user->getGivenName(),
             'familyName'    => $user->getFamilyName(),
             'roles'         => $user->getRoles(),
-            'applications'  => [],
+            'applications'  => $user->getApplications(),
             'token'         => $this->jwtManager->createFor($user),
-            'using'         => $this->manager->getCompositeKey(),
         ];
-
-        $request = $this->requestStack->getCurrentRequest();
-        $baseUrl = sprintf('%s%s', $request->getSchemeAndHttpHost(), '/auth/user/retrieve');
-
-        foreach ($user->getPublicKeys() as $app => $key) {
-            $data['applications'][$app] = [
-                'key'   => $key,
-                'use'   => sprintf('%s?%s=%s', $baseUrl, AccountManager::PUBLIC_KEY_PARAM, $key),
-            ];
-        }
-
         return $data;
     }
 

@@ -3,12 +3,20 @@
 namespace AppBundle\Security\User;
 
 use \Serializable;
+use AppBundle\Core\AccountManager;
+use AppBundle\Cors\CorsDefinition as Cors;
 use As3\Modlr\Models\Model;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class CoreUser implements UserInterface, Serializable
 {
+    private $applications = [];
+
+    private $identfier;
+
     private $model;
+
+    private $origin;
 
     private $familyName;
 
@@ -27,23 +35,48 @@ class CoreUser implements UserInterface, Serializable
     public function __construct(Model $model)
     {
         $this->model      = $model;
+        $this->identifier = $model->getId();
         $this->familyName = $model->get('familyName');
         $this->givenName  = $model->get('givenName');
         $this->password   = $model->get('password');
         $this->salt       = $model->get('salt');
         $this->username   = $model->get('email');
-
-        $this->setRoles();
     }
 
+    /**
+     * Gets the applications available to this user.
+     *
+     * @return  array
+     */
+    public function getApplications()
+    {
+        return $this->applications;
+    }
+
+    /**
+     * @return  string
+     */
     public function getFamilyName()
     {
         return $this->familyName;
     }
 
+    /**
+     * @return  string
+     */
     public function getGivenName()
     {
         return $this->givenName;
+    }
+
+    /**
+     * Gets the user database id.
+     *
+     * @return  string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -73,16 +106,6 @@ class CoreUser implements UserInterface, Serializable
     }
 
     /**
-     * Gets the application public access keys available to this user.
-     *
-     * @return  array
-     */
-    public function getPublicKeys()
-    {
-        return $this->publicKeys;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getSalt()
@@ -106,48 +129,115 @@ class CoreUser implements UserInterface, Serializable
         return;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function serialize()
     {
         return serialize([
+            $this->identifier,
             $this->familyName,
             $this->givenName,
             $this->password,
-            $this->publicKeys,
             $this->roles,
             $this->salt,
             $this->username,
         ]);
     }
 
+    /**
+     * Sets the request/auth origin.
+     * Determines what applications/roles will be available to the user.
+     *
+     * @param   string  $origin
+     * @return  self
+     */
+    public function setOrigin($origin)
+    {
+        $this->origin = $origin;
+        $this->loadApplications();
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function unserialize($serialized)
     {
         list(
+            $this->identifier,
             $this->familyName,
             $this->givenName,
             $this->password,
-            $this->publicKeys,
             $this->roles,
             $this->salt,
             $this->username
         ) = unserialize($serialized);
     }
 
-    private function setRoles()
+    /**
+     * Applies applications details for an allowed application.
+     *
+     * @param   Model   $application
+     * @param   array   $roles
+     */
+    private function applyAppDetailsFor(Model $application, array $roles)
     {
-        $this->roles[] = 'ROLE_CORE\USER';
+        $key = sprintf('%s:%s', $application->get('account')->get('key'), $application->get('key'));
+
+        $this->applications[] = [
+            'id'        => $key,
+            'name'      => $application->get('name'),
+            'fullName'  => sprintf('%s: %s', $application->get('account')->get('name'), $application->get('name')),
+            'key'       => $application->get('publicKey'),
+        ];
+
+        foreach ($roles as $role) {
+            $role = strtoupper($role);
+            if (0 === stripos($role, 'role_')) {
+                $role = str_replace('ROLE_', '', $role);
+            }
+            $this->roles[] = sprintf('ROLE_%s\%s', strtoupper($key), $role);
+        }
+    }
+
+    /**
+     * Loads all applications available to user, based on the user auth origin.
+     *
+     */
+    private function loadApplications()
+    {
+        // Determine if a global origin was set.
+        $global = false;
+        foreach (AccountManager::getGlobalOrigins() as $origin) {
+            if (true === Cors::isOriginMatch($this->origin, $origin)) {
+                $global = true;
+                break;
+            }
+        }
+
         foreach ($this->model->get('details') as $details) {
             $application = $details->get('application');
-            $key = sprintf('%s:%s', $application->get('account')->get('key'), $application->get('key'));
-
-            $this->publicKeys[$key] = $application->get('publicKey');
-
-            foreach($details->get('roles') as $role) {
-                $role = strtoupper($role);
-                if (0 === stripos($role, 'role_')) {
-                    $role = str_replace('ROLE_', '', $role);
-                }
-                $this->roles[] = sprintf('ROLE_%s\%s', strtoupper($key), $role);
+            if (null === $application) {
+                continue;
             }
+            if (true === $global) {
+                // If global flag, allow all applications found for the user.
+                $this->applyAppDetailsFor($application, $details->get('roles'));
+                continue;
+            }
+            foreach ($application->get('allowedOrigins') as $origin) {
+                if (true === Cors::isOriginMatch($this->origin, $origin)) {
+                    // Limit applications to matched origins only.
+                    $this->applyAppDetailsFor($application, $details->get('roles'));
+                    continue;
+                }
+            }
+        }
+
+        if (!empty($this->roles)) {
+            // Set standard user role.
+            $this->roles[] = 'ROLE_CORE\USER';
         }
     }
 }
