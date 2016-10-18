@@ -8,7 +8,6 @@ export default Base.extend({
     session: service('session'),
 
     restore: function(data) {
-        // @todo Re-validate that the user can use the selected app. Remove if cannot.
         let _self = this;
         return new RSVP.Promise(function(resolve, reject) {
             $.get('/auth/user/retrieve').done(function(response) {
@@ -25,7 +24,6 @@ export default Base.extend({
     },
 
     authenticate: function(username, password) {
-        // @todo Check for the presence of a selected app in session. If user can use it, leave it, else remove it.
         let _self = this;
         return new RSVP.Promise(function(resolve, reject) {
             $.ajax('/auth/user/submit', {
@@ -35,7 +33,7 @@ export default Base.extend({
             }).done(function(response) {
                 resolve(response.data);
             }).fail(function(jqXHR) {
-                reject(_self.formatError(jqXHR));
+                reject(_self._formatError(jqXHR));
             });
         });
     },
@@ -50,7 +48,7 @@ export default Base.extend({
         });
     },
 
-    formatError: function(jqXHR) {
+    _formatError: function(jqXHR) {
         if (jqXHR.responseJSON && jqXHR.responseJSON.errors) {
             return jqXHR.responseJSON.errors[0];
         }

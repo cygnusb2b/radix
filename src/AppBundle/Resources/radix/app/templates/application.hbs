@@ -4,8 +4,7 @@
 {{ confirm-modal-delete }}
 
 {{#if session.isAuthenticated}}
-    {{!-- User is logged in: display the application --}}
-
+    {{!-- User is logged in: display the application, with wrapping elements --}}
     {{ partial 'application/-nav' }}
 
     <div class="container-fluid">
@@ -17,7 +16,7 @@
         </div>
     </div>
 {{else}}
-    {{!-- User is not logged in: show the splash screen --}}
+    {{!-- User is not logged in: show the splash screen, without wrappers --}}
     {{login-splash}}
 {{/if}}
 

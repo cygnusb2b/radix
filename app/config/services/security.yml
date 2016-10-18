@@ -84,7 +84,7 @@ services:
     app_bundle.security.user_provider.core_user:
         private: true
         class: AppBundle\Security\User\CoreUserProvider
-        arguments: [ "@as3_modlr.store" ]
+        arguments: [ "@as3_modlr.store", "@request_stack" ]
 
     app_bundle.security.user_provider.customer:
         class: AppBundle\Security\User\CustomerProvider
