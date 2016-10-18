@@ -3,14 +3,23 @@
 {{ confirm-modal-unsaved }}
 {{ confirm-modal-delete }}
 
+{{#if session.isAuthenticated}}
+    {{!-- User is logged in: display the application --}}
 
-{{ partial 'application/-nav' }}
+    {{ partial 'application/-nav' }}
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-xl-12">
-            {{select-application}}
-            {{ outlet }}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                {{!-- {{select-application}} --}}
+                {{ outlet }}
+            </div>
         </div>
     </div>
-</div>
+{{else}}
+    {{!-- User is not logged in: show the splash screen --}}
+    {{login-splash}}
+{{/if}}
+
+
+
