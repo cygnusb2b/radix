@@ -28,14 +28,14 @@ export default Route.extend(ApplicationRouteMixin, {
 
     actions: {
         refreshApp: function() {
-            this.get('loading').show();
-            this.refresh();
+            let loading = this.get('loading');
+            loading.show();
+            this.refresh().finally(() => loading.hide());
         }
     },
 
     _loadCurrentUser: function() {
-        let _self = this;
-        return this.get('userManager').load().then(() => _self._selectApplication());
+        return this.get('userManager').load().then(() => this._selectApplication());
     },
 
     _selectApplication: function() {
