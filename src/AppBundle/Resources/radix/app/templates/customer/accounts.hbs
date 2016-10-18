@@ -6,11 +6,24 @@
 
         {{#each model as |item|}}
             {{#link-to 'customer.accounts.edit' item.id class='list-group-item list-group-item-action'}}
+
+                <small class="list-group-item-text">{{item.id}}</small>
+
                 <h5 class="list-group-item-heading">
-                    {{item.name}}
+                    {{item.givenName}} {{item.familyName}}
                 </h5>
 
-                <p class="list-group-item-text">{{item.label}}</p>
+                <p class="list-group-item-text">
+                    {{#if item.primaryEmail}}
+                        <span>{{item.primaryEmail}}</span>
+                    {{/if}}
+                    {{#if item.credentials.password.username}}
+                        <span>{{item.credentials.password.username}}</span>
+                    {{/if}}
+                </p>
+                <small class="list-group-item-text">{{item.createdDate}}</small>
+
+
             {{/link-to}}
         {{else}}
             <div class="list-group-item list-group-item-action">
