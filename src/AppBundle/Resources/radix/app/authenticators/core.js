@@ -22,11 +22,10 @@ export default Base.extend({
     authenticate: function(username, password) {
         let _self = this;
         return new RSVP.Promise(function(resolve, reject) {
-            $.post('/auth/user/submit', {
-                data: {
-                    username: username,
-                    password: password
-                }
+            $.ajax('/auth/user/submit', {
+                method      : 'POST',
+                contentType : 'application/json',
+                data: JSON.stringify({ data: { username: username, password: password } })
             }).done(function(response) {
                 resolve(response.data);
             }).fail(function(jqXHR) {
