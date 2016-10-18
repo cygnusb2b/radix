@@ -48,6 +48,7 @@ class CoreUserGenerator implements AuthGeneratorInterface
     public function generateFor(UserInterface $user)
     {
         $data = [
+            'id'            => $user->getIdentifier(),
             'username'      => $user->getUserName(),
             'givenName'     => $user->getGivenName(),
             'familyName'    => $user->getFamilyName(),
