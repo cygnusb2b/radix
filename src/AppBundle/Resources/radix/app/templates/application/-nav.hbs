@@ -4,6 +4,7 @@
         <div class="collapse navbar-toggleable-xs" id="primary-navigation">
             {{#link-to 'index' class='navbar-brand'}}Radix{{/link-to}}
             <ul class="nav navbar-nav">
+                {{select-application onAppChange="refreshApp"}}
                 {{!-- <li class="nav-item">
                     {{#link-to 'modeling' class='nav-link'}}Modeling{{/link-to}}
                 </li> --}}

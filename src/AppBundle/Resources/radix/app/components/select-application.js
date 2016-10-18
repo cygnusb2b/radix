@@ -3,26 +3,31 @@ import Ember from 'ember';
 const { inject: { service }, Component, computed } = Ember;
 
 export default Component.extend({
+    tagName: 'li',
+    classNames: ['nav-item'],
+    classNameBindings: ['canSelect:dropdown'],
+
     session: service('session'),
 
-    selectedApp: computed('session.data.selectedApp', {
-        get(key) {
-            return this.get('session.data.selectedApp');
-        },
-        set(key, value) {
-            this.get('session').set('data.selectedApp', value);
-            return value;
-        }
+    apps: computed('session.data.authenticated.applications.[]', function() {
+        return this.get('session.data.authenticated.applications') || [];
     }),
 
-    apps: computed('session.data.authenticated.applications', function() {
-        let available = this.get('session.data.authenticated.applications') || [];
-        return available.sortBy('fullName');
+    canSelect: computed('apps', function() {
+        return this.get('apps.length') > 1;
+    }),
+
+    toSelect: computed('apps', function() {
+        let selectedId = this.get('session.data.application.id');
+        return this.get('apps').filter(function(item) {
+            return item.id !== selectedId;
+        }).sortBy('name');
     }),
 
     actions: {
-        selectApp: function(app) {
-            this.set('selectedApp', app);
+        changeApp: function(app) {
+            this.get('session').set('data.application', app);
+            this.sendAction('onAppChange');
         }
     }
 });

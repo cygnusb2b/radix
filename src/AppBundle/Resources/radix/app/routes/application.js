@@ -20,7 +20,14 @@ export default Route.extend(ApplicationRouteMixin, {
 
     setupController: function(controller, model) {
         controller.set('session', this.get('session'));
+        controller.set('userManager', this.get('userManager'));
         this._super(controller, model);
+    },
+
+    actions: {
+        refreshApp: function() {
+            this.refresh();
+        }
     },
 
     _loadCurrentUser: function() {
