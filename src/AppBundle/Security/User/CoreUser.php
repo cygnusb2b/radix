@@ -41,8 +41,6 @@ class CoreUser implements UserInterface, Serializable
         $this->password   = $model->get('password');
         $this->salt       = $model->get('salt');
         $this->username   = $model->get('email');
-
-        $this->setRoles();
     }
 
     /**
@@ -69,6 +67,16 @@ class CoreUser implements UserInterface, Serializable
     public function getGivenName()
     {
         return $this->givenName;
+    }
+
+    /**
+     * Gets the user database id.
+     *
+     * @return  string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -226,16 +234,10 @@ class CoreUser implements UserInterface, Serializable
                 }
             }
         }
-    }
 
-    /**
-     * Sets the default roles.
-     *
-     * @return  self
-     */
-    private function setRoles()
-    {
-        $this->roles[] = 'ROLE_CORE\USER';
-        return $this;
+        if (!empty($this->roles)) {
+            // Set standard user role.
+            $this->roles[] = 'ROLE_CORE\USER';
+        }
     }
 }
