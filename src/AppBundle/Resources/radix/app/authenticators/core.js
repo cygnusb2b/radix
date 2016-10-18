@@ -12,7 +12,12 @@ export default Base.extend({
         let _self = this;
         return new RSVP.Promise(function(resolve, reject) {
             $.get('/auth/user/retrieve').done(function(response) {
-                resolve(response.data);
+                if (!response.data.id || (response.data.id !== data.id)) {
+                    // The backend either killed the user session, or there was an identifier mismatch.
+                    reject();
+                } else {
+                    resolve(response.data);
+                }
             }).fail(function(jqXHR) {
                 reject(_self.formatError(jqXHR));
             });
@@ -20,6 +25,7 @@ export default Base.extend({
     },
 
     authenticate: function(username, password) {
+        // @todo Check for the presence of a selected app in session. If user can use it, leave it, else remove it.
         let _self = this;
         return new RSVP.Promise(function(resolve, reject) {
             $.ajax('/auth/user/submit', {
@@ -35,13 +41,10 @@ export default Base.extend({
     },
 
     invalidate: function() {
-        let _self = this;
-        this.get('session').set('data.selectedApp', null); // Kill the active app.
-
-        return new RSVP.Promise(function(resolve, reject) {
-            $.get('/auth/user/destroy').done(function(response) {
+        return new RSVP.Promise(function(resolve) {
+            $.get('/auth/user/destroy').done(function() {
                 resolve({});
-            }).fail(function(jqXHR) {
+            }).fail(function() {
                 resolve({}); // Always resolve.
             });
         });
