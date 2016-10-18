@@ -60,11 +60,9 @@ class CoreUserGenerator implements AuthGeneratorInterface
         $request = $this->requestStack->getCurrentRequest();
         $baseUrl = sprintf('%s%s', $request->getSchemeAndHttpHost(), '/auth/user/retrieve');
 
-        foreach ($user->getPublicKeys() as $app => $key) {
-            $data['applications'][$app] = [
-                'key'   => $key,
-                'use'   => sprintf('%s?%s=%s', $baseUrl, AccountManager::PUBLIC_KEY_PARAM, $key),
-            ];
+        foreach ($user->getAvailableApps() as $app) {
+            $app['use'] = sprintf('%s?%s=%s', $baseUrl, AccountManager::PUBLIC_KEY_PARAM, $app['key']);
+            $data['applications'][] = $app;
         }
 
         return $data;

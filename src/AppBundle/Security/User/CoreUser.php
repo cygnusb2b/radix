@@ -8,6 +8,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class CoreUser implements UserInterface, Serializable
 {
+    private $availableApps = [];
+
     private $model;
 
     private $familyName;
@@ -34,6 +36,16 @@ class CoreUser implements UserInterface, Serializable
         $this->username   = $model->get('email');
 
         $this->setRoles();
+    }
+
+    /**
+     * Gets the applications available to this user.
+     *
+     * @return  array
+     */
+    public function getAvailableApps()
+    {
+        return $this->availableApps;
     }
 
     public function getFamilyName()
@@ -73,16 +85,6 @@ class CoreUser implements UserInterface, Serializable
     }
 
     /**
-     * Gets the application public access keys available to this user.
-     *
-     * @return  array
-     */
-    public function getPublicKeys()
-    {
-        return $this->publicKeys;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getSalt()
@@ -112,7 +114,7 @@ class CoreUser implements UserInterface, Serializable
             $this->familyName,
             $this->givenName,
             $this->password,
-            $this->publicKeys,
+            $this->availableApps,
             $this->roles,
             $this->salt,
             $this->username,
@@ -125,7 +127,7 @@ class CoreUser implements UserInterface, Serializable
             $this->familyName,
             $this->givenName,
             $this->password,
-            $this->publicKeys,
+            $this->availableApps,
             $this->roles,
             $this->salt,
             $this->username
@@ -139,7 +141,12 @@ class CoreUser implements UserInterface, Serializable
             $application = $details->get('application');
             $key = sprintf('%s:%s', $application->get('account')->get('key'), $application->get('key'));
 
-            $this->publicKeys[$key] = $application->get('publicKey');
+            $this->availableApps[] = [
+                'id'        => $key,
+                'name'      => $application->get('name'),
+                'fullName'  => sprintf('%s: %s', $application->get('account')->get('name'), $application->get('name')),
+                'key'       => $application->get('publicKey'),
+            ];
 
             foreach($details->get('roles') as $role) {
                 $role = strtoupper($role);
