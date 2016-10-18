@@ -23,8 +23,10 @@ export default Base.extend({
         let _self = this;
         return new RSVP.Promise(function(resolve, reject) {
             $.post('/auth/user/submit', {
-                username: username,
-                password: password
+                data: {
+                    username: username,
+                    password: password
+                }
             }).done(function(response) {
                 resolve(response.data);
             }).fail(function(jqXHR) {

@@ -52,19 +52,9 @@ class CoreUserGenerator implements AuthGeneratorInterface
             'givenName'     => $user->getGivenName(),
             'familyName'    => $user->getFamilyName(),
             'roles'         => $user->getRoles(),
-            'applications'  => [],
+            'applications'  => $user->getApplications(),
             'token'         => $this->jwtManager->createFor($user),
-            'using'         => $this->manager->getCompositeKey(),
         ];
-
-        $request = $this->requestStack->getCurrentRequest();
-        $baseUrl = sprintf('%s%s', $request->getSchemeAndHttpHost(), '/auth/user/retrieve');
-
-        foreach ($user->getAvailableApps() as $app) {
-            $app['use'] = sprintf('%s?%s=%s', $baseUrl, AccountManager::PUBLIC_KEY_PARAM, $app['key']);
-            $data['applications'][] = $app;
-        }
-
         return $data;
     }
 

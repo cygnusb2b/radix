@@ -117,6 +117,25 @@ class CorsDefinition
     }
 
     /**
+     * Creates an origin URL to a regex pattern.
+     *
+     * @param   string  $origin
+     * @return  string
+     */
+    public static function createPatternFor($origin)
+    {
+        if (false !== strpos($origin, '*')) {
+            $parts = explode('*', $origin);
+            foreach ($parts as &$part) {
+                $part = preg_quote($part, '/');
+            }
+            $origin = sprintf('/^%s$/i', implode('.*', $parts));
+            return $origin;
+        }
+        return sprintf('/^%s$/i', preg_quote($origin, '/'));
+    }
+
+    /**
      * Gets the max age of the pre flight request.
      *
      * @return  int
@@ -154,6 +173,18 @@ class CorsDefinition
             }
         }
         return false;
+    }
+
+    /**
+     * Determines if the origins are considered a match.
+     *
+     * @param   string  $origin
+     * @param   string  $compareTo
+     * @return  bool
+     */
+    public static function isOriginMatch($origin, $compareTo)
+    {
+        return 1 === preg_match(self::createPatternFor($compareTo), $origin);
     }
 
     /**
@@ -278,27 +309,8 @@ class CorsDefinition
         $patterns = [];
         $origins  = array_keys($this->getAllowedOrigins());
         foreach ($origins as $origin) {
-            $patterns[] = $this->convertOriginToPattern($origin);
+            $patterns[] = self::createPatternFor($origin);
         }
         return $patterns;
-    }
-
-    /**
-     * Converts a CORS origin to a regex match pattern
-     *
-     * @param   string  $origin
-     * @return  string
-     */
-    private function convertOriginToPattern($origin)
-    {
-        if (false !== strpos($origin, '*')) {
-            $parts = explode('*', $origin);
-            foreach ($parts as &$part) {
-                $part = preg_quote($part, '/');
-            }
-            $origin = sprintf('/^%s$/i', implode('.*', $parts));
-            return $origin;
-        }
-        return sprintf('/^%s$/i', preg_quote($origin, '/'));
     }
 }

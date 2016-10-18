@@ -13,16 +13,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class CorsListener implements EventSubscriberInterface
 {
     /**
-     * Origins to always allow, regardless of application settings.
-     *
-     * @var array
-     */
-    private $alwaysAllow = [
-        'http://radix.as3.io',
-        'http://*.radix.as3.io',
-    ];
-
-    /**
      * @var CorsDefinition
      */
     private $definition;
@@ -82,7 +72,7 @@ class CorsListener implements EventSubscriberInterface
         }
 
         $app     = $this->manager->getApplication();
-        $origins = $this->alwaysAllow;
+        $origins = AccountManager::getGlobalOrigins();
         if (null !== $app) {
             $origins = array_merge($origins, $app->get('allowedOrigins'));
         }

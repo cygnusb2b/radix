@@ -3,12 +3,14 @@
 namespace AppBundle\Security\Authenticator;
 
 use AppBundle\Security\Auth\AuthGeneratorManager;
+use AppBundle\Utility\RequestUtility;
 use As3\Modlr\Api\AdapterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\HttpUtils;
@@ -17,6 +19,7 @@ class CoreUserAuthenticator extends AbstractCoreAuthenticator
 {
     const USERNAME = 'username';
     const PASSWORD = 'password';
+    const ORIGIN   = 'origin';
 
     /**
      * @var AuthGeneratorManager
@@ -52,11 +55,21 @@ class CoreUserAuthenticator extends AbstractCoreAuthenticator
             throw new BadCredentialsException('The presented credentials cannot be empty.');
         }
 
-        return $this->encoderFactory->getEncoder($user)->isPasswordValid(
+        $valid = $this->encoderFactory->getEncoder($user)->isPasswordValid(
             $user->getPassword(),
             $credentials[$passField],
             $user->getSalt()
         );
+        if (false === $valid) {
+            return false;
+        }
+
+        // Set the authentication origin and determine if applications can be accessed.
+        $user->setOrigin($credentials[self::ORIGIN]);
+        if (empty($user->getApplications())) {
+            throw new InsufficientAuthenticationException('No applications are available for this user.');
+        }
+        return true;
     }
 
     /**
@@ -80,35 +93,8 @@ class CoreUserAuthenticator extends AbstractCoreAuthenticator
      */
     protected function extractCredentials(Request $request)
     {
-        $userField = self::USERNAME;
-        $passField = self::PASSWORD;
-
-        switch ($request->getMethod()) {
-            case 'GET':
-                return [
-                    $userField  => $request->query->get($userField),
-                    $passField  => $request->query->get($passField),
-                ];
-            case 'POST':
-                if (0 === stripos($request->headers->get('content-type'), 'application/json')) {
-                    // JSON request.
-                    $payload = @json_decode($request->getContent(), true);
-                    return [
-                        $userField  => isset($payload[$userField]) ? $payload[$userField] : null,
-                        $passField  => isset($payload[$passField]) ? $payload[$passField] : null,
-                    ];
-                }
-                // Treat as standard x-www-form-urlencoded.
-                return [
-                    $userField  => $request->request->get($userField),
-                    $passField  => $request->request->get($passField),
-                ];
-                // Could support more post options - like XML? Shyeah, right...
-            default:
-                return [
-                    $userField  => null,
-                    $passField  => null,
-                ];
-        }
+        $payload = RequestUtility::extractPayload($request);
+        $payload[self::ORIGIN] = $request->getSchemeAndHttpHost();
+        return $payload;
     }
 }
