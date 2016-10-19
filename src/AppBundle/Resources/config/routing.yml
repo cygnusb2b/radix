@@ -17,11 +17,6 @@ app_bundle_app_auth_verify_reset_token:
     defaults: { _controller: AppBundle:App\Auth:verifyResetToken }
     methods: [ GET ]
 
-app_bundle_app_identity_detect:
-    path: /app/identity
-    defaults: { _controller: AppBundle:App\Identity:detect }
-    methods: [ POST ]
-
 app_bundle_app_init:
     path: /app/init
     defaults: { _controller: AppBundle:App\Init:default }
