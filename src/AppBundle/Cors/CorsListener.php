@@ -60,7 +60,13 @@ class CorsListener implements EventSubscriberInterface
         $origin   = $request->headers->get('Origin');
 
 
-        if (false === $event->isMasterRequest() || 'application' !== $context || empty($origin)) {
+        if (false === $event->isMasterRequest() || 'application' !== $context) {
+            return;
+        }
+
+        if (empty($origin)) {
+            // Same domain request. Ensure Vary is added, but do not process further.
+            $response->setVary('Origin', false);
             return;
         }
 
