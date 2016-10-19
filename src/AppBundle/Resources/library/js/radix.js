@@ -38,6 +38,12 @@
         return CustomerManager.isLoggedIn();
     };
 
+    Radix.addDetectionCallback = function(callback) {
+        EventDispatcher.subscribe('CustomerManager.preInit', function() {
+            CustomerManager.IdentityDetectionCallbacks.push(callback);
+        });
+    };
+
     Radix.init = function(config) {
         ClientConfig = new ClientConfig(config);
         if (true === ClientConfig.valid()) {

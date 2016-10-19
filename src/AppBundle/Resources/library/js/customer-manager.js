@@ -4,6 +4,8 @@ function CustomerManager()
     // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
     var identity = null;
 
+    this.IdentityDetectionCallbacks = [];
+
     EventDispatcher.subscribe('CustomerManager.login.success', function() {
         EventDispatcher.trigger('CustomerManager.customer.loaded');
     });
@@ -13,6 +15,7 @@ function CustomerManager()
     }.bind(this));
 
     this.init = function() {
+        EventDispatcher.trigger('CustomerManager.preInit');
         this.checkAuth().then(function (response) {
             customer = response.data;
 
@@ -167,6 +170,18 @@ function CustomerManager()
     }
 
     this.parseDetectionParams = function() {
+
+        var custom    = false;
+        var nonScoped = Utils.parseQueryString();
+        for (var i = 0; i < this.IdentityDetectionCallbacks.length; i++) {
+            var callback = this.IdentityDetectionCallbacks[i];
+            var response = callback(nonScoped);
+            if (Utils.isObject(response)) {
+                // Use custom callback response
+                return response;
+            }
+        };
+
         var query = Utils.parseQueryString(null, true);
         var run   = false;
         if (query.detect && (query.email || query.id)) {
