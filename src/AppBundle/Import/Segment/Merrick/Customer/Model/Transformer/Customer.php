@@ -155,7 +155,7 @@ class Customer extends Transformer
             if (!is_numeric($oKey)) {
                 continue;
             }
-            $questions[] = ['question' => $oKey, 'answer' => $value];
+            $questions[] = ['question' => $oKey, 'answer' => (string) $value];
         }
         return $questions;
     }

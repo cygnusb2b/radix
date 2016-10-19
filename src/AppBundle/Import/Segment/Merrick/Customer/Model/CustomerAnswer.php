@@ -126,6 +126,7 @@ class CustomerAnswer extends Customer
 
     private function retrieveAnswer($legacyId)
     {
+        $legacyId = (string) $legacyId;
         if (!array_key_exists($legacyId, $this->answers)) {
             $this->answers[$legacyId] = $this->getCollectionForModel('question-choice')->findOne(['integration.clientKey' => 'omeda', 'integration.identifier' => $legacyId]);
         }
