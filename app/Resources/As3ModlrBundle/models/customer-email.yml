@@ -12,7 +12,7 @@ customer-email: # for user data linking, registration must be confirmed via emai
                         partialFilterExpression:
                             "verification.verified": true
                 - { keys: { account: 1, value: 1 }, options: { unique: true }}
-                - { keys: { "verification.token": 1 }, options: { unique: true } }
+                - { keys: { "verification.token": 1 }, options: { unique: true, sparse: true } }
     mixins: [ 'timestampable' ]
     attributes:
         name:
