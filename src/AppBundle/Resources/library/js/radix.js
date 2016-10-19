@@ -18,7 +18,6 @@
     var Forms;
     var ClientConfig;
     var ModuleLoader;
-    var IdentityDetector;
     var CustomerManager;
     var LibraryLoader;
 
@@ -56,7 +55,6 @@
             });
 
             ModuleLoader     = new ModuleLoader();
-            IdentityDetector = new IdentityDetector();
             CustomerManager  = new CustomerManager();
             LibraryLoader    = new LibraryLoader();
         } else {
@@ -256,7 +254,6 @@
     {{ loadFile('ajax') }}
     {{ loadFile('client-config') }}
     {{ loadFile('customer-manager') }}
-    {{ loadFile('identity-detector') }}
     {{ loadFile('debugger') }}
     {{ loadFile('utils') }}
 
