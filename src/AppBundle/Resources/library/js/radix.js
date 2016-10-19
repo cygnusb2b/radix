@@ -38,6 +38,12 @@
         return CustomerManager.isLoggedIn();
     };
 
+    Radix.addDetectionCallback = function(callback) {
+        EventDispatcher.subscribe('CustomerManager.preInit', function() {
+            CustomerManager.IdentityDetectionCallbacks.push(callback);
+        });
+    };
+
     Radix.init = function(config) {
         ClientConfig = new ClientConfig(config);
         if (true === ClientConfig.valid()) {
@@ -54,9 +60,9 @@
                 });
             });
 
-            ModuleLoader    = new ModuleLoader();
-            CustomerManager = new CustomerManager();
-            LibraryLoader   = new LibraryLoader();
+            ModuleLoader     = new ModuleLoader();
+            CustomerManager  = new CustomerManager();
+            LibraryLoader    = new LibraryLoader();
         } else {
             Debugger.error('Client config is invalid. Ensure all require properties were set.');
         }

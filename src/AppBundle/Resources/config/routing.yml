@@ -17,14 +17,14 @@ app_bundle_app_auth_verify_reset_token:
     defaults: { _controller: AppBundle:App\Auth:verifyResetToken }
     methods: [ GET ]
 
-app_bundle_app_optins_email_deployment:
-    path: /app/opt-ins/email-deployment/{emailAddress}
-    defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
-    methods: [ GET ]
-
 app_bundle_app_init:
     path: /app/init
     defaults: { _controller: AppBundle:App\Init:default }
+    methods: [ GET ]
+
+app_bundle_app_optins_email_deployment:
+    path: /app/opt-ins/email-deployment/{emailAddress}
+    defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
     methods: [ GET ]
 
 app_bundle_app_product:
@@ -47,7 +47,7 @@ app_bundle_app_question:
     defaults: { _controller: AppBundle:App\Question:retrieve }
     methods: [ GET ]
 
-app_bundle_submission:
+app_bundle_app_submission:
     path: /app/submission/{sourceKey}
     defaults: { _controller: AppBundle:App\Submission:index }
     methods: [ GET, POST ]
