@@ -1,28 +1,36 @@
 function IdentityDetector()
 {
-    EventDispatcher.subscribe('CustomerManager.init', function() {
+    // Should this happen before or after customer init?
+    EventDispatcher.subscribe('appLoaded', function() {
         this.init();
     }.bind(this));
 
     this.init = function() {
-        if (CustomerManager.isLoggedIn()) {
-            // Disallow detection while logged in.
-            return;
-        }
+
         var query = Utils.parseQueryString(null, true);
-        if (!query.detect || (!query.id && !query.email)) {
+        var run   = false;
+        if (query.detect && (query.email || query.id)) {
+            run = true;
+        }
+
+        Debugger.log('IdentityDetector.init()', query, run);
+
+        if (!run) {
             return;
         }
 
         var data = {
-            handler    : query.detect,
-            identifier : query.id || null,
-            email      : query.email || null
+            clientKey    : query.detect,
+            primaryEmail : query.email || null,
+            externalId   : query.id || null
+
         };
         delete query.detect;
-        delete query.id;
         delete query.email;
-        data['fields'] = query;
+        delete query.id;
+        data['extra'] = query;
+
+        Debugger.log('IdentityDetector.init() send', data);
 
         Ajax.send('/app/identity', 'POST', { data: data }).then(function(response) {
 
@@ -30,6 +38,6 @@ function IdentityDetector()
             Debugger.error('Backend processing of identity unsucessful.')
         });
 
-        console.warn('IdentityDetector.init', CustomerManager.isLoggedIn(), data);
+
     }
 }
