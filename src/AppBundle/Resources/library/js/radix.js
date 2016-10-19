@@ -29,6 +29,11 @@
         return CustomerManager.getCustomer();
     };
 
+    // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+    Radix.getIdentity = function() {
+        return CustomerManager.getIdentity();
+    };
+
     Radix.hasCustomer = function() {
         return CustomerManager.isLoggedIn();
     };
