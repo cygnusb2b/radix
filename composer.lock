@@ -53,16 +53,16 @@
         },
         {
             "name": "as3/modlr",
-            "version": "0.3.16",
+            "version": "0.3.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/modlr.git",
-                "reference": "cfd01ca3bbfb09438c3e55e56a51ec0b293307da"
+                "reference": "70efff7b26f69f41729c358f0aa37d7d25103167"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/modlr/zipball/cfd01ca3bbfb09438c3e55e56a51ec0b293307da",
-                "reference": "cfd01ca3bbfb09438c3e55e56a51ec0b293307da",
+                "url": "https://api.github.com/repos/as3io/modlr/zipball/70efff7b26f69f41729c358f0aa37d7d25103167",
+                "reference": "70efff7b26f69f41729c358f0aa37d7d25103167",
                 "shasum": ""
             },
             "require": {
@@ -93,7 +93,7 @@
                 }
             ],
             "description": "Simplified PHP library for fast and efficient RESTful API for MongoDB. Designed for use with front end web frameworks such as EmberJS.",
-            "time": "2016-10-17 17:14:59"
+            "time": "2016-10-19 15:23:40"
         },
         {
             "name": "as3/modlr-api-jsonapiorg",
@@ -138,12 +138,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/As3ModlrBundle.git",
-                "reference": "ea88de7d98c80c7866f800db4ea00886c2e73c55"
+                "reference": "7ce2abb7390c7eaf4081c5b7e00b96e7001774a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/As3ModlrBundle/zipball/ea88de7d98c80c7866f800db4ea00886c2e73c55",
-                "reference": "ea88de7d98c80c7866f800db4ea00886c2e73c55",
+                "url": "https://api.github.com/repos/as3io/As3ModlrBundle/zipball/7ce2abb7390c7eaf4081c5b7e00b96e7001774a4",
+                "reference": "7ce2abb7390c7eaf4081c5b7e00b96e7001774a4",
                 "shasum": ""
             },
             "require": {
@@ -169,7 +169,7 @@
                 }
             ],
             "description": "Symfony bundle for the Modlr REST ODM library.",
-            "time": "2016-09-27 18:03:07"
+            "time": "2016-10-19 15:53:59"
         },
         {
             "name": "as3/modlr-persister-mongodb",
