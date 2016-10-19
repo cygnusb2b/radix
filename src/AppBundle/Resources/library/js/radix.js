@@ -256,6 +256,7 @@
     {{ loadFile('ajax') }}
     {{ loadFile('client-config') }}
     {{ loadFile('customer-manager') }}
+    {{ loadFile('identity-detector') }}
     {{ loadFile('debugger') }}
     {{ loadFile('utils') }}
 
