@@ -1,8 +1,3 @@
-experimental:
-  notify:
-    branches:
-      ignore:
-        - dev
 machine:
     timezone: America/Chicago
     environment:
@@ -23,3 +18,7 @@ dependencies:
     - echo "extension=mongo.so" > /opt/circleci/php/$(phpenv global)/etc/conf.d/mongo.ini
     - echo "extension=redis.so" > /opt/circleci/php/$(phpenv global)/etc/conf.d/redis.ini
     - echo "date.timezone = \"America/Chicago\"" > /opt/circleci/php/$(phpenv global)/etc/conf.d/date.ini
+test:
+  override:
+    - mkdir -p $CIRCLE_TEST_REPORTS/phpunit
+    - phpunit --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
