@@ -166,13 +166,44 @@ function CustomerManager()
         return (customer._id) ? true : false;
     }
 
-    this.checkAuth = function() {
+    this.parseDetectionParams = function() {
+        var query = Utils.parseQueryString(null, true);
+        var run   = false;
+        if (query.detect && (query.email || query.id)) {
+            run = true;
+        }
 
+        if (!run) {
+            return;
+        }
+        var data = {
+            clientKey    : query.detect,
+            primaryEmail : query.email || null,
+            externalId   : query.id || null
+
+        };
+        delete query.detect;
+        delete query.email;
+        delete query.id;
+        data['extra'] = query;
+        return data;
+    }
+
+    this.checkAuth = function() {
         var headers;
         if (Callbacks.has('checkAuth')) {
             headers = Callbacks.get('checkAuth')();
         }
-        return Ajax.send('/app/auth', 'GET', undefined, headers);
+
+        var detectionParams = this.parseDetectionParams();
+        Debugger.log('CustomerManager.checkAuth()::detectionParams', detectionParams);
+
+        var url = '/app/auth';
+        if (detectionParams) {
+            url = url + '?' + $.param({ detect: detectionParams});
+        }
+
+        return Ajax.send(url, 'GET', undefined, headers);
     }
 
     this.getCustomer = function() {
