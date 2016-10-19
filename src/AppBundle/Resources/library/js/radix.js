@@ -18,6 +18,7 @@
     var Forms;
     var ClientConfig;
     var ModuleLoader;
+    var IdentityDetector;
     var CustomerManager;
     var LibraryLoader;
 
@@ -54,9 +55,10 @@
                 });
             });
 
-            ModuleLoader    = new ModuleLoader();
-            CustomerManager = new CustomerManager();
-            LibraryLoader   = new LibraryLoader();
+            ModuleLoader     = new ModuleLoader();
+            IdentityDetector = new IdentityDetector();
+            CustomerManager  = new CustomerManager();
+            LibraryLoader    = new LibraryLoader();
         } else {
             Debugger.error('Client config is invalid. Ensure all require properties were set.');
         }
