@@ -16,8 +16,6 @@ machine:
         redis.platform.as3.io: 127.0.0.1
         redis.analytics.as3.io: 127.0.0.1
 dependencies:
-    pre:
-        - yes '' | pecl install mongo redis-2.2.8
-test:
-    override:
-        - phpunit --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
+  pre:
+    - yes '' | pecl install mongo redis-2.2.8
+    - echo "extension=mongo.so" > /opt/circleci/php/$(phpenv global)/etc/conf.d/mongo.ini
