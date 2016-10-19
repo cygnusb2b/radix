@@ -20,7 +20,7 @@ class CustomerIdentity extends Customer
     protected function formatModel(array $doc)
     {
         $transformer = new Transformer\Customer();
-        $transformer->define('email', 'email', 'strtolower');
+        $transformer->define('primaryEmail', 'email', 'strtolower');
         return $transformer->toApp($doc);
     }
 
