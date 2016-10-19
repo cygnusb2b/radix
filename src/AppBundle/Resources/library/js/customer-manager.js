@@ -1,6 +1,8 @@
 function CustomerManager()
 {
     var customer = getDefaultCustomerObject();
+    // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+    var identity = null;
 
     EventDispatcher.subscribe('CustomerManager.login.success', function() {
         EventDispatcher.trigger('CustomerManager.customer.loaded');
@@ -13,6 +15,11 @@ function CustomerManager()
     this.init = function() {
         this.checkAuth().then(function (response) {
             customer = response.data;
+
+            // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+            identity = response.identity;
+            EventDispatcher.trigger('CustomerManager.identity.loaded');
+
             EventDispatcher.trigger('CustomerManager.customer.loaded');
             EventDispatcher.trigger('CustomerManager.init');
         }, function () {
@@ -24,6 +31,11 @@ function CustomerManager()
         var promise = this.checkAuth();
         promise.then(function (response) {
             customer = response.data;
+
+            // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+            identity = response.identity;
+
+            EventDispatcher.trigger('CustomerManager.identity.loaded');
         }, function() {
             Debugger.error('Unable to retrieve a customer.');
         });
@@ -165,6 +177,11 @@ function CustomerManager()
 
     this.getCustomer = function() {
         return customer;
+    }
+
+    // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+    this.getIdentity = function() {
+        return identity;
     }
 
     this.logout = function() {

@@ -83,6 +83,9 @@ class CustomerManager
         $user = $this->getSecurityUser();
         if ($user) {
             $serialized = $this->authGenerator->generateFor($user);
+            // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+            $customer = $this->getActiveCustomer();
+            $serialized['identity'] = (null === $customer) ? null : $customer->getId();
             return new JsonResponse($serialized);
         }
         return $this->createDefaultAuthResponse();
@@ -97,6 +100,9 @@ class CustomerManager
     {
         $model = $this->getStore()->create('customer-account');
         $serialized = $this->authGenerator->getSerializer()->serialize($model);
+        // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+        $customer = $this->getActiveCustomer();
+        $serialized['identity'] = (null === $customer) ? null : $customer->getId();
         return new JsonResponse($serialized);
     }
 
