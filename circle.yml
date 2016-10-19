@@ -19,3 +19,4 @@ dependencies:
   pre:
     - yes '' | pecl install mongo redis-2.2.8
     - echo "extension=mongo.so" > /opt/circleci/php/$(phpenv global)/etc/conf.d/mongo.ini
+    - echo "extension=redis.so" > /opt/circleci/php/$(phpenv global)/etc/conf.d/redis.ini
