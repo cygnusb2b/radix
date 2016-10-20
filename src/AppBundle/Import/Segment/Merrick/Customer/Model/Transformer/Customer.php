@@ -111,7 +111,7 @@ class Customer extends Transformer
             $credentials['password'] = [
                 'value'     => $data['pwd'],
                 'salt'      => isset($data['salt']) ? $data['salt'] : null,
-                'mechanism' => 'merick'
+                'mechanism' => 'merrick'
             ];
         }
         return $credentials;
