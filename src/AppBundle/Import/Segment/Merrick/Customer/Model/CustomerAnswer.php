@@ -80,7 +80,7 @@ class CustomerAnswer extends Customer
             ],
             'customer'  => $doc['customer'],
             'question'  => ['id' => $question['_id'], 'type' => 'question'],
-            'answer'    => ['id' => $answer['_id'], 'type' => 'question-choice']
+            'value'     => ['id' => $answer['_id'], 'type' => 'question-choice']
         ];
     }
 

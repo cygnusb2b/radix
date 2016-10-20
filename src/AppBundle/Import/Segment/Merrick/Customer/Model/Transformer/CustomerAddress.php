@@ -18,8 +18,8 @@ class CustomerAddress extends Transformer
         $this->define('city', 'city');
         $this->define('postalCode', 'postalCode');
         $this->define('country', 'country');
-        $this->define('countryCode', 'country');
+        $this->define('countryCode', 'countryCode');
         $this->define('region', 'region');
-        $this->define('regionCode', 'region');
+        $this->define('regionCode', 'regionCode');
     }
 }
