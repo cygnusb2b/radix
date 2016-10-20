@@ -142,7 +142,6 @@ class Transformer extends BaseTransformer
         // Ensure required fields are present
         foreach ($this->requiredFields as $key) {
             if (!array_key_exists($key, $data)) {
-                var_Dump(array_keys($data));
                 throw new \RuntimeException(sprintf('Required field "%s" is not present in transformed data!', $key));
             }
         }

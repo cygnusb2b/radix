@@ -7,7 +7,7 @@ export default Ember.Route.extend({
     templateName: 'demographic/questions/edit',
 
     model: function() {
-        return this.store.createRecord('demographic');
+        return this.store.createRecord('question');
     },
 
     actions: {

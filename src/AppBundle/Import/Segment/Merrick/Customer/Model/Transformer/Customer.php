@@ -111,7 +111,7 @@ class Customer extends Transformer
             $credentials['password'] = [
                 'value'     => $data['pwd'],
                 'salt'      => isset($data['salt']) ? $data['salt'] : null,
-                'mechanism' => 'merick'
+                'mechanism' => 'merrick'
             ];
         }
         return $credentials;
@@ -155,7 +155,7 @@ class Customer extends Transformer
             if (!is_numeric($oKey)) {
                 continue;
             }
-            $questions[] = ['question' => $oKey, 'answer' => $value];
+            $questions[] = ['question' => $oKey, 'answer' => (string) $value];
         }
         return $questions;
     }

@@ -13,7 +13,7 @@ export default Ember.Route.extend({
 
         this.get('loading').show();
 
-        return this.store.query('demographic-choice', {
+        return this.store.query('question-choice', {
             page: {
                 offset: parseInt(this.get('offset')),
                 limit:  parseInt(this.get('limit'))

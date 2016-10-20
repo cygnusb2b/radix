@@ -6,7 +6,7 @@ export default Ember.Route.extend({
     utility: Ember.inject.service('model-utility'),
 
     model: function(params) {
-        return this.store.findRecord('demographic', params.id);
+        return this.store.findRecord('question', params.id);
     },
 
     actions: {

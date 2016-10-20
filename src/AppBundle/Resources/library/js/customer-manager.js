@@ -1,6 +1,10 @@
 function CustomerManager()
 {
     var customer = getDefaultCustomerObject();
+    // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+    var identity = null;
+
+    this.IdentityDetectionCallbacks = [];
 
     EventDispatcher.subscribe('CustomerManager.login.success', function() {
         EventDispatcher.trigger('CustomerManager.customer.loaded');
@@ -11,8 +15,14 @@ function CustomerManager()
     }.bind(this));
 
     this.init = function() {
+        EventDispatcher.trigger('CustomerManager.preInit');
         this.checkAuth().then(function (response) {
             customer = response.data;
+
+            // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+            identity = response.identity;
+            EventDispatcher.trigger('CustomerManager.identity.loaded');
+
             EventDispatcher.trigger('CustomerManager.customer.loaded');
             EventDispatcher.trigger('CustomerManager.init');
         }, function () {
@@ -24,6 +34,11 @@ function CustomerManager()
         var promise = this.checkAuth();
         promise.then(function (response) {
             customer = response.data;
+
+            // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+            identity = response.identity;
+
+            EventDispatcher.trigger('CustomerManager.identity.loaded');
         }, function() {
             Debugger.error('Unable to retrieve a customer.');
         });
@@ -154,17 +169,65 @@ function CustomerManager()
         return (customer._id) ? true : false;
     }
 
-    this.checkAuth = function() {
+    this.parseDetectionParams = function() {
 
+        var custom    = false;
+        var nonScoped = Utils.parseQueryString();
+        for (var i = 0; i < this.IdentityDetectionCallbacks.length; i++) {
+            var callback = this.IdentityDetectionCallbacks[i];
+            var response = callback(nonScoped);
+            if (Utils.isObject(response)) {
+                // Use custom callback response
+                return response;
+            }
+        };
+
+        var query = Utils.parseQueryString(null, true);
+        var run   = false;
+        if (query.detect && (query.email || query.id)) {
+            run = true;
+        }
+
+        if (!run) {
+            return;
+        }
+        var data = {
+            clientKey    : query.detect,
+            primaryEmail : query.email || null,
+            externalId   : query.id || null
+
+        };
+        delete query.detect;
+        delete query.email;
+        delete query.id;
+        data['extra'] = query;
+        return data;
+    }
+
+    this.checkAuth = function() {
         var headers;
         if (Callbacks.has('checkAuth')) {
             headers = Callbacks.get('checkAuth')();
         }
-        return Ajax.send('/app/auth', 'GET', undefined, headers);
+
+        var detectionParams = this.parseDetectionParams();
+        Debugger.log('CustomerManager.checkAuth()::detectionParams', detectionParams);
+
+        var url = '/app/auth';
+        if (detectionParams) {
+            url = url + '?' + $.param({ detect: detectionParams});
+        }
+
+        return Ajax.send(url, 'GET', undefined, headers);
     }
 
     this.getCustomer = function() {
         return customer;
+    }
+
+    // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
+    this.getIdentity = function() {
+        return identity;
     }
 
     this.logout = function() {

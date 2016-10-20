@@ -1,0 +1,24 @@
+machine:
+    timezone: America/Chicago
+    environment:
+        APP_ENV: test
+    php:
+        version: 5.6.17
+    services:
+        - redis
+    hosts:
+        mongo.platform.as3.io: 127.0.0.1
+        mongo.legacy.as3.io: 127.0.0.1
+        mongo.analytics.as3.io: 127.0.0.1
+        redis.platform.as3.io: 127.0.0.1
+        redis.analytics.as3.io: 127.0.0.1
+dependencies:
+  pre:
+    - yes '' | pecl install mongo redis-2.2.8
+    - echo "extension=mongo.so" > /opt/circleci/php/$(phpenv global)/etc/conf.d/mongo.ini
+    - echo "extension=redis.so" > /opt/circleci/php/$(phpenv global)/etc/conf.d/redis.ini
+    - echo "date.timezone = \"America/Chicago\"" > /opt/circleci/php/$(phpenv global)/etc/conf.d/date.ini
+test:
+  override:
+    - mkdir -p $CIRCLE_TEST_REPORTS/phpunit
+    - phpunit --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml

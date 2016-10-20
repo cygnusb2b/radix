@@ -7,7 +7,7 @@ export default Ember.Route.extend({
     templateName: 'demographic/labels/edit',
 
     model: function() {
-        return this.store.createRecord('demographic-label');
+        return this.store.createRecord('question-tag');
     },
 
     actions: {
