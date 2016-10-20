@@ -31,6 +31,11 @@ function ComponentLoaderModule()
                 required     : [ 'modelType', 'modelIdentifier' ],
                 usesChildren : false
             },
+            GatedDownload : {
+                allowed      : [ 'title', 'description', 'fileUrl', 'webhookUrl', 'className', 'enableNotify', 'notifyEmail' ],
+                required     : [ 'fileUrl' ],
+                usesChildren : false
+            },
             LinkLogout : {
                 allowed      : [ 'tagName', 'wrappingTag', 'wrappingClass', 'className', 'label', 'prefix', 'suffix' ],
                 required     : [  ],
@@ -133,6 +138,19 @@ function ComponentLoaderModule()
                 var propName = scoped ? Utils.lcFirst(key.replace('prop', '')) : key;
                 if (-1 !== propNames.indexOf(propName)) {
                     cleaned[propName] = props[key];
+                }
+            }
+        }
+
+        if (scoped) {
+            cleaned['meta'] = {};
+            for (var key in props) {
+                if (props.hasOwnProperty(key)) {
+                    if (0 !== key.indexOf('meta')) {
+                        continue;
+                    }
+                    var metaName = Utils.lcFirst(key.replace('meta', ''));
+                    cleaned['meta'][metaName] = props[key];
                 }
             }
         }
