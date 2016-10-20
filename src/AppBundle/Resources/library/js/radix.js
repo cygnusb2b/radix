@@ -138,6 +138,7 @@
         this.FormSelectOption               = {{ loadComponent('form-select-option') }}
         this.FormQuestion                   = {{ loadComponent('form-question') }}
         this.FormTextArea                   = {{ loadComponent('form-textarea') }}
+        this.GatedDownload                  = {{ loadComponent('gated-download') }}
         this.Inquiry                        = {{ loadComponent('inquiry') }}
         this.LinkLogout                     = {{ loadComponent('link-logout') }}
         this.Login                          = {{ loadComponent('login') }}
@@ -168,6 +169,7 @@
         this.ResetPasswordGenerate  = {{ loadForm('reset-password-generate') }}
         this.ResetPassword          = {{ loadForm('reset-password') }}
         this.Login                  = {{ loadForm('login') }}
+        this.GatedDownload          = {{ loadForm('gated-download') }}
 
         this.get = function(name) {
             return this[name];
