@@ -9,6 +9,7 @@ services:
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_submit" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_generate" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.email_opt_in" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.gated_download" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.inquiry" ] ]
 
     app_bundle.submission.handler.customer_account:
@@ -34,6 +35,9 @@ services:
     app_bundle.submission.handler.email_opt_in:
         class: AppBundle\Submission\Handlers\EmailOptInHandler
         arguments: [ "@app_bundle.factory.product.email_deployment_optin" ]
+
+    app_bundle.submission.handler.gated_download:
+        class: AppBundle\Submission\Handlers\GatedDownloadHandler
 
     app_bundle.submission.handler.inquiry:
         class: AppBundle\Submission\Handlers\InquiryHandler
