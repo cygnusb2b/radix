@@ -18,13 +18,6 @@ if ('prod' === $env) {
     $kernel = new AppKernel('dev', $debug);
 }
 
-// Load AppCache based on server environment variable 'APP_CACHE'
-if (getenv('USE_CACHE') === 'true') {
-    $kernel = new AppCache($kernel);
-    // When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter
-    Request::enableHttpMethodParameterOverride();
-}
-
 $request = Request::createFromGlobals();
 
 // Set trusted proxies (varnish) based on server environment variable 'TRUSTED_PROXIES'
