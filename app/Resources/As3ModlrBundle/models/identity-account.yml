@@ -1,0 +1,20 @@
+identity-account:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'identity-attributable', 'timestampable' ]
+    relationships:
+        credentials:
+            type: many
+            inverse: true
+            field: account
+            entity: account-credential
+            description: 'The credentials this account owns. Used for signing in.'
+        emails:
+            type: many
+            inverse: true
+            field: account
+            entity: identity-account-email
+            description: 'The email addresses that this account owns.'
+

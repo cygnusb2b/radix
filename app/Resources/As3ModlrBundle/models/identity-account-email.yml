@@ -1,0 +1,17 @@
+identity-account-email:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable', 'identity-emailable' ]
+    embeds:
+        verification:
+            type: one
+            entity: identity-email-verification
+            description: 'The email address verification details.'
+    relationships:
+        account:
+            type: one
+            entity: identity-account
+            description: 'The identity account that owns this email address.'
+

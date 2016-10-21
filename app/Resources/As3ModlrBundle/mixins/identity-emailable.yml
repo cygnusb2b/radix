@@ -1,0 +1,15 @@
+identity-emailable:
+    attributes:
+        description:
+            type: string
+            description: 'A string value describing the email address.'
+        isPrimary:
+            type: boolean
+            defaultValue: false
+            description: 'Whether or this email address is considered the primary for the associated identity.'
+        value:
+            type: string
+            description: 'The email address value.'
+        emailType:
+            type: string
+            description: 'The email type, one of Personal, Business, or Other. An empty value signifies that the type is unknown.'

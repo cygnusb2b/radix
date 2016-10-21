@@ -1,0 +1,24 @@
+identity-attributable:
+    attributes:
+        givenName:
+            type: string
+        familyName:
+            type: string
+        middleName:
+            type: string
+        salutation:
+            type: string
+        suffix:
+            type: string
+        gender:
+            type: string # Male, Female, Non-Binary, Unknown
+            defaultValue: Unknown
+        title:
+            type: string
+        companyName:
+            type: string
+        fullName:
+            type: string
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: customerFullName
