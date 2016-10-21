@@ -11,6 +11,20 @@ identity-account:
             calculated:
                 class: AppBundle\CalculatedFields
                 method: identityAccountPrimaryEmail
+        displayName:
+            type: string # should have an intelligent default if empty: try the first part of an email address, try a password username value, try a social nickname, etc.
+        picture:
+            type: string
+        roles:
+            type: array
+            defaultValue: [ USER ]
+    embeds:
+        settings:
+            type: one
+            entity: identity-account-settings
+        history:
+            type: one
+            entity: identity-account-history
     relationships:
         credentials:
             type: many
