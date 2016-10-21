@@ -32,5 +32,44 @@ identity:
                                 "$exists": true
                 - { keys: { source: 1, identifier: 1 } , options: { unique: true, partialFilterExpression: { _type: "identity-external" } } }
                 - { keys: { _type: 1, _id: 1 }, options: { unique: true } }
-    mixins: [ 'identity-attributable', 'timestampable' ]
+    attributes:
+        givenName:
+            type: string
+        familyName:
+            type: string
+        middleName:
+            type: string
+        salutation:
+            type: string
+        suffix:
+            type: string
+        gender:
+            type: string # Male, Female, Non-Binary, Unknown
+            defaultValue: Unknown
+        title:
+            type: string
+        companyName:
+            type: string
+        fullName:
+            type: string
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityFullName
+        primaryPhone:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityPrimaryPhone
+        primaryAddress:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityPrimaryAddress
+    embeds:
+        addresses:
+            type: many
+            entity: identity-address
+        phones:
+            type: many
+            entity: identity-address
 

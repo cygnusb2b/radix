@@ -60,7 +60,7 @@ class CalculatedFields
         return $primary;
     }
 
-    public static function identityAttributableFullName(Model $model)
+    public static function identityFullName(Model $model)
     {
         $name = '';
         if ($model->get('givenName')) {
@@ -75,7 +75,7 @@ class CalculatedFields
         }
     }
 
-    public static function identityAttributablePrimaryAddress(Model $model)
+    public static function identityPrimaryAddress(Model $model)
     {
         $buildAddress = function(Model $model) {
             $fields = ['name', 'companyName', 'street', 'extra', 'city', 'region', 'regionCode', 'postalCode', 'country', 'countryCode'];
@@ -100,7 +100,7 @@ class CalculatedFields
         return $primary;
     }
 
-    public static function identityAttributablePrimaryPhone(Model $model)
+    public static function identityPrimaryPhone(Model $model)
     {
         $primary = null;
         foreach ($model->get('phones') as $phone) {
