@@ -19,6 +19,10 @@ identity-account:
             type: array
             defaultValue: [ USER ]
     embeds:
+        credentials:
+            type: one
+            entity: identity-account-credentials
+            description: 'The credentials this account owns. Used for signing in.'
         settings:
             type: one
             entity: identity-account-settings
@@ -26,12 +30,6 @@ identity-account:
             type: one
             entity: identity-account-history
     relationships:
-        credentials:
-            type: many
-            inverse: true
-            field: account
-            entity: account-credential
-            description: 'The credentials this account owns. Used for signing in.'
         emails:
             type: many
             inverse: true
