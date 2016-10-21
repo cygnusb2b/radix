@@ -1,7 +1,36 @@
 identity:
     entity:
+        abstract: true
+        polymorphic: true
         persistence:
             key: mongodb
             db: radix
-    mixins: [ 'identity-attributable', 'identity-email-embeddable', 'timestampable' ]
+            schemata:
+                -
+                    keys:
+                        "credentials.password.username": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.password.username":
+                                "$exists": true
+                -
+                    keys:
+                        "credentials.social.identifier": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.social.identifier":
+                                "$exists": true
+                -
+                    keys:
+                        "credentials.password.resetCode": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.password.resetCode":
+                                "$exists": true
+                - { keys: { source: 1, identifier: 1 } , options: { unique: true, partialFilterExpression: { _type: "identity-external" } } }
+                - { keys: { _type: 1, _id: 1 }, options: { unique: true } }
+    mixins: [ 'identity-attributable', 'timestampable' ]
 

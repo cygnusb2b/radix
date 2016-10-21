@@ -1,4 +1,4 @@
-identity-email-verification:
+identity-account-email-verification:
     attributes:
         verified:
             type: boolean

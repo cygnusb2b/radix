@@ -18,7 +18,7 @@ identity-account-email:
     embeds:
         verification:
             type: one
-            entity: identity-email-verification
+            entity: identity-account-email-verification
             description: 'The email address verification details.'
     relationships:
         account:

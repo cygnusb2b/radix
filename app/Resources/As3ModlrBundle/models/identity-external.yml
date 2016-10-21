@@ -1,12 +1,10 @@
 identity-external:
     entity:
+        extends: identity
         persistence:
             key: mongodb
             db: radix
-            schemata:
-                - { keys: { source: 1, identifier: 1 }, options: { unique: true }}
-
-    mixins: [ 'identity-attributable', 'identity-email-embeddable', 'timestampable' ]
+    mixins: [ 'identity-email-embeddable' ]
     attributes:
         source:
             type: string
