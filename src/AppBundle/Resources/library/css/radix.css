@@ -772,37 +772,12 @@ ins {
 .platform-element input[type="radio"]:focus {
     border-left: 0 none transparent;
 }
-.platform-element input[type="checkbox"]:first-of-type,
-.platform-element input[type="radio"]:first-of-type {
+
+.platform-element input[type="checkbox"],
+.platform-element input[type="radio"] {
     margin-top: 30px;
 }
-.platform-element input[type="checkbox"]::after,
-.platform-element input[type="radio"]::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
 
-    width: 20px;
-    height: 20px;
-
-    content: " ";
-    -webkit-transition-duration: .3s;
-            transition-duration: .3s;
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
-
-    border-radius: 20px;
-    background: #fff;
-}
-.platform-element  input[type="checkbox,"]:checked,
-.platform-element  input[type="radio"]:checked {
-    background: #b0afaf;
-}
-.platform-element  input[type="checkbox"]:checked::after,
-.platform-element  input[type="radio"]:checked::after {
-    background: #008000;
-}
 .platform-element input[type="checkbox"] + label,
 .platform-element input[type="radio"] + label {
     position: relative;
@@ -810,53 +785,73 @@ ins {
 
     display: inline-block;
     float: left;
-    padding: 0;
     margin: 10px 0;
 
     line-height: 20px;
 }
-.platform-element input[type="checkbox"]:first-of-type + label,
-.platform-element input[type="radio"]:first-of-type + label {
+.platform-element input[type="checkbox"] + label,
+.platform-element input[type="radio"] + label {
     margin-top: 30px;
 }
 
-/* Alternate "switch" style layout for toggle*/
-.platform-element .toggle input[type="radio"] {
-    margin: 30px 0 10px 15px;
-    clear: none;
-
-    border-radius: 10px 0 0 10px;
-    background: #86d993;
-}
-.platform-element .toggle input[type="radio"]:checked {
-    background: #b0afaf;
-}
-.platform-element .toggle input[type="radio"]::after {
-    -webkit-transform: translateX(20px);
-            transform: translateX(20px);
-}
-.platform-element .toggle input[type="radio"]:last-of-type {
-    margin-left: 0;
-
-    border-radius: 0 10px 10px 0;
-    background: #b0afaf;
-}
-.platform-element .toggle input[type="radio"]:last-of-type::after {
-    -webkit-transform: translateX(-20px);
-            transform: translateX(-20px);
-}
-.platform-element .toggle input[type="radio"]:last-of-type:checked {
-    background: #86d993;
-}
-.platform-element .toggle input[type="radio"]:last-of-type:checked::after {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
-
-    background: #008000;
-}
-.platform-element .toggle input[type="radio"] + label {
+.platform-element .toggle input {
     display: none;
 }
+
+.platform-element .toggle label {
+    float: left;
+    width: 100%;
+
+    text-align: center;
+}
+
+.platform-element .toggle label {
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    padding: 2px;
+
+    font-size: 10.5px;
+    font-weight: normal;
+    line-height: 24px;
+
+    -webkit-transition: all .1s ease-in-out;
+       -moz-transition: all .1s ease-in-out;
+        -ms-transition: all .1s ease-in-out;
+         -o-transition: all .1s ease-in-out;
+            transition: all .1s ease-in-out;
+    text-align: center;
+
+    color: rgba(0, 0, 0, .6);
+    border: 1px solid rgba(0, 0, 0, .2);
+    background-color: #e4e4e4;
+    text-shadow: none;
+}
+
+.platform-element .toggle label:hover {
+    cursor: pointer;
+}
+
+.platform-element .toggle input:checked + label {
+    font-weight: bold;
+
+    color: rgb(0, 128, 0);
+    background-color: rgb(134, 217, 147);
+    -webkit-box-shadow: none;
+            box-shadow: none;
+}
+.platform-element .toggle input[value="false"]:checked + label {
+    color: #323a45;
+    background-color: #ccc;
+}
+.platform-element .toggle label:first-of-type {
+    border-radius: 12px 0 0 12px;
+}
+
+.platform-element .toggle label:last-of-type {
+    border-radius: 0 12px 12px 0;
+}
+
 
 /* Subscribe page layout */
 @media screen and (min-width: 1000px) {
@@ -875,7 +870,7 @@ ins {
 }
 .platform-element .email-subscription-wrapper .form-product-email .form-element-wrapper {
     float: left;
-    width: 94px;
+    width: 150px;
 }
 .platform-element .email-subscription-wrapper .form-product-email .product-email-deployment {
     float: left;
