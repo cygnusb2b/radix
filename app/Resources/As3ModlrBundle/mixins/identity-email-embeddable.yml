@@ -1,0 +1,13 @@
+identity-email-embeddable:
+    attributes:
+        primaryEmail:
+            type: string
+            description: 'The primary email address of this identity.'
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityEmailEmbeddablePrimaryEmail
+    embeds:
+        emails:
+            type: many
+            entity: identity-email
+            description: 'The email addresses that this identity owns.'

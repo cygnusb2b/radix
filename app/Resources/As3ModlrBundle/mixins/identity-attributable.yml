@@ -22,3 +22,10 @@ identity-attributable:
             calculated:
                 class: AppBundle\CalculatedFields
                 method: customerFullName
+    embeds:
+        addresses:
+            type: many
+            entity: identity-address
+        phones:
+            type: many
+            entity: identity-address

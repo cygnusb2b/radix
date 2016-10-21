@@ -1,0 +1,7 @@
+identity:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'identity-attributable', 'identity-email-embeddable', 'timestampable' ]
+

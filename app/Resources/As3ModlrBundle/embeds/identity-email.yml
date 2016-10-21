@@ -1,0 +1,2 @@
+identity-email:
+    uses: [ 'identity-emailable' ]

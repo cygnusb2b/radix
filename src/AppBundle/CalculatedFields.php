@@ -6,6 +6,23 @@ use As3\Modlr\Models\Model;
 
 class CalculatedFields
 {
+    public static function identityEmailEmbeddablePrimaryEmail(Model $model)
+    {
+        $primary = null;
+        foreach ($model->get('emails') as $email) {
+            if (null === $primary) {
+                // Use first email as primary, as a default.
+                $primary = $email->get('value');
+            }
+            if (true === $email->get('isPrimary')) {
+                $primary = $email->get('value');
+                break;
+            }
+        }
+        return $primary;
+    }
+
+
     /**
      * Calculates the email deployment optins for customer-account models.
      *
