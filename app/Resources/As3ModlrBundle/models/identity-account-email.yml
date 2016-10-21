@@ -3,6 +3,17 @@ identity-account-email:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                -
+                    keys:
+                        value: 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "verification.verified": true
+                - { keys: { account: 1, value: 1 }, options: { unique: true }}
+                - { keys: { "verification.token": 1 }, options: { unique: true, sparse: true } }
+
     mixins: [ 'timestampable', 'identity-emailable' ]
     embeds:
         verification:

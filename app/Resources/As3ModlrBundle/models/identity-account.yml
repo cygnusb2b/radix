@@ -3,6 +3,32 @@ identity-account:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                -
+                    keys:
+                        "credentials.password.username": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.password.username":
+                                "$exists": true
+                -
+                    keys:
+                        "credentials.social.identifier": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.social.identifier":
+                                "$exists": true
+                -
+                    keys:
+                        "credentials.password.resetCode": 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "credentials.password.resetCode":
+                                "$exists": true
+
     mixins: [ 'identity-attributable', 'timestampable' ]
     attributes:
         primaryEmail:
