@@ -65,6 +65,9 @@ identity:
             calculated:
                 class: AppBundle\CalculatedFields
                 method: identityPrimaryAddress
+        extra:
+            type: object
+            description: 'Any extra, non-defined indentity data.'
     embeds:
         addresses:
             type: many
