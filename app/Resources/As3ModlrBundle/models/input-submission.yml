@@ -33,9 +33,9 @@ input-submission:
             entity: input-answer
             inverse: true
             field: submission
-        # source:
-        #     type: one
-        #     entity: input-source
-        customer:
+        identity:
             type: one
-            entity: customer
+            entity: identity
+        # customer: @todo This should be removed
+        #     type: one
+        #     entity: customer
