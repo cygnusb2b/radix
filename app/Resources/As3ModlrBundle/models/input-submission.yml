@@ -36,6 +36,6 @@ input-submission:
         identity:
             type: one
             entity: identity
-        # customer: @todo This should be removed
-        #     type: one
-        #     entity: customer
+        customer: # @todo This should be removed
+            type: one
+            entity: customer
