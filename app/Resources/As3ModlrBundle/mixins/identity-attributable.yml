@@ -21,7 +21,17 @@ identity-attributable:
             type: string
             calculated:
                 class: AppBundle\CalculatedFields
-                method: customerFullName
+                method: identityAttributableFullName
+        primaryPhone:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityAttributablePrimaryPhone
+        primaryAddress:
+            type: object
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityAttributablePrimaryAddress
     embeds:
         addresses:
             type: many
