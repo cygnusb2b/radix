@@ -12,7 +12,7 @@ React.createClass({ displayName: 'ComponentFormSelectOption',
             React.createElement('option', {
                 value: this.props.value,
                 label: this.props.label
-            })
+            }, this.props.label)
         )
     }
 });
