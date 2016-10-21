@@ -22,6 +22,44 @@ class CalculatedFields
         return $primary;
     }
 
+    public static function identityAccountPrimaryEmail(Model $model)
+    {
+        $primary = null;
+
+        // Try verified emails first.
+        foreach ($model->get('emails') as $email) {
+            $verification = $email->get('verification');
+            if (null === $verification || false === $verification->get('verified')) {
+                continue;
+            }
+            if (null === $primary) {
+                // Use first email as primary, as a default.
+                $primary = $email->get('value');
+            }
+            if (true === $email->get('isPrimary')) {
+                $primary = $email->get('value');
+                break;
+            }
+        }
+        if (!empty($primary)) {
+            return $primary;
+        }
+
+        // Try again with non-verified.
+        foreach ($model->get('emails') as $email) {
+            if (null === $primary) {
+                // Use first email as primary, as a default.
+                $primary = $email->get('value');
+            }
+            if (true === $email->get('isPrimary')) {
+                $primary = $email->get('value');
+                break;
+            }
+        }
+
+        return $primary;
+    }
+
 
     /**
      * Calculates the email deployment optins for customer-account models.

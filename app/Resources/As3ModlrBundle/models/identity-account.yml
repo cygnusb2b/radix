@@ -4,6 +4,13 @@ identity-account:
             key: mongodb
             db: radix
     mixins: [ 'identity-attributable', 'timestampable' ]
+    attributes:
+        primaryEmail:
+            type: string
+            description: 'The primary email address of this account.'
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityAccountPrimaryEmail
     relationships:
         credentials:
             type: many
