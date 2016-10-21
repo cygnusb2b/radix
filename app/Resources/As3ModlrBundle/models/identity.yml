@@ -72,4 +72,10 @@ identity:
         phones:
             type: many
             entity: identity-address
+    relationships:
+        answers:
+            type: many
+            entity: identity-answer
+            inverse: true
+            field: identity
 
