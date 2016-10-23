@@ -8,6 +8,7 @@ services:
             # - [ addFactory, [ "@app_bundle.factory.customer.email" ] ]
             # - [ addFactory, [ "@app_bundle.factory.customer.identity" ] ]
             - [ addFactory, [ "@app_bundle.factory.identity.address" ] ]
+            - [ addFactory, [ "@app_bundle.factory.identity.email" ] ]
             - [ addFactory, [ "@app_bundle.factory.identity.phone" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_submission" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_answer" ] ]
@@ -15,6 +16,10 @@ services:
     app_bundle.factory.identity.address:
         private: true
         class: AppBundle\Factory\Identity\IdentityAddressFactory
+
+    app_bundle.factory.identity.email:
+        private: true
+        class: AppBundle\Factory\Identity\IdentityEmailFactory
 
     app_bundle.factory.identity.phone:
         private: true

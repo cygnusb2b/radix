@@ -4,7 +4,6 @@ namespace AppBundle\Factory\Identity;
 
 use AppBundle\Factory\AbstractEmbedFactory;
 use AppBundle\Factory\Error;
-use AppBundle\Utility\LocaleUtility;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Embed;
 
