@@ -87,6 +87,6 @@ class IdentityEmailFactory extends AbstractEmbedFactory
      */
     protected function getSupportsType()
     {
-        return 'identity-email'
+        return 'identity-email';
     }
 }

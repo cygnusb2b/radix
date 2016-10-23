@@ -118,6 +118,6 @@ class IdentityAddressFactory extends AbstractEmbedFactory
      */
     protected function getSupportsType()
     {
-        return 'identity-address'
+        return 'identity-address';
     }
 }

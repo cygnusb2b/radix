@@ -82,6 +82,6 @@ class IdentityPhoneFactory extends AbstractEmbedFactory
      */
     protected function getSupportsType()
     {
-        return 'identity-phone'
+        return 'identity-phone';
     }
 }
