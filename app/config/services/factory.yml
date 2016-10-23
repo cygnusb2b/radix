@@ -7,6 +7,7 @@ services:
             # - [ addFactory, [ "@app_bundle.factory.customer.answer" ] ]
             # - [ addFactory, [ "@app_bundle.factory.customer.email" ] ]
             # - [ addFactory, [ "@app_bundle.factory.customer.identity" ] ]
+            - [ addFactory, [ "@app_bundle.factory.identity.answer" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_submission" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_answer" ] ]
 
@@ -27,6 +28,11 @@ services:
     app_bundle.factory.identity.address:
         private: true
         class: AppBundle\Factory\Identity\IdentityAddressFactory
+
+    app_bundle.factory.identity.answer:
+        private: true
+        class: AppBundle\Factory\Identity\IdentityAnswerFactory
+        arguments: [ "@as3_modlr.store", "@app_bundle.question.answer_factory" ]
 
     app_bundle.factory.identity.email:
         private: true
