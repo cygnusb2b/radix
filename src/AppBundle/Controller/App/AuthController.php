@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AuthController extends AbstractAppController
 {
     /**
-     * Retrieves the customer account's auth state.
+     * Retrieves the account's auth state.
      *
      * @param   Request $request
      * @return  JsonResponse
@@ -19,8 +19,8 @@ class AuthController extends AbstractAppController
     public function retrieveAction(Request $request)
     {
         // @todo This is a temporary solution. Re-evaluate identity detection.
-        $this->detectIdentity($request);
-        $manager = $this->get('app_bundle.customer.manager');
+        // $this->detectIdentity($request);
+        $manager = $this->get('app_bundle.identity.manager');
         return $manager->createAuthResponse();
     }
 

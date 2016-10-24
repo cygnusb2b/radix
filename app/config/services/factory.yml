@@ -32,12 +32,12 @@ services:
 
     app_bundle.factory.identity.account:
         private: true
-        class: AppBundle\Factory\Identity\IdentityInternalFactory
+        class: AppBundle\Factory\Identity\IdentityAccountFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.factory.identity.address", "@app_bundle.factory.identity.phone", "@app_bundle.factory.identity.answer", "@app_bundle.factory.identity.account_credentials", "@app_bundle.factory.identity.account_email" ]
 
     app_bundle.factory.identity.external:
         private: true
-        class: AppBundle\Factory\Identity\IdentityInternalFactory
+        class: AppBundle\Factory\Identity\IdentityExternalFactory
         arguments: [ "@as3_modlr.store", "@app_bundle.factory.identity.address", "@app_bundle.factory.identity.phone", "@app_bundle.factory.identity.answer", "@app_bundle.factory.identity.email" ]
 
     app_bundle.factory.identity.internal:
