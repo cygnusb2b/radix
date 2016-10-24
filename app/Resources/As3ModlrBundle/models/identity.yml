@@ -32,6 +32,7 @@ identity:
                                 "$exists": true
                 - { keys: { source: 1, identifier: 1 } , options: { unique: true, partialFilterExpression: { _type: "identity-external" } } }
                 - { keys: { _type: 1, _id: 1 }, options: { unique: true } }
+                - { keys: { "emails.value": 1 } }
     mixins: [ 'soft-deleteable' ]
     attributes:
         givenName:

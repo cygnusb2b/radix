@@ -187,11 +187,29 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
     }
 
     /**
+     * Gets the identity model type this factory supports.
+     *
+     * @return  string
+     */
+    abstract public function getSupportsType();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(Model $model)
+    {
+        return $this->getSupportsType() === $model->getType();
+    }
+
+    /**
      * Creates a new, unsaved, empty identity model instance.
      *
      * @return  Model
      */
-    protected abstract function createEmptyInstance();
+    protected function createEmptyInstance()
+    {
+        return $this->getStore()->create($this->getSupportsType());
+    }
 
     /**
      * This is needed in order to ensure newly created answers are also accounted for.

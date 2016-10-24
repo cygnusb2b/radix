@@ -30,20 +30,11 @@ class IdentityExternalFactory extends IdentityInternalFactory
         return true;
     }
 
-
     /**
      * {@inheritdoc}
      */
-    public function supports(Model $model)
+    public function getSupportsType()
     {
-        return 'identity-external' === $model->getType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function createEmptyInstance()
-    {
-        return $this->getStore()->create('identity-external');
+        return 'identity-external';
     }
 }

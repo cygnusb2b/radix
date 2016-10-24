@@ -3,9 +3,13 @@ services:
         class: AppBundle\Identity\CookieManager
         arguments: [ "@request_stack" ]
 
-    # app_bundle.customer.manager:
-    #     class: AppBundle\Customer\CustomerManager
-    #     arguments: [ "@app_bundle.factory.customer.account", "@app_bundle.factory.customer.identity", "@security.token_storage", "@app_bundle.security.auth.generator.customer", "@app_bundle.customer.cookie_manager", "@event_dispatcher" ]
+    app_bundle.identity.manager:
+        class: AppBundle\Identity\IdentityManager
+        arguments: [ "@security.token_storage", "@app_bundle.security.auth.generator.identity", "@app_bundle.identity.cookie_manager", "@event_dispatcher" ]
+        calls:
+            -  [ addIdentityFactory, [ "@app_bundle.factory.identity.account" ] ]
+            -  [ addIdentityFactory, [ "@app_bundle.factory.identity.external" ] ]
+            -  [ addIdentityFactory, [ "@app_bundle.factory.identity.internal" ] ]
 
     app_bundle.identity.subscriber:
         private: true
@@ -14,15 +18,15 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    app_bundle.customer.abstract_token_generator:
+    app_bundle.identity.abstract_token_generator:
         abstract: true
-        class: AppBundle\Customer\AbstractTokenGenerator
+        class: AppBundle\Identity\AbstractTokenGenerator
         arguments: [ "%secret%" ]
 
-    app_bundle.customer.email_verify.token_generator:
+    app_bundle.identity.email_verify.token_generator:
         parent: app_bundle.customer.abstract_token_generator
-        class: AppBundle\Customer\EmailVerifyTokenGenerator
+        class: AppBundle\Identity\EmailVerifyTokenGenerator
 
-    app_bundle.customer.password_reset.token_generator:
+    app_bundle.identity.password_reset.token_generator:
         parent: app_bundle.customer.abstract_token_generator
-        class: AppBundle\Customer\ResetPasswordTokenGenerator
+        class: AppBundle\Identity\ResetPasswordTokenGenerator

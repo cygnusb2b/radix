@@ -145,17 +145,9 @@ class IdentityAccountFactory extends AbstractIdentityFactory
     /**
      * {@inheritdoc}
      */
-    public function supports(Model $model)
+    public function getSupportsType()
     {
-        return 'identity-account' === $model->getType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function createEmptyInstance()
-    {
-        return $this->getStore()->create('identity-account');
+        return 'identity-account';
     }
 
     /**
