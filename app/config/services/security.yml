@@ -25,9 +25,9 @@ services:
         calls:
             - [ addRoute, [ "as3_modlr_rest_api" ] ]
 
-    app_bundle.security.authenticator.customer:
+    app_bundle.security.authenticator.account:
         private: true
-        class: AppBundle\Security\Authenticator\CustomerAuthenticator
+        class: AppBundle\Security\Authenticator\AccountAuthenticator
         arguments: [ "@as3_modlr.api.adapter", "@security.http_utils", "@security.encoder_factory", "@app_bundle.security.auth.generator_manager", "@app_bundle.security.encoder.legacy_encoder_manager" ]
         calls:
             - [ addRoute, [ "app_bundle_app_auth_submit" ] ]
@@ -86,6 +86,6 @@ services:
         class: AppBundle\Security\User\CoreUserProvider
         arguments: [ "@as3_modlr.store", "@request_stack" ]
 
-    app_bundle.security.user_provider.customer:
-        class: AppBundle\Security\User\CustomerProvider
+    app_bundle.security.user_provider.account:
+        class: AppBundle\Security\User\AccountProvider
         arguments: [ "@as3_modlr.store" ]

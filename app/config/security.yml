@@ -6,8 +6,8 @@ security:
     providers:
         core_user:
             id: app_bundle.security.user_provider.core_user
-        identity:
-            id: app_bundle.security.user_provider.identity
+        account:
+            id: app_bundle.security.user_provider.account
         in_memory:
             memory: ~
 
@@ -27,11 +27,11 @@ security:
         app:
             context: application
             pattern: ^/app
-            provider: identity
+            provider: account
             anonymous: ~
             guard:
                 authenticators:
-                    - app_bundle.security.authenticator.identity
+                    - app_bundle.security.authenticator.account
             remember_me:
                 secret: "%secret%"
                 lifetime: 63072000
@@ -39,7 +39,7 @@ security:
                 always_remember_me: true
             logout:
                 path: /app/auth/destroy
-                # delete_cookies: ~ # @todo Will need to determine if identity cookies need deletion?
+                # delete_cookies: ~ # @todo Will need to determine if account cookies need deletion?
                 invalidate_session: false
                 success_handler: app_bundle_security.logout_success_handler.application
         api:
@@ -63,7 +63,7 @@ security:
                 always_remember_me: true
             logout:
                 path: /auth/user/destroy
-                # delete_cookies: ~ # @todo Will need to determine if identity cookies need deletion?
+                # delete_cookies: ~ # @todo Will need to determine if account cookies need deletion?
                 invalidate_session: false
                 success_handler: app_bundle_security.logout_success_handler
 
