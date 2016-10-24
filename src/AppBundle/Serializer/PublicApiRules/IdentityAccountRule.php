@@ -4,7 +4,7 @@ namespace AppBundle\Serializer\PublicApiRules;
 
 use AppBundle\Serializer\PublicApiRuleInterface;
 
-class CustomerAccountRule extends AbstractRule implements PublicApiRuleInterface
+class IdentityAccountRule extends AbstractRule implements PublicApiRuleInterface
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class CustomerAccountRule extends AbstractRule implements PublicApiRuleInterface
      */
     public function getModelType()
     {
-        return 'customer-account';
+        return 'identity-account';
     }
 
     /**
@@ -30,7 +30,6 @@ class CustomerAccountRule extends AbstractRule implements PublicApiRuleInterface
         return [
             'settings'    => true,
             'credentials' => true,
-            'submissions' => true,
         ];
     }
 
