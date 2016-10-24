@@ -79,7 +79,7 @@ services:
     app_bundle_security.logout_success_handler.application:
         private: true
         class: AppBundle\Security\ApplicationLogoutSuccessHandler
-        arguments: [ "@app_bundle.customer.manager" ]
+        arguments: [ "@app_bundle.identity.manager" ]
 
     app_bundle.security.user_provider.core_user:
         private: true
