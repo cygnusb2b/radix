@@ -93,7 +93,7 @@ class IdentityManager
         $user = $this->getSecurityUser();
         if ($user) {
             $serialized = $this->authGenerator->generateFor($user);
-            $this->appendIdentityId($serialized);
+            $serialized = $this->appendIdentityId($serialized);
             return new JsonResponse($serialized);
         }
         return $this->createDefaultAuthResponse();
@@ -108,7 +108,7 @@ class IdentityManager
     {
         $model = $this->getStore()->create('identity-account');
         $serialized = $this->authGenerator->getSerializer()->serialize($model);
-        $this->appendIdentityId($serialized);
+        $serialized = $this->appendIdentityId($serialized);
         return new JsonResponse($serialized);
     }
 

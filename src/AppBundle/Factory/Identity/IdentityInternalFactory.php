@@ -129,7 +129,7 @@ class IdentityInternalFactory extends AbstractIdentityFactory
         } else {
             // The identity is existing, or a primary email already exists. Determine update or create.
             $create = false;
-            foreach ($identifier->get('emails') as $email) {
+            foreach ($identity->get('emails') as $email) {
                 if ($email->get('value') === $properties['value']) {
                     // Existing email. Update.
                     $create = false;

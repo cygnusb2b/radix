@@ -2,6 +2,7 @@
 
 namespace AppBundle;
 
+use As3\Modlr\Models\Embed;
 use As3\Modlr\Models\Model;
 
 class CalculatedFields
@@ -77,7 +78,7 @@ class CalculatedFields
 
     public static function identityPrimaryAddress(Model $model)
     {
-        $buildAddress = function(Model $model) {
+        $buildAddress = function(Embed $model) {
             $fields = ['identifier', 'name', 'companyName', 'street', 'extra', 'city', 'region', 'regionCode', 'postalCode', 'country', 'countryCode'];
             foreach ($fields as $key) {
                 $object[$key] = $model->get($key);
