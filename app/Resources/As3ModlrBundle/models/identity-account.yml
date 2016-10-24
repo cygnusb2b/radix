@@ -6,7 +6,7 @@ identity-account:
             db: radix
     attributes:
         primaryEmail:
-            type: string
+            type: object
             description: 'The primary email address of this account.'
             calculated:
                 class: AppBundle\CalculatedFields

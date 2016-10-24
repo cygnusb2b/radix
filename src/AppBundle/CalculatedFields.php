@@ -14,13 +14,13 @@ class CalculatedFields
                 // Use first email as primary, as a default.
                 $primary = [
                     'identifier' => $email->get('identifier'),
-                    'value'      => $email->get('value');
+                    'value'      => $email->get('value'),
                 ];
             }
             if (true === $email->get('isPrimary')) {
                 $primary = [
                     'identifier' => $email->get('identifier'),
-                    'value'      => $email->get('value');
+                    'value'      => $email->get('value'),
                 ];
                 break;
             }
@@ -40,10 +40,16 @@ class CalculatedFields
             }
             if (null === $primary) {
                 // Use first email as primary, as a default.
-                $primary = $email->get('value');
+                $primary = [
+                    'identifier' => $email->getId(),
+                    'value'      => $email->get('value'),
+                ];
             }
             if (true === $email->get('isPrimary')) {
-                $primary = $email->get('value');
+                $primary = [
+                    'identifier' => $email->getId(),
+                    'value'      => $email->get('value'),
+                ];
                 break;
             }
         }
@@ -55,10 +61,16 @@ class CalculatedFields
         foreach ($model->get('emails') as $email) {
             if (null === $primary) {
                 // Use first email as primary, as a default.
-                $primary = $email->get('value');
+                $primary = $primary = [
+                    'identifier' => $email->getId(),
+                    'value'      => $email->get('value'),
+                ];
             }
             if (true === $email->get('isPrimary')) {
-                $primary = $email->get('value');
+                $primary = $primary = [
+                    'identifier' => $email->getId(),
+                    'value'      => $email->get('value'),
+                ];
                 break;
             }
         }
