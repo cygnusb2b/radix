@@ -98,9 +98,11 @@ class IdentityInternalFactory extends AbstractIdentityFactory
 
         // Force set to primary, since currently this is all the method supports.
         $properties = [
-            'primaryEmail'  => $email,
-            'isPrimary'     => true,
+            'value'     => $email,
+            'isPrimary' => true,
         ];
+
+
         $embedMeta  = $identity->getMetadata()->getEmbed('emails')->embedMeta;
         $factory    = $this->getEmailFactory();
 
@@ -117,7 +119,7 @@ class IdentityInternalFactory extends AbstractIdentityFactory
             // The identity is existing, or a primary email already exists. Determine update or create.
             $create = false;
             foreach ($identifier->get('emails') as $email) {
-                if ($email->get('value') === $properties['primaryEmail']) {
+                if ($email->get('value') === $properties['value']) {
                     // Existing email. Update.
                     $create = false;
                     $factory->apply($email, $properties);

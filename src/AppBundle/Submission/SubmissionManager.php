@@ -83,16 +83,17 @@ class SubmissionManager
 
         // Do the identity/submission "dance."
         $identity = $this->determineIdentity($submission, $payload);
-        if (null !== $customer) {
-            $customerFactory = $this->customerManager->getCustomerFactoryFor($customer);
-            $submission->set('customer', $customer);
+
+        if (null !== $identity) {
+            $identityFactory = $this->identityManager->getidentityFactoryForModel($identity);
+            $submission->set('identity', $identity);
         }
 
         // Send the before save hook to allow the handler to perform additional logic.
         $this->callHookFor($sourceKey, 'beforeSave', [$payload, $submission]);
 
-        // Throw error if unable to save the customer or the submission.
-        if (null !== $customer && true !== $result = $customerFactory->canSave($customer)) {
+        // Throw error if unable to save the identity or the submission.
+        if (null !== $identity && true !== $result = $identityFactory->canSave($identity)) {
             $result->throwException();
         }
         if (true !== $result = $this->submissionFactory->canSave($submission)) {
@@ -102,9 +103,9 @@ class SubmissionManager
         // Send the can save hook to allow for additional save checks.
         $this->callHookFor($sourceKey, 'canSave', []);
 
-        // Save the customer and submission
-        if (null !== $customer) {
-            $customerFactory->save($customer);
+        // Save the identity and submission
+        if (null !== $identity) {
+            $identityFactory->save($identity);
         }
         $this->submissionFactory->save($submission);
 
@@ -112,8 +113,8 @@ class SubmissionManager
         $this->callHookFor($sourceKey, 'save', []);
 
         // Set the active identity, if applicable.
-        if (null !== $customer && 'customer-identity' === $customer->getType()) {
-            $this->customerManager->setActiveIdentity($customer);
+        if (null !== $identity && 'identity-internal' === $identity->getType()) {
+            $this->identityManager->setActiveIdentity($identity);
         }
 
         // Send email notifications.
@@ -174,15 +175,9 @@ class SubmissionManager
             $factory->apply($account, $payload->getIdentity()->all());
             return $account;
         }
-        // Customer is not logged in. Create/update the identity, if possible.
-        // @todo Primary email (from the submission side) is only sending the primary email value. This would also need to send the email identifier.
+        // Account is not logged in. Create/update the identity, if possible.
         $emailAddress = $payload->getIdentity()->get('primaryEmail');
-
-        var_dump(__METHOD__, $emailAddress);
-        die();
-
-        $payload->getIdentity()->remove('primaryEmail');
-        $identities = $this->identityManager->upsertIdentitiesFor($emailAddress, $payload->getIdentity()->all());
+        $identities   = $this->identityManager->upsertIdentitiesFor($emailAddress, $payload->getIdentity()->all());
         if (empty($identities)) {
             return;
         }

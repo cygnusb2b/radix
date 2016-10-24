@@ -38,9 +38,6 @@ class IdentityAccountHandler implements SubmissionHandlerInterface
         // Reset any previous.
         $this->newAccount = null;
 
-        var_dump(__METHOD__, $payload->getIdentity()->all());
-        die();
-
         // Create the new account and override the identity set by the manager.
         $this->newAccount = $this->accountFactory->create($payload->getIdentity()->all());
         $submission->set('identity', $this->newAccount);

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Factory;
 
-use As3\Modlr\Metadata\EmbedMeta;
+use As3\Modlr\Metadata\EmbedMetadata;
 use As3\Modlr\Models\Embed;
 
 /**
@@ -22,9 +22,10 @@ abstract class AbstractEmbedFactory extends AbstractModelFactory implements Vali
      */
     public function apply(Embed $embed, array $attributes = [])
     {
-        if (false === $this->supportsEmbed($phone)) {
+        if (false === $this->supportsEmbed($embed)) {
             $this->getUnsupportedError()->throwException();
         }
+
         $metadata = $embed->getMetadata();
         foreach ($attributes as $key => $value) {
             if ('identifier' === $key) {
@@ -41,18 +42,18 @@ abstract class AbstractEmbedFactory extends AbstractModelFactory implements Vali
     /**
      * Creates a new embed instance for the provided metadata.
      *
-     * @param   EmbedMeta   $embedMeta
-     * @param   array       $attributes
+     * @param   EmbedMetadata   $embedMeta
+     * @param   array           $attributes
      * @return  Embed
      */
-    public function create(EmbedMeta $embedMeta, array $attributes = [])
+    public function create(EmbedMetadata $embedMeta, array $attributes = [])
     {
-        if (false === $this->supportsEmbed($embedMeta->name)) {
+        if (false === $this->supportsMetadata($embedMeta)) {
             $this->getUnsupportedError()->throwException();
         }
 
         $toLoad = [];
-        if ($metadata->hasAttribute('identifier')) {
+        if ($embedMeta->hasAttribute('identifier')) {
             $identifier = new \MongoId();
             $toLoad['identifier'] = (string) $identifier;
         }
@@ -89,5 +90,16 @@ abstract class AbstractEmbedFactory extends AbstractModelFactory implements Vali
     protected function supportsEmbed(Embed $model)
     {
         return $this->getSupportsType() === $model->getName();
+    }
+
+    /**
+     * Determines if the embed metadata is supported.
+     *
+     * @param   EmbedMetadata   $model
+     * @return  bool
+     */
+    protected function supportsMetadata(EmbedMetadata $meta)
+    {
+        return $this->getSupportsType() === $meta->name;
     }
 }

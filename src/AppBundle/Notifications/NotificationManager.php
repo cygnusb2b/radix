@@ -144,9 +144,9 @@ class NotificationManager
      */
     private function inject(Model $submission, Model $template = null)
     {
-        $args = [];
-        $app = $this->accountManager->getApplication();
-        $customer = $submission->get('customer');
+        $args     = [];
+        $app      = $this->accountManager->getApplication();
+        $identity = $submission->get('identity');
 
         // Global notification settings
         $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.name')) ? ModelUtility::getModelValueFor($app, 'settings.branding.name') : $value;
@@ -155,12 +155,11 @@ class NotificationManager
         }
 
         $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.email')) ? 'no-reply@radix.as3.io': $value;
-        $args['from']           = [ $fromEmail => $fromName ];
-
-        $args['application']    = $app;
-        $args['submission']     = $submission;
-        $args['customer']       = $submission->get('customer');
-        $args['template']       = $template;
+        $args['from']        = [ $fromEmail => $fromName ];
+        $args['application'] = $app;
+        $args['submission']  = $submission;
+        $args['identity']    = $identity;
+        $args['template']    = $template;
 
         // Routing
         if ($template) {
@@ -176,7 +175,7 @@ class NotificationManager
 
         // Default to if not set by template
         if (!isset($args['to'])) {
-            $args['to'] = [ $customer->get('primaryEmail') => $customer->get('fullName') ];
+            $args['to'] = [ $identity->get('primaryEmail') => $identity->get('fullName') ];
         }
 
         return $args;

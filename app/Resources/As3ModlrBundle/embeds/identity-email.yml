@@ -1,5 +1,5 @@
 identity-email:
-    uses: [ 'identity-emailable' ]
+    mixins: [ 'identity-emailable' ]
     attributes:
         identifier:
             type: string
