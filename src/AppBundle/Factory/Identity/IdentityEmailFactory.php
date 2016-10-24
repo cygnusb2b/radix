@@ -33,7 +33,7 @@ class IdentityEmailFactory extends AbstractEmbedFactory
         $value = $email->get('value');
         if (empty($value)) {
             // All embedded email addresses required a value.
-            // If an outside form our source does NOT require an email address, measures should be take to ensure the embedded email model is never created.
+            // If an outside form our source does NOT require an email address, measures should be taken to ensure the embedded email model is never created.
             return new Error('The email address value is required.', 400);
         }
         if (false === ModelUtility::isEmailAddressValid($value)) {
