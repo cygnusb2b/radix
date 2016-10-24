@@ -322,13 +322,13 @@ class IdentityManager
      *
      * @param   string  $emailAddress
      * @param   array   $attributes
-     * @return  Model[]|null
+     * @return  Model[]
      */
     public function upsertIdentitiesFor($emailAddress, array $attributes = [])
     {
         if (null !== $identity && 'identity-account' === $identity->getType()) {
             // Cannot update an identity account in this fashion.
-            return;
+            return [];
         }
 
         $emailAddress = ModelUtility::formatEmailAddress($emailAddress);
@@ -350,10 +350,10 @@ class IdentityManager
                     return [$identity];
                 } else {
                     // @todo This could clone the current external identity and apply...
-                    return;
+                    return [];
                 }
             }
-            return;
+            return [];
         }
 
         // Email address was provided. Find all possible internal identities.
