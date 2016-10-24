@@ -5,7 +5,7 @@ services:
 
     app_bundle.identity.manager:
         class: AppBundle\Identity\IdentityManager
-        arguments: [ "@security.token_storage", "@app_bundle.security.auth.generator.identity", "@app_bundle.identity.cookie_manager", "@event_dispatcher" ]
+        arguments: [ "@security.token_storage", "@app_bundle.security.auth.generator.account", "@app_bundle.identity.cookie_manager", "@event_dispatcher" ]
         calls:
             -  [ addIdentityFactory, [ "@app_bundle.factory.identity.account" ] ]
             -  [ addIdentityFactory, [ "@app_bundle.factory.identity.external" ] ]
@@ -24,9 +24,9 @@ services:
         arguments: [ "%secret%" ]
 
     app_bundle.identity.email_verify.token_generator:
-        parent: app_bundle.customer.abstract_token_generator
+        parent: app_bundle.identity.abstract_token_generator
         class: AppBundle\Identity\EmailVerifyTokenGenerator
 
     app_bundle.identity.password_reset.token_generator:
-        parent: app_bundle.customer.abstract_token_generator
+        parent: app_bundle.identity.abstract_token_generator
         class: AppBundle\Identity\ResetPasswordTokenGenerator
