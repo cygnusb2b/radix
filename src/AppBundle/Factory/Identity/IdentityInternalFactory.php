@@ -94,7 +94,7 @@ class IdentityInternalFactory extends AbstractIdentityFactory
      * @param   Model   $identity
      * @param   array   $attributes
      */
-    private function setPrimaryEmail(Model $identity, array $attributes)
+    protected function setPrimaryEmail(Model $identity, array $attributes)
     {
         if (false === HelperUtility::isSetArray($attributes, 'primaryEmail')) {
             return;

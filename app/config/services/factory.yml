@@ -8,6 +8,7 @@ services:
             # - [ addFactory, [ "@app_bundle.factory.customer.email" ] ]
             # - [ addFactory, [ "@app_bundle.factory.customer.identity" ] ]
             - [ addFactory, [ "@app_bundle.factory.identity.answer" ] ]
+            - [ addFactory, [ "@app_bundle.factory.identity.external" ] ]
             - [ addFactory, [ "@app_bundle.factory.identity.internal" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_submission" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_answer" ] ]
@@ -26,6 +27,11 @@ services:
         private: true
         class: AppBundle\Factory\Identity\AccountCredentialSocialFactory
         arguments: [ "@as3_modlr.store" ]
+
+    app_bundle.factory.identity.external:
+        private: true
+        class: AppBundle\Factory\Identity\IdentityInternalFactory
+        arguments: [ "@as3_modlr.store", "@app_bundle.factory.identity.address", "@app_bundle.factory.identity.phone", "@app_bundle.factory.identity.answer", "@app_bundle.factory.identity.email" ]
 
     app_bundle.factory.identity.internal:
         private: true
