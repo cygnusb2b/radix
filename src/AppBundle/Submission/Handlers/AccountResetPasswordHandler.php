@@ -49,7 +49,7 @@ class AccountResetPasswordHandler implements SubmissionHandlerInterface
     public function canSave()
     {
         $credentials = $this->accountModel->get('credentials');
-        if (true !== $result = $this->identityManager->getIdentityFactorFor('identity-account')->getCredentialsFactory()->canSave($credentials)) {
+        if (true !== $result = $this->identityManager->getIdentityFactoryFor('identity-account')->getCredentialsFactory()->canSave($credentials)) {
             $result->throwException();
         }
     }
