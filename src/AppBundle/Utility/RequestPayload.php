@@ -15,7 +15,7 @@ class RequestPayload
     /**
      * @var Parameters
      */
-    private $customer;
+    private $identity;
 
     /**
      * @var Parameters
@@ -32,7 +32,7 @@ class RequestPayload
      */
     public function __construct(Request $request = null)
     {
-        $this->customer   = new Parameters();
+        $this->identity   = new Parameters();
         $this->submission = new Parameters();
         $this->meta       = new Parameters();
         $this->extractFrom($request);
@@ -63,8 +63,8 @@ class RequestPayload
         $payload = RequestUtility::extractPayload($request, false);
         $data    = RequestUtility::parsePayloadData($payload['data']);
 
-        if (isset($data['customer'])) {
-            $this->customer->replace($data['customer']);
+        if (isset($data['identity'])) {
+            $this->identity->replace($data['identity']);
         }
         if (isset($data['submission'])) {
             $this->submission->replace($data['submission']);
@@ -82,20 +82,20 @@ class RequestPayload
      */
     public function clear()
     {
-        $this->customer->clear();
+        $this->identity->clear();
         $this->submission->clear();
         $this->meta->clear();
         return $this;
     }
 
     /**
-     * Gets the customer parameters.
+     * Gets the identity parameters.
      *
      * @return  Parameters
      */
-    public function getCustomer()
+    public function getIdentity()
     {
-        return $this->customer;
+        return $this->identity;
     }
 
     /**
@@ -124,7 +124,7 @@ class RequestPayload
     public function toArray()
     {
         return [
-            'customer'      => $this->customer->toArray(),
+            'identity'      => $this->identity->toArray(),
             'submission'    => $this->submission->toArray(),
             'meta'          => $this->meta->toArray(),
         ];
