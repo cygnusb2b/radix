@@ -50,7 +50,6 @@ class IdentityInternalFactory extends AbstractIdentityFactory
         if (true !== $result = parent::canSave($identity)) {
             return $result;
         }
-        $this->preValidate($identity);
 
         foreach ($identity->get('emails') as $email) {
             if (true !== $result = $this->getEmailFactory()->canSave($email)) {

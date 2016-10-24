@@ -23,8 +23,6 @@ class IdentityExternalFactory extends IdentityInternalFactory
         if (true !== $result = parent::canSave($identity)) {
             return $result;
         }
-        $this->preValidate($identity);
-
         if (empty($identity->get('source')) || empty($identity->get('identifier'))) {
             return new Error('All external identities must contain a source and identifier.', 400);
         }
