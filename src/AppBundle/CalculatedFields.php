@@ -12,10 +12,16 @@ class CalculatedFields
         foreach ($model->get('emails') as $email) {
             if (null === $primary) {
                 // Use first email as primary, as a default.
-                $primary = $email->get('value');
+                $primary = [
+                    'identifier' => $email->get('identifier'),
+                    'value'      => $email->get('value');
+                ];
             }
             if (true === $email->get('isPrimary')) {
-                $primary = $email->get('value');
+                $primary = [
+                    'identifier' => $email->get('identifier'),
+                    'value'      => $email->get('value');
+                ];
                 break;
             }
         }
@@ -78,7 +84,7 @@ class CalculatedFields
     public static function identityPrimaryAddress(Model $model)
     {
         $buildAddress = function(Model $model) {
-            $fields = ['name', 'companyName', 'street', 'extra', 'city', 'region', 'regionCode', 'postalCode', 'country', 'countryCode'];
+            $fields = ['identifier', 'name', 'companyName', 'street', 'extra', 'city', 'region', 'regionCode', 'postalCode', 'country', 'countryCode'];
             foreach ($fields as $key) {
                 $object[$key] = $model->get($key);
             }
@@ -110,10 +116,10 @@ class CalculatedFields
             }
             if (null === $primary) {
                 // Use first phone as primary, as a default.
-                $primary = ['number' => $phone->get('number'), 'phoneType' => $phone->get('phoneType')];
+                $primary = ['identifier' => $phone->get('identifier'), 'number' => $phone->get('number'), 'phoneType' => $phone->get('phoneType')];
             }
             if (true === $phone->get('isPrimary')) {
-                $primary = ['number' => $phone->get('number'), 'phoneType' => $phone->get('phoneType')];
+                $primary = ['identifier' => $phone->get('identifier'), 'number' => $phone->get('number'), 'phoneType' => $phone->get('phoneType')];
                 break;
             }
         }
