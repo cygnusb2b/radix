@@ -1,7 +1,7 @@
 identity-email-embeddable:
     attributes:
         primaryEmail:
-            type: string
+            type: object
             description: 'The primary email address of this identity.'
             calculated:
                 class: AppBundle\CalculatedFields
