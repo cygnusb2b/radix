@@ -16,7 +16,7 @@ question:
             defaultValue: false
         boundTo:
             type: string
-            defaultValue: submission # determines, where the answer is bound: one of customer or submission
+            defaultValue: submission # determines, where the answer is bound: one of identity or submission
         label:
             type: string
         questionType:

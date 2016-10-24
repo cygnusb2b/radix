@@ -13,19 +13,19 @@ React.createClass({ displayName: 'ComponentGatedDownload',
     },
 
     componentDidMount: function() {
-        EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
-            this.setState({ customer : CustomerManager.getCustomer() });
+        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+            this.setState({ account : AccountManager.getAccount() });
         }.bind(this));
 
-        EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
-            this.setState({ customer : CustomerManager.getCustomer(), nextTemplate: null });
+        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+            this.setState({ account : AccountManager.getAccount(), nextTemplate: null });
         }.bind(this));
     },
 
     getInitialState: function() {
         return {
-            customer        : CustomerManager.getCustomer(),
-            nextTemplate    : null
+            account      : AccountManager.getAccount(),
+            nextTemplate : null
         }
     },
 
@@ -59,10 +59,10 @@ React.createClass({ displayName: 'ComponentGatedDownload',
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
             locker.unlock();
 
-            // Refresh the customer, if logged in.
-            if (CustomerManager.isLoggedIn()) {
-                CustomerManager.reloadCustomer().then(function() {
-                    EventDispatcher.trigger('CustomerManager.customer.loaded');
+            // Refresh the account, if logged in.
+            if (AccountManager.isLoggedIn()) {
+                AccountManager.reloadAccount().then(function() {
+                    EventDispatcher.trigger('AccountManager.account.loaded');
                 });
             }
 
@@ -103,9 +103,9 @@ React.createClass({ displayName: 'ComponentGatedDownload',
                 React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
                 React.createElement('hr'),
                 React.createElement(Radix.Forms.get('GatedDownload'), {
-                    customer     : this.state.customer,
-                    onSubmit     : this.handleSubmit,
-                    fieldRef     : this.handleFieldRef
+                    account  : this.state.account,
+                    onSubmit : this.handleSubmit,
+                    fieldRef : this.handleFieldRef
                 }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

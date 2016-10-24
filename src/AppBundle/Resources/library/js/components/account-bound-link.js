@@ -1,4 +1,4 @@
-React.createClass({ displayName: 'ComponentCustomerBoundLink',
+React.createClass({ displayName: 'ComponentAccountBoundLink',
 
     getDefaultProps: function() {
         return {
@@ -11,13 +11,13 @@ React.createClass({ displayName: 'ComponentCustomerBoundLink',
             suffix        : null,
             showLoggedIn  : true,
             showLoggedOut : true,
-            onClick       : function(event) { Debugger.error('ComponentCustomerBoundLink', 'Nothing handled the click action.'); }
+            onClick       : function(event) { Debugger.error('ComponentAccountBoundLink', 'Nothing handled the click action.'); }
         };
     },
 
     getInitialState: function() {
         var visible;
-        if (CustomerManager.isLoggedIn()) {
+        if (AccountManager.isLoggedIn()) {
             visible = this.props.showLoggedIn;
         } else {
             visible = this.props.showLoggedOut;
@@ -28,23 +28,23 @@ React.createClass({ displayName: 'ComponentCustomerBoundLink',
     },
 
     componentDidMount: function() {
-        EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
+        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
             this.setState({ visible: this.props.showLoggedIn });
         }.bind(this));
 
-        EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
+        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
             this.setState({ visible: this.props.showLoggedOut });
         }.bind(this));
     },
 
     handleClick: function(event) {
         event.preventDefault();
-        Debugger.log('ComponentCustomerBoundLink', 'handleClick()', this);
+        Debugger.log('ComponentAccountBoundLink', 'handleClick()', this);
         this.props.onClick(event);
     },
 
     render: function() {
-        Debugger.log('ComponentCustomerBoundLink', 'render()', this);
+        Debugger.log('ComponentAccountBoundLink', 'render()', this);
 
         if (!this.state.visible) {
             return (React.createElement('span'));

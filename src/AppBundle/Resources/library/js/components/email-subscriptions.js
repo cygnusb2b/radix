@@ -1,12 +1,12 @@
 React.createClass({ displayName: 'ComponentEmailSubscriptions',
 
     componentDidMount: function() {
-        EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
-            this.setState({ customer : CustomerManager.getCustomer() });
+        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+            this.setState({ account : AccountManager.getAccount() });
         }.bind(this));
 
-        EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
-            this.setState({ customer : CustomerManager.getCustomer(), nextTemplate: null });
+        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+            this.setState({ account : AccountManager.getAccount(), nextTemplate: null });
         }.bind(this));
     },
 
@@ -19,7 +19,7 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
 
     getInitialState: function() {
         return {
-            customer     : CustomerManager.getCustomer(),
+            account      : AccountManager.getAccount(),
             nextTemplate : null
         }
     },
@@ -52,10 +52,10 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
             locker.unlock();
 
-            // Refresh the customer, if logged in.
-            if (CustomerManager.isLoggedIn()) {
-                CustomerManager.reloadCustomer().then(function() {
-                    EventDispatcher.trigger('CustomerManager.customer.loaded');
+            // Refresh the account, if logged in.
+            if (AccountManager.isLoggedIn()) {
+                AccountManager.reloadAccount().then(function() {
+                    EventDispatcher.trigger('AccountManager.account.loaded');
                 });
             }
 
@@ -96,12 +96,12 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
                 React.createElement('div', { className: 'email-subscription-wrapper' },
                     React.createElement(Radix.Components.get('FormProductsEmail'), {
                         fieldRef : this.handleFieldRef,
-                        optIns   : this._getOptInsFor(this.state.customer.primaryEmail)
+                        optIns   : this._getOptInsFor(this.state.account.primaryEmail)
                     }),
                     React.createElement(Radix.Forms.get('EmailSubscription'), {
-                        customer     : this.state.customer,
-                        onSubmit     : this.handleSubmit,
-                        fieldRef     : this.handleFieldRef
+                        account  : this.state.account,
+                        onSubmit : this.handleSubmit,
+                        fieldRef : this.handleFieldRef
                     })
                 ),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
@@ -112,8 +112,8 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
     },
 
     _getOptInsFor: function(email) {
-        for (var i = 0; i < this.state.customer.optIns.length; i++) {
-            var optIn = this.state.customer.optIns[i];
+        for (var i = 0; i < this.state.account.optIns.length; i++) {
+            var optIn = this.state.account.optIns[i];
             if (email === optIn.address) {
                 return optIn.products;
             }

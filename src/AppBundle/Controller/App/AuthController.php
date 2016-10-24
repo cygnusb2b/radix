@@ -38,13 +38,13 @@ class AuthController extends AbstractAppController
         }
 
         $criteria = ['credentials.password.resetCode' => $token];
-        $account  = $this->get('as3_modlr.store')->findQuery('customer-account', $criteria)->getSingleResult();
+        $account  = $this->get('as3_modlr.store')->findQuery('identity-account', $criteria)->getSingleResult();
         if (null === $account) {
             throw new HttpFriendlyException('No account found for the provided token.', 400);
         }
 
         // Parse/validate.
-        $generator = $this->get('app_bundle.customer.password_reset.token_generator');
+        $generator = $this->get('app_bundle.identity.password_reset.token_generator');
         $generator->parseFor($token, $account->getId(), []);
 
         return new JsonResponse(['data' => ['verified' => true, 'primaryEmail' => $account->get('primaryEmail')]], 200);

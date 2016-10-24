@@ -3,9 +3,9 @@ React.createClass({ displayName: 'FormEmailSubscription',
     // @todo:: Should these forms take the customer object directly, or simply the form field values??
     getDefaultProps: function() {
         return {
-            customer    : {},
-            onSubmit    : function(event) { Debugger.error('Nothing handled the form submit.');     },
-            fieldRef    : function(input) { Debugger.error('Nothing handled the field reference.'); }
+            account  : {},
+            onSubmit : function(event) { Debugger.error('Nothing handled the form submit.');     },
+            fieldRef : function(input) { Debugger.error('Nothing handled the field reference.'); }
         }
     },
 
@@ -14,23 +14,23 @@ React.createClass({ displayName: 'FormEmailSubscription',
     },
 
     _getForm: function() {
-        var customer     = this.props.customer;
-        var disableEmail = (customer._id) ? true : false;
-        var phoneType    = customer.primaryPhone.phoneType || 'Phone';
+        var account      = this.props.account;
+        var disableEmail = (account._id) ? true : false;
+        var phoneType    = account.primaryPhone.phoneType || 'Phone';
         var phoneLabel   = phoneType + ' #';
 
         return React.createElement('form', { autocomplete: false, className: 'database-form', onSubmit: this.props.onSubmit },
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, type: 'email', name: 'customer:primaryEmail', wrapperClass: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:givenName', wrapperClass: 'givenName', label: 'First Name', required: true, value: customer.givenName }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:familyName', wrapperClass: 'familyName', label: 'Last Name', required: true, value: customer.familyName }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:companyName', wrapperClass: 'companyName', label: 'Company Name', value: customer.companyName }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:title', wrapperClass: 'title', label: 'Job Title', value: customer.title }),
-            React.createElement(Radix.Components.get('FormSelectCountry'), { fieldRef: this.props.fieldRef, name: 'customer:primaryAddress.countryCode', wrapperClass: 'countryCode', selected: customer.primaryAddress.countryCode }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, type: 'tel', name: 'customer:primaryPhone.number', wrapperClass: 'phone', label: phoneLabel, value: customer.primaryPhone.number }),
-            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'business-code', answers: customer.answers }),
-            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'title-code', answers: customer.answers }),
-            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'employee-size', answers: customer.answers }),
-            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'sales-volume', answers: customer.answers }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, type: 'email', name: 'identity:primaryEmail', wrapperClass: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: account.primaryEmail }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:givenName', wrapperClass: 'givenName', label: 'First Name', required: true, value: account.givenName }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:familyName', wrapperClass: 'familyName', label: 'Last Name', required: true, value: account.familyName }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:companyName', wrapperClass: 'companyName', label: 'Company Name', value: account.companyName }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:title', wrapperClass: 'title', label: 'Job Title', value: account.title }),
+            React.createElement(Radix.Components.get('FormSelectCountry'), { fieldRef: this.props.fieldRef, name: 'identity:primaryAddress.countryCode', wrapperClass: 'countryCode', selected: account.primaryAddress.countryCode }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, type: 'tel', name: 'identity:primaryPhone.number', wrapperClass: 'phone', label: phoneLabel, value: account.primaryPhone.number }),
+            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'business-code', answers: account.answers }),
+            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'title-code', answers: account.answers }),
+            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'employee-size', answers: account.answers }),
+            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'sales-volume', answers: account.answers }),
             React.createElement('button', { type: 'submit'}, 'Submit')
         );
     }

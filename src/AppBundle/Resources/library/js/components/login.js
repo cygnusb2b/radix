@@ -34,7 +34,7 @@ React.createClass({ displayName: 'ComponentLogin',
 
         Debugger.info('ComponentLogin', 'handleSubmit()', payload);
 
-        CustomerManager.databaseLogin(payload).then(function(response) {
+        AccountManager.databaseLogin(payload).then(function(response) {
             locker.unlock();
 
             if (Utils.isFunction(this.props.onSuccess)) {
@@ -54,16 +54,16 @@ React.createClass({ displayName: 'ComponentLogin',
 
     getInitialState: function() {
         return {
-            loggedIn: CustomerManager.isLoggedIn()
+            loggedIn: AccountManager.isLoggedIn()
         }
     },
 
     componentDidMount: function() {
-        EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
+        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
             this.setState({ loggedIn: true });
         }.bind(this));
 
-        EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
+        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
             this.setState({ loggedIn: false });
         }.bind(this));
     },

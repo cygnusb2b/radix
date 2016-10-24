@@ -158,6 +158,10 @@ class InputSubmissionFactory extends AbstractModelFactory implements SubscriberF
             unset($payload['identity']['password']);
             $submission->set('payload', $payload);
         }
+        if (isset($payload['identity']['confirmPassword'])) {
+            unset($payload['identity']['confirmPassword']);
+            $submission->set('payload', $payload);
+        }
     }
 
     /**

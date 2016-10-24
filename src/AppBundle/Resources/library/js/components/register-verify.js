@@ -2,8 +2,8 @@ React.createClass({ displayName: 'ComponentRegisterVerify',
 
     getDefaultProps: function() {
         return {
-            emailAddress: null,
-            customerId: null
+            emailAddress : null,
+            accountId    : null
         };
     },
 
@@ -22,7 +22,7 @@ React.createClass({ displayName: 'ComponentRegisterVerify',
                 React.createElement('h5', { className: 'card-subtitle m-t-1'}, 'Still no email?'),
                 React.createElement(Radix.Components.get('ResendVerifyEmail'), {
                     emailAddress : this.props.emailAddress,
-                    customerId   : this.props.customerId,
+                    accountId    : this.props.accountId,
                     className    : 'card-text'
                 }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),

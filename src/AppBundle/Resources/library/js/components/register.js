@@ -1,7 +1,7 @@
 React.createClass({ displayName: 'ComponentRegister',
     getDefaultProps: function() {
         return {
-            title     : 'Log In',
+            title     : 'Register',
             onSuccess : null,
             onFailure : null
         };
@@ -9,7 +9,7 @@ React.createClass({ displayName: 'ComponentRegister',
 
     getInitialState: function() {
         return {
-            loggedIn : CustomerManager.isLoggedIn(),
+            loggedIn : AccountManager.isLoggedIn(),
             verify   : null
         };
     },
@@ -49,11 +49,11 @@ React.createClass({ displayName: 'ComponentRegister',
             return;
         }
 
-        CustomerManager.databaseRegister(payload).then(function(response) {
+        AccountManager.register(payload).then(function(response) {
             locker.unlock();
             var verify = {
                 emailAddress : response.data.email,
-                customerId   : response.data.customer
+                accountId    : response.data.account
             };
             this.setState({ verify: verify });
         }.bind(this), function(response) {
@@ -113,15 +113,15 @@ React.createClass({ displayName: 'ComponentRegister',
 
     _validateSubmit: function(data) {
         var error = this._error;
-        if (!data['customer:password']) {
+        if (!data['identity:password']) {
             error.display('The password field is required.');
             return false;
         }
-        if (data['customer:password'].length < 4) {
+        if (data['identity:password'].length < 4) {
             error.display('The password must be at least 4 characters long.');
             return false;
         }
-        if (data['customer:password'].length > 72) {
+        if (data['identity:password'].length > 72) {
             error.display('The password cannot be longer than 72 characters.');
             return false;
         }

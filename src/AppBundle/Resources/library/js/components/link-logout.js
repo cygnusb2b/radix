@@ -13,13 +13,13 @@ React.createClass({ displayName: 'ComponentLinkLogout',
     },
 
     handleClick: function() {
-        CustomerManager.logout();
+        AccountManager.logout();
     },
 
     render: function() {
         Debugger.log('ComponentLinkLogout', 'render()', this);
         return (
-            React.createElement(Radix.Components.get('CustomerBoundLink'), {
+            React.createElement(Radix.Components.get('AccountBoundLink'), {
                 tagName       : this.props.tagName,
                 wrappingTag   : this.props.wrappingTag,
                 wrappingClass : this.props.wrappingClass,
