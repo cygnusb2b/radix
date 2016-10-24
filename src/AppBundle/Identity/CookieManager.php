@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CookieManager
 {
-    const VISITOR_COOKIE = '__radix-cidentityv';
+    const VISITOR_COOKIE = '__radix-cv';
     const SESSION_COOKIE = '__radix-cs';
     const VISITOR_EXPIRE = 63072000; # 2 years
     const SESSION_EXPIRE = 86400; # 24 hours

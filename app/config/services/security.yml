@@ -3,16 +3,16 @@ services:
         class: AppBundle\Security\Auth\AuthGeneratorManager
         calls:
             - [ addGenerator, [ "@app_bundle.security.auth.generator.core_user" ] ]
-            - [ addGenerator, [ "@app_bundle.security.auth.generator.customer" ] ]
+            - [ addGenerator, [ "@app_bundle.security.auth.generator.account" ] ]
 
     app_bundle.security.auth.generator.core_user:
         private: true
         class: AppBundle\Security\Auth\CoreUserGenerator
         arguments: [ "@app_bundle.security.jwt.generator_manager", "@request_stack", "@app_bundle.core.account_manager" ]
 
-    app_bundle.security.auth.generator.customer:
+    app_bundle.security.auth.generator.account:
         private: true
-        class: AppBundle\Security\Auth\CustomerGenerator
+        class: AppBundle\Security\Auth\AccountGenerator
         arguments: [ "@app_bundle.serializer.public_api" ]
 
     app_bundle.security.auth.schema:

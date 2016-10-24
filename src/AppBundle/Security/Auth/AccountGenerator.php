@@ -2,16 +2,16 @@
 
 namespace AppBundle\Security\Auth;
 
-use AppBundle\Security\User\Customer;
+use AppBundle\Security\User\Account;
 use AppBundle\Serializer\PublicApiSerializer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Generates auth data for a customer.
+ * Generates auth data for an account.
  *
  * @author Jacob Bare <jacob.bare@gmail.com>
  */
-class CustomerGenerator implements AuthGeneratorInterface
+class AccountGenerator implements AuthGeneratorInterface
 {
     /**
      * @var PublicApiSerializer
@@ -48,6 +48,6 @@ class CustomerGenerator implements AuthGeneratorInterface
      */
     public function supports(UserInterface $user)
     {
-        return $user instanceof Customer;
+        return $user instanceof Account;
     }
 }
