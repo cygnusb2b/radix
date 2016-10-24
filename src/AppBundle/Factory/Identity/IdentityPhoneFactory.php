@@ -44,26 +44,6 @@ class IdentityPhoneFactory extends AbstractEmbedFactory
     }
 
     /**
-     * Determines if two phone number values.
-     *
-     * @param   string  $phone
-     * @param   string  $source
-     * @return  bool
-     */
-    public function doPhonesMatch($phone, $source)
-    {
-        $formatter = function($value) {
-            $value = trim($value);
-            if (empty($value)) {
-                return;
-            }
-            return preg_replace('/[^0-9]/', '', $value);
-        };
-
-        return $formatter($phone) === $formatter($source);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function postValidate(AbstractModel $phone)

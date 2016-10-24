@@ -80,6 +80,17 @@ class IdentityInternalFactory extends AbstractIdentityFactory
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function postValidate(AbstractModel $identity)
+    {
+        parent::postValidate($identity);
+        foreach ($identity->get('emails') as $email) {
+            $this->getEmailFactory()->postValidate($email);
+        }
+    }
+
+    /**
      * Sets the primary email address to the identity model.
      *
      * @todo    Handle when multiple emails are used.

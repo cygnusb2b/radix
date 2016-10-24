@@ -35,13 +35,6 @@ class IdentityAddressFactory extends AbstractEmbedFactory
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function postSave(Model $model)
-    {
-    }
-
-    /**
      * {@inheritodc}
      */
     public function postValidate(AbstractModel $address)

@@ -169,6 +169,12 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
      */
     public function postValidate(AbstractModel $identity)
     {
+        foreach ($identity->get('addresses') as $address) {
+            $this->getAddressFactory()->postValidate($address);
+        }
+        foreach ($identity->get('phones') as $phone) {
+            $this->getPhoneFactory()->postValidate($phone);
+        }
     }
 
     /**
