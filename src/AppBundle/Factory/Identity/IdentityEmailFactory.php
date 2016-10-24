@@ -59,6 +59,15 @@ class IdentityEmailFactory extends AbstractEmbedFactory
         $value = ModelUtility::formatEmailAddress($email->get('value'));
         $value = (empty($value)) ? null : $value;
         $email->set('value', $value);
+
+        // Ensure type is valid.
+        if (null !== $type = $email->get('emailType')) {
+            $type = ucfirst($type);
+            if (!in_array($type, $this->types)) {
+                $type = null;
+            }
+            $email->set('emailType', $type);
+        }
     }
 
     /**
