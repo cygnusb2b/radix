@@ -1,8 +1,8 @@
 {% extends 'email.html.twig' %}
 
 {% block headline %}
-    {% if values.get('customer.givenName') %}
-        Hello, {{ values.get('customer.givenName') }}!
+    {% if values.get('identity.givenName') %}
+        Hello, {{ values.get('identity.givenName') }}!
     {% else %}
         Hello!
     {% endif %}

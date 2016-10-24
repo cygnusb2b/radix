@@ -1,10 +1,9 @@
 <?php
 
-namespace AppBundle\Notifications\NotificationFactory\CustomerAccount;
+namespace AppBundle\Notifications\NotificationFactory\Account;
 
 use As3\Modlr\Models\Model;
 use AppBundle\Notifications\Notification;
-use AppBundle\Notifications\NotificationFactory\CustomerTrait;
 use AppBundle\Notifications\NotificationFactoryInterface;
 
 /**
@@ -28,9 +27,9 @@ class ResetPassword implements NotificationFactoryInterface
      */
     public function supports(Model $submission, Model $template = null)
     {
-        $customer = $submission->get('customer');
-        if ('customer-account.reset-password' === $submission->get('sourceKey') && null !== $customer) {
-            if ('customer-identity' !== $customer->getType() && null !== $customer->get('primaryEmail')) {
+        $identity = $submission->get('identity');
+        if ('identity-account.reset-password' === $submission->get('sourceKey') && null !== $identity) {
+            if ('account-identity' === $identity->getType() && null !== $identity->get('primaryEmail')) {
                 return true;
             }
         }

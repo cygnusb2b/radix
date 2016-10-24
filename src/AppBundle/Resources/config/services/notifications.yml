@@ -20,21 +20,21 @@ services:
         private: true
         class: AppBundle\Notifications\NotificationFactory\DefaultFactory
 
-    app_bundle.notification_factory.customer_account.activate:
+    app_bundle.notification_factory.account.activate:
         private: true
-        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\Activate
+        class: AppBundle\Notifications\NotificationFactory\Account\Activate
 
-    app_bundle.notification_factory.customer_account.reset_password:
+    app_bundle.notification_factory.account.reset_password:
         private: true
-        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\ResetPassword
+        class: AppBundle\Notifications\NotificationFactory\Account\ResetPassword
 
-    app_bundle.notification_factory.customer_account.reset_password_generate:
+    app_bundle.notification_factory.account.reset_password_generate:
         private: true
-        class: AppBundle\Notifications\NotificationFactory\CustomerAccount\ResetPasswordGenerate
+        class: AppBundle\Notifications\NotificationFactory\Account\ResetPasswordGenerate
 
-    app_bundle.notification_factory.customer_email.verify_generate:
+    app_bundle.notification_factory.account_email.verify_generate:
         private: true
-        class: AppBundle\Notifications\NotificationFactory\CustomerEmail\VerifyGenerate
+        class: AppBundle\Notifications\NotificationFactory\AccountEmail\VerifyGenerate
 
     app_bundle.notification_factory.product_email_deployment.opt_in:
         private: true
@@ -48,8 +48,8 @@ services:
             - "@app_bundle.templating.template_loader"
             - "@app_bundle.core.account_manager"
         calls:
-            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.activate" ] ]
-            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.reset_password" ] ]
-            - [ addFactory, [ "@app_bundle.notification_factory.customer_account.reset_password_generate" ] ]
-            - [ addFactory, [ "@app_bundle.notification_factory.customer_email.verify_generate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.account.activate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.account.reset_password" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.account.reset_password_generate" ] ]
+            - [ addFactory, [ "@app_bundle.notification_factory.account_email.verify_generate" ] ]
             - [ addFactory, [ "@app_bundle.notification_factory.product_email_deployment.opt_in" ] ]

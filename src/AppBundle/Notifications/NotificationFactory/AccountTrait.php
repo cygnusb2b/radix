@@ -7,7 +7,7 @@ use AppBundle\Core\AccountManager;
 use AppBundle\Utility\ModelUtility;
 use Symfony\Component\HttpFoundation\Request;
 
-trait CustomerTrait
+trait AccountTrait
 {
     /**
      * @param   Model   $submission
@@ -23,15 +23,15 @@ trait CustomerTrait
     }
 
     /**
-     * @param   Model   $customerEmail
+     * @param   Model   $identityEmail
      * @param   Model   $submission
      */
-    protected function getVerificationLink(Model $submission, Model $customerEmail, Model $application)
+    protected function getVerificationLink(Model $submission, Model $identityEmail, Model $application)
     {
         return sprintf(
             '%s?radix.action=VerifyEmail&radix.token=%s',
             $submission->get('referringHost'),
-            $customerEmail->get('verification')->get('token')
+            $identityEmail->get('verification')->get('token')
         );
     }
 
@@ -54,18 +54,18 @@ trait CustomerTrait
     }
 
     /**
-     * Returns the active `customer-email` model
+     * Returns the active identity email model
      *
      * @param   Model   $submission
      * @return  Model   $email
      */
-    private function getCustomerEmail(Model $submission, $value)
+    private function getIdentityEmail(Model $submission, $value)
     {
-        foreach ($submission->get('customer')->get('emails') as $email) {
+        foreach ($submission->get('identity')->get('emails') as $email) {
             if ($value === $email->get('value')) {
                 return $email;
             }
         }
-        throw new \RuntimeException(sprintf('Could not find email for customer %s', $submission->get('customer')->getId()));
+        throw new \RuntimeException(sprintf('Could not find email for identity %s', $submission->get('identity')->getId()));
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Notifications\NotificationFactory\CustomerEmail;
+namespace AppBundle\Notifications\NotificationFactory\AccountEmail;
 
 use As3\Modlr\Models\Model;
 use AppBundle\Notifications\Notification;
-use AppBundle\Notifications\NotificationFactory\CustomerTrait;
+use AppBundle\Notifications\NotificationFactory\AccountTrait;
 use AppBundle\Notifications\NotificationFactoryInterface;
 
 /**
@@ -14,14 +14,14 @@ use AppBundle\Notifications\NotificationFactoryInterface;
  */
 class VerifyGenerate implements NotificationFactoryInterface
 {
-    use CustomerTrait;
+    use AccountTrait;
 
     /**
      * {@inheritdoc}
      */
     public function generate(Model $submission, Model $template = null, array $args)
     {
-        $email = $this->getCustomerEmail($submission, $submission->get('payload')->customer['primaryEmail']);
+        $email = $this->getIdentityEmail($submission, $submission->get('payload')->identity['primaryEmail']);
         $email->reload();
         $args['verificationLink'] = $this->getVerificationLink($submission, $email, $args['application']);
         $args['verificationEmail'] = $email->get('value');
@@ -34,9 +34,9 @@ class VerifyGenerate implements NotificationFactoryInterface
      */
     public function supports(Model $submission, Model $template = null)
     {
-        $customer = $submission->get('customer');
-        if ('customer-email.verify-generate' === $submission->get('sourceKey') && null !== $customer) {
-            if ('customer-identity' !== $customer->getType() && null !== $customer->get('primaryEmail')) {
+        $identity = $submission->get('identity');
+        if ('identity-account-email.verify-generate' === $submission->get('sourceKey') && null !== $identity) {
+            if ('identity-account' === $identity->getType() && null !== $identity->get('primaryEmail')) {
                 return true;
             }
         }

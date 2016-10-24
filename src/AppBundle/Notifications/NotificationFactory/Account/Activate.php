@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Notifications\NotificationFactory\CustomerAccount;
+namespace AppBundle\Notifications\NotificationFactory\Account;
 
 use As3\Modlr\Models\Model;
 use AppBundle\Notifications\Notification;
-use AppBundle\Notifications\NotificationFactory\CustomerTrait;
+use AppBundle\Notifications\NotificationFactory\AccountTrait;
 use AppBundle\Notifications\NotificationFactoryInterface;
 
 /**
@@ -14,14 +14,14 @@ use AppBundle\Notifications\NotificationFactoryInterface;
  */
 class Activate implements NotificationFactoryInterface
 {
-    use CustomerTrait;
+    use AccountTrait;
 
     /**
      * {@inheritdoc}
      */
     public function generate(Model $submission, Model $template = null, array $args)
     {
-        $email = $this->getCustomerEmail($submission, $submission->get('payload')->customer['primaryEmail']);
+        $email = $this->getIdentityEmail($submission, $submission->get('payload')->identity['primaryEmail']);
         $args['verificationLink'] = $this->getVerificationLink($submission, $email, $args['application']);
         $args['subject'] = $this->appendFallbackSubject($args, 'Activate your %s account');
         return new Notification($args);
@@ -32,9 +32,9 @@ class Activate implements NotificationFactoryInterface
      */
     public function supports(Model $submission, Model $template = null)
     {
-        $customer = $submission->get('customer');
-        if ('customer-account' === $submission->get('sourceKey') && null !== $customer) {
-            if ('customer-identity' !== $customer->getType() && null !== $customer->get('primaryEmail')) {
+        $identity = $submission->get('identity');
+        if ('identity-account' === $submission->get('sourceKey') && null !== $identity) {
+            if ('identity-account' === $identity->getType() && null !== $identity->get('primaryEmail')) {
                 return true;
             }
         }
