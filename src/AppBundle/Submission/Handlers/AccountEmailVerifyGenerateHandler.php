@@ -2,9 +2,8 @@
 
 namespace AppBundle\Submission\Handlers;
 
-use AppBundle\Customer\EmailVerifyTokenGenerator;
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Factory\Customer\CustomerEmailFactory;
+use AppBundle\Factory\Identity\AccountEmailFactory;
 use AppBundle\Submission\SubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
@@ -12,10 +11,10 @@ use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
+class AccountEmailVerifyGenerateHandler implements SubmissionHandlerInterface
 {
     /**
-     * @var CustomerEmailFactory
+     * @var AccountEmailFactory
      */
     private $emailFactory;
 
@@ -25,9 +24,9 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
     private $emailModel;
 
     /**
-     * @param   CustomerEmailFactory    $emailFactory
+     * @param   AccountEmailFactory     $emailFactory
      */
-    public function __construct(CustomerEmailFactory $emailFactory)
+    public function __construct(AccountEmailFactory $emailFactory)
     {
         $this->emailFactory = $emailFactory;
     }
@@ -52,7 +51,7 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
         $verification->set('completedDate', null);
 
         // Force the submission to be linked to the account being verified.
-        $submission->set('customer', $model->get('account'));
+        $submission->set('identity', $model->get('account'));
     }
 
     /**
@@ -80,7 +79,7 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
      */
     public function getSourceKey()
     {
-        return 'customer-email.verify-generate';
+        return 'identity-account-email.verify-generate';
     }
 
     /**
@@ -99,8 +98,8 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
         // Reset previous email model.
         $this->emailModel = null;
 
-        $emailAddress = $payload->getCustomer()->get('primaryEmail');
-        $customerId   = $payload->getCustomer()->get('id');
+        $emailAddress = $payload->getIdentity()->get('primaryEmail');
+        $accountId    = $payload->getIdentity()->get('id');
 
         $emailAddress = ModelUtility::formatEmailAddress($emailAddress);
         if (empty($emailAddress)) {
@@ -111,7 +110,7 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
             throw new HttpFriendlyException(sprintf('The email address "%s" is already verified.', $emailAddress), 400);
         }
 
-        $model = $this->retrieveUnverifiedEmailModelFor($emailAddress, $customerId);
+        $model = $this->retrieveUnverifiedEmailModelFor($emailAddress, $accountId);
         if (null === $model) {
             throw new HttpFriendlyException(sprintf('No linked account was found for email address "%s"', $emailAddress), 404);
         }
@@ -140,18 +139,18 @@ class CustomerEmailVerifyGenerateHandler implements SubmissionHandlerInterface
      * Fallback logic exists if a customer id is not provided where, if multiple addresses are found, it will use the most recently created.
      *
      * @param   string  $emailAddress
-     * @param   string  $customerId
+     * @param   string  $accountId
      * @return  Model|null
      */
-    private function retrieveUnverifiedEmailModelFor($emailAddress, $customerId)
+    private function retrieveUnverifiedEmailModelFor($emailAddress, $accountId)
     {
         $criteria = [
             'value'                 => $emailAddress,
             'verification.verified' => false,
         ];
-        if (HelperUtility::isMongoIdFormat($customerId)) {
-            $criteria['account'] = $customerId;
+        if (HelperUtility::isMongoIdFormat($accountId)) {
+            $criteria['account'] = $accountId;
         }
-        return $this->getStore()->findQuery('customer-email', $criteria, [], ['createdDate' => -1])->getSingleResult();
+        return $this->getStore()->findQuery('identity-account-email', $criteria, [], ['createdDate' => -1])->getSingleResult();
     }
 }

@@ -2,32 +2,32 @@
 
 namespace AppBundle\Submission\Handlers;
 
-use AppBundle\Factory\Customer\CustomerAccountFactory;
-use AppBundle\Customer\ResetPasswordTokenGenerator;
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Security\User\CustomerProvider;
+use AppBundle\Factory\Identity\IdentityAccountFactory;
+use AppBundle\Identity\ResetPasswordTokenGenerator;
+use AppBundle\Security\User\AccountProvider;
 use AppBundle\Submission\SubmissionHandlerInterface;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
-class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerInterface
+class AccountResetPasswordGenerateHandler implements SubmissionHandlerInterface
 {
     /**
-     * @var CustomerAccountFactory
+     * @var IdentityAccountFactory
      */
-    private $customerFactory;
-
-    /**
-     * @var CustomerProvider
-     */
-    private $customerProvider;
+    private $accountFactory;
 
     /**
      * @var Model|null
      */
-    private $customerModel;
+    private $accountModel;
+
+    /**
+     * @var AccountProvider
+     */
+    private $accountProvider;
 
     /**
      * @var ResetPasswordTokenGenerator
@@ -35,15 +35,15 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
     private $tokenGenerator;
 
     /**
-     * @param   CustomerAccountFactory      $customerFactory
-     * @param   CustomerProvider            $customerProvider
+     * @param   IdentityAccountFactory      $accountFactory
+     * @param   AccountProvider             $accountProvider
      * @param   ResetPasswordTokenGenerator $tokenGenerator
      */
-    public function __construct(CustomerAccountFactory $customerFactory, CustomerProvider $customerProvider, ResetPasswordTokenGenerator $tokenGenerator)
+    public function __construct(IdentityAccountFactory $accountFactory, AccountProvider $accountProvider, ResetPasswordTokenGenerator $tokenGenerator)
     {
-        $this->customerFactory  = $customerFactory;
-        $this->customerProvider = $customerProvider;
-        $this->tokenGenerator   = $tokenGenerator;
+        $this->accountFactory  = $accountFactory;
+        $this->accountProvider = $accountProvider;
+        $this->tokenGenerator  = $tokenGenerator;
     }
 
     /**
@@ -51,7 +51,7 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
      */
     public function getStore()
     {
-        return $this->customerProvider->getStore();
+        return $this->accountProvider->getStore();
     }
 
     /**
@@ -59,7 +59,7 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
      */
     public function beforeSave(RequestPayload $payload, Model $submission)
     {
-        $credentials = $this->customerModel->get('credentials');
+        $credentials = $this->accountModel->get('credentials');
         $password    = $credentials->get('password');
         if (null === $password) {
             // Customer is attemping to reset an account without a password crendetial (social, etc).
@@ -69,13 +69,13 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
             $credentials->set('password', $password);
         }
 
-        $token = $this->tokenGenerator->createFor($this->customerModel->getId(), []);
+        $token = $this->tokenGenerator->createFor($this->accountModel->getId(), []);
         $password->set('resetCode', (string) $token);
         $credentials->set('password', $password);
-        $this->customerModel->set('credentials', $credentials);
+        $this->accountModel->set('credentials', $credentials);
 
         // Force the submission to be linked to the account being reset.
-        $submission->set('customer', $this->customerModel);
+        $submission->set('identity', $this->accountModel);
     }
 
     /**
@@ -83,7 +83,7 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
      */
     public function canSave()
     {
-        if (true !== $result = $this->customerFactory->canSave($this->customerModel)) {
+        if (true !== $result = $this->accountFactory->canSave($this->accountModel)) {
             $result->throwException();
         }
     }
@@ -103,7 +103,7 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
      */
     public function getSourceKey()
     {
-        return 'customer-account.reset-password-generate';
+        return 'identity-account.reset-password-generate';
     }
 
     /**
@@ -111,7 +111,7 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
      */
     public function save()
     {
-        $this->customerModel->save();
+        $this->accountModel->save();
     }
 
     /**
@@ -119,21 +119,21 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
      */
     public function validateAlways(RequestPayload $payload)
     {
-        // Reset previous customer model.
-        $this->customerModel = null;
+        // Reset previous account model.
+        $this->accountModel = null;
 
-        $emailOrUsername = $payload->getCustomer()->get('primaryEmail');
+        $emailOrUsername = $payload->getIdentity()->get('primaryEmail');
         if (empty($emailOrUsername)) {
             throw new HttpFriendlyException('Unable to reset password: No email address or username was provided.', 400);
         }
 
         try {
-            $this->customerModel = $this->customerProvider->findViaPasswordCredentials($emailOrUsername);
+            $this->accountModel = $this->accountProvider->findViaPasswordCredentials($emailOrUsername);
         } catch (AuthenticationException $e) {
             throw new HttpFriendlyException(sprintf('Unable to reset password: %s', $e->getMessage()), 400);
         }
 
-        $credentials = $this->customerModel->get('credentials');
+        $credentials = $this->accountModel->get('credentials');
         if (null === $credentials) {
             throw new HttpFriendlyException('Unable to reset password: No existing credentials were found on this account.', 400);
         }
@@ -145,7 +145,7 @@ class CustomerAccountResetPasswordGenerateHandler implements SubmissionHandlerIn
     public function validateWhenLoggedIn(RequestPayload $payload, Model $account)
     {
         // Disallow reset while logged in.
-        throw new HttpFriendlyException('A customer account is already logged in. Reset password is not available while logged in - use change password instead.', 400);
+        throw new HttpFriendlyException('An account is already logged in. Reset password is not available while logged in - use change password instead.', 400);
     }
 
     /**

@@ -3,33 +3,33 @@ services:
         class: AppBundle\Submission\SubmissionManager
         arguments: [ "@app_bundle.factory.input_submission", "@app_bundle.identity.manager", "@app_bundle.notifications.manager" ]
         calls:
-            - [ addHandler,  [ "@app_bundle.submission.handler.customer_account" ] ]
-            - [ addHandler,  [ "@app_bundle.submission.handler.customer_account.password_reset" ] ]
-            - [ addHandler,  [ "@app_bundle.submission.handler.customer_account.password_reset_generate" ] ]
-            - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_submit" ] ]
-            - [ addHandler,  [ "@app_bundle.submission.handler.customer_email.verify_generate" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.identity_account" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.identity_account.password_reset" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.identity_account.password_reset_generate" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.identity_account.verify_submit" ] ]
+            - [ addHandler,  [ "@app_bundle.submission.handler.identity_account.verify_generate" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.email_opt_in" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.gated_download" ] ]
             - [ addHandler,  [ "@app_bundle.submission.handler.inquiry" ] ]
 
-    app_bundle.submission.handler.customer_account:
-        class: AppBundle\Submission\Handlers\CustomerAccountHandler
+    app_bundle.submission.handler.identity_account:
+        class: AppBundle\Submission\Handlers\IdentityAccountHandler
         arguments: [ "@app_bundle.factory.identity.account" ]
 
-    app_bundle.submission.handler.customer_account.password_reset:
-        class: AppBundle\Submission\Handlers\CustomerAccountResetPasswordHandler
+    app_bundle.submission.handler.identity_account.password_reset:
+        class: AppBundle\Submission\Handlers\AccountResetPasswordHandler
         arguments: [ "@app_bundle.identity.password_reset.token_generator", "@app_bundle.identity.manager" ]
 
-    app_bundle.submission.handler.customer_account.password_reset_generate:
-        class: AppBundle\Submission\Handlers\CustomerAccountResetPasswordGenerateHandler
+    app_bundle.submission.handler.identity_account.password_reset_generate:
+        class: AppBundle\Submission\Handlers\AccountResetPasswordGenerateHandler
         arguments: [ "@app_bundle.factory.identity.account", "@app_bundle.security.user_provider.account", "@app_bundle.identity.password_reset.token_generator" ]
 
-    app_bundle.submission.handler.customer_email.verify_generate:
-        class: AppBundle\Submission\Handlers\CustomerEmailVerifyGenerateHandler
+    app_bundle.submission.handler.identity_account.verify_generate:
+        class: AppBundle\Submission\Handlers\AccountEmailVerifyGenerateHandler
         arguments: [ "@app_bundle.factory.identity.account_email" ]
 
-    app_bundle.submission.handler.customer_email.verify_submit:
-        class: AppBundle\Submission\Handlers\CustomerEmailVerifySubmitHandler
+    app_bundle.submission.handler.identity_account.verify_submit:
+        class: AppBundle\Submission\Handlers\AccountEmailVerifySubmitHandler
         arguments: [ "@app_bundle.identity.email_verify.token_generator", "@app_bundle.identity.manager" ]
 
     app_bundle.submission.handler.email_opt_in:

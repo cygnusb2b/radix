@@ -30,7 +30,7 @@ React.createClass({ displayName: 'ComponentResendVerifyEmail',
             'submission:referringHref' : window.location.href
         };
 
-        var sourceKey = 'account-email.verify-generate';
+        var sourceKey = 'identity-account-email.verify-generate';
         var payload   = {
             data: data
         };

@@ -3,17 +3,17 @@
 namespace AppBundle\Submission\Handlers;
 
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Factory\Customer\CustomerAccountFactory as AccountFactory;
+use AppBundle\Factory\Identity\IdentityAccountFactory;
 use AppBundle\Submission\SubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class CustomerAccountHandler implements SubmissionHandlerInterface
+class IdentityAccountHandler implements SubmissionHandlerInterface
 {
     /**
-     * @var AccountFactory
+     * @var IdentityAccountFactory
      */
     private $accountFactory;
 
@@ -23,9 +23,9 @@ class CustomerAccountHandler implements SubmissionHandlerInterface
     private $newAccount;
 
     /**
-     * @param   AccountFactory  $accountFactory
+     * @param   IdentityAccountFactory  $accountFactory
      */
-    public function __construct(AccountFactory $accountFactory)
+    public function __construct(IdentityAccountFactory $accountFactory)
     {
         $this->accountFactory = $accountFactory;
     }
@@ -38,9 +38,12 @@ class CustomerAccountHandler implements SubmissionHandlerInterface
         // Reset any previous.
         $this->newAccount = null;
 
+        var_dump(__METHOD__, $payload->getIdentity()->all());
+        die();
+
         // Create the new account and override the identity set by the manager.
-        $this->newAccount = $this->accountFactory->create($payload->getCustomer()->all());
-        $submission->set('customer', $this->newAccount);
+        $this->newAccount = $this->accountFactory->create($payload->getIdentity()->all());
+        $submission->set('identity', $this->newAccount);
     }
 
     /**
@@ -60,8 +63,8 @@ class CustomerAccountHandler implements SubmissionHandlerInterface
     {
         return new JsonResponse([
             'data' => [
-                'customer'  => $submission->get('customer')->getId(),
-                'email'     => $submission->get('customer')->get('primaryEmail'),
+                'account'   => $submission->get('identity')->getId(),
+                'email'     => $submission->get('identity')->get('primaryEmail'),
             ]
         ], 201);
     }
@@ -71,7 +74,7 @@ class CustomerAccountHandler implements SubmissionHandlerInterface
      */
     public function getSourceKey()
     {
-        return 'customer-account';
+        return 'identity-account';
     }
 
     /**
@@ -95,7 +98,7 @@ class CustomerAccountHandler implements SubmissionHandlerInterface
     public function validateWhenLoggedIn(RequestPayload $payload, Model $account)
     {
         // Disallow creation while logged in.
-        throw new HttpFriendlyException('A customer account is already logged in. Account creation is not available while logged in.', 400);
+        throw new HttpFriendlyException('An account is already logged in. Account creation is not available while logged in.', 400);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Submission;
 
-use AppBundle\Customer\CustomerManager;
+use AppBundle\Identity\IdentityManager;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Factory\InputSubmissionFactory;
 use AppBundle\Notifications\NotificationManager;
@@ -13,9 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SubmissionManager
 {
     /**
-     * @var CustomerManager
+     * @var IdentityManager
      */
-    private $customerManager;
+    private $identityManager;
 
     /**
      * @var SubmissionHandlerInterface
@@ -34,13 +34,13 @@ class SubmissionManager
 
     /**
      * @param   InputSubmissionFactory  $submissionFactory
-     * @param   CustomerManager         $customerManager
+     * @param   IdentityManager         $identityManager
      * @param   NotificationManager     $notificationManager
      */
-    public function __construct(InputSubmissionFactory $submissionFactory, CustomerManager $customerManager, NotificationManager $notificationManager)
+    public function __construct(InputSubmissionFactory $submissionFactory, IdentityManager $identityManager, NotificationManager $notificationManager)
     {
         $this->submissionFactory   = $submissionFactory;
-        $this->customerManager     = $customerManager;
+        $this->identityManager     = $identityManager;
         $this->notificationManager = $notificationManager;
     }
 
@@ -70,19 +70,19 @@ class SubmissionManager
         // Send the validate always hook.
         $this->callHookFor($sourceKey, 'validateAlways', [$payload]);
 
-        // Send the appropriate customer state validation hook.
-        $activeCustomer = $this->customerManager->getActiveCustomer();
-        if (null !== $activeCustomer && 'customer-account' === $activeCustomer->getType()) {
-            $this->callHookFor($sourceKey, 'validateWhenLoggedIn', [$payload, $activeCustomer]);
+        // Send the appropriate identity state validation hook.
+        $activeIdentity = $this->identityManager->getActiveIdentity();
+        if (null !== $activeIdentity && 'identity-account' === $activeIdentity->getType()) {
+            $this->callHookFor($sourceKey, 'validateWhenLoggedIn', [$payload, $activeIdentity]);
         } else {
-            $this->callHookFor($sourceKey, 'validateWhenLoggedOut', [$payload, $activeCustomer]);
+            $this->callHookFor($sourceKey, 'validateWhenLoggedOut', [$payload, $activeIdentity]);
         }
 
         // Create the submission.
         $submission = $this->createSubmission($sourceKey, $payload);
 
-        // Do the customer/submission "dance."
-        $customer = $this->determineCustomer($submission, $payload);
+        // Do the identity/submission "dance."
+        $identity = $this->determineIdentity($submission, $payload);
         if (null !== $customer) {
             $customerFactory = $this->customerManager->getCustomerFactoryFor($customer);
             $submission->set('customer', $customer);
@@ -153,28 +153,39 @@ class SubmissionManager
     }
 
     /**
-     * Determines the customer to use for the submission.
+     * Determines the identity to use for the submission.
      * Will use an identity if an account is not logged in.
      * If no identity is found, it will create one.
      *
      * @todo    Will need to determine how to get the identity if an email isn't provided with the submission.
      * @param   Model           $submission
      * @param   RequestPayload  $payload
-     * @return  Model|null      The appropriate customer for the submission.
+     * @return  Model|null      The appropriate identity for the submission.
      */
-    private function determineCustomer(Model $submission, RequestPayload $payload)
+    private function determineIdentity(Model $submission, RequestPayload $payload)
     {
-        if (null !== $customer = $this->customerManager->getActiveAccount()) {
-            // Logged in customer.
+        if (null !== $account = $this->identityManager->getActiveAccount()) {
+            // Logged in account.
             // Make sure email isn't updated by this form. @todo Will need to determine a better way of handling this.
-            $payload->getCustomer()->remove('primaryEmail');
-            $payload->getCustomer()->remove('emails');
-            // Update customer data with the submission data.
-            $this->customerManager->getAccountFactory()->apply($customer, $payload->getCustomer()->all());
-            return $customer;
+            $payload->getIdentity()->remove('primaryEmail');
+            $payload->getIdentity()->remove('emails');
+            // Update account data with the submission data.
+            $factory = $this->identityManager->getIdentityFactoryForModel($account);
+            $factory->apply($account, $payload->getIdentity()->all());
+            return $account;
         }
         // Customer is not logged in. Create/update the identity, if possible.
-        $emailAddress = $payload->getCustomer()->get('primaryEmail');
-        return $this->customerManager->upsertIdentityFor($emailAddress, $payload->getCustomer()->all());
+        // @todo Primary email (from the submission side) is only sending the primary email value. This would also need to send the email identifier.
+        $emailAddress = $payload->getIdentity()->get('primaryEmail');
+
+        var_dump(__METHOD__, $emailAddress);
+        die();
+
+        $payload->getIdentity()->remove('primaryEmail');
+        $identities = $this->identityManager->upsertIdentitiesFor($emailAddress, $payload->getIdentity()->all());
+        if (empty($identities)) {
+            return;
+        }
+        return $identities[0];
     }
 }

@@ -2,10 +2,9 @@
 
 namespace AppBundle\Submission\Handlers;
 
-use AppBundle\Customer\CustomerManager;
-use AppBundle\Customer\EmailVerifyTokenGenerator;
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Factory\Customer\CustomerEmailFactory;
+use AppBundle\Identity\EmailVerifyTokenGenerator;
+use AppBundle\Identity\IdentityManager;
 use AppBundle\Submission\SubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
@@ -13,25 +12,23 @@ use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class CustomerEmailVerifySubmitHandler implements SubmissionHandlerInterface
+class AccountEmailVerifySubmitHandler implements SubmissionHandlerInterface
 {
-    private $customerManager;
+    private $identityManager;
 
     private $emailModel;
 
-    private $identityModel;
-
     private $tokenGenerator;
 
-    public function __construct(EmailVerifyTokenGenerator $tokenGenerator, CustomerManager $customerManager)
+    public function __construct(EmailVerifyTokenGenerator $tokenGenerator, IdentityManager $identityManager)
     {
         $this->tokenGenerator   = $tokenGenerator;
-        $this->customerManager  = $customerManager;
+        $this->identityManager  = $identityManager;
     }
 
     public function getStore()
     {
-        return $this->customerManager->getStore();
+        return $this->identityManager->getStore();
     }
 
     /**
@@ -39,22 +36,16 @@ class CustomerEmailVerifySubmitHandler implements SubmissionHandlerInterface
      */
     public function beforeSave(RequestPayload $payload, Model $submission)
     {
-        $this->identityModel = null;
         $verification = $this->emailModel->get('verification');
         $verification->set('verified', true);
         $verification->set('completedDate', new \DateTime());
 
-        $account  = $this->emailModel->get('account');
-        $identity = $this->customerManager->upsertIdentityFor($this->emailModel->get('value'));
-        if (null !== $identity) {
-            $identity->set('account', $account);
-            $this->identityModel = $identity;
-        }
+        $account = $this->emailModel->get('account');
 
-        $submission->set('customer', $account);
+        $submission->set('identity', $account);
 
-        // Log the customer in.
-        $this->customerManager->login($account);
+        // Log the account in.
+        $this->identityManager->login($account);
     }
 
     /**
@@ -62,13 +53,8 @@ class CustomerEmailVerifySubmitHandler implements SubmissionHandlerInterface
      */
     public function canSave()
     {
-        if (true !== $result = $this->customerManager->getAccountFactory()->getEmailFactory()->canSave($this->emailModel)) {
+        if (true !== $result = $this->identityManager->getIdentityFactoryFor('identity-account')->getEmailFactory()->canSave($this->emailModel)) {
             $result->throwException();
-        }
-        if (null !== $this->identityModel) {
-            if (true !== $result = $this->customerManager->getIdentityFactory()->canSave($this->identityModel)) {
-                $result->throwException();
-            }
         }
     }
 
@@ -87,7 +73,7 @@ class CustomerEmailVerifySubmitHandler implements SubmissionHandlerInterface
      */
     public function getSourceKey()
     {
-        return 'customer-email.verify-submit';
+        return 'identity-account-email.verify-submit';
     }
 
     /**
@@ -96,9 +82,6 @@ class CustomerEmailVerifySubmitHandler implements SubmissionHandlerInterface
     public function save()
     {
         $this->emailModel->save();
-        if (null !== $this->identityModel) {
-            $this->customerManager->getIdentityFactory()->save($this->identityModel);
-        }
     }
 
     /**
@@ -113,7 +96,7 @@ class CustomerEmailVerifySubmitHandler implements SubmissionHandlerInterface
         if (empty($token)) {
             throw new HttpFriendlyException('No email verification token was provided. Unable to verify.', 400);
         }
-        $model = $this->getStore()->findQuery('customer-email', ['verification.token' => $token])->getSingleResult();
+        $model = $this->getStore()->findQuery('identity-account-email', ['verification.token' => $token])->getSingleResult();
         if (null === $model) {
             throw new HttpFriendlyException('No email address was found for the provided token.', 404);
         }

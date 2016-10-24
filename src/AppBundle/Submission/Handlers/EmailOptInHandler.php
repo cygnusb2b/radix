@@ -35,13 +35,7 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function beforeSave(RequestPayload $payload, Model $submission)
     {
-        $customer = $submission->get('customer');
-        if (null !== $customer && 'customer-account' === $customer->getType()) {
-            // Logged in user.
-            $emailAddress = $customer->get('primaryEmail');
-        } else {
-            $emailAddress = ModelUtility::formatEmailAddress($payload->getCustomer()->get('primaryEmail'));
-        }
+        $emailAddress = ModelUtility::formatEmailAddress($payload->getIdentity()->get('primaryEmail'));
         $this->setOptInModelsFor($emailAddress, $payload->getSubmission()->getAsArray('optIns'));
     }
 
@@ -99,6 +93,10 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function validateWhenLoggedIn(RequestPayload $payload, Model $account)
     {
+        $email = $account->get('primaryEmail');
+        if (empty($email)) {
+            throw new HttpFriendlyException('The email address field is required.', 400);
+        }
     }
 
     /**
@@ -106,7 +104,7 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function validateWhenLoggedOut(RequestPayload $payload, Model $identity = null)
     {
-        $email = ModelUtility::formatEmailAddress($payload->getCustomer()->get('primaryEmail'));
+        $email = ModelUtility::formatEmailAddress($payload->getIdentity()->get('primaryEmail'));
         if (empty($email)) {
             throw new HttpFriendlyException('The email address field is required.', 400);
         }

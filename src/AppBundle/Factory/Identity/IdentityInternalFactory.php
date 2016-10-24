@@ -4,6 +4,7 @@ namespace AppBundle\Factory\Identity;
 
 use AppBundle\Factory\Error;
 use AppBundle\Utility\HelperUtility;
+use AppBundle\Utility\ModelUtility;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
@@ -87,22 +88,25 @@ class IdentityInternalFactory extends AbstractIdentityFactory
      */
     protected function setPrimaryEmail(Model $identity, array $attributes)
     {
-        if (false === HelperUtility::isSetArray($attributes, 'primaryEmail')) {
+        if (!isset($attributes['primaryEmail'])) {
             return;
         }
-        if (false === HelperUtility::isSetNotEmpty($attributes['primaryEmail'], 'value')) {
+        $email = ModelUtility::formatEmailAddress($attributes['primaryEmail']);
+        if (empty($email)) {
             return;
         }
 
-        $properties = $attributes['primaryEmail'];
+        // Force set to primary, since currently this is all the method supports.
+        $properties = [
+            'primaryEmail'  => $email,
+            'isPrimary'     => true,
+        ];
         $embedMeta  = $identity->getMetadata()->getEmbed('emails')->embedMeta;
         $factory    = $this->getEmailFactory();
 
-        // @todo Needs to re-vamped when front-end support is added for multiple addresses.
+        // @todo Needs to re-vamped when front-end support is added for multiple email addresses.
+        // @todo Need to find away to update the specific address
         $primaryEmail = $identity->get('primaryEmail');
-
-        // Force set to primary, since currently this is all the method supports.
-        $properties['isPrimary'] = true;
 
         if (true === $identity->getState()->is('new') || null === $primaryEmail) {
             // The identity is new, or no email was previously set. Create and push.
@@ -112,20 +116,14 @@ class IdentityInternalFactory extends AbstractIdentityFactory
         } else {
             // The identity is existing, or a primary email already exists. Determine update or create.
             $create = false;
-            if (!isset($properties['identifier'])) {
-                // The email is "new" on the front-end. @todo Need to add check to ensure the email value doesn't already exist.
-                $create = true;
-            } else {
-                // Existing email. Attempt to find and update.
-                foreach ($identity->get('emails') as $email) {
-                    if ($email->get('identifier') === $properties['identifier']) {
-                        // Apply the email attributes to the found email.
-                        $factory->apply($email, $properties);
-                        return;
-                    }
+            foreach ($identifier->get('emails') as $email) {
+                if ($email->get('value') === $properties['primaryEmail']) {
+                    // Existing email. Update.
+                    $create = false;
+                    $factory->apply($email, $properties);
+                } else {
+                    $email->set('isPrimary', false);
                 }
-                // At this point, the incoming email has an identifier, but it wasn't found on the identity. Treat as a creation.
-                $create = true;
             }
 
             if (true === $create) {
