@@ -7,6 +7,7 @@ use AppBundle\Factory\Error;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Embed;
 use As3\Modlr\Models\Model;
+use As3\Modlr\Store\Store;
 
 /**
  * Factory for identity account credentials
@@ -26,11 +27,13 @@ class AccountCredentialsFactory extends AbstractEmbedFactory
     private $social;
 
     /**
-     * @param   AccountCredentialPasswordFactory   $password
-     * @param   AccountCredentialSocialFactory     $social
+     * @param   Store                               $store
+     * @param   AccountCredentialPasswordFactory    $password
+     * @param   AccountCredentialSocialFactory      $social
      */
-    public function __construct(AccountCredentialPasswordFactory $password, AccountCredentialSocialFactory $social)
+    public function __construct(Store $store, AccountCredentialPasswordFactory $password, AccountCredentialSocialFactory $social)
     {
+        parent::__construct($store);
         $this->password = $password;
         $this->social   = $social;
     }
@@ -50,9 +53,15 @@ class AccountCredentialsFactory extends AbstractEmbedFactory
             $this->getUnsupportedError()->throwException();
         }
 
-        $credential = $credentials->createEmbedFor('password');
-        $this->getPasswordFactory()->apply($credential, $clearPassword, $mechanism, $username);
-        $credentials->set('password', $credential);
+        $properties = [
+            'value'     => $clearPassword,
+            'mechanism' => $mechanism,
+            'username'  => $username,
+        ];
+        $embedMeta = $credentials->getMetadata()->getEmbed('password')->embedMeta;
+        $password  = $this->password->create($embedMeta, $properties);
+
+        $credentials->set('password', $password);
         return $credentials;
     }
 

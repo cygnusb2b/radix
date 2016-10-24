@@ -13,13 +13,6 @@ use As3\Modlr\Models\AbstractModel;
 class AccountCredentialSocialFactory extends AbstractEmbedFactory
 {
     /**
-     *
-     */
-    public function apply()
-    {
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function canSave(AbstractModel $credentials)

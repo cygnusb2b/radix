@@ -14,7 +14,7 @@ services:
     app_bundle.factory.identity.account_credentials:
         private: true
         class: AppBundle\Factory\Identity\AccountCredentialsFactory
-        arguments: [ "@app_bundle.factory.customer.account_credential_password", "@app_bundle.factory.customer.account_credential_social" ]
+        arguments: [ "@as3_modlr.store", "@app_bundle.factory.customer.account_credential_password", "@app_bundle.factory.customer.account_credential_social" ]
 
     app_bundle.factory.customer.account_credential_password:
         private: true
@@ -24,10 +24,12 @@ services:
     app_bundle.factory.customer.account_credential_social:
         private: true
         class: AppBundle\Factory\Identity\AccountCredentialSocialFactory
+        arguments: [ "@as3_modlr.store" ]
 
     app_bundle.factory.identity.address:
         private: true
         class: AppBundle\Factory\Identity\IdentityAddressFactory
+        arguments: [ "@as3_modlr.store" ]
 
     app_bundle.factory.identity.answer:
         private: true
@@ -37,10 +39,12 @@ services:
     app_bundle.factory.identity.email:
         private: true
         class: AppBundle\Factory\Identity\IdentityEmailFactory
+        arguments: [ "@as3_modlr.store" ]
 
     app_bundle.factory.identity.phone:
         private: true
         class: AppBundle\Factory\Identity\IdentityPhoneFactory
+        arguments: [ "@as3_modlr.store" ]
 
     # app_bundle.factory.customer.account:
     #     private: true

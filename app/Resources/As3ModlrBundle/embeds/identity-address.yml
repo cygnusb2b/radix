@@ -1,5 +1,8 @@
 identity-address:
     attributes:
+        identifier:
+            type: string
+            description: 'The internal identifier.'
         description:
             type: string
         isPrimary:

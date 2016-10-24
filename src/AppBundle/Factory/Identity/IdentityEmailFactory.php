@@ -21,27 +21,6 @@ class IdentityEmailFactory extends AbstractEmbedFactory
     private $types = ['Personal', 'Business', 'Other'];
 
     /**
-     * Applies attribute key/value data to the provided email.
-     *
-     * @param   Embed   $email
-     * @param   array   $attributes
-     * @return  Embed   $email
-     */
-    public function apply(Embed $email, array $attributes = [])
-    {
-        if (false === $this->supportsEmbed($email)) {
-            $this->getUnsupportedError()->throwException();
-        }
-        $metadata = $email->getMetadata();
-        foreach ($attributes as $key => $value) {
-            if (true === $metadata->hasAttribute($key)) {
-                $email->set($key, $value);
-            }
-        }
-        return $email;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function canSave(AbstractModel $email)

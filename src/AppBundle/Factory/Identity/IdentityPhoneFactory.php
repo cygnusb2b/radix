@@ -20,27 +20,6 @@ class IdentityPhoneFactory extends AbstractEmbedFactory
     private $types = ['Work', 'Home', 'Mobile', 'Fax', 'Phone'];
 
     /**
-     * Applies attribute key/value data to the provided phone.
-     *
-     * @param   Embed   $phone
-     * @param   array   $attributes
-     * @return  Embed   $phone
-     */
-    public function apply(Embed $phone, array $attributes = [])
-    {
-        if (false === $this->supportsEmbed($phone)) {
-            $this->getUnsupportedError()->throwException();
-        }
-        $metadata = $phone->getMetadata();
-        foreach ($attributes as $key => $value) {
-            if (true === $metadata->hasAttribute($key)) {
-                $phone->set($key, $value);
-            }
-        }
-        return $phone;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function canSave(AbstractModel $phone)
@@ -51,12 +30,37 @@ class IdentityPhoneFactory extends AbstractEmbedFactory
 
         $this->preValidate($phone);
 
+        $number = $phone->get('number');
+        if (empty($number)) {
+            return new Error(sprintf('The phone number cannot be empty.', $type), 400);
+        }
+
         $type = $phone->get('phoneType');
         if (!in_array($type, $this->types)) {
             return new Error(sprintf('The phone type `%s` is not supported.', $type), 400);
         }
 
         return true;
+    }
+
+    /**
+     * Determines if two phone number values.
+     *
+     * @param   string  $phone
+     * @param   string  $source
+     * @return  bool
+     */
+    public function doPhonesMatch($phone, $source)
+    {
+        $formatter = function($value) {
+            $value = trim($value);
+            if (empty($value)) {
+                return;
+            }
+            return preg_replace('/[^0-9]/', '', $value);
+        };
+
+        return $formatter($phone) === $formatter($source);
     }
 
     /**

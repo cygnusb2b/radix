@@ -2,14 +2,67 @@
 
 namespace AppBundle\Factory;
 
+use As3\Modlr\Metadata\EmbedMeta;
+use As3\Modlr\Models\Embed;
+
 /**
  * Abstract factory for AS3 embeds.
  * Must also implement the remaining methods of the validation interface.
  *
  * @author  Jacob Bare <jacob.bare@gmail.com>
  */
-abstract class AbstractEmbedFactory implements ValidationFactoryInterface
+abstract class AbstractEmbedFactory extends AbstractModelFactory implements ValidationFactoryInterface
 {
+    /**
+     * Applies attribute key/value data to the provided embed.
+     *
+     * @param   Embed   $embed
+     * @param   array   $attributes
+     * @return  Embed   $embed
+     */
+    public function apply(Embed $embed, array $attributes = [])
+    {
+        if (false === $this->supportsEmbed($phone)) {
+            $this->getUnsupportedError()->throwException();
+        }
+        $metadata = $embed->getMetadata();
+        foreach ($attributes as $key => $value) {
+            if ('identifier' === $key) {
+                // Do not reset the identifier.
+                continue;
+            }
+            if (true === $metadata->hasAttribute($key)) {
+                $embed->set($key, $value);
+            }
+        }
+        return $embed;
+    }
+
+    /**
+     * Creates a new embed instance for the provided metadata.
+     *
+     * @param   EmbedMeta   $embedMeta
+     * @param   array       $attributes
+     * @return  Embed
+     */
+    public function create(EmbedMeta $embedMeta, array $attributes = [])
+    {
+        if (false === $this->supportsEmbed($embedMeta->name)) {
+            $this->getUnsupportedError()->throwException();
+        }
+
+        $toLoad = [];
+        if ($metadata->hasAttribute('identifier')) {
+            $identifier = new \MongoId();
+            $toLoad['identifier'] = (string) $identifier;
+        }
+
+        $embed = $this->getStore()->loadEmbed($embedMeta, $toLoad);
+        $embed->getState()->setNew();
+        $this->apply($embed, $attributes);
+        return $embed;
+    }
+
     /**
      * Determines the embed type this factory supports.
      *

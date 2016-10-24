@@ -68,7 +68,7 @@ identity:
                 method: identityPrimaryAddress
         extra:
             type: object
-            description: 'Any extra, non-defined indentity data.'
+            description: 'Any extra, non-defined identity data.'
     embeds:
         addresses:
             type: many

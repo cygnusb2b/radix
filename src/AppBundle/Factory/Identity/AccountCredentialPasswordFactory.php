@@ -38,48 +38,15 @@ class AccountCredentialPasswordFactory extends AbstractEmbedFactory
     ];
 
     /**
-     * @var Store
-     */
-    private $store;
-
-    /**
      * @param   Store               $store
      * @param   UserPasswordEncoder $encoder
      * @param   AuthSchema          $authSchema
      */
     public function __construct(Store $store, UserPasswordEncoder $encoder, AuthSchema $authSchema)
     {
-        $this->store      = $store;
+        parent::__construct($store);
         $this->encoder    = $encoder;
         $this->authSchema = $authSchema;
-    }
-
-    /**
-     * Applys values to a customer password credential.
-     *
-     * @param   Embed       $credential
-     * @param   string      $clearPassword  The cleartext (unencoded) password.
-     * @param   string      $mechanism
-     * @param   string|null $username
-     * @return  Embed
-     */
-    public function apply(Embed $credential, $clearPassword, $mechanism = 'platform', $username = null, $salt = null)
-    {
-        if (false === $this->supportsEmbed($credential)) {
-            $this->getUnsupportedError()->throwException();
-        }
-
-        $username = (empty($username)) ? null : $username;
-        $credential->set('username', $username);
-        $credential->set('value', $clearPassword);
-        $credential->set('mechanism', $mechanism);
-        $credential->set('salt', $salt);
-
-        if ('platform' === $mechanism) {
-            // Do not allow salts for platform accounts since bcrypt is used.
-            $credential->set('salt', null);
-        }
-        return $credential;
     }
 
     /**
@@ -133,7 +100,7 @@ class AccountCredentialPasswordFactory extends AbstractEmbedFactory
         $password = $credential->get('value');
         if ('platform' === $credential->get('mechanism') && null !== $password && 0 === preg_match('/^\$2[ayb]\$.{56}$/i', $password)) {
             // The password is currently clear text. Encode.
-            $encoded = $this->encoder->encodePassword(new Account($this->store->create('identity-account')), $password);
+            $encoded = $this->encoder->encodePassword(new Account($this->getStore()->create('identity-account')), $password);
             $credential->set('value', $encoded);
         }
     }
@@ -143,6 +110,16 @@ class AccountCredentialPasswordFactory extends AbstractEmbedFactory
      */
     public function preValidate(AbstractModel $credential)
     {
+        $username = $credential->get('username');
+        if (empty($username)) {
+            // Nullify empty usernames.
+            $credential->set('username', null);
+        }
+
+        if ('platform' === $credential->get('mechanism')) {
+            // Do not allow salts for platform accounts since bcrypt is used.
+            $credential->set('salt', null);
+        }
     }
 
     /**
@@ -156,7 +133,7 @@ class AccountCredentialPasswordFactory extends AbstractEmbedFactory
         $criteria = [
             'credentials.password.username' => $username,
         ];
-        $account = $this->store->findQuery('identity-account', $criteria)->getSingleResult();
+        $account = $this->getStore()->findQuery('identity-account', $criteria)->getSingleResult();
         if (null !== $account && false === $account->get('deleted')) {
             return $account;
         }

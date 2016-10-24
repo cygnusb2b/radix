@@ -16,26 +16,6 @@ use As3\Modlr\Models\Embed;
 class IdentityAddressFactory extends AbstractEmbedFactory
 {
     /**
-     * Applies attribute key/value data to the provided address.
-     *
-     * @param   Embed   $address
-     * @param   array   $attributes
-     */
-    public function apply(Embed $address, array $attributes = [])
-    {
-        if (false === $this->supportsEmbed($address)) {
-            $this->getUnsupportedError()->throwException();
-        }
-        $metadata = $address->getMetadata();
-        foreach ($attributes as $key => $value) {
-            if (true === $metadata->hasAttribute($key)) {
-                $address->set($key, $value);
-            }
-        }
-        return $address;
-    }
-
-    /**
      * {@inheritodc}
      */
     public function canSave(AbstractModel $address)

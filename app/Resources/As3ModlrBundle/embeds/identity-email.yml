@@ -1,2 +1,6 @@
 identity-email:
     uses: [ 'identity-emailable' ]
+    attributes:
+        identifier:
+            type: string
+            description: 'The internal identifier.'
