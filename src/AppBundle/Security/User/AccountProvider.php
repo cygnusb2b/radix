@@ -32,7 +32,7 @@ class AccountProvider implements UserProviderInterface
     }
 
     /**
-     * Attempts to find a customer using password credentials (email/username).
+     * Attempts to find an account using password credentials (email/username).
      *
      * @param   string  $emailOrUsername
      * @return  Model
@@ -49,9 +49,9 @@ class AccountProvider implements UserProviderInterface
         $criteria = [
             'credentials.password.username' => $emailOrUsername,
         ];
-        $customer = $this->store->findQuery('customer-account', $criteria)->getSingleResult();
-        if (null !== $customer && false === $customer->get('deleted')) {
-            return $customer;
+        $account = $this->store->findQuery('identity-account', $criteria)->getSingleResult();
+        if (null !== $account && false === $account->get('deleted')) {
+            return $account;
         }
 
         // Try email address
@@ -59,9 +59,9 @@ class AccountProvider implements UserProviderInterface
             'value'    => strtolower($emailOrUsername),
             'verification.verified' => true,
         ];
-        $email = $this->store->findQuery('customer-email', $criteria)->getSingleResult();
+        $email = $this->store->findQuery('identity-account-email', $criteria)->getSingleResult();
         if (null !== $email && null !== $email->get('account') && false === $email->get('account')->get('deleted')) {
-            // Valid customer.
+            // Valid account.
             return $email->get('account');
         }
 
@@ -72,7 +72,7 @@ class AccountProvider implements UserProviderInterface
             'value'    => strtolower($emailOrUsername),
             'verification.verified' => false,
         ];
-        $email = $this->store->findQuery('customer-email', $criteria)->getSingleResult();
+        $email = $this->store->findQuery('identity-account-email', $criteria)->getSingleResult();
         if (null !== $email && null !== $email->get('account')) {
             // Currently pending email verification.
             throw new CustomUserMessageAuthenticationException('This account is awaiting email verificaton. Please check your email and click the verification link.');
@@ -91,18 +91,18 @@ class AccountProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($customerId)
+    public function loadUserByUsername($accountId)
     {
-        if (0 === preg_match('/^[a-f0-9]{24}$/', $customerId)) {
-            throw new BadCredentialsException('The provided customer account identifier is invalid.');
+        if (0 === preg_match('/^[a-f0-9]{24}$/', $accountId)) {
+            throw new BadCredentialsException('The provided account identifier is invalid.');
         }
 
         try {
-            $customer = $this->store->find('customer-account', $customerId);
-            if (null === $customer || true === $customer->get('deleted')) {
+            $account = $this->store->find('identity-account', $accountId);
+            if (null === $account || true === $account->get('deleted')) {
                 throw new UsernameNotFoundException('No user found.');
             }
-            return new Customer($customer);
+            return new Account($account);
         } catch (\Exception $e) {
             if ($e instanceof UsernameNotFoundException) {
                 throw $e;
@@ -124,22 +124,10 @@ class AccountProvider implements UserProviderInterface
     }
 
     /**
-     * Sets the authentication realm.
-     *
-     * @param   string  $realm
-     * @return  self
-     */
-    public function setRealm($realm)
-    {
-        $this->realm = $realm;
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function supportsClass($class)
     {
-        return 'AppBundle\Security\User\Customer' === $class;
+        return 'AppBundle\Security\User\Account' === $class;
     }
 }
