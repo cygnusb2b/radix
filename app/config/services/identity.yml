@@ -7,12 +7,12 @@ services:
     #     class: AppBundle\Customer\CustomerManager
     #     arguments: [ "@app_bundle.factory.customer.account", "@app_bundle.factory.customer.identity", "@security.token_storage", "@app_bundle.security.auth.generator.customer", "@app_bundle.customer.cookie_manager", "@event_dispatcher" ]
 
-    # app_bundle.customer.subscriber:
-    #     private: true
-    #     class: AppBundle\Customer\CustomerSubscriber
-    #     arguments: [ "@app_bundle.core.account_manager", "@app_bundle.customer.manager" ]
-    #     tags:
-    #         - { name: kernel.event_subscriber }
+    app_bundle.identity.subscriber:
+        private: true
+        class: AppBundle\Identity\IdentitySubscriber
+        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.identity.manager" ]
+        tags:
+            - { name: kernel.event_subscriber }
 
     app_bundle.customer.abstract_token_generator:
         abstract: true
