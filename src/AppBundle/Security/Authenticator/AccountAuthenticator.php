@@ -5,7 +5,7 @@ namespace AppBundle\Security\Authenticator;
 use AppBundle\Utility\RequestUtility;
 use AppBundle\Security\Auth\AuthGeneratorManager;
 use AppBundle\Security\Encoder\LegacyEncoderManager;
-use AppBundle\Security\User\CustomerProvider;
+use AppBundle\Security\User\AccountProvider;
 use As3\Modlr\Api\AdapterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,7 +101,7 @@ class AccountAuthenticator extends AbstractCoreAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        if (!$userProvider instanceof CustomerProvider) {
+        if (!$userProvider instanceof AccountProvider) {
             throw new AuthenticationServiceException('Improper customer provider passed.');
         }
 
