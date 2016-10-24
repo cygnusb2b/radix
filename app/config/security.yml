@@ -6,8 +6,8 @@ security:
     providers:
         core_user:
             id: app_bundle.security.user_provider.core_user
-        customer:
-            id: app_bundle.security.user_provider.customer
+        identity:
+            id: app_bundle.security.user_provider.identity
         in_memory:
             memory: ~
 
@@ -15,7 +15,7 @@ security:
         AppBundle\Security\User\CoreUser:
             algorithm: bcrypt
             cost: 13
-        AppBundle\Security\User\Customer:
+        AppBundle\Security\User\Account:
             algorithm: bcrypt
             cost: 10
 
@@ -27,11 +27,11 @@ security:
         app:
             context: application
             pattern: ^/app
-            provider: customer
+            provider: identity
             anonymous: ~
             guard:
                 authenticators:
-                    - app_bundle.security.authenticator.customer
+                    - app_bundle.security.authenticator.identity
             remember_me:
                 secret: "%secret%"
                 lifetime: 63072000

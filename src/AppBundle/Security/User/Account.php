@@ -6,9 +6,9 @@ use \Serializable;
 use As3\Modlr\Models\Model;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
-class Customer implements AdvancedUserInterface, Serializable
+class Account implements AdvancedUserInterface, Serializable
 {
-    private $customer;
+    private $account;
     private $enabled = false;
     private $familyName;
     private $givenName;
@@ -19,26 +19,26 @@ class Customer implements AdvancedUserInterface, Serializable
     private $salt;
     private $username;
 
-    public function __construct(Model $customer)
+    public function __construct(Model $account)
     {
-        $this->customer = $customer;
+        $this->account = $account;
 
-        $this->familyName  = $customer->get('familyName');
-        $this->givenName   = $customer->get('givenName');
+        $this->familyName  = $account->get('familyName');
+        $this->givenName   = $account->get('givenName');
 
         // @todo Will need to account for how social users get loaded here.
         // Or will (likely) need a new user class.
 
-        $credentials = $customer->get('credentials');
+        $credentials = $account->get('credentials');
 
         if (null !== $credentials && null !== $password = $credentials->get('password')) {
             $this->password   = $password->get('value');
             $this->salt       = $password->get('salt');
             $this->mechanism  = $password->get('mechanism');
-            $this->username   = $customer->getId();
+            $this->username   = $account->getId();
 
         }
-        if (null !== $settings = $customer->get('settings')) {
+        if (null !== $settings = $account->get('settings')) {
             $this->locked  = $settings->get('locked');
             $this->enabled = $settings->get('enabled');
         }
@@ -62,7 +62,7 @@ class Customer implements AdvancedUserInterface, Serializable
 
     public function getModel()
     {
-        return $this->customer;
+        return $this->account;
     }
 
     /**
@@ -169,7 +169,7 @@ class Customer implements AdvancedUserInterface, Serializable
 
     private function setRoles()
     {
-        $roles = (array) $this->customer->get('roles');
+        $roles = (array) $this->account->get('roles');
         foreach ($roles as $role) {
             $role = strtoupper($role);
             if (0 === stripos($role, 'role_')) {
