@@ -119,6 +119,7 @@ class QuestionPullHandler implements HandlerInterface
             ->set('questionType', $definition->getType())
             ->set('builtIn', false)
             ->set('allowHtml', $definition->getAllowHtml())
+            ->set('boundTo', $integration->get('boundTo'))
         ;
         foreach ($integration->get('tagWith') as $tag) {
             $question->push('tags', $tag);
@@ -244,6 +245,7 @@ class QuestionPullHandler implements HandlerInterface
         $question
             ->set('name', $definition->getName())
             ->set('allowHtml', $definition->getAllowHtml())
+            ->set('boundTo', $integration->get('boundTo'))
         ;
         if (null === $question->get('label')) {
             $question->set('label', $definition->getLabel());
