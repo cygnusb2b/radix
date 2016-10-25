@@ -301,13 +301,13 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
         // Force set to primary, since currently this is all the method supports.
         $properties['isPrimary'] = true;
 
-        if (true === $identity->getState()->is('new') || null === $primaryAddress) {
-            // The identity is new, or no address phone was previously set. Create and push.
+        if (true === $identity->getState()->is('new')) {
+            // The identity is new. Create and push.
             $phone = $factory->create($embedMeta, $properties);
             $identity->pushEmbed('addresses', $phone);
 
         } else {
-            // The identity is existing, or a primary address already exists. Determine update or create.
+            // The identity is existing. Determine update or create.
             $create = false;
             if (!isset($properties['identifier'])) {
                 // The address is "new" on the front-end. @todo Need to add check to ensure the address value (same country/state, etc) doesn't already exist.
@@ -318,14 +318,20 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
                     if ($address->get('identifier') === $properties['identifier']) {
                         // Apply the address attributes to the found address.
                         $factory->apply($address, $properties);
-                        return;
+                    } else {
+                        $address->set('isPrimary', false);
                     }
+                    return;
                 }
                 // At this point, the incoming address has an identifier, but it wasn't found on the identity. Treat as a creation.
                 $create = true;
             }
 
             if (true === $create) {
+                foreach ($identity->get('addresses') as $address) {
+                    // Clear primary status for existing addresses.
+                    $address->set('isPrimary', false);
+                }
                 $address = $factory->create($embedMeta, $properties);
                 $identity->pushEmbed('addresses', $address);
             }
@@ -358,13 +364,13 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
         // Force set to primary, since currently this is all the method supports.
         $properties['isPrimary'] = true;
 
-        if (true === $identity->getState()->is('new') || null === $primaryPhone) {
-            // The identity is new, or no primary phone was previously set. Create and push.
+        if (true === $identity->getState()->is('new')) {
+            // The identity is new. Create and push.
             $phone = $factory->create($embedMeta, $properties);
             $identity->pushEmbed('phones', $phone);
 
         } else {
-            // The identity is existing, or a primary phone already exists. Determine update or create.
+            // The identity is existing. Determine update or create.
             $create = false;
             if (!isset($properties['identifier'])) {
                 // The phone is "new" on the front-end. @todo Need to add check to ensure the phone number doesn't already exist.
@@ -375,14 +381,20 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
                     if ($phone->get('identifier') === $properties['identifier']) {
                         // Apply the phone attributes to the found phone.
                         $factory->apply($phone, $properties);
-                        return;
+                    } else {
+                        $phone->set('isPrimary', false);
                     }
+                    return;
                 }
                 // At this point, the incoming phone has an identifier, but it wasn't found on the identity. Treat as a creation.
                 $create = true;
             }
 
             if (true === $create) {
+                foreach ($identity->get('phones') as $phone) {
+                    // Clear primary status for existing phones.
+                    $phone->set('isPrimary', false);
+                }
                 $phone = $factory->create($embedMeta, $properties);
                 $identity->pushEmbed('phones', $phone);
             }

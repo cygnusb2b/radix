@@ -78,7 +78,7 @@ abstract class AbstractEmbedFactory extends AbstractModelFactory implements Vali
      */
     protected function getUnsupportedError()
     {
-        return new Error(sprintf('The provided embed model is not supported. Expected an instance of `%s`', $this->getSupportedEmbedType()));
+        return new Error(sprintf('The provided embed model is not supported. Expected an instance of `%s`', $this->getSupportsType()));
     }
 
     /**

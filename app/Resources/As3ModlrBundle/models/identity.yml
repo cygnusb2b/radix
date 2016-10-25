@@ -76,7 +76,7 @@ identity:
             entity: identity-address
         phones:
             type: many
-            entity: identity-address
+            entity: identity-phone
     relationships:
         answers:
             type: many
