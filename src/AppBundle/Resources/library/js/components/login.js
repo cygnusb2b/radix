@@ -90,7 +90,7 @@ React.createClass({ displayName: 'ComponentLogin',
                 onSubmit : this.handleSubmit,
                 fieldRef : this.handleFieldRef
             }),
-            React.createElement('p', { className: 'text-center muted' }, 'Need an account? ',
+            React.createElement('p', { className: 'text-center' }, 'Need an account? ',
                 React.createElement(Radix.Components.get('ModalLinkRegister'), { label: 'Sign up!' })
             ),
             React.createElement(Radix.Components.get('ModalLinkResetPasswordGenerate')),

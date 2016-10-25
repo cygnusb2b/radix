@@ -87,7 +87,7 @@ React.createClass({ displayName: 'ComponentRegister',
                     onSubmit : this.handleSubmit,
                     fieldRef : this.handleFieldRef
                 }),
-                React.createElement('p', { className: 'muted text-center' }, 'Already have an account? ',
+                React.createElement('p', { className: 'text-center' }, 'Already have an account? ',
                     React.createElement(Radix.Components.get('ModalLinkLogin'), { label: 'Sign in!' })
                 ),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),

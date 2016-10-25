@@ -4,7 +4,7 @@ React.createClass({ displayName: 'ComponentModalLinkResetPasswordGenerate',
         return {
             tagName       : 'a',
             wrappingTag   : 'p',
-            wrappingClass : 'text-center muted',
+            wrappingClass : 'text-center',
             className     : null,
             label         : 'Reset',
             prefix        : 'Forgot your password?',

@@ -3,7 +3,7 @@ React.createClass({ displayName: 'ComponentContactSupport',
     getDefaultProps: function() {
         return {
             opening   : 'Having difficulties?',
-            className : 'text-center muted'
+            className : 'text-center'
         };
     },
 
