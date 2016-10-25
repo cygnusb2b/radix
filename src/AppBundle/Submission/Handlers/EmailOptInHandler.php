@@ -35,7 +35,7 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function beforeSave(RequestPayload $payload, Model $submission)
     {
-        $emailAddress = ModelUtility::formatEmailAddress($payload->getIdentity()->get('primaryEmail'));
+        $emailAddress = ModelUtility::formatEmailAddress($payload->getSubmission()->get('emailAddress'));
         $this->setOptInModelsFor($emailAddress, $payload->getSubmission()->getAsArray('optIns'));
     }
 
@@ -86,6 +86,13 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function validateAlways(RequestPayload $payload)
     {
+        $email = ModelUtility::formatEmailAddress($payload->getSubmission()->get('emailAddress'));
+        if (empty($email)) {
+            throw new HttpFriendlyException('The email address field is required.', 400);
+        }
+        if (false === ModelUtility::isEmailAddressValid($email)) {
+            throw new HttpFriendlyException('The provided email address is invalid.', 400);
+        }
     }
 
     /**
@@ -93,10 +100,6 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function validateWhenLoggedIn(RequestPayload $payload, Model $account)
     {
-        $email = $account->get('primaryEmail');
-        if (empty($email)) {
-            throw new HttpFriendlyException('The email address field is required.', 400);
-        }
     }
 
     /**
@@ -104,13 +107,6 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function validateWhenLoggedOut(RequestPayload $payload, Model $identity = null)
     {
-        $email = ModelUtility::formatEmailAddress($payload->getIdentity()->get('primaryEmail'));
-        if (empty($email)) {
-            throw new HttpFriendlyException('The email address field is required.', 400);
-        }
-        if (false === ModelUtility::isEmailAddressValid($email)) {
-            throw new HttpFriendlyException('The provided email address is invalid.', 400);
-        }
     }
 
     /**

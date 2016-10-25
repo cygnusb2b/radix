@@ -2,12 +2,18 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
 
     componentDidMount: function() {
         EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-            this.setState({ account : AccountManager.getAccount() });
+            var account = AccountManager.getAccount();
+            this._loadOptinsFor(account.primaryEmail);
+            this.setState({ account : account });
         }.bind(this));
 
         EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-            this.setState({ account : AccountManager.getAccount(), nextTemplate: null });
+            var account = AccountManager.getAccount();
+            this._loadOptinsFor(account.primaryEmail);
+            this.setState({ account : account, nextTemplate: null });
         }.bind(this));
+
+        this._loadOptinsFor(this.state.account.primaryEmail);
     },
 
     getDefaultProps: function() {
@@ -20,6 +26,7 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
     getInitialState: function() {
         return {
             account      : AccountManager.getAccount(),
+            optIns       : {},
             nextTemplate : null
         }
     },
@@ -96,7 +103,7 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
                 React.createElement('div', { className: 'email-subscription-wrapper' },
                     React.createElement(Radix.Components.get('FormProductsEmail'), {
                         fieldRef : this.handleFieldRef,
-                        optIns   : this._getOptInsFor(this.state.account.primaryEmail)
+                        optIns   : this.state.optIns
                     }),
                     React.createElement(Radix.Forms.get('EmailSubscription'), {
                         account  : this.state.account,
@@ -111,14 +118,18 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
         return (elements);
     },
 
-    _getOptInsFor: function(email) {
-        for (var i = 0; i < this.state.account.optIns.length; i++) {
-            var optIn = this.state.account.optIns[i];
-            if (email === optIn.address) {
-                return optIn.products;
-            }
+    _loadOptinsFor: function(emailAddress) {
+        var optIns = {}
+        if (emailAddress) {
+            Ajax.send('/app/opt-ins/email-deployment/' + emailAddress, 'GET').then(function(response) {
+                this.setState({ optIns: response.data });
+            }.bind(this), function() {
+                this.setState({ optIns: optIns });
+                Debugger.error('ComponentEmailSubscriptions _loadOptinsFor()', 'Unable to load optins.');
+            }.bind(this));
+        } else {
+            this.setState({ optIns: optIns });
         }
-        return {};
     },
 
     _setErrorDisplay: function(ref) {

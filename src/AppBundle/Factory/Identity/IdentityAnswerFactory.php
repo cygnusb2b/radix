@@ -120,7 +120,7 @@ class IdentityAnswerFactory extends AbstractModelFactory implements SubscriberFa
         }
         // Answer doesn't exist on identity, add it.
         if (null !== $answer) {
-            $answer->set('identity', $customer);
+            $answer->set('identity', $identity);
         }
     }
 

@@ -121,52 +121,6 @@ class CalculatedFields
         return $primary;
     }
 
-
-    /**
-     * Calculates the email deployment optins for customer-account models.
-     *
-     * @param   Model   $model
-     * @return  array|null
-     */
-    public static function customerAccountOptIns(Model $model)
-    {
-        $addresses = [];
-        foreach ($model->get('emails') as $email) {
-            $addresses[] = $email->get('value');
-        }
-        $optIns = $model->getStore()->findQuery('product-email-deployment-optin', ['email' => ['$in' => $addresses]]);
-        $byEmail = [];
-        foreach ($optIns as $optIn) {
-            $byEmail[$optIn->get('email')]['address'] = $optIn->get('email');
-            $byEmail[$optIn->get('email')]['products'][$optIn->get('product')->getId()] = $optIn->get('optedIn');
-        }
-
-        $objs = [];
-        foreach ($byEmail as $optIns) {
-            $objs[] = (object) $optIns;
-        }
-        return $objs;
-    }
-
-    /**
-     * Calculates the email deployment optins for the primary email on customer-account models.
-     *
-     * @param   Model   $model
-     * @return  object|null
-     */
-    public static function customerAccountPrimaryOptIns(Model $model)
-    {
-        $address = $model->get('primaryEmail');
-        if (empty($address)) {
-            return;
-        }
-        foreach ($model->get('optIns') as $optIn) {
-            if ($optIn->address === $address) {
-                return $optIn;
-            }
-        }
-    }
-
     /**
      * Calculates the primary address field for customer models.
      *
