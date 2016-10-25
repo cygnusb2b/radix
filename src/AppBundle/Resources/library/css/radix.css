@@ -596,7 +596,7 @@ ins {
     letter-spacing: .03em;
     text-transform: uppercase;
 
-    color: #aeaeae;
+    color: #333;
 }
 .platform-element input:focus + label {
     text-decoration: underline;
