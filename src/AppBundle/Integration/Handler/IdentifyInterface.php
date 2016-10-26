@@ -9,7 +9,7 @@ interface IdentifyInterface extends HandlerInterface
     /**
      * Executes the the identify integration.
      *
-     * @param   string  $externalId
+     * @param   string                      $externalId     The third-party, external identifier.
      * @return  ExternalIdentityDefinition
      * @throws  \Exception  On any internal identification error.
      */

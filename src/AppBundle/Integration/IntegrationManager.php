@@ -2,8 +2,11 @@
 
 namespace AppBundle\Integration;
 
+use AppBundle\Integration\Execution;
+use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
+use As3\Parameters\Parameters;
 
 class IntegrationManager
 {
@@ -38,10 +41,19 @@ class IntegrationManager
     }
 
     /**
+     * @return  Store
+     */
+    public function getStore()
+    {
+        return $this->store;
+    }
+
+    /**
      * Runs an indentification integration.
      *
      * @param   string  $pullKey        The pull key name to use.
      * @param   string  $externalId     The external, third-party identity identifier.
+     * @return  Model The external-identity model pulled from the third-party service.
      */
     public function identify($pullKey, $externalId)
     {
@@ -51,25 +63,9 @@ class IntegrationManager
         if (null === $handler) {
             throw new \RuntimeException('Identify is not supported by the `%s` integration service.');
         }
-        list($source, $identifier) = $handler->getSourceAndIdentifierFor($externalId);
-
-        $identity = $this->store->findQuery('identity-external', ['source' => $source, 'identifier' => $identifier])->getSingleResult();
-        if (null === $identity) {
-            // Immediately create. Will update the model data later.
-            $identity = $this->store->create('identity-external');
-            $identity->set('source', $source);
-            $identity->set('identifier', $identifier);
-            $identity->save();
-        }
-        return $identity
-
-        // @todo At this point, the actual identification and updating of the identity model should be handled post-process.
-        $definition = $handler->execute($identifier);
-
-
-
-        var_dump($source, $identifier, $definition);
-        die();
+        $execution = new Execution\IdentifyExecution($integration, $service, $this);
+        $execution->setHandler($handler);
+        return $execution->run($externalId);
     }
 
     /**

@@ -48,6 +48,10 @@ class IdentityEmailFactory extends AbstractEmbedFactory
      */
     public function postValidate(AbstractModel $email)
     {
+        $identifier = new \MongoId();
+        if (empty($email->get('identifier'))) {
+            $email->set('identifier', (string) $identifier);
+        }
     }
 
     /**
