@@ -30,10 +30,7 @@ question:
             field: question
         pull:
             type: one
-            entity: question-integration-pull
-        push:
-            type: many
-            entity: question-integration-push
+            entity: integration-question-pull
         tags:
             type: many
             entity: question-tag

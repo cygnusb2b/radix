@@ -1,12 +1,13 @@
-question-integration-pull:
+integration-question-pull:
     entity:
-        extends: question-integration
+        extends: integration
         persistence:
             key: mongodb
             db: radix
     attributes:
         identifier:
             type: string
+            description: 'The external, third-party question identifier to use when pulling question data.'
         boundTo:
             type: string
             defaultValue: identity
