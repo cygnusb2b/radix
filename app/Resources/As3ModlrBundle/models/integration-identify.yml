@@ -1,0 +1,10 @@
+integration-identify:
+    entity:
+        extends: integration
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        pullKey:
+            type: string
+            description: 'The key used by Radix.identify.pull and ?radix.pull to select this integration.'

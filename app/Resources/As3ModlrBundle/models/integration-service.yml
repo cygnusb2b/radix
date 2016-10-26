@@ -1,0 +1,13 @@
+integration-service:
+    entity:
+        abstract: true
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { _type: 1, _id: 1 }, options: { unique: true } }
+    mixins: [ 'timestampable' ]
+    attributes:
+        name:
+            type: string

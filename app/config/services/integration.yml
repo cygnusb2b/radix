@@ -1,0 +1,10 @@
+services:
+    app_bundle.integration.manager:
+        class: AppBundle\Integration\IntegrationManager
+        arguments: [ "@as3_modlr.store" ]
+        calls:
+            - [ addService, [ "@app_bundle.integration.service.omeda" ] ]
+
+    app_bundle.integration.service.omeda:
+        class: AppBundle\Integrations\Omeda\OmedaService
+        arguments: [ "@app_bundle.omeda_sdk.api_client" ]
