@@ -195,6 +195,9 @@ class IdentifyExecution extends AbstractExecution
             switch ($question->get('questionType')) {
                 case 'choice-single':
                     foreach ($question->get('choices') as $choice) {
+                        if (true === $choice->get('deleted')) {
+                            continue;
+                        }
                         $meta = $choice->get('integration');
                         if (null === $meta || null === $pull = $meta->get('pull')) {
                             continue;
@@ -205,14 +208,34 @@ class IdentifyExecution extends AbstractExecution
                     }
                     break;
                 case 'choice-multiple':
-                    # code...
+                    $values      = (array) $answerDef->getValue();
+                    $externalIds = array_flip($values);
+                    $choices     = [];
+                    foreach ($question->get('choices') as $choice) {
+                        if (true === $choice->get('deleted')) {
+                            continue;
+                        }
+                        $meta = $choice->get('integration');
+                        if (null === $meta || null === $pull = $meta->get('pull')) {
+                            continue;
+                        }
+                        if (isset($externalIds[$pull->get('identifier')])) {
+                            $choices[] = $choice;
+                        }
+                    }
+                    if (empty($choices)) {
+                        continue;
+                    }
+                    foreach ($choices as $choice) {
+                        $answer->push('value', $choice);
+                    }
                     break;
                 default:
                     $answer->set('value', $answerDef->getValue());
                     break;
             }
 
-            if (empty($answer->get('value')->get('name'))) {
+            if (empty($answer->get('value'))) {
                 // Do not allow the answer to be saved. No value was specified.
                 continue;
             }
