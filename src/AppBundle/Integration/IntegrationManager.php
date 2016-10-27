@@ -3,6 +3,7 @@
 namespace AppBundle\Integration;
 
 use AppBundle\Integration\Execution;
+use AppBundle\Question\TypeManager;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
@@ -21,11 +22,18 @@ class IntegrationManager
     private $store;
 
     /**
-     * @param   Store    $store
+     * @var TypeManager
      */
-    public function __construct(Store $store)
+    private $typeManager;
+
+    /**
+     * @param   Store       $store
+     * @param   TypeManager $typeManager
+     */
+    public function __construct(Store $store, TypeManager $typeManager)
     {
-        $this->store = $store;
+        $this->store       = $store;
+        $this->typeManager = $typeManager;
     }
 
     /**
@@ -68,6 +76,7 @@ class IntegrationManager
         }
         $execution = new Execution\IdentifyExecution($integration, $service, $this);
         $execution->setHandler($handler);
+        $execution->setTypeManager($this->typeManager);
         $model = $execution->run($externalId);
 
         $this->updateIntegrationDetails($integration);

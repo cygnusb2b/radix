@@ -73,7 +73,7 @@ class QuestionPullHandler extends AbstractHandler implements QuestionPullInterfa
         if (empty($demographic)) {
             throw new \InvalidArgumentException(sprintf('No Omeda demographic found for ID "%s"', $identifier));
         }
-        return $demographic;
+        return reset($demographic);
     }
 
     /**

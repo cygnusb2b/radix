@@ -52,26 +52,31 @@ class AuthController extends AbstractAppController
     /**
      * Detects an identity from an incoming request, if applicable.
      *
+     * @todo    This should move to a service so it can be handled by auth and the /app/identify endpoint.
      * @param   Request $request
      */
     private function detectIdentity(Request $request)
     {
         $params = $request->query->get('identify');
-        if (!is_array($params) || empty($params) || !isset($params['identifier'])) {
+        if (!is_array($params) || empty($params)) {
             // No identification params found.
             return;
         }
 
-        if (!isset($params['pullKey']) && !isset($params['source'])) {
-            // Must have either a pull key or a source.
-            return;
-        }
+        if (isset($params['pull'])) {
+            $parts = explode('|', $params['pull']);
+            for ($i=0; $i <= 1; $i++) {
+                if (!isset($parts[$i]) || empty($parts[$i])) {
+                    return;
+                }
+            }
+            $pullKey    = $parts[0];
+            $identifier = $parts[1];
 
-        if (isset($params['pullKey'])) {
             // Pull identification.
             $manager = $this->get('app_bundle.integration.manager');
             try {
-                $identity = $manager->identify($params['pullKey'], $params['identifier']);
+                $identity = $manager->identify($pullKey, $identifier);
                 if (null !== $identity) {
                     $this->get('app_bundle.identity.manager')->setActiveIdentity($identity);
                 }
@@ -84,8 +89,7 @@ class AuthController extends AbstractAppController
             }
 
         } else {
-            // Direct integration
-            throw new \BadMethodCallException('Direct identification is not yet supported');
+            throw new \BadMethodCallException('Other forms of identification (e.g. `identifier` and `upsert` are not yet supported.');
         }
     }
 }

@@ -4,12 +4,20 @@ namespace AppBundle\Integration\Execution;
 
 use AppBundle\Integration\Definition\AbstractDefinition;
 use AppBundle\Integration\Definition\ExternalIdentityDefinition;
+use AppBundle\Integration\Definition\IdentityAnswerDefinition;
 use AppBundle\Integration\Handler\HandlerInterface;
 use AppBundle\Integration\Handler\IdentifyInterface;
+use AppBundle\Question\TypeManager;
 use As3\Modlr\Models\Model;
 
 class IdentifyExecution extends AbstractExecution
 {
+    /**
+     * @var TypeManager
+     */
+    private $typeManager;
+
+
     /**
      * Executes the identify integration.
      * Any logic contained in this method will be run for ALL integration services!
@@ -35,14 +43,25 @@ class IdentifyExecution extends AbstractExecution
         // @todo At this point, the actual identification and updating of the identity model should be handled post-process.
 
         // Get all question-pull integrations that match this service.
-        $definition = $handler->execute($identifier, $this->extractExternalQuestionIds());
+        $integrations = $this->extractQuestionIntegrations();
+        $definition   = $handler->execute($identifier, $this->extractExternalQuestionIds($integrations));
+
         $this->applyIdentityValues($identity, $definition);
 
         $identity->save();
 
         // Handle question answers.
-        $this->upsertAnswers($identity, $definition);
+        $this->upsertAnswers($identity, $definition, $integrations);
         return $identity;
+    }
+
+    /**
+     * @return  TypeManager
+     */
+    public function setTypeManager(TypeManager $typeManager)
+    {
+        $this->typeManager = $typeManager;
+        return $this;
     }
 
     /**
@@ -102,33 +121,105 @@ class IdentifyExecution extends AbstractExecution
     }
 
     /**
-     * Gets all external question identifiers related to this identify request.
-     *
      * @return  array
      */
-    private function extractExternalQuestionIds()
+    private function extractExternalQuestionIds(array $integrations)
     {
         $identifiers = [];
+        foreach ($integrations as $integration) {
+            $identifiers[$integration->get('identifier')] = true;
+        }
+        return array_keys($identifiers);
+    }
+
+    /**
+     * @return  Model[]
+     */
+    private function extractQuestionIntegrations()
+    {
         $criteria    = [
-            'type'       => ['$in' => ['integration-question-pull', 'integration-question-push']],
+            'type'       => 'integration-question-pull',
             'service'    => $this->getIntegration()->get('service')->getId(),
             'boundTo'    => 'identity',
             'identifier' => ['$exists' => true]
         ];
 
-        $collection = $this->getStore()->findQuery('integration', $criteria);
+        $integrations = [];
+        $collection   = $this->getStore()->findQuery('integration', $criteria);
         foreach ($collection as $integration) {
             if (false === $integration->get('enabled')) {
                 continue;
             }
-            $identifiers[$integration->get('identifier')]  = true;
+            $integrations[] = $integration;
         }
-        return array_keys($identifiers);
+        return $integrations;
     }
 
-    private function upsertAnswers(Model $identity, ExternalIdentityDefinition $definition)
+    private function upsertAnswers(Model $identity, ExternalIdentityDefinition $definition, array $integrations)
     {
-        var_dump(__METHOD__, $definition->getAnswers());
-        die();
+        // Clear previous answers.
+        foreach ($identity->get('answers') as $answer) {
+            $answer->delete();
+            $answer->save();
+        }
+
+        $answerDefs  = $definition->getAnswers();
+        if (empty($integrations) || empty($answerDefs)) {
+            // No answers provided by the service. Do not process.
+            return;
+        }
+
+        $ids = [];
+        foreach ($integrations as $integration) {
+            // Get all integration model ids where a definition was returned.
+            $identifier = $integration->get('identifier');
+            if (isset($answerDefs[$identifier])) {
+                $ids[] = $integration->getId();
+            }
+        }
+
+        // Get all questions that have matches.
+        $criteria  = ['pull' => ['$in' => $ids]];
+        $questions = $this->getStore()->findQuery('question', $criteria);
+        $answers   = [];
+        foreach ($questions as $question) {
+            if (true === $question->get('deleted')) {
+                continue;
+            }
+
+            $answerType = $this->typeManager->getQuestionTypeFor($question->get('questionType'))->getAnswerType();
+            $answer     = $this->getStore()->create(sprintf('identity-answer-%s', $answerType));
+            $identifier = $question->get('pull')->get('identifier');
+            $answerDef  = $answerDefs[$identifier];
+
+            switch ($question->get('questionType')) {
+                case 'choice-single':
+                    foreach ($question->get('choices') as $choice) {
+                        $meta = $choice->get('integration');
+                        if (null === $meta || null === $pull = $meta->get('pull')) {
+                            continue;
+                        }
+                        if ($answerDef->getValue() == $pull->get('identifier')) {
+                            $answer->set('value', $choice);
+                        }
+                    }
+                    break;
+                case 'choice-multiple':
+                    # code...
+                    break;
+                default:
+                    $answer->set('value', $answerDef->getValue());
+                    break;
+            }
+
+            if (empty($answer->get('value')->get('name'))) {
+                // Do not allow the answer to be saved. No value was specified.
+                continue;
+            }
+
+            $answer->set('question', $question);
+            $answer->set('identity', $identity);
+            $answer->save();
+        }
     }
 }

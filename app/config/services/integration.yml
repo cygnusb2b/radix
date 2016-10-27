@@ -1,7 +1,7 @@
 services:
     app_bundle.integration.manager:
         class: AppBundle\Integration\IntegrationManager
-        arguments: [ "@as3_modlr.store" ]
+        arguments: [ "@as3_modlr.store", "@app_bundle.question.type_manager" ]
         calls:
             - [ addService, [ "@app_bundle.integration.service.omeda" ] ]
 

@@ -4,6 +4,7 @@ namespace AppBundle\Integrations\Omeda;
 
 use AppBundle\Integration\Definition\ExternalIdentityDefinition;
 use AppBundle\Integration\Definition\IdentityAddressDefinition;
+use AppBundle\Integration\Definition\IdentityAnswerDefinition;
 use AppBundle\Integration\Definition\IdentityEmailDefinition;
 use AppBundle\Integration\Handler\IdentifyInterface;
 
@@ -106,8 +107,8 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
             return;
         }
 
-        $answers      = [];
-        $demographics = $this->getDemographicData(array_flip($questionIds));
+        $answers       = [];
+        $demographics   = $this->getDemographicData(array_flip($questionIds));
 
         foreach ($payload['CustomerDemographics'] as $answer) {
             $identifier = $answer['DemographicId'];
@@ -137,7 +138,10 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
                     break;
             }
         }
-        // @todo Loop over answers and create definitions.
+
+        foreach ($answers as $questionId => $value) {
+            $definition->addAnswer(new IdentityAnswerDefinition($questionId, $value));
+        }
     }
 
     /**

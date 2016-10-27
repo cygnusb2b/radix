@@ -38,7 +38,7 @@ abstract class AbstractIdentityDefinition extends AbstractDefinition
     public function addAnswer(IdentityAnswerDefinition $definition)
     {
         if (false === $definition->isEmpty()) {
-            $this->answers[] = $definition;
+            $this->answers[$definition->getQuestionIdentifier()] = $definition;
         }
         return $this;
     }
