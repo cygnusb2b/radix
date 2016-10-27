@@ -1,0 +1,6 @@
+integration-meta-detail:
+    attributes:
+        service:
+            type: string
+        identifier:
+            type: string

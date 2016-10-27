@@ -49,7 +49,7 @@ class IntegrationManager
     }
 
     /**
-     * Runs an indentification integration.
+     * Runs an indentify integration.
      *
      * @param   string  $pullKey        The pull key name to use.
      * @param   string  $externalId     The external, third-party identity identifier.
@@ -61,11 +61,44 @@ class IntegrationManager
         $service     = $this->loadServiceFor($integration);
         $handler     = $service->getIdentifyHandler();
         if (null === $handler) {
-            throw new \RuntimeException('Identify is not supported by the `%s` integration service.');
+            $this->throwUnsupportedError('identify', $service->getKey());
         }
         $execution = new Execution\IdentifyExecution($integration, $service, $this);
         $execution->setHandler($handler);
-        return $execution->run($externalId);
+        $model = $execution->run($externalId);
+
+        $this->updateIntegrationDetails($integration);
+
+        return $model;
+
+    }
+
+    /**
+     * Runs question-pull integrations
+     *
+     * @param   string|null     $integrationId  The question-pull id to use. If none specified, will use all.
+     */
+    public function questionPull($integrationId = null)
+    {
+        $criteria = [];
+        if (null !== $integrationId) {
+            $criteria['id'] = $integrationId;
+        }
+        $integrations = $this->getStore()->findQuery('integration-question-pull', $criteria);
+        foreach ($integrations as $integration) {
+            $this->validateIntegration($integration);
+
+            $service = $this->loadServiceFor($integration);
+            $handler = $service->getQuestionPullHandler();
+            if (null === $handler) {
+                $this->throwUnsupportedError('question-pull', $service->getKey());
+            }
+            $execution = new Execution\QuestionPullExecution($integration, $service, $this);
+            $execution->setHandler($handler);
+            $execution->run();
+
+            $this->updateIntegrationDetails($integration);
+        }
     }
 
     /**
@@ -98,7 +131,7 @@ class IntegrationManager
             throw new \InvalidArgumentException(sprintf('No integration service was found as a registered service for key `%s`', $key));
         }
 
-        // Create the service parameters by extracted attributes from the model and configure the service instance.
+        // Create the service parameters by extracting attributes from the model and configure the service instance.
         $parameters = [];
         foreach ($model->getMetadata()->getAttributes() as $key => $meta) {
             $parameters[$key] = $model->get($key);
@@ -126,9 +159,42 @@ class IntegrationManager
         if (null === $integration) {
             throw new \InvalidArgumentException(sprintf('No `%s` integration found for criteria: %s', $type, json_encode($criteria)));
         }
+        $this->validateIntegration($integration);
+        return $integration;
+    }
+
+    private function throwUnsupportedError($integrationType, $serviceKey)
+    {
+        throw new \RuntimeException(sprintf('The `%s` integration type is not supported by the `%s` service.', $integrationType, $serviceKey));
+    }
+
+    /**
+     * Updates the details of the integration.
+     *
+     * @param   Model   $integration
+     */
+    private function updateIntegrationDetails(Model $integration)
+    {
+        $now       = new \DateTime();
+        $integration
+            ->set('lastRunDate', $now)
+            ->set('timesRan', (integer) $integration->get('timesRan') + 1)
+        ;
+
+        if (null === $integration->get('firstRunDate')) {
+            $integration->set('firstRunDate', $now);
+        }
+        $integration->save();
+    }
+
+    /**
+     * @param   Model   $integration
+     * @throws  \RuntimeException
+     */
+    private function validateIntegration(Model $integration)
+    {
         if (false === $integration->get('enabled')) {
             throw new \RuntimeException(sprintf('The integration is currently disabled for id `%s`', $integration->getId()));
         }
-        return $integration;
     }
 }

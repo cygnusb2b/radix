@@ -18,6 +18,11 @@ class OmedaService implements ServiceInterface
     private $identifyHandler;
 
     /**
+     * @var QuestionPullHandler
+     */
+    private $questionPullHandler;
+
+    /**
      * Constructor.
      *
      * @param   ApiClient  $apiClient
@@ -25,8 +30,9 @@ class OmedaService implements ServiceInterface
      */
     public function __construct(ApiClient $apiClient)
     {
-        $this->apiClient       = $apiClient;
-        $this->identifyHandler = new IdentifyHandler();
+        $this->apiClient           = $apiClient;
+        $this->identifyHandler     = new IdentifyHandler();
+        $this->questionPullHandler = new QuestionPullHandler();
     }
 
     /**
@@ -60,17 +66,18 @@ class OmedaService implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function executeQuestionPull($externalId, array $extra = [])
+    public function getKey()
     {
-
+        return 'omeda';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getKey()
+    public function getQuestionPullHandler()
     {
-        return 'omeda';
+        $this->questionPullHandler->setService($this);
+        return $this->questionPullHandler;
     }
 
     /**

@@ -17,6 +17,10 @@ integration:
         enabled:
             type: boolean
             defaultValue: true
+        extra:
+            type: object
+            description: 'Any extra parameters that this integration may need.'
+            defaultValue: []
         firstRunDate:
             type: date
         lastRunDate:

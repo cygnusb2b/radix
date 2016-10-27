@@ -22,19 +22,6 @@ interface ServiceInterface
     public function getIdentifyHandler();
 
     /**
-     * Executes a question pull.
-     * Can contain additional, service specific arguments.
-     * If supported, the service should return a question definition.
-     * A value of anything other than QuestionDefinition will signify that this service does not support the integration.
-     *
-     * @param   string  $identifier
-     * @param   array   $extra
-     * @return  Definition\QuestionDefinition|mixed
-     * @throws  \Exception On any internal service errors.
-     */
-    public function executeQuestionPull($externalId, array $extra = []);
-
-    /**
      * Gets the service key.
      * Is ultimately used internally to retrieve the service model from the database.
      * Must be dasherized.
@@ -42,6 +29,14 @@ interface ServiceInterface
      * @return  string
      */
     public function getKey();
+
+    /**
+     * Gets the question-pull integration handler for this service.
+     * If the service does not support this integration, a null value should be returned.
+     *
+     * @return  Handler\QuestionPullInterface|null
+     */
+    public function getQuestionPullHandler();
 
     /**
      * Determines if the service is configured properly.

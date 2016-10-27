@@ -28,9 +28,13 @@ abstract class AbstractExecution
      * @param   Model               $integration
      * @param   ServiceInterface    $service
      * @param   IntegrationManager  $manager
+     * @throws  \InvalidArgumentException
      */
     public function __construct(Model $integration, ServiceInterface $service, IntegrationManager $manager)
     {
+        if ($integration->getType() !== $this->getSupportedModelType()) {
+            throw new \InvalidArgumentException(sprintf('The provided model integration type `%s` is not supported. Expected `%s`', $integration->getType(), $this->getSupportedModelType()));
+        }
         $this->integration  = $integration;
         $this->service      = $service;
         $this->manager      = $manager;
@@ -109,6 +113,13 @@ abstract class AbstractExecution
     {
         return $this->manager->getStore();
     }
+
+    /**
+     * Gets the integration model type this execution supports.
+     *
+     * @return  string
+     */
+    abstract protected function getSupportedModelType();
 
     /**
      * Validates that this execution supports the appropriate handler implementation.

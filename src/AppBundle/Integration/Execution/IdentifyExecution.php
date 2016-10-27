@@ -10,6 +10,7 @@ class IdentifyExecution extends AbstractExecution
 {
     /**
      * Executes the identify integration.
+     * Any logic contained in this method will be run for ALL integration services!
      *
      * @param   string  $externalId
      * @return  Model
@@ -19,10 +20,11 @@ class IdentifyExecution extends AbstractExecution
         $handler = $this->getHandler();
         list($source, $identifier) = $handler->getSourceAndIdentifierFor($externalId);
 
+        $source   = sprintf('identify:%s', $source);
         $identity = $this->getStore()->findQuery('identity-external', ['source' => $source, 'identifier' => $identifier])->getSingleResult();
         if (null === $identity) {
             // Immediately create. Will update the model data later.
-            $identity = $this->store->create('identity-external');
+            $identity = $this->getStore()->create('identity-external');
             $identity->set('source', $source);
             $identity->set('identifier', $identifier);
             $identity->save();
@@ -36,6 +38,14 @@ class IdentifyExecution extends AbstractExecution
         // @todo Must clear the existing model (if not new) and apply the definition to the model.
 
         return $identity;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getSupportedModelType()
+    {
+        return 'integration-identify';
     }
 
     /**

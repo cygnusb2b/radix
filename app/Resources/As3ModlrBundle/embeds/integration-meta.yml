@@ -1,0 +1,8 @@
+integration-meta:
+    embeds:
+        pull:
+            type: one
+            entity: integration-meta-detail
+        push:
+            type: many
+            entity: integration-meta-detail

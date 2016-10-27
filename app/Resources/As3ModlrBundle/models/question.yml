@@ -4,14 +4,12 @@ question:
             key: mongodb
             db: radix
             schemata:
-                - { keys: { key: 1 }, options: { unique: true }}
-                - { keys: { tags: 1 }}
+                - { keys: { key: 1 }, options: { unique: true } }
+                - { keys: { tags: 1 } }
+                - { keys: { pull: 1 } , options: { unique: true, partialFilterExpression: { pull: { '$exists': true } } } }
     mixins: [ 'keyable', 'timestampable', 'soft-deleteable' ]
     attributes:
         allowHtml:
-            type: boolean
-            defaultValue: false
-        builtIn:
             type: boolean
             defaultValue: false
         boundTo:
