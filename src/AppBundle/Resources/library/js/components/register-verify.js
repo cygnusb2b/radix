@@ -22,8 +22,7 @@ React.createClass({ displayName: 'ComponentRegisterVerify',
                 React.createElement('h5', { className: 'card-subtitle m-t-1'}, 'Still no email?'),
                 React.createElement(Radix.Components.get('ResendVerifyEmail'), {
                     emailAddress : this.props.emailAddress,
-                    customerId   : this.props.customerId,
-                    className    : 'card-text'
+                    customerId   : this.props.customerId
                 }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'), { ref: this._setLock })
