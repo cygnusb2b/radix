@@ -12,7 +12,7 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($externalId)
+    public function execute($externalId, array $questionIds = [])
     {
         $this->validateIdentifier($externalId);
         $payload = $this->parseApiResponse($this->getApiClient()->customer->lookup($externalId));
@@ -21,6 +21,7 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
         $this->applyAttributes($definition, $payload);
         $this->applyEmails($definition, $payload);
         $this->applyAddresses($definition, $payload);
+        $this->applyAnswers($definition, $payload, $questionIds);
         return $definition;
     }
 
@@ -89,6 +90,54 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
                 $definition->addAddress($addressDef);
             }
         }
+    }
+
+    /**
+     * Applies identity answers from the payload to the definition for the provided external question ids.
+     *
+     * @param   ExternalIdentityDefinition  $definition
+     * @param   array                       $payload
+     * @param   array                       $questionIds
+     */
+    private function applyAnswers(ExternalIdentityDefinition $definition, array $payload, array $questionIds)
+    {
+        if (!isset($payload['CustomerDemographics']) || !is_array($payload['CustomerDemographics'])) {
+            // No answers to process.
+            return;
+        }
+
+        $answers      = [];
+        $demographics = $this->getDemographicData(array_flip($questionIds));
+
+        foreach ($payload['CustomerDemographics'] as $answer) {
+            $identifier = $answer['DemographicId'];
+            if (!isset($demographics[$identifier])) {
+                continue;
+            }
+            $demographic  = $demographics[$identifier];
+            $questionType = $this->getQuestionTypeFor($demographic['DemographicType']);
+
+            switch ($questionType) {
+                case 'choice-single':
+                    $answers[$identifier] = $answer['ValueId'];
+                    break;
+                case 'choice-multiple':
+                    if (!isset($answers[$identifier])) {
+                        $answers[$identifier] = [];
+                    } elseif (!is_array($answers[$identifier])) {
+                        $answers[$identifier] = (array) $answers[$identifier];
+                    }
+                    $answers[$identifier][] = $answer['ValueId'];
+                    break;
+                case 'datetime':
+                    $answers[$identifier] = $answer['ValueDate'];
+                    break;
+                default:
+                    $answers[$identifier] = $answer['ValueText'];
+                    break;
+            }
+        }
+        // @todo Loop over answers and create definitions.
     }
 
     /**

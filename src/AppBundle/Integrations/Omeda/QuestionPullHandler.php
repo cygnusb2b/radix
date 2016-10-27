@@ -69,22 +69,11 @@ class QuestionPullHandler extends AbstractHandler implements QuestionPullInterfa
      */
     private function extractDemographicDataFor($identifier)
     {
-        $brandData = $this->getBrandData();
-        if (!isset($brandData['Demographics']) || !is_array($brandData['Demographics'])) {
-            throw new \RuntimeException('No demographic information was found in the Omeda brand data.');
-        }
-
-        $found = null;
-        foreach ($brandData['Demographics'] as $demographic) {
-            if (isset($demographic['Id']) && $demographic['Id'] == $identifier) {
-                $found = $demographic;
-                break;
-            }
-        }
-        if (empty($found)) {
+        $demographic = $this->getDemographicData([$identifier => true]);
+        if (empty($demographic)) {
             throw new \InvalidArgumentException(sprintf('No Omeda demographic found for ID "%s"', $identifier));
         }
-        return $found;
+        return $demographic;
     }
 
     /**
@@ -103,30 +92,6 @@ class QuestionPullHandler extends AbstractHandler implements QuestionPullInterfa
         ];
         if (!isset($map[$omedaType])) {
             throw new \InvalidArgumentException('No corresponding choice type was found for Omeda demographic value type "%s"', $omedaType);
-        }
-        return $map[$omedaType];
-    }
-
-    /**
-     * Gets the internal question type for an Omeda demographic type.
-     *
-     * @param   int     $omedaType
-     * @return  string
-     * @throws  \InvalidArgumentException
-     */
-    private function getQuestionTypeFor($omedaType)
-    {
-        $map = [
-            1  => 'choice-single',
-            2  => 'choice-multiple',
-            3  => 'string',
-            5  => 'boolean',
-            6  => 'datetime',
-            7  => 'integer',
-            8  => 'float',
-        ];
-        if (!isset($map[$omedaType])) {
-            throw new \InvalidArgumentException('No corresponding question type was found for Omeda demographic type `%s`', $omedaType);
         }
         return $map[$omedaType];
     }

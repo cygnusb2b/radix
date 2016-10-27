@@ -33,14 +33,15 @@ class IdentifyExecution extends AbstractExecution
         }
 
         // @todo At this point, the actual identification and updating of the identity model should be handled post-process.
-        $definition = $handler->execute($identifier);
+
+        // Get all question-pull integrations that match this service.
+        $definition = $handler->execute($identifier, $this->extractExternalQuestionIds());
         $this->applyIdentityValues($identity, $definition);
+
         $identity->save();
 
-        // @todo Determine if a question pull integration also exists with this service id. If so, sync question answers.
-
-        // @todo Must clear the existing model (if not new) and apply the definition to the model.
-
+        // Handle question answers.
+        $this->upsertAnswers($identity, $definition);
         return $identity;
     }
 
@@ -81,6 +82,12 @@ class IdentifyExecution extends AbstractExecution
         $this->applyEmbedManyFor($identity, 'addresses', ['identifier', 'description', 'isPrimary', 'companyName', 'street', 'extra', 'city', 'regionCode', 'countryCode', 'postalCode'], $definition->getAddresses());
     }
 
+    /**
+     * @param   Model                   $identity
+     * @param   string                  $fieldKey
+     * @param   array                   $fields
+     * @param   AbstractDefinition[]    $definitions
+     */
     private function applyEmbedManyFor(Model $identity, $fieldKey, array $fields, array $definitions)
     {
         $identity->clear($fieldKey);
@@ -92,5 +99,36 @@ class IdentifyExecution extends AbstractExecution
             }
             $identity->pushEmbed($fieldKey, $embed);
         }
+    }
+
+    /**
+     * Gets all external question identifiers related to this identify request.
+     *
+     * @return  array
+     */
+    private function extractExternalQuestionIds()
+    {
+        $identifiers = [];
+        $criteria    = [
+            'type'       => ['$in' => ['integration-question-pull', 'integration-question-push']],
+            'service'    => $this->getIntegration()->get('service')->getId(),
+            'boundTo'    => 'identity',
+            'identifier' => ['$exists' => true]
+        ];
+
+        $collection = $this->getStore()->findQuery('integration', $criteria);
+        foreach ($collection as $integration) {
+            if (false === $integration->get('enabled')) {
+                continue;
+            }
+            $identifiers[$integration->get('identifier')]  = true;
+        }
+        return array_keys($identifiers);
+    }
+
+    private function upsertAnswers(Model $identity, ExternalIdentityDefinition $definition)
+    {
+        var_dump(__METHOD__, $definition->getAnswers());
+        die();
     }
 }

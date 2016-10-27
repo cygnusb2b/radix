@@ -10,6 +10,11 @@ abstract class AbstractIdentityDefinition extends AbstractDefinition
     private $addresses = [];
 
     /**
+     * @var IdentityAnswerDefinition
+     */
+    private $answers = [];
+
+    /**
      * @var IdentityPhoneDefinition[]
      */
     private $phones = [];
@@ -22,6 +27,18 @@ abstract class AbstractIdentityDefinition extends AbstractDefinition
     {
         if (false === $definition->isEmpty()) {
             $this->addresses[] = $definition;
+        }
+        return $this;
+    }
+
+    /**
+     * @param   IdentityAnswerDefinition   $definition
+     * @return  self
+     */
+    public function addAnswer(IdentityAnswerDefinition $definition)
+    {
+        if (false === $definition->isEmpty()) {
+            $this->answers[] = $definition;
         }
         return $this;
     }
@@ -47,6 +64,14 @@ abstract class AbstractIdentityDefinition extends AbstractDefinition
     }
 
     /**
+     * @return  IdentityAnswerDefinition[]
+     */
+    public function getAnswers()
+    {
+        return $this->answers;
+    }
+
+    /**
      * @return  IdentityPhoneDefinition[]
      */
     public function getPhones()
@@ -62,6 +87,6 @@ abstract class AbstractIdentityDefinition extends AbstractDefinition
         if (true === parent::isEmpty()) {
             return true;
         }
-        return empty($this->addresses) && empty($this->phones);
+        return empty($this->addresses) && empty($this->phones) && empty($this->answers);
     }
 }

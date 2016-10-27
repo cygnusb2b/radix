@@ -72,7 +72,9 @@ class AuthController extends AbstractAppController
             $manager = $this->get('app_bundle.integration.manager');
             try {
                 $identity = $manager->identify($params['pullKey'], $params['identifier']);
-                $this->get('app_bundle.identity.manager')->setActiveIdentity($identity);
+                if (null !== $identity) {
+                    $this->get('app_bundle.identity.manager')->setActiveIdentity($identity);
+                }
             } catch(\Exception $e) {
                 if (true === $this->getParameter('kernel.debug')) {
                     throw $e;

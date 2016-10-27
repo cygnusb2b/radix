@@ -16,7 +16,7 @@ class AbstractHandler extends BaseAbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function supportsServiceClass($className)
+    final public function supportsServiceClass($className)
     {
         return 'AppBundle\Integrations\Omeda\OmedaService';
     }
@@ -25,7 +25,7 @@ class AbstractHandler extends BaseAbstractHandler
      * @return  ApiClient
      * @throws  \RuntimeException If the Omeda integration service has not been set.
      */
-    protected function getApiClient()
+    final protected function getApiClient()
     {
         if (null === $this->service) {
             throw new \RuntimeException('No service has been set to this handler.');
@@ -38,7 +38,7 @@ class AbstractHandler extends BaseAbstractHandler
      *
      * @return  array
      */
-    protected function getBrandData()
+    final protected function getBrandData()
     {
         $config = $this->getApiClient()->getConfiguration();
         $client = $config['clientKey'];
@@ -51,12 +51,58 @@ class AbstractHandler extends BaseAbstractHandler
     }
 
     /**
+     * Gets the brand demographic data from Omeda.
+     *
+     * @return  array
+     */
+    final protected function getDemographicData(array $filterBy = [])
+    {
+        $demographics = [];
+        $brandData    = $this->getBrandData();
+        if (!isset($brandData['Demographics']) || !is_array($brandData['Demographics'])) {
+            return $demographics;
+        }
+        $filter = !empty($filterBy);
+        foreach ($brandData['Demographics'] as $demographic) {
+            $identifier = $demographic['Id'];
+            if (false === $filter || isset($filterBy[$identifier])) {
+                $demographics[$identifier] = $demographic;
+            }
+        }
+        return $demographics;
+    }
+
+    /**
+     * Gets the internal question type for an Omeda demographic type.
+     *
+     * @param   int     $omedaType
+     * @return  string
+     * @throws  \InvalidArgumentException
+     */
+    final protected function getQuestionTypeFor($omedaType)
+    {
+        $map = [
+            1  => 'choice-single',
+            2  => 'choice-multiple',
+            3  => 'string',
+            5  => 'boolean',
+            6  => 'datetime',
+            7  => 'integer',
+            8  => 'float',
+        ];
+        if (!isset($map[$omedaType])) {
+            throw new \InvalidArgumentException('No corresponding question type was found for Omeda demographic type `%s`', $omedaType);
+        }
+        return $map[$omedaType];
+    }
+
+    /**
      * Parses an Omeda API response.
      *
      * @param   Response    $response
      * @return  array
      */
-    protected function parseApiResponse(Response $response)
+    final protected function parseApiResponse(Response $response)
     {
         $payload = @json_decode($response->getBody()->getContents(), true);
         if (!is_array($payload)) {

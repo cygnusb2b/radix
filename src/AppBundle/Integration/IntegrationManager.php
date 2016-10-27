@@ -53,11 +53,14 @@ class IntegrationManager
      *
      * @param   string  $pullKey        The pull key name to use.
      * @param   string  $externalId     The external, third-party identity identifier.
-     * @return  Model The external-identity model pulled from the third-party service.
+     * @return  Model|null The external-identity model pulled from the third-party service.
      */
     public function identify($pullKey, $externalId)
     {
         $integration = $this->retrieveIntegrationFor('identify', ['pullKey' => $pullKey]);
+        if (false === $integration->get('enabled')) {
+            return;
+        }
         $service     = $this->loadServiceFor($integration);
         $handler     = $service->getIdentifyHandler();
         if (null === $handler) {
@@ -70,7 +73,6 @@ class IntegrationManager
         $this->updateIntegrationDetails($integration);
 
         return $model;
-
     }
 
     /**
@@ -86,7 +88,9 @@ class IntegrationManager
         }
         $integrations = $this->getStore()->findQuery('integration-question-pull', $criteria);
         foreach ($integrations as $integration) {
-            $this->validateIntegration($integration);
+            if (false === $integration->get('enabled')) {
+                continue;
+            }
 
             $service = $this->loadServiceFor($integration);
             $handler = $service->getQuestionPullHandler();
@@ -159,7 +163,6 @@ class IntegrationManager
         if (null === $integration) {
             throw new \InvalidArgumentException(sprintf('No `%s` integration found for criteria: %s', $type, json_encode($criteria)));
         }
-        $this->validateIntegration($integration);
         return $integration;
     }
 
@@ -185,16 +188,5 @@ class IntegrationManager
             $integration->set('firstRunDate', $now);
         }
         $integration->save();
-    }
-
-    /**
-     * @param   Model   $integration
-     * @throws  \RuntimeException
-     */
-    private function validateIntegration(Model $integration)
-    {
-        if (false === $integration->get('enabled')) {
-            throw new \RuntimeException(sprintf('The integration is currently disabled for id `%s`', $integration->getId()));
-        }
     }
 }
