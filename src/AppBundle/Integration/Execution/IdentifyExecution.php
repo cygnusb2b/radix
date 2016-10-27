@@ -2,6 +2,8 @@
 
 namespace AppBundle\Integration\Execution;
 
+use AppBundle\Integration\Definition\AbstractDefinition;
+use AppBundle\Integration\Definition\ExternalIdentityDefinition;
 use AppBundle\Integration\Handler\HandlerInterface;
 use AppBundle\Integration\Handler\IdentifyInterface;
 use As3\Modlr\Models\Model;
@@ -27,11 +29,13 @@ class IdentifyExecution extends AbstractExecution
             $identity = $this->getStore()->create('identity-external');
             $identity->set('source', $source);
             $identity->set('identifier', $identifier);
-            $identity->save();
+            // $identity->save(); // @todo uncomment once the application is done post-process.
         }
 
         // @todo At this point, the actual identification and updating of the identity model should be handled post-process.
         $definition = $handler->execute($identifier);
+        $this->applyIdentityValues($identity, $definition);
+        $identity->save();
 
         // @todo Determine if a question pull integration also exists with this service id. If so, sync question answers.
 
@@ -55,6 +59,38 @@ class IdentifyExecution extends AbstractExecution
     {
         if (!$handler instanceof IdentifyInterface) {
             throw new \InvalidArgumentException('The handler is unsupported. Expected an implementation of IdentifyInterface');
+        }
+    }
+
+    /**
+     * Applies the identity values from a definition to a model.
+     *
+     * @param   Model                       $identity
+     * @param   ExternalIdentityDefinition  $definition
+     */
+    private function applyIdentityValues(Model $identity, ExternalIdentityDefinition $definition)
+    {
+        $attributes  = $definition->getAttributes();
+
+        foreach (['givenName', 'familyName', 'middleName', 'salutation', 'suffix', 'gender', 'title', 'companyName', 'externalId'] as $key) {
+            $identity->set($key, $attributes->get($key));
+        }
+
+        $this->applyEmbedManyFor($identity, 'emails', ['identifier', 'description', 'isPrimary', 'value', 'emailType'], $definition->getEmails());
+        $this->applyEmbedManyFor($identity, 'phones', ['identifier', 'description', 'isPrimary', 'number', 'phoneType'], $definition->getPhones());
+        $this->applyEmbedManyFor($identity, 'addresses', ['identifier', 'description', 'isPrimary', 'companyName', 'street', 'extra', 'city', 'regionCode', 'countryCode', 'postalCode'], $definition->getAddresses());
+    }
+
+    private function applyEmbedManyFor(Model $identity, $fieldKey, array $fields, array $definitions)
+    {
+        $identity->clear($fieldKey);
+        foreach ($definitions as $definition) {
+            $embed      = $identity->createEmbedFor($fieldKey);
+            $attributes = $definition->getAttributes();
+            foreach ($fields as $key) {
+                $embed->set($key, $attributes->get($key));
+            }
+            $identity->pushEmbed($fieldKey, $embed);
         }
     }
 }

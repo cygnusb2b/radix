@@ -80,7 +80,7 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
                 $addressDef = new IdentityAddressDefinition($identifier);
                 foreach ($map as $theirKey => $ourKey) {
                     if (isset($address[$theirKey]) && !empty($address[$theirKey])) {
-                        $addressDef->getAttributes()->set($ourKey, $theirKey);
+                        $addressDef->getAttributes()->set($ourKey, $address[$theirKey]);
                     }
                 }
                 if (isset($address['StatusCode']) && 1 == $address['StatusCode']) {
