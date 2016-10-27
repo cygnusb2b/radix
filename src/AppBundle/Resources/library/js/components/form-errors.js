@@ -6,7 +6,7 @@ React.createClass({ displayName: 'ComponentFormErrors',
 
     getDefaultProps: function() {
         return {
-            ref : null,
+            ref : null
         };
     },
 
@@ -37,7 +37,7 @@ React.createClass({ displayName: 'ComponentFormErrors',
 
     getMeta: function(jqXHR) {
         if (jqXHR.errors && jqXHR.errors.length) {
-            return jqXHR.errors[0].meta;
+            return jqXHR.errors[0].meta || {};
         }
         return {};
     },
