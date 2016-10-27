@@ -2,15 +2,17 @@ React.createClass({ displayName: 'ComponentResendVerifyEmail',
 
     getDefaultProps: function() {
         return {
-            className    : null,
+            className    : 'alert alert-info',
             emailAddress : null,
-            accountId    : null
+            accountId    : null,
+            display      : true
         };
     },
 
     getInitialState: function() {
         return {
-            succeeded: false
+            display   : this.props.display,
+            succeeded : false
         };
     },
 
@@ -48,21 +50,42 @@ React.createClass({ displayName: 'ComponentResendVerifyEmail',
     },
 
     render: function() {
-
-        var support  = Application.settings.support || {};
-        var elements = React.createElement('div', { className: this.props.className },
-            React.createElement('p', null, 'To receive a new verification code, you can ', React.createElement('a', { href: 'javascript:void(0)', onClick: this.send }, 'resend'), ' the verification message to ', this.props.emailAddress, '.'),
-            React.createElement('p', { className: 'card-text'}, 'If you\'re still experiencing issues, you can ', React.createElement('a', { href: 'mailto:' + support.email }, 'contact'), ' our support team for further assistance.'),
-            React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-            React.createElement(Radix.Components.get('FormLock'), { ref: this._setLock })
-        );
-
-        if (this.state.succeeded) {
-            elements = React.createElement('p', { className: 'alert-success alert', role: 'alert' },
-                React.createElement('strong', null, 'Success!'), ' The verification email was sent to ', React.createElement('strong', null, this.props.emailAddress), '.'
+        var elements;
+        if (this.state.display) {
+            var support  = Application.settings.support || {};
+            elements = React.createElement('p', { className: this.props.className },
+                React.createElement('span', null, 'To receive a new verification code, you can ', React.createElement('a', { href: 'javascript:void(0)', onClick: this.send }, 'resend'), ' the verification message to ', this.props.emailAddress, '. '),
+                React.createElement('span', { className: 'card-text'}, 'If you\'re still experiencing issues, you can ', React.createElement('a', { href: 'mailto:' + support.email }, 'contact'), ' our support team for further assistance.')
             );
+
+            if (this.state.succeeded) {
+                elements = React.createElement('p', { className: 'alert-success alert', role: 'alert' },
+                    React.createElement('strong', null, 'Success!'), ' The verification email was sent to ', React.createElement('strong', null, this.props.emailAddress), '.'
+                );
+            }
         }
-        return (elements)
+        return (
+            React.createElement('div', null,
+                elements,
+                React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+                React.createElement(Radix.Components.get('FormLock'), { ref: this._setLock })
+            )
+        )
+    },
+
+    clearError: function() {
+        this._error.clear();
+        return this;
+    },
+
+    hide: function() {
+        this.setState({ display: false });
+        return this;
+    },
+
+    show: function() {
+        this.setState({ display: true });
+        return this;
     },
 
     _setLock: function(ref) {

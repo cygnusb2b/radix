@@ -18,7 +18,9 @@ React.createClass({ displayName: 'ComponentLogin',
 
         var locker = this._formLock;
         var error  = this._error;
+        var verify = this._verify;
 
+        verify.hide().clearError();
         error.clear();
         locker.lock();
 
@@ -45,6 +47,14 @@ React.createClass({ displayName: 'ComponentLogin',
             locker.unlock();
             error.displayAjaxError(response);
 
+            var meta = error.getMeta(response);
+            if ('EmailVerification' === meta.type) {
+                // If email verification error, display the resend verify information.
+                this._verify.props.emailAddress = meta.email;
+                this._verify.props.accountId    = meta.account;
+                this._verify.show();
+            }
+
             if (Utils.isFunction(this.props.onFailure)) {
                 this.props.onFailure(response);
             }
@@ -54,7 +64,7 @@ React.createClass({ displayName: 'ComponentLogin',
 
     getInitialState: function() {
         return {
-            loggedIn: AccountManager.isLoggedIn()
+            loggedIn : AccountManager.isLoggedIn()
         }
     },
 
@@ -96,6 +106,7 @@ React.createClass({ displayName: 'ComponentLogin',
             React.createElement(Radix.Components.get('ModalLinkResetPasswordGenerate')),
             React.createElement(Radix.Components.get('ContactSupport'), { opening: 'Having trouble logging in?' }),
             React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+            React.createElement(Radix.Components.get('ResendVerifyEmail'), { ref: this._setVerify, display: false }),
             React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
         );
     },
@@ -108,5 +119,9 @@ React.createClass({ displayName: 'ComponentLogin',
 
     _setLock: function(ref) {
         this._formLock = ref;
+    },
+
+    _setVerify: function(ref) {
+        this._verify = ref;
     }
 });

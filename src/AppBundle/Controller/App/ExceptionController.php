@@ -19,21 +19,22 @@ class ExceptionController extends BaseExceptionController
         $currentContent = $this->getAndCleanOutputBuffering($request->headers->get('X-Php-Ob-Level', -1));
         $showException = $request->attributes->get('showException', $this->debug); // As opposed to an additional parameter, this maintains BC
 
-        $meta = [];
-        $code = $exception->getStatusCode();
+        $meta       = [
+            'code'  => $exception->getCode(),
+            'type'  => $this->getExceptionTypeFrom($exception->getClass()),
+        ];
+        $statusCode = $exception->getStatusCode();
 
-
-        if ('AppBundle\Exception\HttpFriendlyException' === $exception->getClass()) {
-            $headers = $exception->getHeaders();
-            foreach ($headers as $key => $value) {
-                if (0 === stripos($key, 'radix.')) {
-                    $metaKey = str_replace('radix.', '', $key);
-                    $meta[$metaKey] = $value;
-                    unset($headers[$key]);
-                }
+        $headers = $exception->getHeaders();
+        foreach ($headers as $key => $value) {
+            if (0 === stripos($key, 'radix.')) {
+                $metaKey = str_replace('radix.', '', $key);
+                $meta[$metaKey] = $value;
+                unset($headers[$key]);
             }
-            $exception->setHeaders($headers);
         }
+        $exception->setHeaders($headers);
+
         if ($showException) {
             $meta['exception'] = $exception->toArray();
         }
@@ -42,15 +43,22 @@ class ExceptionController extends BaseExceptionController
         }
 
         return new Response($this->twig->render(
-            (string) $this->findTemplate($request, $request->getRequestFormat(), $code, $showException),
+            (string) $this->findTemplate($request, $request->getRequestFormat(), $statusCode, $showException),
             [
-                'status_code'   => $code,
-                'status_text'   => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : '',
+                'status_code'   => $statusCode,
+                'status_text'   => isset(Response::$statusTexts[$statusCode]) ? Response::$statusTexts[$statusCode] : '',
                 'exception'     => $exception,
                 'logger'        => $logger,
                 'currentContent'=> $currentContent,
                 'meta'          => $meta,
             ]
         ));
+    }
+
+    private function getExceptionTypeFrom($className)
+    {
+        $parts = explode('\\', $className);
+        $type  = array_pop($parts);
+        return str_replace('Exception', '', $type);
     }
 }

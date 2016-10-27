@@ -200,7 +200,7 @@ class CookieManager
             return;
         }
         if (false === HelperUtility::isMongoIdFormat($data['id']) || !isset($this->allowedTypes[$data['type']])) {
-            return false;
+            return;
         }
         return new CustomerCookie($name, $expires, $data['id'], $data['type']);
     }

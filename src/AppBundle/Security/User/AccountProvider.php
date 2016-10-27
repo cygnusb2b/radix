@@ -2,10 +2,10 @@
 
 namespace AppBundle\Security\User;
 
+use AppBundle\Exception\EmailVerificationException;
 use As3\Modlr\Store\Store;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -65,8 +65,6 @@ class AccountProvider implements UserProviderInterface
             return $email->get('account');
         }
 
-
-
         // Determine if this is an email awaiting verification.
         $criteria = [
             'value'    => strtolower($emailOrUsername),
@@ -75,7 +73,7 @@ class AccountProvider implements UserProviderInterface
         $email = $this->store->findQuery('identity-account-email', $criteria)->getSingleResult();
         if (null !== $email && null !== $email->get('account')) {
             // Currently pending email verification.
-            throw new CustomUserMessageAuthenticationException('This account is awaiting email verificaton. Please check your email and click the verification link.');
+            throw new EmailVerificationException($email->get('value'), $email->get('account')->getId());
         }
         throw new UsernameNotFoundException('No account found for the provided email address or username');
     }
