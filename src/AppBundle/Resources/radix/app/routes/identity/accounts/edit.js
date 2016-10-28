@@ -8,7 +8,7 @@ export default Route.extend({
     utility: service('model-utility'),
 
     model: function(params) {
-        return this.store.findRecord('customer-account', params.id);
+        return this.store.findRecord('identity-account', params.id);
     },
 
     actions: {

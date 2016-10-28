@@ -13,7 +13,7 @@ export default Ember.Route.extend({
 
         this.get('loading').show();
 
-        return this.store.query('customer-account', {
+        return this.store.query('identity-account', {
             page: {
                 offset: parseInt(this.get('offset')),
                 limit:  parseInt(this.get('limit'))

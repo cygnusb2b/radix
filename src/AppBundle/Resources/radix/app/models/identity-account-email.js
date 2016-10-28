@@ -5,5 +5,5 @@ export default DS.Model.extend(Timestampable, {
     name:       DS.attr('string'),
     isPrimary:  DS.attr('boolean', { defaultValue: false }),
     value:      DS.attr('string'),
-    account:    DS.belongsTo('customer-account')
+    account:    DS.belongsTo('identity-account')
 });
