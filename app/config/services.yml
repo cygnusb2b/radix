@@ -1,5 +1,6 @@
 imports:
     - { resource: services/cloning.yml }
+    - { resource: services/console.yml }
     - { resource: services/event-subscribers.yml }
     - { resource: services/factory.yml }
     - { resource: services/identity.yml }

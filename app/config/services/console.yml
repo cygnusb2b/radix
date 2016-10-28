@@ -1,0 +1,10 @@
+services:
+    app_bundle.command.integration.abstract:
+        abstract: true
+        arguments: [ "@app_bundle.integration.manager" ]
+
+    app_bundle.command.integration.question_pull:
+        parent: app_bundle.command.integration.abstract
+        class: AppBundle\Command\Integration\QuestionPullCommand
+        tags:
+            - { name: console.command }
