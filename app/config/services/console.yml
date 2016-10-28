@@ -8,3 +8,9 @@ services:
         class: AppBundle\Command\Integration\QuestionPullCommand
         tags:
             - { name: console.command }
+
+    app_bundle.command.integration.identify:
+        parent: app_bundle.command.integration.abstract
+        class: AppBundle\Command\Integration\IdentifyCommand
+        tags:
+            - { name: console.command }
