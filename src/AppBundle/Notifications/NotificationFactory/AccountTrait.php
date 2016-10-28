@@ -16,7 +16,7 @@ trait AccountTrait
     protected function getPasswordResetLink(Model $submission, Model $account)
     {
         return sprintf(
-            '%s?radix.action=ResetPassword&radix.token=%s',
+            '%s?rdx.action=ResetPassword&rdx.token=%s',
             $submission->get('referringHost'),
             $account->get('credentials')->get('password')->get('resetCode')
         );
@@ -29,7 +29,7 @@ trait AccountTrait
     protected function getVerificationLink(Model $submission, Model $identityEmail, Model $application)
     {
         return sprintf(
-            '%s?radix.action=VerifyEmail&radix.token=%s',
+            '%s?rdx.action=VerifyEmail&rdx.token=%s',
             $submission->get('referringHost'),
             $identityEmail->get('verification')->get('token')
         );
