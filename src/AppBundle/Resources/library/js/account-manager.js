@@ -54,35 +54,17 @@ function AccountManager()
 
         var custom    = false;
         var nonScoped = Utils.parseQueryString();
-        for (var i = 0; i < this.IdentityDetectionCallbacks.length; i++) {
-            var callback = this.IdentityDetectionCallbacks[i];
-            var response = callback(nonScoped);
-            if (Utils.isObject(response)) {
-                // Use custom callback response
-                return response;
-            }
-        };
+        // for (var i = 0; i < this.IdentityDetectionCallbacks.length; i++) {
+        //     var callback = this.IdentityDetectionCallbacks[i];
+        //     var response = callback(nonScoped);
+        //     if (Utils.isObject(response)) {
+        //         // Use custom callback response
+        //         return response;
+        //     }
+        // };
 
         var query = Utils.parseQueryString(null, true);
-        var run   = false;
-        if (query.detect && (query.email || query.id)) {
-            run = true;
-        }
-
-        if (!run) {
-            return;
-        }
-        var data = {
-            clientKey    : query.detect,
-            primaryEmail : query.email || null,
-            externalId   : query.id || null
-
-        };
-        delete query.detect;
-        delete query.email;
-        delete query.id;
-        data['extra'] = query;
-        return data;
+        return (!query.ident) ? null : query.ident;
     }
 
     this.checkAuth = function() {
@@ -96,7 +78,7 @@ function AccountManager()
 
         var url = '/app/auth';
         if (detectionParams) {
-            url = url + '?' + $.param({ detect: detectionParams});
+            url = url + '?' + $.param({ ident: detectionParams});
         }
 
         return Ajax.send(url, 'GET', undefined, headers);

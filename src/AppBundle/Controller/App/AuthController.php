@@ -57,7 +57,7 @@ class AuthController extends AbstractAppController
      */
     private function detectIdentity(Request $request)
     {
-        $params = $request->query->get('identify');
+        $params = $request->query->get('ident');
         if (!is_array($params) || empty($params)) {
             // No identification params found.
             return;
