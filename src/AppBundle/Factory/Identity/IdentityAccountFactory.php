@@ -4,6 +4,7 @@ namespace AppBundle\Factory\Identity;
 
 use AppBundle\Factory\Error;
 use AppBundle\Utility\HelperUtility;
+use AppBundle\Utility\ModelUtility;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
@@ -71,7 +72,27 @@ class IdentityAccountFactory extends AbstractIdentityFactory
      */
     public function create(array $attributes = [])
     {
-        $identity = parent::create($attributes);
+        // If account is awaiting verification, re-use.
+        $identity = null;
+        if (isset($attributes['primaryEmail'])) {
+            $emailAddress = ModelUtility::formatEmailAddress($attributes['primaryEmail']);
+            if (!empty($emailAddress)) {
+                $criteria = [
+                    'value'                 => $emailAddress,
+                    'verification.verified' => false,
+                ];
+                $email = $this->getStore()->findQuery('identity-account-email', $criteria)->getSingleResult();
+                if (null !== $email && null !== $email->get('account')) {
+                    $identity = $email->get('account');
+                    $identity->set('deleted', false);
+                    $this->apply($identity, $attributes);
+                }
+            }
+        }
+
+        if (null === $identity) {
+            $identity = parent::create($attributes);
+        }
 
         // Create the initial credentials set.
         $identity->set('credentials', $identity->createEmbedFor('credentials'));
@@ -227,7 +248,16 @@ class IdentityAccountFactory extends AbstractIdentityFactory
         if (!isset($attributes['primaryEmail'])) {
             return;
         }
-        // @todo This needs to upsert... so, if no primary email found, create new and set.
-        $this->getEmailFactory()->create($identity, $attributes['primaryEmail'], true);
+
+        $current      = $identity->get('primaryEmail');
+        $emailAddress = ModelUtility::formatEmailAddress($attributes['primaryEmail']);
+        if (null === $current || $emailAddress !== $current) {
+            // Only create the email address if it isn't currently set, or different.
+            // @todo This should be re-visiting to support better upserting.
+            // @todo This needs to upsert... so, if no primary email found, create new and set.
+            $this->getEmailFactory()->create($identity, $attributes['primaryEmail'], true);
+        } else {
+            // The primary email is the same. Determine if the verification token should be re-generated...
+        }
     }
 }
