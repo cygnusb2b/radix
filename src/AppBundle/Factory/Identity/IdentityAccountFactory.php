@@ -257,7 +257,12 @@ class IdentityAccountFactory extends AbstractIdentityFactory
             // @todo This needs to upsert... so, if no primary email found, create new and set.
             $this->getEmailFactory()->create($identity, $attributes['primaryEmail'], true);
         } else {
-            // The primary email is the same. Determine if the verification token should be re-generated...
+            // The primary email is the same. Set the verification token to null, to allow the factory to determine how to re-generate it.
+            foreach ($identity->get('emails') as $email) {
+                if ($email->get('value') === $current && !$email->get('verification')->get('verified')) {
+                    $email->get('verification')->set('token', null);
+                }
+            }
         }
     }
 }

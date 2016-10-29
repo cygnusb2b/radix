@@ -114,11 +114,32 @@ class AccountEmailFactory extends AbstractModelFactory implements SubscriberFact
         // Generate and set the JWT token for non-verified emails.
         $verification = $email->get('verification');
         if (false === $verification->get('verified') && null === $verification->get('token')) {
-            $token = $this->tokenGenerator->createFor(
-                $email->get('account')->getId(), ['emailAddress' => $email->get('value')]
-            );
-            $verification->set('token', $token);
-            $verification->set('generatedDate', new \DateTime());
+            $attributes = $verification->getChangeSet()['attributes'];
+            $generate  = false;
+            if (!isset($attributes['token']) || !isset($attributes['token']['old'])) {
+                $generate = true;
+            } else {
+                // Determine if the old token is still valid.
+                $token = $attributes['token']['old'];
+                try {
+                    $this->tokenGenerator->parseFor(
+                        $token,
+                        $email->get('account')->getId(),
+                        ['emailAddress' => $email->get('value')]
+                    );
+                    $verification->set('token', $token);
+                } catch (\Exception $e) {
+                    $generate = true;
+                }
+            }
+
+            if (true === $generate) {
+                $token = $this->tokenGenerator->createFor(
+                    $email->get('account')->getId(), ['emailAddress' => $email->get('value')]
+                );
+                $verification->set('token', $token);
+                $verification->set('generatedDate', new \DateTime());
+            }
         }
 
         // Append the display name to the customer account, when applicable.
