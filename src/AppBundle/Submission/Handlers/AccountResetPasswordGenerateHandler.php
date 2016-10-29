@@ -69,10 +69,28 @@ class AccountResetPasswordGenerateHandler implements SubmissionHandlerInterface
             $credentials->set('password', $password);
         }
 
-        $token = $this->tokenGenerator->createFor($this->accountModel->getId(), []);
-        $password->set('resetCode', (string) $token);
-        $credentials->set('password', $password);
-        $this->accountModel->set('credentials', $credentials);
+        $token    = $password->get('resetCode');
+        $generate = false;
+
+        if (null === $token) {
+            // No reset token current set. Generate new.
+            $generate = true;
+        } else {
+            try {
+                // Token is still valid if this succeeds.
+                $this->tokenGenerator->parseFor($token, $this->accountModel->getId(), []);
+            } catch (\Exception $e) {
+                // Token is invalid. Generate new.
+                $generate = true;
+            }
+        }
+
+        if (true === $generate) {
+            $token = $this->tokenGenerator->createFor($this->accountModel->getId(), []);
+            $password->set('resetCode', (string) $token);
+            $credentials->set('password', $password);
+            $this->accountModel->set('credentials', $credentials);
+        }
 
         // Force the submission to be linked to the account being reset.
         $submission->set('identity', $this->accountModel);
