@@ -18,8 +18,12 @@ class AuthController extends AbstractAppController
      */
     public function retrieveAction(Request $request)
     {
-        $this->detectIdentity($request);
         $manager = $this->get('app_bundle.identity.manager');
+        if (false === $manager->isAccountLoggedIn()) {
+            // @todo This should be handled by the identify service.
+            // The identify action should still run, but no cookies should be set if logged in.
+            $this->detectIdentity($request);
+        }
         return $manager->createAuthResponse();
     }
 
