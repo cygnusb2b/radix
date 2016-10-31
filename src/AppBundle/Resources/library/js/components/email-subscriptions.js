@@ -1,13 +1,19 @@
 React.createClass({ displayName: 'ComponentEmailSubscriptions',
 
     componentDidMount: function() {
-        EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
-            this.setState({ customer : CustomerManager.getCustomer() });
+        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+            var account = AccountManager.getAccount();
+            this._loadOptinsFor(account.primaryEmail);
+            this.setState({ account : account });
         }.bind(this));
 
-        EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
-            this.setState({ customer : CustomerManager.getCustomer(), nextTemplate: null });
+        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+            var account = AccountManager.getAccount();
+            this._loadOptinsFor(account.primaryEmail);
+            this.setState({ account : account, nextTemplate: null });
         }.bind(this));
+
+        this._loadOptinsFor(this.state.account.primaryEmail);
     },
 
     getDefaultProps: function() {
@@ -19,7 +25,8 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
 
     getInitialState: function() {
         return {
-            customer     : CustomerManager.getCustomer(),
+            account      : AccountManager.getAccount(),
+            optIns       : {},
             nextTemplate : null
         }
     },
@@ -52,10 +59,10 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
             locker.unlock();
 
-            // Refresh the customer, if logged in.
-            if (CustomerManager.isLoggedIn()) {
-                CustomerManager.reloadCustomer().then(function() {
-                    EventDispatcher.trigger('CustomerManager.customer.loaded');
+            // Refresh the account, if logged in.
+            if (AccountManager.isLoggedIn()) {
+                AccountManager.reloadAccount().then(function() {
+                    EventDispatcher.trigger('AccountManager.account.loaded');
                 });
             }
 
@@ -96,12 +103,12 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
                 React.createElement('div', { className: 'email-subscription-wrapper' },
                     React.createElement(Radix.Components.get('FormProductsEmail'), {
                         fieldRef : this.handleFieldRef,
-                        optIns   : this._getOptInsFor(this.state.customer.primaryEmail)
+                        optIns   : this.state.optIns
                     }),
                     React.createElement(Radix.Forms.get('EmailSubscription'), {
-                        customer     : this.state.customer,
-                        onSubmit     : this.handleSubmit,
-                        fieldRef     : this.handleFieldRef
+                        account  : this.state.account,
+                        onSubmit : this.handleSubmit,
+                        fieldRef : this.handleFieldRef
                     })
                 ),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
@@ -111,14 +118,18 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
         return (elements);
     },
 
-    _getOptInsFor: function(email) {
-        for (var i = 0; i < this.state.customer.optIns.length; i++) {
-            var optIn = this.state.customer.optIns[i];
-            if (email === optIn.address) {
-                return optIn.products;
-            }
+    _loadOptinsFor: function(emailAddress) {
+        var optIns = {}
+        if (emailAddress) {
+            Ajax.send('/app/opt-ins/email-deployment/' + emailAddress, 'GET').then(function(response) {
+                this.setState({ optIns: response.data });
+            }.bind(this), function() {
+                this.setState({ optIns: optIns });
+                Debugger.error('ComponentEmailSubscriptions _loadOptinsFor()', 'Unable to load optins.');
+            }.bind(this));
+        } else {
+            this.setState({ optIns: optIns });
         }
-        return {};
     },
 
     _setErrorDisplay: function(ref) {

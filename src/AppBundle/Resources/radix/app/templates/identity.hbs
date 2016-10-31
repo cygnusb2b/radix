@@ -1,0 +1,10 @@
+<div class="row">
+    <div class="col-sm-2 m-b-1">
+        <div class="list-group">
+            {{#link-to 'identity.accounts' class='list-group-item list-group-item-action'}}Accounts{{/link-to}}
+            {{#link-to 'identity.internal' class='list-group-item list-group-item-action'}}Identities{{/link-to}}
+            {{#link-to 'identity.external' class='list-group-item list-group-item-action'}}Third-Party{{/link-to}}
+        </div>
+    </div>
+    {{ outlet }}
+</div>

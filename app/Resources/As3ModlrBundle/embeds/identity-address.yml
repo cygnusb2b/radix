@@ -1,0 +1,28 @@
+identity-address:
+    attributes:
+        identifier:
+            type: string
+            description: 'The internal identifier.'
+        description:
+            type: string
+        isPrimary:
+            type: boolean
+            defaultValue: false
+        companyName:
+            type: string
+        street:
+            type: string
+        extra:
+            type: string
+        city:
+            type: string
+        region:
+            type: string
+        regionCode:
+            type: string
+        country:
+            type: string
+        countryCode:
+            type: string # ISO 3166-1 alpha-3
+        postalCode:
+            type: string

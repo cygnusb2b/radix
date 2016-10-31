@@ -46,7 +46,7 @@ class OptIn implements NotificationFactoryInterface
      */
     public function supports(Model $submission, Model $template = null)
     {
-        $customer = $submission->get('customer');
-        return 'product-email-deployment-optin' === $submission->get('sourceKey') && null !== $customer && null !== $customer->get('primaryEmail');
+        $identity = $submission->get('identity');
+        return 'product-email-deployment-optin' === $submission->get('sourceKey') && null !== $identity && null !== $identity->get('primaryEmail');
     }
 }

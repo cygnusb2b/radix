@@ -12,7 +12,7 @@ class QuestionAnswerFactory
      * @var array
      */
     private $answerContexts = [
-        'customer'  => true,
+        'identity'  => true,
         'input'     => true,
     ];
 

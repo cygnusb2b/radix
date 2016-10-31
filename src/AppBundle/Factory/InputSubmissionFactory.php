@@ -152,10 +152,14 @@ class InputSubmissionFactory extends AbstractModelFactory implements SubscriberF
             $this->appendRequestDetails($submission, $request);
         }
 
-        // Remove any sensitive customer data.
+        // Remove any sensitive identity data.
         $payload = (array) $submission->get('payload');
-        if (isset($payload['customer']['password'])) {
-            unset($payload['customer']['password']);
+        if (isset($payload['identity']['password'])) {
+            unset($payload['identity']['password']);
+            $submission->set('payload', $payload);
+        }
+        if (isset($payload['identity']['confirmPassword'])) {
+            unset($payload['identity']['confirmPassword']);
             $submission->set('payload', $payload);
         }
     }
@@ -251,16 +255,16 @@ class InputSubmissionFactory extends AbstractModelFactory implements SubscriberF
     }
 
     /**
-     * Sets question answers to the submission model from both the customer and the submission.
+     * Sets question answers to the submission model from both the identity and the submission.
      *
      * @param   Model           $submission
      * @param   RequestPayload  $payload
      */
     private function setAnswers(Model $submission, RequestPayload $payload)
     {
-        // Save both customer and submission answers.
+        // Save both identity and submission answers.
         $answers = array_merge(
-            $payload->getCustomer()->get('answers', []),
+            $payload->getIdentity()->get('answers', []),
             $payload->getSubmission()->get('answers', [])
         );
 

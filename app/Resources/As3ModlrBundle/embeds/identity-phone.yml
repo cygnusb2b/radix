@@ -1,0 +1,15 @@
+identity-phone:
+    attributes:
+        identifier:
+            type: string
+            description: 'The internal identifier.'
+        description:
+            type: string
+        phoneType:
+            type: string # Work, Home, Mobile, Fax, Phone (if unknown/default)
+            defaultValue: Phone
+        number:
+            type: string # The phone number
+        isPrimary:
+            type: boolean
+            defaultValue: false

@@ -1,0 +1,28 @@
+identity-account-email:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                -
+                    keys:
+                        value: 1
+                    options:
+                        unique: true
+                        partialFilterExpression:
+                            "verification.verified": true
+                - { keys: { account: 1, value: 1 }, options: { unique: true }}
+                - { keys: { "verification.token": 1 }, options: { unique: true, sparse: true } }
+
+    mixins: [ 'timestampable', 'identity-emailable' ]
+    embeds:
+        verification:
+            type: one
+            entity: identity-account-email-verification
+            description: 'The email address verification details.'
+    relationships:
+        account:
+            type: one
+            entity: identity-account
+            description: 'The identity account that owns this email address.'
+

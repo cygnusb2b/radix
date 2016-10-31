@@ -19,7 +19,7 @@ question-choice:
     embeds:
         integration:
             type: one
-            entity: question-choice-integration
+            entity: integration-meta
     relationships:
         question:
             type: one

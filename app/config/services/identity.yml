@@ -1,0 +1,32 @@
+services:
+    app_bundle.identity.cookie_manager:
+        class: AppBundle\Identity\CookieManager
+        arguments: [ "@request_stack" ]
+
+    app_bundle.identity.manager:
+        class: AppBundle\Identity\IdentityManager
+        arguments: [ "@security.token_storage", "@app_bundle.security.auth.generator.account", "@app_bundle.identity.cookie_manager", "@event_dispatcher" ]
+        calls:
+            -  [ addIdentityFactory, [ "@app_bundle.factory.identity.account" ] ]
+            -  [ addIdentityFactory, [ "@app_bundle.factory.identity.external" ] ]
+            -  [ addIdentityFactory, [ "@app_bundle.factory.identity.internal" ] ]
+
+    app_bundle.identity.subscriber:
+        private: true
+        class: AppBundle\Identity\IdentitySubscriber
+        arguments: [ "@app_bundle.core.account_manager", "@app_bundle.identity.manager" ]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    app_bundle.identity.abstract_token_generator:
+        abstract: true
+        class: AppBundle\Identity\AbstractTokenGenerator
+        arguments: [ "%secret%" ]
+
+    app_bundle.identity.email_verify.token_generator:
+        parent: app_bundle.identity.abstract_token_generator
+        class: AppBundle\Identity\EmailVerifyTokenGenerator
+
+    app_bundle.identity.password_reset.token_generator:
+        parent: app_bundle.identity.abstract_token_generator
+        class: AppBundle\Identity\ResetPasswordTokenGenerator

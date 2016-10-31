@@ -3,8 +3,8 @@
 namespace AppBundle\Security;
 
 use \MongoDate;
+use AppBundle\Security\User\Account;
 use AppBundle\Security\User\CoreUser;
-use AppBundle\Security\User\Customer;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
 use Symfony\Component\Security\Core\Authentication\Token\RememberMeToken;
@@ -52,8 +52,8 @@ class LoginListener
 
         if ($user instanceof CoreUser) {
             $this->updateCoreUser($user->getModel());
-        } elseif ($user instanceof Customer) {
-            $this->updateCustomer($user->getModel());
+        } elseif ($user instanceof Account) {
+            $this->updateAccount($user->getModel());
         }
     }
 
@@ -83,11 +83,11 @@ class LoginListener
     }
 
     /**
-     * Updates the customer auth model on login.
+     * Updates the account auth model on login.
      *
      * @param   Model   $model
      */
-    protected function updateCustomer(Model $model)
+    protected function updateAccount(Model $model)
     {
         $now = new MongoDate();
 

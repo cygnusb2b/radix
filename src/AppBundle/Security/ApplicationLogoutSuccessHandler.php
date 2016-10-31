@@ -2,7 +2,7 @@
 
 namespace AppBundle\Security;
 
-use AppBundle\Customer\CustomerManager;
+use AppBundle\Identity\IdentityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
@@ -15,14 +15,14 @@ use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
 class ApplicationLogoutSuccessHandler implements LogoutSuccessHandlerInterface
 {
     /**
-     * @var CustomerManager
+     * @var IdentityManager
      */
     private $manager;
 
     /**
-     * @param   CustomerManager    $manager
+     * @param   IdentityManager    $manager
      */
-    public function __construct(CustomerManager $manager)
+    public function __construct(IdentityManager $manager)
     {
         $this->manager = $manager;
     }

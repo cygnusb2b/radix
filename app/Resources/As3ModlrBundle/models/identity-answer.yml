@@ -1,0 +1,15 @@
+identity-answer:
+    entity:
+        abstract: true
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { "identity._id": 1, question:1 }, options: { unique: true } }
+    mixins: [ 'timestampable', 'question-answerable' ]
+    relationships:
+        identity:
+            type: one
+            entity: identity
+

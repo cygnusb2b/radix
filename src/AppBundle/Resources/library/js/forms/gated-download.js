@@ -8,12 +8,12 @@ React.createClass({ displayName: 'FormGatedDownload',
     // So, this needs to be re-explored.
     getDefaultProps: function() {
         return {
-            customer    : {
+            account  : {
                 primaryAddress: {},
                 primaryPhone: {}
             },
-            onSubmit    : function(event) { Debugger.error('Nothing handled the form submit.')  },
-            fieldRef    : function(input) { Debugger.error('Nothing handled the field reference.'); }
+            onSubmit : function(event) { Debugger.error('Nothing handled the form submit.')  },
+            fieldRef : function(input) { Debugger.error('Nothing handled the field reference.'); }
         }
     },
 
@@ -22,20 +22,21 @@ React.createClass({ displayName: 'FormGatedDownload',
     },
 
     _getForm: function() {
-        var customer     = this.props.customer;
-        var phoneType    = customer.primaryPhone.phoneType || 'Phone';
+        var account      = this.props.account;
+        var phoneType    = account.primaryPhone.phoneType || 'Phone';
         var phoneLabel   = phoneType + ' #';
-        var disableEmail = (customer._id && customer.primaryEmail) ? true : false;
+        var disableEmail = (account._id && account.primaryEmail) ? true : false;
 
         return React.createElement('form', { autocomplete: false, className: 'database-form', onSubmit: this.props.onSubmit },
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:givenName', wrapperClass: 'givenName', label: 'First Name', required: true, value: customer.givenName }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:familyName', wrapperClass: 'familyName', label: 'Last Name', required: true, value: customer.familyName }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, type: 'email', name: 'customer:primaryEmail', wrapperClass: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: customer.primaryEmail }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:companyName', wrapperClass: 'companyName', label: 'Company Name', value: customer.companyName }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:title', wrapperClass: 'title', label: 'Job Title', value: customer.title }),
-            React.createElement(Radix.Components.get('CountryPostalCode'), { fieldRef: this.props.fieldRef, postalCode: customer.primaryAddress.postalCode, countryCode: customer.primaryAddress.countryCode }),
-            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'business-code', answers: customer.answers }),
-            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'title-code', answers: customer.answers }),
+            React.createElement(Radix.Components.get('FormInputHidden'), { ref: this.props.fieldRef, name: 'identity:primaryAddress.identifier', value: account.primaryAddress.identifier }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:givenName', wrapperClass: 'givenName', label: 'First Name', required: true, value: account.givenName }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:familyName', wrapperClass: 'familyName', label: 'Last Name', required: true, value: account.familyName }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, type: 'email', name: 'identity:primaryEmail', wrapperClass: 'email', label: 'Email Address', required: !disableEmail, readonly: disableEmail, value: account.primaryEmail }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:companyName', wrapperClass: 'companyName', label: 'Company Name', value: account.companyName }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:title', wrapperClass: 'title', label: 'Job Title', value: account.title }),
+            React.createElement(Radix.Components.get('CountryPostalCode'), { fieldRef: this.props.fieldRef, postalCode: account.primaryAddress.postalCode, countryCode: account.primaryAddress.countryCode }),
+            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'business-code', answers: account.answers }),
+            React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'title-code', answers: account.answers }),
             React.createElement('button', { type: 'submit'}, 'Submit')
         );
     }

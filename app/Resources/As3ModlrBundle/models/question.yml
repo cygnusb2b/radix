@@ -4,19 +4,17 @@ question:
             key: mongodb
             db: radix
             schemata:
-                - { keys: { key: 1 }, options: { unique: true }}
-                - { keys: { tags: 1 }}
+                - { keys: { key: 1 }, options: { unique: true } }
+                - { keys: { tags: 1 } }
+                - { keys: { pull: 1 } , options: { unique: true, partialFilterExpression: { pull: { '$exists': true } } } }
     mixins: [ 'keyable', 'timestampable', 'soft-deleteable' ]
     attributes:
         allowHtml:
             type: boolean
             defaultValue: false
-        builtIn:
-            type: boolean
-            defaultValue: false
         boundTo:
             type: string
-            defaultValue: submission # determines, where the answer is bound: one of customer or submission
+            defaultValue: submission # determines, where the answer is bound: one of identity or submission
         label:
             type: string
         questionType:
@@ -30,10 +28,7 @@ question:
             field: question
         pull:
             type: one
-            entity: question-integration-pull
-        push:
-            type: many
-            entity: question-integration-push
+            entity: integration-question-pull
         tags:
             type: many
             entity: question-tag

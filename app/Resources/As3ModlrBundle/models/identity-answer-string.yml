@@ -1,0 +1,7 @@
+identity-answer-string:
+    mixins: [ 'question-answerable-string' ]
+    entity:
+        extends: identity-answer
+        persistence:
+            key: mongodb
+            db: radix

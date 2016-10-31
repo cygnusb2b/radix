@@ -51,6 +51,12 @@ class QuestionSubscriber implements EventSubscriberInterface
         }
         $this->validateQuestionType($model);
 
+        $type = $this->typeManager->getQuestionTypeFor($model->get('questionType'));
+        if (null !== $model->get('allowHtml') && false === $type->supportsHtml()) {
+            // Prevent allowing HTML if the question type does not support it.
+            $model->set('allowHtml', false);
+        }
+
     }
 
     /**

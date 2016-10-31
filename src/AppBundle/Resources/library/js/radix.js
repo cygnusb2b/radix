@@ -18,29 +18,28 @@
     var Forms;
     var ClientConfig;
     var ModuleLoader;
-    var CustomerManager;
+    var AccountManager;
     var LibraryLoader;
 
     Radix.emit = function(key) {
         EventDispatcher.trigger(key);
     };
 
-    Radix.getCustomer = function() {
-        return CustomerManager.getCustomer();
+    Radix.getAccount = function() {
+        return AccountManager.getAccount();
     };
 
-    // @todo Remove sending the identity once backend tracking (Sapience/Olytics) has been integrated.
     Radix.getIdentity = function() {
-        return CustomerManager.getIdentity();
+        return AccountManager.getIdentityId();
     };
 
-    Radix.hasCustomer = function() {
-        return CustomerManager.isLoggedIn();
+    Radix.hasAccount = function() {
+        return AccountManager.isLoggedIn();
     };
 
     Radix.addDetectionCallback = function(callback) {
-        EventDispatcher.subscribe('CustomerManager.preInit', function() {
-            CustomerManager.IdentityDetectionCallbacks.push(callback);
+        EventDispatcher.subscribe('AccountManager.preInit', function() {
+            AccountManager.IdentityDetectionCallbacks.push(callback);
         });
     };
 
@@ -60,9 +59,9 @@
                 });
             });
 
-            ModuleLoader     = new ModuleLoader();
-            CustomerManager  = new CustomerManager();
-            LibraryLoader    = new LibraryLoader();
+            ModuleLoader   = new ModuleLoader();
+            AccountManager = new AccountManager();
+            LibraryLoader  = new LibraryLoader();
         } else {
             Debugger.error('Client config is invalid. Ensure all require properties were set.');
         }
@@ -115,7 +114,7 @@
      */
     function Components()
     {
-        this.CustomerBoundLink              = {{ loadComponent('customer-bound-link') }}
+        this.AccountBoundLink               = {{ loadComponent('account-bound-link') }}
         this.ContactSupport                 = {{ loadComponent('contact-support') }}
         this.EmailSubscriptions             = {{ loadComponent('email-subscriptions') }}
         this.ModalLink                      = {{ loadComponent('modal-link') }}
@@ -187,7 +186,7 @@
             Radix.ComponentLoader = new ComponentLoaderModule();
         });
 
-        EventDispatcher.subscribe('CustomerManager.init', function() {
+        EventDispatcher.subscribe('AccountManager.init', function() {
             var keys = ['ModalModule', 'ComponentLoader'];
             for (var i = 0; i < keys.length; i++) {
                 var key = keys[i];
@@ -223,8 +222,8 @@
         var count = 0,
             libraries = [
                 '//cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
-                'http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js',
-                '//cdn.auth0.com/w2/auth0-6.js'
+                'http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js'
+                // '//cdn.auth0.com/w2/auth0-6.js'
             ];
 
         function loadLibraries() {
@@ -261,7 +260,7 @@
 
     {{ loadFile('ajax') }}
     {{ loadFile('client-config') }}
-    {{ loadFile('customer-manager') }}
+    {{ loadFile('account-manager') }}
     {{ loadFile('debugger') }}
     {{ loadFile('utils') }}
 

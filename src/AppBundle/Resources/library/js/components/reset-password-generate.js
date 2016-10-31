@@ -31,7 +31,7 @@ React.createClass({ displayName: 'ComponentResetPasswordGenerate',
         data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
         data['submission:referringHref'] = window.location.href;
 
-        var sourceKey = 'customer-account.reset-password-generate';
+        var sourceKey = 'identity-account.reset-password-generate';
         var payload   = {
             data: data
         };
@@ -50,17 +50,17 @@ React.createClass({ displayName: 'ComponentResetPasswordGenerate',
 
     getInitialState: function() {
         return {
-            loggedIn  : CustomerManager.isLoggedIn(),
+            loggedIn  : AccountManager.isLoggedIn(),
             succeeded : false
         }
     },
 
     componentDidMount: function() {
-        EventDispatcher.subscribe('CustomerManager.customer.loaded', function() {
+        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
             this.setState({ loggedIn: true });
         }.bind(this));
 
-        EventDispatcher.subscribe('CustomerManager.customer.unloaded', function() {
+        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
             this.setState({ loggedIn: false });
         }.bind(this));
     },

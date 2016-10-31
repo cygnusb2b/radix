@@ -39,7 +39,7 @@ React.createClass({ displayName: 'ComponentResetPassword',
         data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
         data['submission:referringHref'] = window.location.href;
 
-        var sourceKey = 'customer-account.reset-password';
+        var sourceKey = 'identity-account.reset-password';
         var payload   = {
             data: data
         };
@@ -50,8 +50,8 @@ React.createClass({ displayName: 'ComponentResetPassword',
             locker.unlock();
             this.setState({ succeeded: true });
 
-            CustomerManager.reloadCustomer().then(function() {
-                EventDispatcher.trigger('CustomerManager.customer.loaded');
+            AccountManager.reloadAccount().then(function() {
+                EventDispatcher.trigger('AccountManager.account.loaded');
             });
 
         }.bind(this), function(jqXHR) {
@@ -71,8 +71,8 @@ React.createClass({ displayName: 'ComponentResetPassword',
 
         Debugger.info('ComponentResetPassword', 'verifyToken', token);
 
-        if (CustomerManager.isLoggedIn()) {
-            CustomerManager.logout().then(function() {
+        if (AccountManager.isLoggedIn()) {
+            AccountManager.logout().then(function() {
                 this._doTokenVerify(token);
             }.bind(this));
         } else {

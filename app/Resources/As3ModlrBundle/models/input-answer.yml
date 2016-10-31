@@ -5,6 +5,8 @@ input-answer:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { submission: 1, question: 1 }, options: { unique: true } }
     mixins: [ 'timestampable', 'question-answerable' ]
     relationships:
         submission:

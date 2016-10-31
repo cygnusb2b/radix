@@ -1,6 +1,0 @@
-question-integration-push:
-    entity:
-        extends: question-integration
-        persistence:
-            key: mongodb
-            db: radix

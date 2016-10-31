@@ -14,8 +14,8 @@ React.createClass({ displayName: 'FormResetPassword',
     _getForm: function() {
 
         return React.createElement('form', { className: 'database-form', onSubmit: this.props.onSubmit },
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:password', label: 'New Password', required: true, wrapperClass: 'password', type: 'password' }),
-            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'customer:confirmPassword', label: 'Confirm Password', required: true, wrapperClass: 'password', type: 'password' }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:password', label: 'New Password', required: true, wrapperClass: 'password', type: 'password' }),
+            React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:confirmPassword', label: 'Confirm Password', required: true, wrapperClass: 'password', type: 'password' }),
             React.createElement('button', { type: 'submit'}, 'Submit')
         );
     }

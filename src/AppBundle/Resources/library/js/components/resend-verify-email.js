@@ -2,10 +2,10 @@ React.createClass({ displayName: 'ComponentResendVerifyEmail',
 
     getDefaultProps: function() {
         return {
-            className: 'alert alert-info',
-            emailAddress: null,
-            customerId: null,
-            display: true,
+            className    : 'alert alert-info',
+            emailAddress : null,
+            accountId    : null,
+            display      : true
         };
     },
 
@@ -26,18 +26,18 @@ React.createClass({ displayName: 'ComponentResendVerifyEmail',
         locker.lock();
 
         var data = {
-            'customer:primaryEmail'    : this.props.emailAddress,
-            'customer:id'              : this.props.customerId,
+            'identity:primaryEmail'    : this.props.emailAddress,
+            'identity:id'              : this.props.accountId,
             'submission:referringHost' : window.location.protocol + '//' + window.location.host,
             'submission:referringHref' : window.location.href
         };
 
-        var sourceKey = 'customer-email.verify-generate';
+        var sourceKey = 'identity-account-email.verify-generate';
         var payload   = {
             data: data
         };
 
-        Debugger.info('EmailSubscriptionModule', 'handleSubmit', sourceKey, payload);
+        Debugger.info('ComponentResendVerifyEmail', 'handleSubmit', sourceKey, payload);
 
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
             locker.unlock();
