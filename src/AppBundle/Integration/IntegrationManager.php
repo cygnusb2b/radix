@@ -58,7 +58,6 @@ class IntegrationManager
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
             $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution));
-            // $execution->runCreate($account);
         }
     }
 
@@ -70,7 +69,7 @@ class IntegrationManager
     public function accountPushDelete(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $execution->runDelete($account);
+            $this->taskManager->addTask(new Task\AccountDeleteCreateTask($account, $execution));
         }
     }
 
@@ -83,7 +82,7 @@ class IntegrationManager
     public function accountPushUpdate(Model $account, array $changeSet)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $execution->runUpdate($account, $changeSet);
+            $this->taskManager->addTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet));
         }
     }
 
