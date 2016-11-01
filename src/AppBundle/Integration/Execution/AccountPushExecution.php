@@ -21,7 +21,6 @@ class AccountPushExecution extends AbstractExecution
         $this->validateAccountModel($account);
         $identifier = $this->getHandler()->onCreate(
             $account,
-            $this->extractExternalIdFor($account),
             $this->retrieveExternalQuestions()
         );
         $this->updateIntegrationDetailsFor($account, $identifier);

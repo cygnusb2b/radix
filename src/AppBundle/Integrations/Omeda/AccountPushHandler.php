@@ -205,7 +205,7 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
         $typeMap = array_flip($this->getEmailTypeMap());
 
         $emails = [];
-        foreach ($account->get('emails') as $emailModel) {
+        foreach ($this->getRelatedEmails($account) as $emailModel) {
             $email = [
                 'EmailAddress' => $emailModel->get('value')
             ];
@@ -268,6 +268,32 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
         $payload = $this->applyPhonesFor($account, $payload);
         $payload = $this->applyAnswersFor($account, $payload, $questions);
         return $payload;
+    }
+
+    /**
+     * This is needed in order to ensure newly created emails are also accounted for.
+     * Modlr really needs to "automatically" append new inverse models to the owner's collection.
+     *
+     * @param   Model   $account
+     * @param   Model[]
+     */
+    private function getRelatedEmails(Model $account)
+    {
+        $emails = [];
+        foreach ($account->getStore()->getModelCache()->getAllForType('identity-account-email') as $email) {
+            if (null === $email->get('account')) {
+                continue;
+            }
+            if ($email->get('account')->getId() === $account->getId()) {
+                $emails[$email->getId()] = $email;
+            }
+        }
+        foreach ($account->get('emails') as $email) {
+            if (!isset($emails[$email->getId()])) {
+                $emails[$email->getId()] = $email;
+            }
+        }
+        return $emails;
     }
 
     /**
