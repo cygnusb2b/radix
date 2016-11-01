@@ -40,7 +40,7 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
         $radixId  = $this->extractExternalIdFrom($customer);
 
         // @todo If a Radix ID is present, should a "two-way" push be executed - e.g. update the Radix data as well?
-        // @todo This should only send the current changeset - not the entire model...??
+        // @todo Should this only send the current changeset, not the entire model...??
         $payload  = $this->createCustomerPayloadFor($account, $questions);
 
         if (empty($radixId)) {
