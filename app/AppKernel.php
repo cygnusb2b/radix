@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new As3\Bundle\ModlrBundle\As3ModlrBundle(),
             new Snc\RedisBundle\SncRedisBundle(),
+            new As3\Bundle\PostProcessBundle\As3PostProcessBundle(),
             new AppBundle\AppBundle(),
         ];
 

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b97f91ffc0f077a0ffc908ea21fe7e61",
-    "content-hash": "b76e2a7d418b1f1e0addc28c1e124b77",
+    "hash": "dcaea73c7cf56dacbb1dbbea436cc491",
+    "content-hash": "410d97861288c75424faa9e8f50355e3",
     "packages": [
         {
             "name": "aol/transformers",
@@ -319,6 +319,47 @@
             ],
             "description": "Common parameter bag classes and parameter formatting/definitions.",
             "time": "2016-09-29 16:29:04"
+        },
+        {
+            "name": "as3/post-process-bundle",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/PostProcessBundle.git",
+                "reference": "a6e8a0215237c30efaf23fbe3e3acd3ea411e287"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/PostProcessBundle/zipball/a6e8a0215237c30efaf23fbe3e3acd3ea411e287",
+                "reference": "a6e8a0215237c30efaf23fbe3e3acd3ea411e287",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/framework-bundle": ">=2.5 <2.8 || ^3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "As3\\Bundle\\PostProcessBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Worden",
+                    "email": "solocommand@gmail.com"
+                },
+                {
+                    "name": "Jacob Bare",
+                    "email": "jacob.bare@gmail.com"
+                }
+            ],
+            "description": "Provides centralized support for executing callable code before Symfony framework termination.",
+            "time": "2016-11-01 22:48:02"
         },
         {
             "name": "as3/symfony-data-importer",

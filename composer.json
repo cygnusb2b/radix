@@ -40,7 +40,8 @@
         "natxet/CssMin": "^3.0",
         "linkorb/jsmin-php": "^1.0",
         "aol/transformers": "^3",
-        "snc/redis-bundle": "^2.0"
+        "snc/redis-bundle": "^2.0",
+        "as3/post-process-bundle": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
