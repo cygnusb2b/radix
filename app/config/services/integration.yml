@@ -14,4 +14,4 @@ services:
         arguments: [ "@service_container" ]
         class: AppBundle\EventSubscriber\AccountPushSubscriber
         tags:
-            - { name: as3_modlr.event_subscriber }
+            - { name: as3_modlr.event_subscriber, priority: -255 }
