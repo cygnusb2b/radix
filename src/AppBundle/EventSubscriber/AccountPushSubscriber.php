@@ -186,7 +186,7 @@ class AccountPushSubscriber implements EventSubscriberInterface
      *
      * @param   Model   $email
      */
-    private function processAnswer(Model $email)
+    private function processEmail(Model $email)
     {
         $account = $email->get('account');
         if (null === $account) {
