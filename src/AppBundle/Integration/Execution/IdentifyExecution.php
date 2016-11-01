@@ -43,8 +43,7 @@ class IdentifyExecution extends AbstractExecution
         // @todo At this point, the actual identification and updating of the identity model should be handled post-process.
 
         // Get all question-pull integrations that match this service.
-        $integrations = $this->extractQuestionIntegrations();
-        $definition   = $handler->execute($identifier, $this->extractExternalQuestionIds($integrations));
+        $definition = $handler->execute($identifier, $this->extractExternalQuestionIds());
 
         $this->applyIdentityValues($identity, $definition);
 
@@ -118,41 +117,6 @@ class IdentifyExecution extends AbstractExecution
             }
             $identity->pushEmbed($fieldKey, $embed);
         }
-    }
-
-    /**
-     * @return  array
-     */
-    private function extractExternalQuestionIds(array $integrations)
-    {
-        $identifiers = [];
-        foreach ($integrations as $integration) {
-            $identifiers[$integration->get('identifier')] = true;
-        }
-        return array_keys($identifiers);
-    }
-
-    /**
-     * @return  Model[]
-     */
-    private function extractQuestionIntegrations()
-    {
-        $criteria    = [
-            'type'       => 'integration-question-pull',
-            'service'    => $this->getIntegration()->get('service')->getId(),
-            'boundTo'    => 'identity',
-            'identifier' => ['$exists' => true]
-        ];
-
-        $integrations = [];
-        $collection   = $this->getStore()->findQuery('integration', $criteria);
-        foreach ($collection as $integration) {
-            if (false === $integration->get('enabled')) {
-                continue;
-            }
-            $integrations[] = $integration;
-        }
-        return $integrations;
     }
 
     private function upsertAnswers(Model $identity, ExternalIdentityDefinition $definition, array $integrations)

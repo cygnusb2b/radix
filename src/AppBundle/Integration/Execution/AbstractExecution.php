@@ -56,6 +56,40 @@ abstract class AbstractExecution
     }
 
     /**
+     * @return  array
+     */
+    final protected function extractExternalQuestionIds()
+    {
+        $integrations = $this->retrieveQuestionIntegrations();
+        $identifiers  = [];
+        foreach ($integrations as $integration) {
+            $identifiers[$integration->get('identifier')] = true;
+        }
+        return array_keys($identifiers);
+    }
+
+    final protected function retrieveExternalQuestions()
+    {
+        $ids       = [];
+        $questions = [];
+        foreach ($this->retrieveQuestionIntegrations() as $integration) {
+            $ids[] = $integration->getId();
+        }
+        if (empty($ids)) {
+            return $questions;
+        }
+        $criteria   = ['pull' => ['$in' => $ids]];
+        $collection = $this->getStore()->findQuery('question', $criteria);
+        foreach ($collection as $question) {
+            if (true === $question->get('deleted')) {
+                continue;
+            }
+            $questions[$question->getId()] = $question;
+        }
+        return $questions;
+    }
+
+    /**
      * Gets the third-party handler for this execution.
      *
      * @final
@@ -128,4 +162,27 @@ abstract class AbstractExecution
      * @throws  \InvalidArgumentException
      */
     abstract protected function validateImplements(HandlerInterface $handler);
+
+    /**
+     * @return  Model[]
+     */
+    private function retrieveQuestionIntegrations()
+    {
+        $criteria    = [
+            'type'       => 'integration-question-pull',
+            'service'    => $this->getIntegration()->get('service')->getId(),
+            'boundTo'    => 'identity',
+            'identifier' => ['$exists' => true]
+        ];
+
+        $integrations = [];
+        $collection   = $this->getStore()->findQuery('integration', $criteria);
+        foreach ($collection as $integration) {
+            if (false === $integration->get('enabled')) {
+                continue;
+            }
+            $integrations[] = $integration;
+        }
+        return $integrations;
+    }
 }

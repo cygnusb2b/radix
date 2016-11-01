@@ -2,8 +2,10 @@
 
 namespace AppBundle\Integration\Execution;
 
+use AppBundle\EventSubscriber\AccountPushSubscriber;
 use AppBundle\Integration\Handler\HandlerInterface;
 use AppBundle\Integration\Handler\AccountPushInterface;
+use As3\Modlr\Models\Embed;
 use As3\Modlr\Models\Model;
 
 class AccountPushExecution extends AbstractExecution
@@ -17,8 +19,12 @@ class AccountPushExecution extends AbstractExecution
     public function runCreate(Model $account)
     {
         $this->validateAccountModel($account);
-        var_dump(__METHOD__);
-        die();
+        $identifier = $this->getHandler()->onCreate(
+            $account,
+            $this->extractExternalIdFor($account),
+            $this->retrieveExternalQuestions()
+        );
+        $this->updateIntegrationDetailsFor($account, $identifier);
     }
 
     /**
@@ -30,8 +36,7 @@ class AccountPushExecution extends AbstractExecution
     public function runDelete(Model $account)
     {
         $this->validateAccountModel($account);
-        var_dump(__METHOD__);
-        die();
+        $this->getHandler()->onDelete($account);
     }
 
     /**
@@ -44,12 +49,13 @@ class AccountPushExecution extends AbstractExecution
     public function runUpdate(Model $account, array $changeSet)
     {
         $this->validateAccountModel($account);
-        $this->getHandler()->onUpdate($account, $changeSet);
-
-        // Add/update the integration details here.
-
-        var_dump(__METHOD__);
-        die();
+        $identifier = $this->getHandler()->onUpdate(
+            $account,
+            $this->extractExternalIdFor($account),
+            $changeSet,
+            $this->retrieveExternalQuestions()
+        );
+        $this->updateIntegrationDetailsFor($account, $identifier);
     }
 
     /**
@@ -68,6 +74,73 @@ class AccountPushExecution extends AbstractExecution
         if (!$handler instanceof AccountPushInterface) {
             throw new \InvalidArgumentException('The handler is unsupported. Expected an implementation of AccountPushInterface');
         }
+    }
+
+    /**
+     * Extracts the push integration details that were set for this account push.
+     *
+     * @param   Model   $account
+     * @return  Embed|null
+     */
+    private function extractPushDetailsFor(Model $account)
+    {
+        if (null === $integration = $account->get('integration')) {
+            // No integration details set.
+            return;
+        }
+        foreach ($integration->get('push') as $push) {
+            if ($push->get('integrationId') === $this->getIntegration()->getId()) {
+                return $push;
+            }
+        }
+    }
+
+    /**
+     * Extracts the external identifier that was set from this account push.
+     *
+     * @param   Model   $account
+     * @return  string|null
+     */
+    private function extractExternalIdFor(Model $account)
+    {
+        $push = $this->extractPushDetailsFor($account);
+        if (null === $push) {
+            return;
+        }
+        $identifier = $push->get('identifier');
+        return empty($identifier) ? null : $identifier;
+    }
+
+    /**
+     * Updates the push integration details for the provided account.
+     *
+     * @param   Model   $account
+     * @param   string  $externalId
+     */
+    private function updateIntegrationDetailsFor(Model $account, $externalId)
+    {
+        $push = $this->extractPushDetailsFor($account);
+        if (null === $push) {
+            if (null === $integration = $account->get('integration')) {
+                $account->set('integration', $account->createEmbedFor('integration'));
+            }
+            $push = $account->get('integration')->createEmbedFor('push');
+            $integration->pushEmbed($push);
+        }
+
+        $now   = new \DateTime();
+        $times = $push->get('timesRan');
+        $push->set('identifier', $externalId);
+        if (null === $push->get('firstRunDate')) {
+            $push->set('firstRunDate', $now);
+        }
+        $push->set('lastRunDate', $now);
+        $push->set('timesRan', ++$times);
+
+        // Must disable the push subscriber so this save doesn't re-trigger another push!
+        AccountPushSubscriber::$enabled = false;
+        $account->save();
+        AccountPushSubscriber::$enabled = true;
     }
 
     /**

@@ -11,10 +11,10 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
     /**
      * {@inheritdoc}
      */
-    public function onCreate(Model $account)
+    public function onCreate(Model $account, array $questions)
     {
-        var_dump(__METHOD__);
-        die();
+        $payload = $this->createCustomerPayloadFor($account, $questions);
+        return $this->saveCustomer($payload);
     }
 
     /**
@@ -29,80 +29,286 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
     /**
      * {@inheritdoc}
      */
-    public function onUpdate(Model $account, array $changeset)
+    public function onUpdate(Model $account, $externalId, array $changeSet, array $questions)
     {
-        // Customer lookup dance:
-        //  - Lookup customer by radix id: if found, do update; if not found, continue
-        //  - Lookup customer by integration push meta (push.[].integration = this.integration.id)
-        //      - No meta found? Do insert.
-        //      - Lookup customer by the push.[].identifier
-        //      - Customer found? Do update and append radix id. If not found, do insert.
+        $customer = $this->retrieveCustomerFor($account, $externalId);
+        if (null === $customer) {
+            return $this->onCreate($account, $questions);
+        }
+        // Get the comprehensive customer response (to ensure consistent data).
+        $customer = $this->lookupCustomer($customer['Id']);
+        $radixId  = $this->extractExternalIdFrom($customer);
+
+        // @todo If a Radix ID is present, should a "two-way" push be executed - e.g. update the Radix data as well?
+        // @todo This should only send the current changeset - not the entire model...??
+        $payload  = $this->createCustomerPayloadFor($account, $questions);
+
+        if (empty($radixId)) {
+            // Add the Omeda customer id if a Radix id is currently missing from the customer.
+            // This ensures that future update requests will use the radix identifier.
+            $payload['OmedaCustomerId'] = $customer['Id'];
+        }
+        $processor = $this->saveCustomer($payload);
+        return $customer['Id'];
+    }
+
+    /**
+     * Applies address information from the account model to the Omeda customer payload.
+     *
+     * @param   Model   $account
+     * @param   array   $payload
+     * @return  array
+     */
+    private function applyAddressesFor(Model $account, array $payload)
+    {
+        $map        = [
+            'Company'       => 'companyName',
+            'Street'        => 'street',
+            'ExtraAddress'  => 'extra',
+            'City'          => 'city',
+            'RegionCode'    => 'regionCode',
+            'PostalCode'    => 'postalCode',
+            'CountryCode'   => 'countryCode',
+        ];
+
+        $addresses = [];
+        foreach ($account->get('addresses') as $addressModel) {
+            $address = [];
+            foreach ($map as $theirKey => $ourKey) {
+                $value = $addressModel->get($ourKey);
+                if (null === $value) {
+                    if ('companyName' === $ourKey) {
+                        $value = $account->get($ourKey);
+                        if (null === $value) {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+                $address[$theirKey] = $value;
+            }
+            if (empty($address)) {
+                continue;
+            }
+            $addresses[] = $address;
+        }
+        if (!empty($addresses)) {
+            $payload['Addresses'] = $addresses;
+        }
+        return $payload;
+    }
+
+    /**
+     * Applies demographic answer information from the account model to the Omeda customer payload.
+     *
+     * @param   Model   $account
+     * @param   array   $payload
+     * @param   Model[] $questions
+     * @return  array
+     */
+    private function applyAnswersFor(Model $account, array $payload, array $questions)
+    {
+        if (empty($questions)) {
+            return $payload;
+        }
+
+        $answers = [];
+        foreach ($account->get('answers') as $answerModel) {
+            $questionModel = $answerModel->get('question');
+            $value         = $answerModel->get('value');
+
+            if (null === $value || null === $questionModel || !isset($questions[$questionModel->getId()])) {
+                continue;
+            }
+            if (null === $pull = $questionModel->get('pull')) {
+                continue;
+            }
+            if (null === $externalId = $pull->get('identifier')) {
+                continue;
+            }
+
+            $answer = [
+                'OmedaDemographicId' => (integer) $externalId,
+            ];
+
+            switch ($questionModel->get('questionType')) {
+                case 'choice-single':
+                    $answer['OmedaDemographicValue'] = $value->get('integration')->get('pull')->get('identifier');
+                    break;
+                case 'choice-multiple':
+                    $values = [];
+                    foreach ($value as $choice) {
+                        $values[] = $choice->get('integration')->get('pull')->get('identifier');
+                    }
+                    $answer['OmedaDemographicValue'] = $values;
+                    break;
+                default:
+                    $answer['OmedaDemographicValue'] = $value;
+                    break;
+            }
+
+            $answers[] = $answer;
+        }
+        if (!empty($answers)) {
+            $payload['CustomerDemographics'] = $answers;
+        }
+        return $payload;
+    }
+
+    /**
+     * Applies attribute information from the account model to the Omeda customer payload.
+     *
+     * @param   Model   $account
+     * @param   array   $payload
+     * @return  array
+     */
+    private function applyAttributesFor(Model $account, array $payload)
+    {
+        $map        = [
+            'Salutation'    => 'salutation',
+            'FirstName'     => 'givenName',
+            'MiddleName'    => 'middleName',
+            'LastName'      => 'familyName',
+            'Suffix'        => 'suffix',
+            'Title'         => 'title',
+        ];
+        foreach ($map as $theirKey => $ourKey) {
+            $value = $account->get($ourKey);
+            if (null === $value) {
+                continue;
+            }
+            $payload[$theirKey] = $value;
+        }
+
+        $gender = $account->get('gender');
+        switch ($gender) {
+            case 'Male':
+                $payload['Gender'] = 'M';
+                break;
+            case 'Female':
+                $payload['Gender'] = 'F';
+                break;
+        }
+        return $payload;
+    }
+
+    /**
+     * Applies email information from the account model to the Omeda customer payload.
+     *
+     * @param   Model   $account
+     * @param   array   $payload
+     * @return  array
+     */
+    private function applyEmailsFor(Model $account, array $payload)
+    {
+        $typeMap = array_flip($this->getEmailTypeMap());
+
+        $emails = [];
+        foreach ($account->get('emails') as $emailModel) {
+            $email = [
+                'EmailAddress' => $emailModel->get('value')
+            ];
+            $type = $emailModel->get('emailType');
+            if (isset($typeMap[$type])) {
+                $email['EmailContactType'] = $typeMap[$type];
+            }
+            $emails[] = $email;
+        }
+        if (!empty($emails)) {
+            $payload['Emails'] = $emails;
+        }
+        return $payload;
+    }
+
+    /**
+     * Applies phone information from the account model to the Omeda customer payload.
+     *
+     * @param   Model   $account
+     * @param   array   $payload
+     * @return  array
+     */
+    private function applyPhonesFor(Model $account, array $payload)
+    {
+        $typeMap = array_flip($this->getPhoneTypeMap());
+
+        $phones = [];
+        foreach ($account->get('phones') as $phoneModel) {
+            $phone = [
+                'Number' => $phoneModel->get('number')
+            ];
+            $type = $phoneModel->get('phoneType');
+            if (isset($typeMap[$type])) {
+                $phone['PhoneContactType'] = $typeMap[$type];
+            }
+            $phones[] = $phone;
+        }
+        if (!empty($phones)) {
+            $payload['Phones'] = $phones;
+        }
+        return $payload;
+    }
+
+    /**
+     * Creates the payload for an Omeda customer insert/update.
+     *
+     * @param   Model   $account
+     * @param   Model[] $questions
+     * @return  array
+     */
+    private function createCustomerPayloadFor(Model $account, array $questions)
+    {
+        $payload = [
+            'ExternalCustomerId'            => $account->getId(),
+            'ExternalCustomerIdNamespace'   => 'radix',
+        ];
+        $payload = $this->applyAttributesFor($account, $payload);
+        $payload = $this->applyEmailsFor($account, $payload);
+        $payload = $this->applyAddressesFor($account, $payload);
+        $payload = $this->applyPhonesFor($account, $payload);
+        $payload = $this->applyAnswersFor($account, $payload, $questions);
+        return $payload;
+    }
+
+    /**
+     * Attempts to retrieve an Omeda customer for the provided Radix identity.
+     *
+     * @param   Model           $identity   The identity.
+     * @param   string|null     $externalId The external (Omeda) ID last used when this identity was pushed.
+     * @return  array|null  The Omeda customer API response, or null if no customer found.
+     */
+    private function retrieveCustomerFor(Model $identity, $externalId, $tryEmail = false)
+    {
+        $tryEmail = (boolean) $tryEmail;
         try {
-            $customer = $this->lookupCustomerFor($account->getId());
-            // Customer found.
-            $this->doUpdate($account, $changeset);
+            // Attempt to find Omeda customer using the Radix identity ID.
+            return $this->lookupCustomerByRadixId($identity->getId());
         } catch (ClientException $e) {
             if (404 == $e->getCode()) {
                 // No customer with a radix identifier found.
-                // Must now check external id...
-                // @todo Generally speaking, this is here for compatibility with legacy Cygnus implementations and should be removed.
-                $identifier = null;
-                foreach ($account->get('externalIds') as $external) {
-                    if ('omeda' === $external->get('source') && is_numeric($external->get('identifier'))) {
-                        $identifier = $external->get('identifier');
-                    }
+                if (empty($externalId)) {
+                    // No external identifier was previously set.
+                    return;
                 }
-                if ($identifier) {
-                    // Attempt to find the customer using the standard Omeda id.
-                    try {
-                        $customer = $this->lookupCustomerById($identifier);
-                        $this->doUpdate($account, $changeset, true);
-                    } catch (ClientException $e) {
-                        if (404 == $e->getCode()) {
-                            // Omeda customer identifier is invalid. Treat as a new record and insert.
-                            $this->doInsert($account);
-                        } else {
-                            throw $e;
+
+                try {
+                    // Attempt to find the customer using the standard Omeda ID.
+                    return $this->lookupCustomerById($externalId);
+                } catch (ClientException $e) {
+                    if (404 == $e->getCode()) {
+                        // Unable to find Omeda customer using the provided Omeda ID.
+                        if (false === $tryEmail) {
+                            return;
                         }
+                        // Try lookup by email address.
+                        throw new \BadMethodCallException(sprintf('%s: Lookup by email address is NYI.', __METHOD__));
+                    } else {
+                        throw $e;
                     }
-
-                    var_dump($identifier);
-                    die();
-                } else {
-                    // No legacy external id found. Treat as a new record and insert.
-                    $this->doInsert($account);
                 }
-
             } else {
                 throw $e;
             }
         }
-    }
-
-    private function doInsert(Model $account)
-    {
-        var_dump(__METHOD__);
-        die();
-        // Check if this customer
-    }
-
-    private function doUpdate(Model $account, array $changeset, $appendRadixId = false)
-    {
-        var_dump(__METHOD__, $appendRadixId);
-        die();
-    }
-
-    private function lookupCustomerById($customerId)
-    {
-        return $this->parseApiResponse(
-            $this->getApiClient()->customer()->lookupById($customerId)
-        );
-    }
-
-    private function lookupCustomerFor($accountId)
-    {
-        return $this->parseApiResponse(
-            $this->getApiClient()->customer()->lookupByExternalId('radix', $accountId)
-        );
     }
 }

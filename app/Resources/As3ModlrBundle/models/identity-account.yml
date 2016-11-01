@@ -4,6 +4,7 @@ identity-account:
         persistence:
             key: mongodb
             db: radix
+    mixins: [ 'integrateable' ]
     attributes:
         primaryEmail:
             type: string
@@ -29,9 +30,6 @@ identity-account:
         history:
             type: one
             entity: identity-account-history
-        integration:
-            type: one
-            entity: integration-meta
     relationships:
         emails:
             type: many

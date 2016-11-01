@@ -4,5 +4,5 @@ identity-internal:
         persistence:
             key: mongodb
             db: radix
-    mixins: [ 'identity-email-embeddable' ]
+    mixins: [ 'identity-email-embeddable', 'integrateable' ]
 
