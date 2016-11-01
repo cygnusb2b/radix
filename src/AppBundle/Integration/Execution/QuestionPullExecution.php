@@ -113,7 +113,7 @@ class QuestionPullExecution extends AbstractExecution
         $choice->set('integration', $meta);
         $meta->set('pull', $pull);
 
-        $pull->set('service', $this->getService()->getKey());
+        $pull->set('integrationId', $this->getIntegration()->getId());
         $pull->set('identifier', $externalId);
 
         $choice->save();
@@ -174,8 +174,8 @@ class QuestionPullExecution extends AbstractExecution
             }
 
             $identifier = $pull->get('identifier');
-            if ($this->getService()->getKey() !== $pull->get('service') || empty($identifier)) {
-                // Service mismatch or missing identifier. Remove choice.
+            if ($this->getIntegration()->getId() !== $pull->get('integrationId') || empty($identifier)) {
+                // Integration mismatch or missing identifier. Remove choice.
                 $this->deleteChoice($choice);
                 continue;
             }
