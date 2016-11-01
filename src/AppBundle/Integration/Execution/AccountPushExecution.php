@@ -136,6 +136,7 @@ class AccountPushExecution extends AbstractExecution
         }
         $push->set('lastRunDate', $now);
         $push->set('timesRan', ++$times);
+        $push->set('integrationId', $this->getIntegration()->getId());
 
         $account->set('touchedDate', new \MongoDate());
 
