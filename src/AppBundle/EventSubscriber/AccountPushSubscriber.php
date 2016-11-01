@@ -32,6 +32,11 @@ class AccountPushSubscriber implements EventSubscriberInterface
     private $container;
 
     /**
+     * @var Model[]
+     */
+    private $processedAccounts = [];
+
+    /**
      * @param   ContainerInterface  $container
      */
     public function __construct(ContainerInterface $container)
@@ -97,6 +102,18 @@ class AccountPushSubscriber implements EventSubscriberInterface
     public function postUpdate(ModelLifecycleArguments $args)
     {
         $model = $args->getModel();
+        if (false == static::$enabled) {
+            return;
+        }
+        if (0 === stripos($model->getType(), 'identity-answer')) {
+            $this->processAnswer($model);
+            return;
+        }
+        if ('identity-account-email' === $model->getType()) {
+            $this->processEmail($model);
+            return;
+        }
+
         if (false === $this->shouldProcess($model)) {
             return;
         }
@@ -104,6 +121,7 @@ class AccountPushSubscriber implements EventSubscriberInterface
         $changeSet  = (isset($this->changeSets[$identifier])) ? $this->changeSets[$identifier] : [];
         try {
             $this->getManager()->accountPushUpdate($model, $changeSet);
+            $this->processedAccounts[$identifier] = true;
         } catch (\Exception $e) {
             RequestUtility::notifyException($e);
         }
@@ -141,5 +159,45 @@ class AccountPushSubscriber implements EventSubscriberInterface
     private function getManager()
     {
         return $this->container->get('app_bundle.integration.manager');
+    }
+
+    /**
+     * Processes an answer model change.
+     *
+     * @param   Model   $answer
+     */
+    private function processAnswer(Model $answer)
+    {
+        $identity = $answer->get('identity');
+        if (null === $identity || 'identity-account' !== $identity->getType()) {
+            return;
+        }
+        $identifier = $identity->getId();
+        if (isset($this->processedAccounts[$identifier])) {
+            return;
+        }
+
+        $this->getManager()->accountPushUpdate($identity, []);
+        $this->processedAccounts[$identifier] = true;
+    }
+
+    /**
+     * Processes an email model email change.
+     *
+     * @param   Model   $email
+     */
+    private function processAnswer(Model $email)
+    {
+        $account = $email->get('account');
+        if (null === $account) {
+            return;
+        }
+        $identifier = $account->getId();
+        if (isset($this->processedAccounts[$identifier])) {
+            return;
+        }
+
+        $this->getManager()->accountPushUpdate($account, []);
+        $this->processedAccounts[$identifier] = true;
     }
 }
