@@ -125,7 +125,7 @@ class AccountPushExecution extends AbstractExecution
                 $account->set('integration', $account->createEmbedFor('integration'));
             }
             $push = $account->get('integration')->createEmbedFor('push');
-            $integration->pushEmbed($push);
+            $account->get('integration')->pushEmbed('push', $push);
         }
 
         $now   = new \DateTime();
@@ -136,6 +136,8 @@ class AccountPushExecution extends AbstractExecution
         }
         $push->set('lastRunDate', $now);
         $push->set('timesRan', ++$times);
+
+        $account->set('touchedDate', new \MongoDate());
 
         // Must disable the push subscriber so this save doesn't re-trigger another push!
         AccountPushSubscriber::$enabled = false;
