@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Utility\RequestUtility;
 use As3\Modlr\Events\EventSubscriberInterface;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Events;
@@ -62,7 +63,12 @@ class AccountPushSubscriber implements EventSubscriberInterface
         if (false === $this->shouldProcess($model)) {
             return;
         }
-        $this->getManager()->accountPushCreate($model);
+        try {
+            $this->getManager()->accountPushCreate($model);
+        } catch (\Exception $e) {
+            RequestUtility::notifyException($e);
+        }
+
     }
 
     /**
@@ -76,7 +82,11 @@ class AccountPushSubscriber implements EventSubscriberInterface
         if (false === $this->shouldProcess($model)) {
             return;
         }
-        $this->getManager()->accountPushDelete($model);
+        try {
+            $this->getManager()->accountPushDelete($model);
+        } catch (\Exception $e) {
+            RequestUtility::notifyException($e);
+        }
     }
 
     /**
@@ -92,7 +102,11 @@ class AccountPushSubscriber implements EventSubscriberInterface
         }
         $identifier = $model->getId();
         $changeSet  = (isset($this->changeSets[$identifier])) ? $this->changeSets[$identifier] : [];
-        $this->getManager()->accountPushUpdate($model, $changeSet);
+        try {
+            $this->getManager()->accountPushUpdate($model, $changeSet);
+        } catch (\Exception $e) {
+            RequestUtility::notifyException($e);
+        }
     }
 
     /**
