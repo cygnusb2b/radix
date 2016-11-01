@@ -29,6 +29,9 @@ identity-account:
         history:
             type: one
             entity: identity-account-history
+        integration:
+            type: one
+            entity: integration-meta
     relationships:
         emails:
             type: many

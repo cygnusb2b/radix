@@ -14,6 +14,14 @@ interface ServiceInterface
     public function configure(array $parameters);
 
     /**
+     * Gets the account-push integration handler for this service.
+     * If the service does not support this integration, a null value should be returned.
+     *
+     * @return  Handler\AccountPushInterface|null
+     */
+    public function getAccountPushHandler();
+
+    /**
      * Gets the identity integration handler for this service.
      * If the service does not support this integration, a null value should be returned.
      *

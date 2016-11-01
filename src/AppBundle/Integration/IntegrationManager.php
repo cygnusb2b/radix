@@ -12,6 +12,11 @@ use As3\Parameters\Parameters;
 class IntegrationManager
 {
     /**
+     * @var null|Execution\AccountPushExecution[]
+     */
+    private $accountPushExecutions;
+
+    /**
      * @var ServiceInterface[]
      */
     private $services = [];
@@ -34,6 +39,43 @@ class IntegrationManager
     {
         $this->store       = $store;
         $this->typeManager = $typeManager;
+    }
+
+    /**
+     * Runs the account-push integration on an account create.
+     *
+     * @param   Model   $account    The account to push.
+     */
+    public function accountPushCreate(Model $account)
+    {
+        foreach ($this->loadAccountPushExecutions() as $execution) {
+            $execution->runCreate($account);
+        }
+    }
+
+    /**
+     * Runs the account-push integration on an account delete.
+     *
+     * @param   Model   $account    The account to push.
+     */
+    public function accountPushDelete(Model $account)
+    {
+        foreach ($this->loadAccountPushExecutions() as $execution) {
+            $execution->runDelete($account);
+        }
+    }
+
+    /**
+     * Runs the account-push integration on an account update.
+     *
+     * @param   Model   $account    The account to push.
+     * @param   array   $changeSet  The model changeset.
+     */
+    public function accountPushUpdate(Model $account, array $changeSet)
+    {
+        foreach ($this->loadAccountPushExecutions() as $execution) {
+            $execution->runUpdate($account, $changeSet);
+        }
     }
 
     /**
@@ -125,6 +167,35 @@ class IntegrationManager
         if (isset($this->services[$key])) {
             return $this->services[$key];
         }
+    }
+
+    /**
+     * Loads account-push execution objects.
+     *
+     * @return  Execution\AccountPushExecution[]
+     */
+    private function loadAccountPushExecutions()
+    {
+        if (null === $this->accountPushExecutions) {
+            $executions   = [];
+            $integrations = $this->getStore()->findQuery('integration-account-push', []);
+            foreach ($integrations as $integration) {
+                if (false === $integration->get('enabled')) {
+                    continue;
+                }
+                $service = $this->loadServiceFor($integration);
+                $handler = $service->getAccountPushHandler();
+                if (null === $handler) {
+                    $this->throwUnsupportedError('account-push', $service->getKey());
+                }
+                $execution = new Execution\AccountPushExecution($integration, $service, $this);
+                $execution->setHandler($handler);
+
+                $executions[$integration->getId()] = $execution;
+            }
+            $this->accountPushExecutions = $executions;
+        }
+        return $this->accountPushExecutions;
     }
 
     /**
