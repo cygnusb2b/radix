@@ -3,11 +3,13 @@
 namespace AppBundle\Integration;
 
 use AppBundle\Integration\Execution;
+use AppBundle\Integration\Task;
 use AppBundle\Question\TypeManager;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
 use As3\Parameters\Parameters;
+use As3\Bundle\PostProcessBundle\Task\TaskManager;
 
 class IntegrationManager
 {
@@ -27,6 +29,11 @@ class IntegrationManager
     private $store;
 
     /**
+     * @var TaskManager
+     */
+    private $taskManager;
+
+    /**
      * @var TypeManager
      */
     private $typeManager;
@@ -35,10 +42,11 @@ class IntegrationManager
      * @param   Store       $store
      * @param   TypeManager $typeManager
      */
-    public function __construct(Store $store, TypeManager $typeManager)
+    public function __construct(Store $store, TypeManager $typeManager, TaskManager $taskManager)
     {
         $this->store       = $store;
         $this->typeManager = $typeManager;
+        $this->taskManager = $taskManager;
     }
 
     /**
@@ -49,7 +57,8 @@ class IntegrationManager
     public function accountPushCreate(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $execution->runCreate($account);
+            $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution));
+            // $execution->runCreate($account);
         }
     }
 

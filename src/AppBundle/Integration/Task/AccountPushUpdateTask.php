@@ -2,9 +2,8 @@
 
 namespace AppBundle\Integration\Task;
 
-use AppBundle\Integration\Execution;
+use AppBundle\Integration\Execution\AccountPushExecution;
 use As3\Modlr\Models\Model;
-use As3\PostProcessBundle\Task\TaskInterface;
 
 class AccountPushUpdateTask extends AbstractAccountPushTask
 {

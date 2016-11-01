@@ -2,10 +2,6 @@
 
 namespace AppBundle\Integration\Task;
 
-use AppBundle\Integration\Execution;
-use As3\Modlr\Models\Model;
-use As3\PostProcessBundle\Task\TaskInterface;
-
 class AccountPushDeleteTask extends AbstractAccountPushTask
 {
     /**
