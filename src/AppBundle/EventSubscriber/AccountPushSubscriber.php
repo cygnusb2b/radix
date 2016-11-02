@@ -71,6 +71,9 @@ class AccountPushSubscriber implements EventSubscriberInterface
         try {
             $this->getManager()->accountPushCreate($model);
         } catch (\Exception $e) {
+            if (true === $this->container->getParameter('kernel.debug')) {
+                throw $e;
+            }
             RequestUtility::notifyException($e);
         }
 
@@ -90,6 +93,9 @@ class AccountPushSubscriber implements EventSubscriberInterface
         try {
             $this->getManager()->accountPushDelete($model);
         } catch (\Exception $e) {
+            if (true === $this->container->getParameter('kernel.debug')) {
+                throw $e;
+            }
             RequestUtility::notifyException($e);
         }
     }
@@ -123,6 +129,9 @@ class AccountPushSubscriber implements EventSubscriberInterface
             $this->getManager()->accountPushUpdate($model, $changeSet);
             $this->processedAccounts[$identifier] = true;
         } catch (\Exception $e) {
+            if (true === $this->container->getParameter('kernel.debug')) {
+                throw $e;
+            }
             RequestUtility::notifyException($e);
         }
     }
