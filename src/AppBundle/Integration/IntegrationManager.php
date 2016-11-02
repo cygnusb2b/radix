@@ -107,7 +107,7 @@ class IntegrationManager
     }
 
     /**
-     * Runs an indentify integration.
+     * Runs an identify integration.
      *
      * @param   string  $pullKey        The pull key name to use.
      * @param   string  $externalId     The external, third-party identity identifier.
@@ -119,19 +119,22 @@ class IntegrationManager
         if (false === $integration->get('enabled')) {
             return;
         }
-        $service     = $this->loadServiceFor($integration);
-        $handler     = $service->getIdentifyHandler();
+        $service = $this->loadServiceFor($integration);
+        $handler = $service->getIdentifyHandler();
         if (null === $handler) {
             $this->throwUnsupportedError('identify', $service->getKey());
         }
+
+        list($source, $identifier) = $handler->getSourceAndIdentifierFor($externalId);
+        $identity = $this->retrieveExternalIdentityFor($source, $identifier);
+
         $execution = new Execution\IdentifyExecution($integration, $service, $this);
         $execution->setHandler($handler);
         $execution->setTypeManager($this->typeManager);
-        $model = $execution->run($externalId);
 
-        $this->updateIntegrationDetails($integration);
+        $this->taskManager->addTask(new Task\IdentifyTask($identity, $execution));
 
-        return $model;
+        return $identity;
     }
 
     /**
@@ -159,8 +162,6 @@ class IntegrationManager
             $execution = new Execution\QuestionPullExecution($integration, $service, $this);
             $execution->setHandler($handler);
             $execution->run();
-
-            $this->updateIntegrationDetails($integration);
         }
     }
 
@@ -236,6 +237,28 @@ class IntegrationManager
     }
 
     /**
+     * Retrieves an external identity model for the provided source and third-party identifier.
+     * Will create a new external identity if one was not found.
+     *
+     * @param   string  $source
+     * @param   string  $identifier
+     * @return  Model
+     */
+    private function retrieveExternalIdentityFor($source, $identifier)
+    {
+        $source   = sprintf('identify:%s', $source);
+        $identity = $this->getStore()->findQuery('identity-external', ['source' => $source, 'identifier' => $identifier])->getSingleResult();
+        if (null === $identity) {
+            // Immediately create. Will update the model data later.
+            $identity = $this->getStore()->create('identity-external');
+            $identity->set('source', $source);
+            $identity->set('identifier', $identifier);
+            $identity->save();
+        }
+        return $identity;
+    }
+
+    /**
      * Retrieve an integration model from the database.
      *
      * @param   string  $type     The integration type.
@@ -254,27 +277,13 @@ class IntegrationManager
         return $integration;
     }
 
+    /**
+     * @param   string  $integrationType
+     * @param   string  $serviceKey
+     * @throws  \RuntimeException
+     */
     private function throwUnsupportedError($integrationType, $serviceKey)
     {
         throw new \RuntimeException(sprintf('The `%s` integration type is not supported by the `%s` service.', $integrationType, $serviceKey));
-    }
-
-    /**
-     * Updates the details of the integration.
-     *
-     * @param   Model   $integration
-     */
-    private function updateIntegrationDetails(Model $integration)
-    {
-        $now       = new \DateTime();
-        $integration
-            ->set('lastRunDate', $now)
-            ->set('timesRan', (integer) $integration->get('timesRan') + 1)
-        ;
-
-        if (null === $integration->get('firstRunDate')) {
-            $integration->set('firstRunDate', $now);
-        }
-        $integration->save();
     }
 }

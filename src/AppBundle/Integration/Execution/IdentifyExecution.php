@@ -17,41 +17,29 @@ class IdentifyExecution extends AbstractExecution
      */
     private $typeManager;
 
-
     /**
      * Executes the identify integration.
      * Any logic contained in this method will be run for ALL integration services!
      *
-     * @param   string  $externalId
-     * @return  Model
+     * @param   Model   $identity
      */
-    public function run($externalId)
+    public function run(Model $identity)
     {
-        $handler = $this->getHandler();
-        list($source, $identifier) = $handler->getSourceAndIdentifierFor($externalId);
-
-        $source   = sprintf('identify:%s', $source);
-        $identity = $this->getStore()->findQuery('identity-external', ['source' => $source, 'identifier' => $identifier])->getSingleResult();
-        if (null === $identity) {
-            // Immediately create. Will update the model data later.
-            $identity = $this->getStore()->create('identity-external');
-            $identity->set('source', $source);
-            $identity->set('identifier', $identifier);
-            // $identity->save(); // @todo uncomment once the application is done post-process.
+        if ('identity-external' !== $identity->getType()) {
+            throw new \InvalidArgumentException(sprintf('Expected a model type of `identity-external` but received `%s`', $identity->getType()));
         }
 
-        // @todo At this point, the actual identification and updating of the identity model should be handled post-process.
-
         // Get all question-pull integrations that match this service.
-        $definition = $handler->execute($identifier, $this->extractExternalQuestionIds());
-
+        $definition = $this->getHandler()->execute(
+            $identity->get('identifier'),
+            $this->extractExternalQuestionIds()
+        );
         $this->applyIdentityValues($identity, $definition);
-
         $identity->save();
 
         // Handle question answers.
-        $this->upsertAnswers($identity, $definition, $integrations);
-        return $identity;
+        $this->upsertAnswers($identity, $definition, $this->retrieveExternalQuestions());
+        $this->updateIntegrationDetails();
     }
 
     /**
@@ -119,7 +107,14 @@ class IdentifyExecution extends AbstractExecution
         }
     }
 
-    private function upsertAnswers(Model $identity, ExternalIdentityDefinition $definition, array $integrations)
+    /**
+     * Updates/inserts all question answers for an identity, based on it's definition.
+     *
+     * @param   Model                       $identity
+     * @param   ExternalIdentityDefinition  $definition
+     * @param   Model[]                     $questions
+     */
+    private function upsertAnswers(Model $identity, ExternalIdentityDefinition $definition, array $questions)
     {
         // Clear previous answers.
         foreach ($identity->get('answers') as $answer) {
@@ -127,34 +122,23 @@ class IdentifyExecution extends AbstractExecution
             $answer->save();
         }
 
-        $answerDefs  = $definition->getAnswers();
-        if (empty($integrations) || empty($answerDefs)) {
+        $answerDefs = $definition->getAnswers();
+        if (empty($answerDefs)) {
             // No answers provided by the service. Do not process.
             return;
         }
 
-        $ids = [];
-        foreach ($integrations as $integration) {
-            // Get all integration model ids where a definition was returned.
-            $identifier = $integration->get('identifier');
-            if (isset($answerDefs[$identifier])) {
-                $ids[] = $integration->getId();
-            }
-        }
-
-        // Get all questions that have matches.
-        $criteria  = ['pull' => ['$in' => $ids]];
-        $questions = $this->getStore()->findQuery('question', $criteria);
-        $answers   = [];
         foreach ($questions as $question) {
             if (true === $question->get('deleted')) {
                 continue;
             }
-
+            $identifier = $question->get('pull')->get('identifier');
+            if (!isset($answerDefs[$identifier])) {
+                continue;
+            }
+            $answerDef  = $answerDefs[$identifier];
             $answerType = $this->typeManager->getQuestionTypeFor($question->get('questionType'))->getAnswerType();
             $answer     = $this->getStore()->create(sprintf('identity-answer-%s', $answerType));
-            $identifier = $question->get('pull')->get('identifier');
-            $answerDef  = $answerDefs[$identifier];
 
             switch ($question->get('questionType')) {
                 case 'choice-single':

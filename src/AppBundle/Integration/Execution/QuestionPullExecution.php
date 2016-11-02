@@ -26,6 +26,7 @@ class QuestionPullExecution extends AbstractExecution
         $definition->getAttributes()->set('key', sprintf('integration-%s-%s', $this->getService()->getKey(), $externalId));
 
         $this->upsertQuestion($definition);
+        $this->updateIntegrationDetails();
     }
 
     /**

@@ -68,27 +68,6 @@ abstract class AbstractExecution
         return array_keys($identifiers);
     }
 
-    final protected function retrieveExternalQuestions()
-    {
-        $ids       = [];
-        $questions = [];
-        foreach ($this->retrieveQuestionIntegrations() as $integration) {
-            $ids[] = $integration->getId();
-        }
-        if (empty($ids)) {
-            return $questions;
-        }
-        $criteria   = ['pull' => ['$in' => $ids]];
-        $collection = $this->getStore()->findQuery('question', $criteria);
-        foreach ($collection as $question) {
-            if (true === $question->get('deleted')) {
-                continue;
-            }
-            $questions[$question->getId()] = $question;
-        }
-        return $questions;
-    }
-
     /**
      * Gets the third-party handler for this execution.
      *
@@ -154,6 +133,53 @@ abstract class AbstractExecution
      * @return  string
      */
     abstract protected function getSupportedModelType();
+
+    /**
+     * Retrieves all question models that are currently pulling for this service.
+     *
+     * @return  Model[]
+     */
+    final protected function retrieveExternalQuestions()
+    {
+        $ids       = [];
+        $questions = [];
+        foreach ($this->retrieveQuestionIntegrations() as $integration) {
+            $ids[] = $integration->getId();
+        }
+        if (empty($ids)) {
+            return $questions;
+        }
+        $criteria   = ['pull' => ['$in' => $ids]];
+        $collection = $this->getStore()->findQuery('question', $criteria);
+        foreach ($collection as $question) {
+            if (true === $question->get('deleted')) {
+                continue;
+            }
+            $questions[$question->getId()] = $question;
+        }
+        return $questions;
+    }
+
+    /**
+     * Updates the details of this integration.
+     * Should be called after runtime.
+     *
+     * @param   Model   $integration
+     */
+    final protected function updateIntegrationDetails()
+    {
+        $now         = new \DateTime();
+        $integration = $this->getIntegration();
+        $integration
+            ->set('lastRunDate', $now)
+            ->set('timesRan', (integer) $integration->get('timesRan') + 1)
+        ;
+
+        if (null === $integration->get('firstRunDate')) {
+            $integration->set('firstRunDate', $now);
+        }
+        $integration->save();
+    }
 
     /**
      * Validates that this execution supports the appropriate handler implementation.
