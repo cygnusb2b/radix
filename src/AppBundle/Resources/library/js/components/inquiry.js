@@ -3,11 +3,12 @@ React.createClass({ displayName: 'ComponentInquiry',
     getDefaultProps: function() {
         return {
             title           : 'Request More Information',
+            description     : null,
             className       : null,
             modelType       : null,
             modelIdentifier : null,
-            enableNotify    : false,
-            notifyEmail     : null,
+            notify          : {},
+            successRedirect : null,
         };
     },
 
@@ -53,12 +54,9 @@ React.createClass({ displayName: 'ComponentInquiry',
                 model  : {
                     type       : this.props.modelType,
                     identifier : this.props.modelIdentifier
-                },
-                notify : {
-                    enabled : this.props.enableNotify,
-                    email   : this.props.notifyEmail
                 }
-            }
+            },
+            notify : Utils.isObject(this.props.notify) ? this.props.notify : {}
         };
 
         Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
@@ -73,9 +71,14 @@ React.createClass({ displayName: 'ComponentInquiry',
                 });
             }
 
-            // Set the next template to display (thank you page, etc).
+            // Get the next template to display (thank you page, etc).
             var template = (response.data) ? response.data.template || null : null;
-            this.setState({ nextTemplate: template });
+            if (this.props.successRedirect) {
+                window.location.href = this.props.successRedirect;
+            } else {
+                // Set the next template to display.
+                this.setState({ nextTemplate: template });
+            }
 
         }.bind(this), function(jqXHR) {
             locker.unlock();
@@ -104,6 +107,7 @@ React.createClass({ displayName: 'ComponentInquiry',
         } else {
             elements = React.createElement('div', { className: className },
                 React.createElement('h2', null, this.props.title),
+                React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description } }),
                 React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
                 React.createElement('hr'),
                 React.createElement(Radix.Forms.get('Inquiry'), {
