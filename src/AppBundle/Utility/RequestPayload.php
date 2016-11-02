@@ -25,6 +25,11 @@ class RequestPayload
     /**
      * @var Parameters
      */
+    private $notify;
+
+    /**
+     * @var Parameters
+     */
     private $submission;
 
     /**
@@ -35,6 +40,7 @@ class RequestPayload
         $this->identity   = new Parameters();
         $this->submission = new Parameters();
         $this->meta       = new Parameters();
+        $this->notify     = new Parameters();
         $this->extractFrom($request);
     }
 
@@ -63,14 +69,15 @@ class RequestPayload
         $payload = RequestUtility::extractPayload($request, false);
         $data    = RequestUtility::parsePayloadData($payload['data']);
 
-        if (isset($data['identity'])) {
-            $this->identity->replace($data['identity']);
+        foreach (['identity', 'submission'] as $key) {
+            if (HelperUtility::isSetArray($data, $key)) {
+                $this->{$key}->replace($data[$key]);
+            }
         }
-        if (isset($data['submission'])) {
-            $this->submission->replace($data['submission']);
-        }
-        if (isset($payload['meta'])) {
-            $this->meta->replace($payload['meta']);
+        foreach (['meta', 'notify'] as $key) {
+            if (HelperUtility::isSetArray($payload, $key)) {
+                $this->{$key}->replace($payload[$key]);
+            }
         }
         return $this;
     }
@@ -109,6 +116,16 @@ class RequestPayload
     }
 
     /**
+     * Gets the notify parameters.
+     *
+     * @return  Parameters
+     */
+    public function getNotify()
+    {
+        return $this->notify;
+    }
+
+    /**
      * Gets the submission parameters.
      *
      * @return  Parameters
@@ -127,6 +144,7 @@ class RequestPayload
             'identity'      => $this->identity->toArray(),
             'submission'    => $this->submission->toArray(),
             'meta'          => $this->meta->toArray(),
+            'notify'        => $this->notify->toArray(),
         ];
     }
 }
