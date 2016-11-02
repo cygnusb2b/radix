@@ -4,6 +4,7 @@ identity-account:
         persistence:
             key: mongodb
             db: radix
+    mixins: [ 'integrateable' ]
     attributes:
         primaryEmail:
             type: string

@@ -3,14 +3,21 @@
 namespace AppBundle\Integration;
 
 use AppBundle\Integration\Execution;
+use AppBundle\Integration\Task;
 use AppBundle\Question\TypeManager;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
 use As3\Parameters\Parameters;
+use As3\Bundle\PostProcessBundle\Task\TaskManager;
 
 class IntegrationManager
 {
+    /**
+     * @var null|Execution\AccountPushExecution[]
+     */
+    private $accountPushExecutions;
+
     /**
      * @var ServiceInterface[]
      */
@@ -22,6 +29,11 @@ class IntegrationManager
     private $store;
 
     /**
+     * @var TaskManager
+     */
+    private $taskManager;
+
+    /**
      * @var TypeManager
      */
     private $typeManager;
@@ -30,10 +42,48 @@ class IntegrationManager
      * @param   Store       $store
      * @param   TypeManager $typeManager
      */
-    public function __construct(Store $store, TypeManager $typeManager)
+    public function __construct(Store $store, TypeManager $typeManager, TaskManager $taskManager)
     {
         $this->store       = $store;
         $this->typeManager = $typeManager;
+        $this->taskManager = $taskManager;
+    }
+
+    /**
+     * Runs the account-push integration on an account create.
+     *
+     * @param   Model   $account    The account to push.
+     */
+    public function accountPushCreate(Model $account)
+    {
+        foreach ($this->loadAccountPushExecutions() as $execution) {
+            $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution));
+        }
+    }
+
+    /**
+     * Runs the account-push integration on an account delete.
+     *
+     * @param   Model   $account    The account to push.
+     */
+    public function accountPushDelete(Model $account)
+    {
+        foreach ($this->loadAccountPushExecutions() as $execution) {
+            $this->taskManager->addTask(new Task\AccountDeleteCreateTask($account, $execution));
+        }
+    }
+
+    /**
+     * Runs the account-push integration on an account update.
+     *
+     * @param   Model   $account    The account to push.
+     * @param   array   $changeSet  The model changeset.
+     */
+    public function accountPushUpdate(Model $account, array $changeSet)
+    {
+        foreach ($this->loadAccountPushExecutions() as $execution) {
+            $this->taskManager->addTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet));
+        }
     }
 
     /**
@@ -125,6 +175,35 @@ class IntegrationManager
         if (isset($this->services[$key])) {
             return $this->services[$key];
         }
+    }
+
+    /**
+     * Loads account-push execution objects.
+     *
+     * @return  Execution\AccountPushExecution[]
+     */
+    private function loadAccountPushExecutions()
+    {
+        if (null === $this->accountPushExecutions) {
+            $executions   = [];
+            $integrations = $this->getStore()->findQuery('integration-account-push', []);
+            foreach ($integrations as $integration) {
+                if (false === $integration->get('enabled')) {
+                    continue;
+                }
+                $service = $this->loadServiceFor($integration);
+                $handler = $service->getAccountPushHandler();
+                if (null === $handler) {
+                    $this->throwUnsupportedError('account-push', $service->getKey());
+                }
+                $execution = new Execution\AccountPushExecution($integration, $service, $this);
+                $execution->setHandler($handler);
+
+                $executions[$integration->getId()] = $execution;
+            }
+            $this->accountPushExecutions = $executions;
+        }
+        return $this->accountPushExecutions;
     }
 
     /**

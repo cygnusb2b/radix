@@ -1,10 +1,17 @@
 services:
     app_bundle.integration.manager:
         class: AppBundle\Integration\IntegrationManager
-        arguments: [ "@as3_modlr.store", "@app_bundle.question.type_manager" ]
+        arguments: [ "@as3_modlr.store", "@app_bundle.question.type_manager", "@as3_post_process.task.manager" ]
         calls:
             - [ addService, [ "@app_bundle.integration.service.omeda" ] ]
 
     app_bundle.integration.service.omeda:
         class: AppBundle\Integrations\Omeda\OmedaService
         arguments: [ "@app_bundle.omeda_sdk.api_client" ]
+
+    app_bundle.integration.event_subscriber.account_push:
+        private: true
+        arguments: [ "@service_container" ]
+        class: AppBundle\EventSubscriber\AccountPushSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber, priority: -255 }

@@ -4,6 +4,7 @@ namespace AppBundle\Integrations\Omeda;
 
 use AppBundle\Integration\Handler\AbstractHandler as BaseAbstractHandler;
 use As3\OmedaSDK\ApiClient;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
 
 class AbstractHandler extends BaseAbstractHandler
@@ -19,6 +20,28 @@ class AbstractHandler extends BaseAbstractHandler
     final public function supportsServiceClass($className)
     {
         return 'AppBundle\Integrations\Omeda\OmedaService';
+    }
+
+    /**
+     * Extracts an external id value from the provided customer for a namespace.
+     *
+     * @param   array   $customer
+     * @param   string  $namespace
+     * @return  string|null
+     */
+    final protected function extractExternalIdFrom(array $customer, $namespace = 'radix')
+    {
+        if (!isset($customer['ExternalIds']) || !is_array($customer['ExternalIds'])) {
+            return;
+        }
+        foreach ($customer['ExternalIds'] as $externalId) {
+            if (!isset($externalId['Namespace']) || !isset($externalId['Id'])) {
+                continue;
+            }
+            if ($namespace === $externalId['Namespace']) {
+                return $externalId['Id'];
+            }
+        }
     }
 
     /**
@@ -73,6 +96,22 @@ class AbstractHandler extends BaseAbstractHandler
     }
 
     /**
+     * @return  array
+     */
+    final protected function getEmailTypeMap()
+    {
+        return [ 300 => 'Business', 310 => 'Personal' ];
+    }
+
+    /**
+     * @return  array
+     */
+    final protected function getPhoneTypeMap()
+    {
+        return [ 200 => 'Business', 210 => 'Home', 230 => 'Mobile', 240 => 'Fax' ];
+    }
+
+    /**
      * Gets the internal question type for an Omeda demographic type.
      *
      * @param   int     $omedaType
@@ -97,6 +136,48 @@ class AbstractHandler extends BaseAbstractHandler
     }
 
     /**
+     * Looks up an Omeda customer by Omeda ID, with the comprehensive response.
+     *
+     * @param   string|int  $customerId
+     * @return  array
+     * @throws  ClientException     On response error (e.g. 404, etc).
+     */
+    final protected function lookupCustomer($customerId)
+    {
+        return $this->parseApiResponse(
+            $this->getApiClient()->customer()->lookup($customerId)
+        );
+    }
+
+    /**
+     * Looks up an Omeda customer by Omeda ID.
+     *
+     * @param   string|int  $customerId
+     * @return  array
+     * @throws  ClientException     On response error (e.g. 404, etc).
+     */
+    final protected function lookupCustomerById($customerId)
+    {
+        return $this->parseApiResponse(
+            $this->getApiClient()->customer()->lookupById($customerId)
+        );
+    }
+
+    /**
+     * Looks up an Omeda customer by the Radix account ID.
+     *
+     * @param   string  $accountId
+     * @return  array
+     * @throws  ClientException     On response error (e.g. 404, etc).
+     */
+    final protected function lookupCustomerByRadixId($accountId)
+    {
+        return $this->parseApiResponse(
+            $this->getApiClient()->customer()->lookupByExternalId('radix', $accountId)
+        );
+    }
+
+    /**
      * Parses an Omeda API response.
      *
      * @param   Response    $response
@@ -109,5 +190,27 @@ class AbstractHandler extends BaseAbstractHandler
             throw new \RuntimeException('Unable to parse API response');
         }
         return $payload;
+    }
+
+    final protected function saveCustomer(array $payload, $runProcessor = true)
+    {
+        $response = $this->parseApiResponse(
+            $this->getApiClient()->customer()->save($payload)
+        );
+        if (!isset($response['ResponseInfo'][0]['TransactionId'])) {
+            throw new \RuntimeException('Unable to retrieve a transaction ID from the customer save response.');
+        }
+        $transactionId = $response['ResponseInfo'][0]['TransactionId'];
+        if (false == $runProcessor) {
+            return $transactionId;
+        }
+
+        $response = $this->parseApiResponse(
+            $this->getApiClient()->utility()->runProcessor($transactionId)
+        );
+        if (!isset($response['BatchStatus'][0]['OmedaCustomerId'])) {
+            throw new \RuntimeException('Unable to retrieve an Omeda customer ID from the processor result.');
+        }
+        return $response['BatchStatus'][0]['OmedaCustomerId'];
     }
 }

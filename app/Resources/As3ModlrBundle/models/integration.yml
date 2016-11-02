@@ -8,6 +8,7 @@ integration:
             schemata:
                 - { keys: { _type: 1, _id: 1 }, options: { unique: true } }
                 - { keys: { pullKey: 1 } , options: { unique: true, partialFilterExpression: { _type: "integration-identify" } } }
+                - { keys: { "service._id": 1, enabled: 1 } , options: { unique: true, partialFilterExpression: { _type: "integration-account-push" } } }
     mixins: [ 'timestampable' ]
     attributes:
         name:

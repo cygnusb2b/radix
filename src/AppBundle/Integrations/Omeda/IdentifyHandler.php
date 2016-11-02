@@ -186,7 +186,7 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
      */
     private function applyEmails(ExternalIdentityDefinition $definition, array $payload)
     {
-        $typeMap = [ 300 => 'Business', 310 => 'Personal' ];
+        $typeMap = $this->getEmailTypeMap();
         if (isset($payload['Emails']) && is_array($payload['Emails'])) {
             foreach ($payload['Emails'] as $email) {
                 if (!isset($email['EmailAddress'])) {
@@ -216,7 +216,7 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
      */
     private function applyPhones(ExternalIdentityDefinition $definition, array $payload)
     {
-        $typeMap = [ 200 => 'Business', 210 => 'Home', 230 => 'Mobile', 240 => 'Fax' ];
+        $typeMap = $this->getPhoneTypeMap();
         if (isset($payload['Phones']) && is_array($payload['Phones'])) {
             foreach ($payload['Phones'] as $phone) {
                 if (!isset($phone['PhoneNumber'])) {
