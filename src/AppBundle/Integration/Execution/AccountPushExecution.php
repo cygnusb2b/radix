@@ -23,7 +23,8 @@ class AccountPushExecution extends AbstractExecution
             $account,
             $this->retrieveExternalQuestions()
         );
-        $this->updateIntegrationDetailsFor($account, $identifier);
+        $this->updatePushDetailsFor($account, $identifier);
+        $this->updateIntegrationDetails();
     }
 
     /**
@@ -54,7 +55,8 @@ class AccountPushExecution extends AbstractExecution
             $changeSet,
             $this->retrieveExternalQuestions()
         );
-        $this->updateIntegrationDetailsFor($account, $identifier);
+        $this->updatePushDetailsFor($account, $identifier);
+        $this->updateIntegrationDetails();
     }
 
     /**
@@ -116,7 +118,7 @@ class AccountPushExecution extends AbstractExecution
      * @param   Model   $account
      * @param   string  $externalId
      */
-    private function updateIntegrationDetailsFor(Model $account, $externalId)
+    private function updatePushDetailsFor(Model $account, $externalId)
     {
         $push = $this->extractPushDetailsFor($account);
         if (null === $push) {
