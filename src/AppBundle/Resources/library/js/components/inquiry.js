@@ -7,7 +7,7 @@ React.createClass({ displayName: 'ComponentInquiry',
             className       : null,
             modelType       : null,
             modelIdentifier : null,
-            notify          : {},
+            notify          : {}, // Technically the notified could be an array of notification objects.
             successRedirect : null,
         };
     },

@@ -7,7 +7,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">Inquiry Test</div>
-            {% set notify = { 'enabled': true, 'template': 'inquiry.notify', to: [ 'developers@southcomm.com' ], cc: [ 'developers@southcomm.com' ] }|json_encode %}
+            {% set notify = { enabled: true, template: 'inquiry.notify', subject: 'Inquiry Submission', to: [ 'developers@southcomm.com' ], cc: [ 'developers@southcomm.com' ] }|json_encode %}
             {% set description = "Inquiry <strong>description</strong> here..." %}
             <ins class="radix"
                 data-component="Inquiry"

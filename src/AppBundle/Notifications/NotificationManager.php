@@ -3,6 +3,7 @@
 namespace AppBundle\Notifications;
 
 use As3\Modlr\Models\Model;
+use As3\Parameters\Parameters;
 use AppBundle\Core\AccountManager;
 use AppBundle\Templating\TemplateLoader;
 use AppBundle\Utility\ModelUtility;
@@ -12,10 +13,14 @@ use Swift_Mailer;
 /**
  * Handles sending notifications
  *
- * @author Josh Worden <jworden@southcomm.com>
+ * @author  Josh Worden <jworden@southcomm.com>
+ * @author  Jacob Bare  <jacob.bare@gmail.com>
  */
 class NotificationManager
 {
+    const DEFAULT_FROM_NAME  = 'Radix Notifications';
+    const DEFAULT_FROM_EMAIL = 'no-reply@radix.as3.io';
+
     /**
      * @var     NotificationFactoryInterface
      */
@@ -65,7 +70,8 @@ class NotificationManager
     }
 
     /**
-     * Sends a notification for the specified submission model
+     * Sends a notification for the specified submission model.
+     * Used to send a notification to the email address of the user submitting, if applicable.
      *
      * @param   Model   $submission     The submission being processed
      * @param   string  $actionKey      The action key (template name)
@@ -113,6 +119,79 @@ class NotificationManager
     }
 
     /**
+     * Notifies recipients of the submission, if applicable.
+     * This is an email notification in addition (and seperate to) the notification that is sent to the person submitting.
+     *
+     * @param   Model       $submission
+     * @param   Parameters  $notify
+     * @return  bool
+     */
+    public function notifySubmission(Model $submission, Parameters $notify)
+    {
+        $templateName = $notify->get('template');
+        if (!$notify->get('enabled') || empty($templateName) || empty($notify->get('to', []))) {
+            return false;
+        }
+        $templateName = TemplateLoader::getTemplateKey('template-notification', $templateName);
+
+        try {
+            $contents = $this->templateLoader->render($templateName, [
+                'application' => $this->accountManager->getApplication(),
+                'submission'  => $submission,
+            ]);
+            if (empty($contents)) {
+                return false;
+            }
+
+            return $this->sendNotification(
+                $contents,
+                $notify->get('subject', 'Submission Notification'),
+                [ $this->getFromEmail() => $this->getFromName() ],
+                (array) $notify->get('to'),
+                (array) $notify->get('cc'),
+                (array) $notify->get('bcc')
+            );
+        } catch (\Exception $e) {
+            RequestUtility::notifyException($e);
+            return false;
+        }
+    }
+
+    /**
+     * Gets the from email.
+     *
+     * @param   string|null     $email
+     * @return  string
+     */
+    private function getFromEmail($email = null)
+    {
+        if (!empty($email)) {
+            return $email;
+        }
+        $app = $this->accountManager->getApplication();
+        return (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.email')) ? self::DEFAULT_FROM_EMAIL : $value;
+    }
+
+    /**
+     * Gets the from name.
+     *
+     * @param   string|null     $name
+     * @return  string
+     */
+    private function getFromName($name = null)
+    {
+        if (!empty($name)) {
+            return $name;
+        }
+        $app  = $this->accountManager->getApplication();
+        $name = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.name')) ? ModelUtility::getModelValueFor($app, 'settings.branding.name') : $value;
+        if (empty($name)) {
+            $name = $app->get('name') ?: self::DEFAULT_FROM_NAME;
+        }
+        return $name;
+    }
+
+    /**
      * Returns the `notification-template`
      *
      * @param   Model   $submission
@@ -149,12 +228,8 @@ class NotificationManager
         $identity = $submission->get('identity');
 
         // Global notification settings
-        $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.name')) ? ModelUtility::getModelValueFor($app, 'settings.branding.name') : $value;
-        if (empty($fromName)) {
-            $fromName = $app->get('name');
-        }
-
-        $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.email')) ? 'no-reply@radix.as3.io': $value;
+        $fromName  = $this->getFromName();
+        $fromEmail = $this->getFromEmail();
         $args['from']        = [ $fromEmail => $fromName ];
         $args['application'] = $app;
         $args['submission']  = $submission;
