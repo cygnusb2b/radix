@@ -19,7 +19,7 @@ class IdentityExternal extends Identity
      */
     protected function formatModel(array $doc)
     {
-        $transformer = new Transformer\IdentityExternal('omeda', 'vsp');    // @todo inject 'vsp'
+        $transformer = new Transformer\IdentityExternal('omeda', $this->getOmedaBrandKey());
         return $transformer->toApp($doc);
     }
 
@@ -48,6 +48,11 @@ class IdentityExternal extends Identity
 
     private function getOmedaBrandKey()
     {
-        return 'vsp';
+        $store = $this->getPersister()->getStorageEngine();
+        $integration = $store->findQuery('integration-service', ['_type' => 'integration-service-omeda'])->getSingleResult();
+        if (null !== $integration) {
+            return $integration->get('brandKey');
+        }
+        throw new \RuntimeException('Unable to find an omeda integration service!');
     }
 }
