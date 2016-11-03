@@ -11,7 +11,7 @@ class IdentityAccount extends Identity
      */
     public function __construct()
     {
-        parent::_construct();
+        parent::__construct();
 
         $this->define('legacy.email', 'email', 'strtolower');
         $this->defineGlobal('credentials', 'credentials');

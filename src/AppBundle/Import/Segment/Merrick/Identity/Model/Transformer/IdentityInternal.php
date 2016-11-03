@@ -4,16 +4,16 @@ namespace AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
 
 use AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
 
-class IdentityExternal extends Identity
+class IdentityInternal extends Identity
 {
     /**
      * {@inheritdoc}
      */
     public function __construct()
     {
-        parent::_construct();
+        parent::__construct();
 
-        $this->defineGlobal('emails', 'identityEmail');
+        $this->defineCallable('emails', 'email', 'identityEmail');
     }
 
     public function identityEmail($value)

@@ -38,8 +38,8 @@ class Identity extends Transformer
             }
         });
 
-        $this->define('legacy.omeda_id', 'omeda_id');
-        $this->define('legacy.omeda_encrypted_id', 'omeda_encrypted_id');
+        $this->define('legacy.omeda_id', 'omeda_id', 'strval');
+        $this->define('legacy.omeda_encrypted_id', 'omeda_encrypted_id', 'strval');
 
         // Global passes for multi fields
         $this->defineGlobal('addresses', 'addresses');
