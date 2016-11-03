@@ -1,0 +1,14 @@
+integration-optin-push:
+    entity:
+        extends: integration
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+         identifier:
+            type: string
+            description: 'The external, third-party email product/list identifier to use when pushing optin data.'
+    relationships:
+        product:
+            type: one
+            entity: product-email-deployment
