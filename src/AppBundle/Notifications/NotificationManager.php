@@ -154,6 +154,7 @@ class NotificationManager
             'submission'     => $submission,
             'answers'        => $answers,
             'identityValues' => $identityValues,
+            'title'          => $notify->get('subject', 'Submission Notification'),
             'notification'   => [
                 'to'  => $this->formatSendToValues((array) $notify->get('to')),
                 'cc'  => $this->formatSendToValues((array) $notify->get('cc')),

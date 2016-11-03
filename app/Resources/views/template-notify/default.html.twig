@@ -1,6 +1,6 @@
 {% extends 'email.html.twig' %}
 
-{% block headline %}Submission Received{% endblock %}
+{% block headline %}{{ values.get('title') }}{% endblock %}
 
 {% block body %}
     {% block notify_header %}
