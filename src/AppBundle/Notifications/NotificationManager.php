@@ -141,11 +141,11 @@ class NotificationManager
     public function notifySubmission(Model $submission, Parameters $notify)
     {
         $templateName = $notify->get('template');
-        if (!$notify->get('enabled') || empty($templateName) || empty($notify->get('to', []))) {
+        if (!$notify->get('enabled')) {
             return false;
         }
         $inflector      = Inflector::get('en');
-        $templateName   = TemplateLoader::getTemplateKey('template-notify', $templateName);
+        $templateName   = TemplateLoader::getTemplateKey('template-notify', $notify->get('template'));
         $default        = TemplateLoader::getTemplateKey('template-notify', 'default');
         $answers        = QuestionAnswerFactory::humanizeAnswers($submission->get('answers'));
         $identityValues = $this->humanizeIdentityValues($submission->get('identity'));
