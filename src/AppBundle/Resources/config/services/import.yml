@@ -12,14 +12,14 @@ services:
             - "@app_bundle.core.account_manager"
 
     app_bundle.import.importer.merrick.customer:
-        class: AppBundle\Import\Importer\Merrick\Customer
+        class: AppBundle\Import\Importer\Merrick\Identity
         parent: app_bundle.import.importer.merrick
         arguments:
             - "@app_bundle.import.persister.as3_modlr"
             - "@app_bundle.import.source.mongo.legacy"
 
     app_bundle.import.importer.merrick.customer_data:
-        class: AppBundle\Import\Importer\Merrick\CustomerData
+        class: AppBundle\Import\Importer\Merrick\IdentityData
         arguments:
             - "@app_bundle.import.persister.as3_modlr"
             - "@app_bundle.import.source.mongo.legacy"

@@ -25,9 +25,9 @@ class Identity extends Merrick
 
         // Identity data
         $this->segments[] = new Segment\Model\IdentityAccount($this, $source);
-        $this->segments[] = new Segment\Model\IdentityIdentity($this, $source);
-        $this->segments[] = new Segment\Model\IdentityAddress($this, $source);
-        $this->segments[] = new Segment\Model\IdentityEmail($this, $source);
+        $this->segments[] = new Segment\Model\IdentityExternal($this, $source);
+        $this->segments[] = new Segment\Model\IdentityInternal($this, $source);
+        $this->segments[] = new Segment\Model\IdentityAccountEmail($this, $source);
 
         // Demographics
         $this->segments[] = new Segment\Model\IdentityAnswer($this, $source);
@@ -38,6 +38,6 @@ class Identity extends Merrick
      */
     public function getKey()
     {
-        return 'merrick_customer';
+        return 'merrick_identity';
     }
 }

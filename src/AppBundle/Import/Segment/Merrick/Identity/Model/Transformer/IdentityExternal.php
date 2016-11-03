@@ -11,7 +11,7 @@ class IdentityExternal extends IdentityInternal
      */
     public function __construct($serviceKey, $brandKey)
     {
-        parent::_construct();
+        parent::__construct();
 
         $this->define('identifier', 'omeda_id');
         $this->defineStatic('source', sprintf('identify:%s:%s', $serviceKey, $brandKey));

@@ -6,20 +6,21 @@ use AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
 
 class IdentityAddress extends Transformer
 {
+    protected $requiredFields = ['identifier'];
     /**
      * {@inheritdoc}
      */
     public function __construct()
     {
-        $this->defineStatic('legacy.source', 'customer');
-        $this->define('street', 'street');
-        $this->define('extra', 'extra');
+        $this->defineStatic('identifier', (string) new \MongoId());
+        $this->define('street', 'address1');
+        $this->define('extra', 'address2');
         $this->define('city', 'city');
-        $this->define('postalCode', 'postalCode');
+        $this->define('postalCode', 'postal_code');
         $this->defineCallable('country', 'country', 'country');
-        $this->defineCallable('countryCode', 'countryCode', 'countryCode');
+        $this->defineCallable('countryCode', 'country', 'countryCode');
         $this->defineCallable('region', 'region', 'region');
-        $this->defineCallable('regionCode', 'regionCode', 'regionCode');
+        $this->defineCallable('regionCode', 'region', 'regionCode');
     }
 
     public function country($value)
