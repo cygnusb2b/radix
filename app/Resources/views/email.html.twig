@@ -1,9 +1,35 @@
 <html>
     <head>
+        {% block styles %}
         <style type="text/css"> table {width: 630px;margin: 0 auto;} .danger { color: red } body{font-family: sans-serif; color: #333; margin: 0;}h1{font-family: sans-serif; line-height: 58px; margin: 0;}.headline, .footer{border-top: 1px solid #EEE; padding: 1em;}.footer{text-align:center; font-family: monospace; color: #CCC;}</style>
+        {% endblock %}
         <title>{{ values.get('subject') }}</title>
     </head>
     <body>
+        {% if environment != 'prod' %}
+            <table>
+                <tbody>
+                    <tr><td><strong>This email was NOT sent in production.</strong></td></tr>
+                    <tr><td>If in production, this notification would have been sent to:</td></tr>
+                    <tr>
+                        <td>
+                            {% for key, addresses in values.get('notification', []) %}
+                                <p>
+                                    <strong>{{ key }}:</strong><br>
+                                    {% for address in addresses %}
+                                        {% if address.name %}
+                                            {{ address.name }} &lt;{{ address.email }}&gt;
+                                        {% else %}
+                                            {{ address.email }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
         <table>
             <tbody>
                 <tr>

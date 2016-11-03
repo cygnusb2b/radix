@@ -8,7 +8,11 @@ use AppBundle\Core\AccountManager;
 use AppBundle\Templating\TemplateLoader;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestUtility;
+use AppBundle\Question\QuestionAnswerFactory;
 use Swift_Mailer;
+
+use ICanBoogie\Inflector;
+
 
 /**
  * Handles sending notifications
@@ -97,7 +101,15 @@ class NotificationManager
         try {
             $args = $this->inject($submission, $template);
             $notification = $factory->generate($submission, $template, $args);
-            $contents = $this->templateLoader->render($templateKey, $notification->getArgs());
+
+            $params = $notification->getArgs();
+            $params['notification'] =  [
+                'to'  => $this->formatSendToValues($notification->getTo()),
+                'cc'  => $this->formatSendToValues($notification->getCc()),
+                'bcc' => $this->formatSendToValues($notification->getBcc()),
+            ];
+
+            $contents = $this->templateLoader->render($templateKey, $params);
 
             if (empty($contents)) {
                 return false;
@@ -132,17 +144,34 @@ class NotificationManager
         if (!$notify->get('enabled') || empty($templateName) || empty($notify->get('to', []))) {
             return false;
         }
-        $templateName = TemplateLoader::getTemplateKey('template-notification', $templateName);
+        $templateName   = TemplateLoader::getTemplateKey('template-notify', $templateName);
+        $default        = TemplateLoader::getTemplateKey('template-notify', 'default');
+        $answers        = QuestionAnswerFactory::humanizeAnswers($submission->get('answers'));
+        $identityValues = $this->humanizeIdentityValues($submission->get('identity'));
+
+        $params = [
+            'application'    => $this->accountManager->getApplication(),
+            'submission'     => $submission,
+            'answers'        => $answers,
+            'identityValues' => $identityValues,
+            'notification'   => [
+                'to'  => $this->formatSendToValues((array) $notify->get('to')),
+                'cc'  => $this->formatSendToValues((array) $notify->get('cc')),
+                'bcc' => $this->formatSendToValues((array) $notify->get('bcc')),
+            ]
+        ];
 
         try {
-            $contents = $this->templateLoader->render($templateName, [
-                'application' => $this->accountManager->getApplication(),
-                'submission'  => $submission,
-            ]);
-            if (empty($contents)) {
-                return false;
-            }
+            // @todo The TemplateLoader should support passing multiple template names so this doesn't need to happen here.
+            $contents = $this->templateLoader->render($templateName, $params);
+        } catch (\Exception $e) {
+            $contents = $this->templateLoader->render($default, $params);
+        }
 
+        if (empty($contents)) {
+            return false;
+        }
+        try {
             return $this->sendNotification(
                 $contents,
                 $notify->get('subject', 'Submission Notification'),
@@ -155,6 +184,24 @@ class NotificationManager
             RequestUtility::notifyException($e);
             return false;
         }
+    }
+
+    /**
+     * Conistently formats send to values.
+     *
+     * @param   array   $values     The send to values.
+     * @return  array
+     */
+    private function formatSendToValues(array $values)
+    {
+        $formatted = [];
+        foreach ($values as $index => $value) {
+            $formatted[] = [
+                'name'  => is_numeric($index) ? null   : $value,
+                'email' => is_numeric($index) ? $value : $index,
+            ];
+        }
+        return $formatted;
     }
 
     /**
@@ -212,6 +259,42 @@ class NotificationManager
     private function getTemplateKey(Model $submission)
     {
         return TemplateLoader::getTemplateKey('template-notification', $submission->get('sourceKey'));
+    }
+
+    /**
+     * Flattens identity model values into "human-readable" format.
+     *
+     * @param   Model|null  $identity
+     * @return  array
+     */
+    private function humanizeIdentityValues(Model $identity = null)
+    {
+        $values = [];
+        if (null === $identity) {
+            return $values;
+        }
+
+        // @todo Use a different inflector???
+        $inflector = Inflector::get('en');
+        foreach (['givenName', 'familyName', 'companyName', 'title', 'primaryEmail'] as $key) {
+            $values[$inflector->titleize($key)] = $identity->get($key);
+        }
+        if (null !== $address = $identity->get('primaryAddress')) {
+            $fields = ['street', 'extra', 'city', 'regionCode', 'postalCode', 'countryCode'];
+            $parts  = [];
+            foreach ($fields as $prop) {
+                $value = $address->{$prop};
+                if (!empty($value)) {
+                    $parts[] = $value;
+                }
+
+            }
+            $values[$inflector->titleize('primaryAddress')] = implode(' ', $parts);
+        }
+        if (null !== $phone = $identity->get('primaryPhone')) {
+            $values[$inflector->titleize('primaryPhone')] = $phone->number;
+        }
+        return $values;
     }
 
     /**

@@ -7,8 +7,9 @@ React.createClass({ displayName: 'ComponentInquiry',
             className       : null,
             modelType       : null,
             modelIdentifier : null,
-            notify          : {}, // Technically the notified could be an array of notification objects.
+            notify          : {}, // Technically the notify value could be an array of notification objects.
             successRedirect : null,
+            referringPath   : null
         };
     },
 
@@ -44,8 +45,14 @@ React.createClass({ displayName: 'ComponentInquiry',
             data[name] = ref.state.value;
         }
 
-        data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
-        data['submission:referringHref'] = window.location.href;
+        var referringHost = window.location.protocol + '//' + window.location.host;
+        var referringHref = window.location.href;
+        if (Utils.isString(this.props.referringPath)) {
+            referringHref = referringHost + '/' + this.props.referringPath.replace(/^\//, '');
+        }
+
+        data['submission:referringHost'] = referringHost;
+        data['submission:referringHref'] = referringHref;
 
         var sourceKey = 'inquiry';
         var payload   = {

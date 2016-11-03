@@ -41,7 +41,8 @@
         "linkorb/jsmin-php": "^1.0",
         "aol/transformers": "^3",
         "snc/redis-bundle": "^2.0",
-        "as3/post-process-bundle": "^1.0"
+        "as3/post-process-bundle": "^1.0",
+        "icanboogie/inflector": "^1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
