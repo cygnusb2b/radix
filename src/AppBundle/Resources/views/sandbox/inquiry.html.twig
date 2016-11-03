@@ -3,10 +3,21 @@
 {% block container %}
 
 <div class="row">
+
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">Inquiry Test</div>
-            <ins class="radix" data-component="Inquiry" data-prop-model-type="content-product" data-prop-model-identifier="10096440" data-prop-class-name="card-block"></ins>
+            {% set notify = { enabled: true, template: 'inquiry.notify', subject: 'Request for More Information', to: [ 'developers@southcomm.com' ], cc: [ 'developers@southcomm.com' ] }|json_encode %}
+            {% set description = '<a href="/some-path">Ergonomic Workstations</a> from <a href="/some-path">80/20, Inc.</a>' %}
+            <ins class="radix"
+                data-component="Inquiry"
+                data-prop-success-redirect="http://www.google.com"
+                data-prop-description="{{ description }}"
+                data-prop-model-type="content-product"
+                data-prop-model-identifier="10096440"
+                data-prop-notify="{{ notify }}"
+                data-prop-class-name="card-block">
+            </ins>
         </div>
     </div>
 </div>

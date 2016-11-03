@@ -15,6 +15,11 @@ function Utils()
         return 'object' === typeof value;
     }
 
+    this.isString = function(value)
+    {
+        return 'string' === typeof value;
+    }
+
     this.show = function() {
         container.style.display = 'block';
     }

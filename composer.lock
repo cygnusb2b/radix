@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dcaea73c7cf56dacbb1dbbea436cc491",
-    "content-hash": "410d97861288c75424faa9e8f50355e3",
+    "hash": "d837d4f14d47d9391c7105182caa712d",
+    "content-hash": "2257a4184dfd94d03db24dd46ddd5951",
     "packages": [
         {
             "name": "aol/transformers",
@@ -1412,6 +1412,58 @@
                 "uri"
             ],
             "time": "2016-06-24 23:00:38"
+        },
+        {
+            "name": "icanboogie/inflector",
+            "version": "v1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ICanBoogie/Inflector.git",
+                "reference": "94ce86a4c4e229ebfb1a959e9094b385c0ff9a8e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ICanBoogie/Inflector/zipball/94ce86a4c4e229ebfb1a959e9094b385c0ff9a8e",
+                "reference": "94ce86a4c4e229ebfb1a959e9094b385c0ff9a8e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3.4"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/"
+                ],
+                "files": [
+                    "lib/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Olivier Laviale",
+                    "email": "olivier.laviale@gmail.com",
+                    "homepage": "http://www.weirdog.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Multilingual inflector that transforms words from singular to plural, underscore to camel case, and more.",
+            "homepage": "http://icanboogie.org/",
+            "keywords": [
+                "camelize",
+                "hyphenate",
+                "inflect",
+                "multilingual",
+                "pluralize",
+                "singularize",
+                "underscore"
+            ],
+            "time": "2016-07-02 11:14:17"
         },
         {
             "name": "incenteev/composer-parameter-handler",

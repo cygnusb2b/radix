@@ -3,19 +3,28 @@
 namespace AppBundle\Notifications;
 
 use As3\Modlr\Models\Model;
+use As3\Parameters\Parameters;
 use AppBundle\Core\AccountManager;
 use AppBundle\Templating\TemplateLoader;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestUtility;
+use AppBundle\Question\QuestionAnswerFactory;
 use Swift_Mailer;
+
+use ICanBoogie\Inflector;
+
 
 /**
  * Handles sending notifications
  *
- * @author Josh Worden <jworden@southcomm.com>
+ * @author  Josh Worden <jworden@southcomm.com>
+ * @author  Jacob Bare  <jacob.bare@gmail.com>
  */
 class NotificationManager
 {
+    const DEFAULT_FROM_NAME  = 'Radix Notifications';
+    const DEFAULT_FROM_EMAIL = 'no-reply@radix.as3.io';
+
     /**
      * @var     NotificationFactoryInterface
      */
@@ -65,7 +74,8 @@ class NotificationManager
     }
 
     /**
-     * Sends a notification for the specified submission model
+     * Sends a notification for the specified submission model.
+     * Used to send a notification to the email address of the user submitting, if applicable.
      *
      * @param   Model   $submission     The submission being processed
      * @param   string  $actionKey      The action key (template name)
@@ -91,7 +101,15 @@ class NotificationManager
         try {
             $args = $this->inject($submission, $template);
             $notification = $factory->generate($submission, $template, $args);
-            $contents = $this->templateLoader->render($templateKey, $notification->getArgs());
+
+            $params = $notification->getArgs();
+            $params['notification'] =  [
+                'to'  => $this->formatSendToValues($notification->getTo()),
+                'cc'  => $this->formatSendToValues($notification->getCc()),
+                'bcc' => $this->formatSendToValues($notification->getBcc()),
+            ];
+
+            $contents = $this->templateLoader->render($templateKey, $params);
 
             if (empty($contents)) {
                 return false;
@@ -110,6 +128,115 @@ class NotificationManager
             RequestUtility::notifyException($e);
             return false;
         }
+    }
+
+    /**
+     * Notifies recipients of the submission, if applicable.
+     * This is an email notification in addition (and seperate to) the notification that is sent to the person submitting.
+     *
+     * @param   Model       $submission
+     * @param   Parameters  $notify
+     * @return  bool
+     */
+    public function notifySubmission(Model $submission, Parameters $notify)
+    {
+        $templateName = $notify->get('template');
+        if (!$notify->get('enabled') || empty($templateName) || empty($notify->get('to', []))) {
+            return false;
+        }
+        $templateName   = TemplateLoader::getTemplateKey('template-notify', $templateName);
+        $default        = TemplateLoader::getTemplateKey('template-notify', 'default');
+        $answers        = QuestionAnswerFactory::humanizeAnswers($submission->get('answers'));
+        $identityValues = $this->humanizeIdentityValues($submission->get('identity'));
+
+        $params = [
+            'application'    => $this->accountManager->getApplication(),
+            'submission'     => $submission,
+            'answers'        => $answers,
+            'identityValues' => $identityValues,
+            'title'          => $notify->get('subject', 'Submission Notification'),
+            'notification'   => [
+                'to'  => $this->formatSendToValues((array) $notify->get('to')),
+                'cc'  => $this->formatSendToValues((array) $notify->get('cc')),
+                'bcc' => $this->formatSendToValues((array) $notify->get('bcc')),
+            ]
+        ];
+
+        try {
+            // @todo The TemplateLoader should support passing multiple template names so this doesn't need to happen here.
+            $contents = $this->templateLoader->render($templateName, $params);
+        } catch (\Exception $e) {
+            $contents = $this->templateLoader->render($default, $params);
+        }
+
+        if (empty($contents)) {
+            return false;
+        }
+        try {
+            return $this->sendNotification(
+                $contents,
+                $notify->get('subject', 'Submission Notification'),
+                [ $this->getFromEmail() => $this->getFromName() ],
+                (array) $notify->get('to'),
+                (array) $notify->get('cc'),
+                (array) $notify->get('bcc')
+            );
+        } catch (\Exception $e) {
+            RequestUtility::notifyException($e);
+            return false;
+        }
+    }
+
+    /**
+     * Conistently formats send to values.
+     *
+     * @param   array   $values     The send to values.
+     * @return  array
+     */
+    private function formatSendToValues(array $values)
+    {
+        $formatted = [];
+        foreach ($values as $index => $value) {
+            $formatted[] = [
+                'name'  => is_numeric($index) ? null   : $value,
+                'email' => is_numeric($index) ? $value : $index,
+            ];
+        }
+        return $formatted;
+    }
+
+    /**
+     * Gets the from email.
+     *
+     * @param   string|null     $email
+     * @return  string
+     */
+    private function getFromEmail($email = null)
+    {
+        if (!empty($email)) {
+            return $email;
+        }
+        $app = $this->accountManager->getApplication();
+        return (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.email')) ? self::DEFAULT_FROM_EMAIL : $value;
+    }
+
+    /**
+     * Gets the from name.
+     *
+     * @param   string|null     $name
+     * @return  string
+     */
+    private function getFromName($name = null)
+    {
+        if (!empty($name)) {
+            return $name;
+        }
+        $app  = $this->accountManager->getApplication();
+        $name = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.name')) ? ModelUtility::getModelValueFor($app, 'settings.branding.name') : $value;
+        if (empty($name)) {
+            $name = $app->get('name') ?: self::DEFAULT_FROM_NAME;
+        }
+        return $name;
     }
 
     /**
@@ -136,6 +263,42 @@ class NotificationManager
     }
 
     /**
+     * Flattens identity model values into "human-readable" format.
+     *
+     * @param   Model|null  $identity
+     * @return  array
+     */
+    private function humanizeIdentityValues(Model $identity = null)
+    {
+        $values = [];
+        if (null === $identity) {
+            return $values;
+        }
+
+        // @todo Use a different inflector???
+        $inflector = Inflector::get('en');
+        foreach (['givenName', 'familyName', 'companyName', 'title', 'primaryEmail'] as $key) {
+            $values[$inflector->titleize($key)] = $identity->get($key);
+        }
+        if (null !== $address = $identity->get('primaryAddress')) {
+            $fields = ['street', 'extra', 'city', 'regionCode', 'postalCode', 'countryCode'];
+            $parts  = [];
+            foreach ($fields as $prop) {
+                $value = $address->{$prop};
+                if (!empty($value)) {
+                    $parts[] = $value;
+                }
+
+            }
+            $values[$inflector->titleize('primaryAddress')] = implode(' ', $parts);
+        }
+        if (null !== $phone = $identity->get('primaryPhone')) {
+            $values[$inflector->titleize('primaryPhone')] = $phone->number;
+        }
+        return $values;
+    }
+
+    /**
      * Injects required parameters for notification and templateLoader
      *
      * @param   Model   $submission
@@ -149,12 +312,8 @@ class NotificationManager
         $identity = $submission->get('identity');
 
         // Global notification settings
-        $fromName  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.name')) ? ModelUtility::getModelValueFor($app, 'settings.branding.name') : $value;
-        if (empty($fromName)) {
-            $fromName = $app->get('name');
-        }
-
-        $fromEmail  = (null === $value = ModelUtility::getModelValueFor($app, 'settings.notifications.email')) ? 'no-reply@radix.as3.io': $value;
+        $fromName  = $this->getFromName();
+        $fromEmail = $this->getFromEmail();
         $args['from']        = [ $fromEmail => $fromName ];
         $args['application'] = $app;
         $args['submission']  = $submission;

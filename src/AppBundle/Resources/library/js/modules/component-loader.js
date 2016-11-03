@@ -27,7 +27,7 @@ function ComponentLoaderModule()
                 usesChildren : false
             },
             Inquiry : {
-                allowed      : [ 'title', 'modelType', 'modelIdentifier', 'className', 'enableNotify', 'notifyEmail' ],
+                allowed      : [ 'title', 'description', 'modelType', 'modelIdentifier', 'className', 'notify', 'successRedirect' ],
                 required     : [ 'modelType', 'modelIdentifier' ],
                 usesChildren : false
             },

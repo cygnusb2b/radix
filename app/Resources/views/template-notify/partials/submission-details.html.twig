@@ -1,0 +1,25 @@
+<hr>
+<table><tbody>
+{% for key,value in values.get('identityValues', []) %}
+    <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+{% endfor %}
+</tbody></table>
+<hr>
+<table><tbody>
+{% for answer in values.get('answers', []) %}
+    <tr><td><strong>{{ answer.question }}</strong></td></tr>
+    <tr>
+        <td>
+            {% if answer.value is iterable %}
+                {{ answer.value|join('<br>') }}
+            {% elseif answer.type == 'date' %}
+                {{ answer.value.format('l, F jS, Y g:i a') }}
+            {% else %}
+                {{ answer.value }}
+            {% endif %}
+            &nbsp;
+        </td>
+    </tr>
+{% endfor %}
+</tbody></table>
+<hr>

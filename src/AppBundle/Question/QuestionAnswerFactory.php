@@ -27,6 +27,44 @@ class QuestionAnswerFactory
     private $typeManager;
 
     /**
+     * Flattens answer models into "human-readable" format.
+     *
+     * @param   array   $answers
+     * @return  array
+     */
+    public static function humanizeAnswers(array $answers)
+    {
+        $formatted = [];
+        foreach ($answers as $model) {
+            $question = $model->get('question');
+            $type     = preg_replace('/^[a-z]+-answer-/', '', $model->getType());
+            $answer   = [
+                'type'     => $type,
+                'question' => $question->get('label') ?: $question->get('name'),
+            ];
+
+            $value = $model->get('value');
+            switch ($question->get('questionType')) {
+                case 'choice-single':
+                    $answer['value'] = $value->get('name');
+                    break;
+                case 'choice-multiple':
+                    $values = [];
+                    foreach ($value as $v) {
+                        $values[] = $v->get('name');
+                    }
+                    $answer['value'] = $values;
+                    break;
+                default:
+                    $answer['value'] = $value;
+                    break;
+            }
+            $formatted[] = $answer;
+        }
+        return $formatted;
+    }
+
+    /**
      * @param   Store           $store
      * @param   TypeManager     $typeManager
      */

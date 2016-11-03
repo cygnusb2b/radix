@@ -18,6 +18,11 @@ class OmedaService implements ServiceInterface
     private $apiClient;
 
     /**
+     * @var
+     */
+    private $env;
+
+    /**
      * @var IdentifyHandler
      */
     private $identifyHandler;
@@ -30,12 +35,13 @@ class OmedaService implements ServiceInterface
     /**
      * Constructor.
      *
-     * @param   ApiClient  $apiClient
-     * @param   array|null $parameters
+     * @param   ApiClient   $apiClient
+     * @param   string      $env
      */
-    public function __construct(ApiClient $apiClient)
+    public function __construct(ApiClient $apiClient, $env)
     {
         $this->apiClient           = $apiClient;
+        $this->env                 = $env;
         $this->accountPushHandler  = new AccountPushHandler();
         $this->identifyHandler     = new IdentifyHandler();
         $this->questionPullHandler = new QuestionPullHandler();
@@ -48,6 +54,9 @@ class OmedaService implements ServiceInterface
     {
         $this->apiClient->configure($parameters);
         $useStaging = isset($parameters['useStaging']) ? $parameters['useStaging'] : false;
+        if ('prod' !== $this->env) {
+            $useStaging = true;
+        }
         $this->apiClient->useStaging($useStaging);
         return $this;
     }

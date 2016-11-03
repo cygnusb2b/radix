@@ -119,6 +119,7 @@ class SubmissionManager
 
         // Send email notifications.
         $this->notificationManager->sendNotificationFor($submission);
+        $this->notificationManager->notifySubmission($submission, $payload->getNotify());
 
         // Return the response.
         return $this->callHookFor($sourceKey, 'createResponseFor', [$submission]);
