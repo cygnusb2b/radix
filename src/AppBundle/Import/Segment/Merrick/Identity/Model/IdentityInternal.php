@@ -29,14 +29,20 @@ class IdentityInternal extends Identity
     protected function getCriteria()
     {
         $criteria = [
-            '$or'   => [
-                ['pwd'  => ['$exists'  => false]],
-                ['pwd'  => ['$eq'      => '']]
-            ],
-            '$or'   => [
-                ['origin'  => ['$exists'  => false]],
-                ['origin'  => ['$ne'      => 'link_tracking']]
-            ],
+            '$and' => [
+                [
+                    '$or'   => [
+                        ['pwd'  => ['$exists'  => false]],
+                        ['pwd'  => ['$eq'      => '']]
+                    ]
+                ],
+                [
+                    '$or'   => [
+                        ['origin'  => ['$exists'  => false]],
+                        ['origin'  => ['$ne'      => 'link_tracking']]
+                    ]
+                ]
+            ]
         ];
         return array_merge(parent::getCriteria(), $criteria);
     }
