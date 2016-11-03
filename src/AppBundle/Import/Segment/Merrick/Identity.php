@@ -4,7 +4,7 @@ namespace AppBundle\Import\Segment\Merrick;
 
 use AppBundle\Import\Segment\Merrick;
 
-abstract class Customer extends Merrick
+abstract class Identity extends Merrick
 {
     /**
      * {@inheritdoc}

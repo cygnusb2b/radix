@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+namespace AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
 
-use AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+use AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
 
-class Customer extends Transformer
+class Identity extends Transformer
 {
     /**
      * {@inheritdoc}
@@ -38,20 +38,12 @@ class Customer extends Transformer
             }
         });
 
-        // Set up for reference passes
-        $this->define('legacy.address.street', 'address1');
-        $this->define('legacy.address.extra', 'address2');
-        $this->define('legacy.address.city', 'city');
-        $this->define('legacy.address.postalCode', 'postal_code');
-        $this->defineCallable('legacy.address.country', 'country', 'country');
-        $this->defineCallable('legacy.address.countryCode', 'country', 'countryCode');
-        $this->defineCallable('legacy.address.region', 'region', 'region');
-        $this->defineCallable('legacy.address.regionCode', 'region', 'regionCode');
+        $this->define('legacy.omeda_id', 'omeda_id');
+        $this->define('legacy.omeda_encrypted_id', 'omeda_encrypted_id');
 
         // Global passes for multi fields
-        $this->defineGlobal('credentials', 'credentials');
+        $this->defineGlobal('addresses', 'addresses');
         $this->defineGlobal('phones', 'phones');
-        $this->defineGlobal('externalIds', 'externalIds');
         $this->defineGlobal('legacy.questions', 'questions');
     }
 
@@ -83,38 +75,10 @@ class Customer extends Transformer
         }
     }
 
-    public function externalIds($data)
+    public function addresses($data)
     {
-        $externalIds = [];
-
-        if (isset($data['omeda_id']) && !empty($data['omeda_id'])) {
-            $externalIds[] = [
-                'identifier'    => (string) $data['omeda_id'],
-                'source'        => 'omeda',
-            ];
-        }
-
-        if (isset($data['omeda_encrypted_id']) && !empty($data['omeda_encrypted_id'])) {
-            $externalIds[] = [
-                'identifier'    => (string) $data['omeda_encrypted_id'],
-                'source'        => 'omeda',
-                'extra'         => ['encrypted'  => true]
-            ];
-        }
-        return $externalIds;
-    }
-
-    public function credentials($data)
-    {
-        $credentials = [];
-        if (isset($data['pwd'])) {
-            $credentials['password'] = [
-                'value'     => $data['pwd'],
-                'salt'      => isset($data['salt']) ? $data['salt'] : null,
-                'mechanism' => 'merrick'
-            ];
-        }
-        return $credentials;
+        $transformer = new IdentityAddress();
+        return [$transformer->toApp($data)];
     }
 
     public function phones($data)

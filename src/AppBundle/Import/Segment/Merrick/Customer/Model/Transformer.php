@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model;
+namespace AppBundle\Import\Segment\Merrick\Identity\Model;
 
 use Aol\Transformers\Transformer as BaseTransformer;
 

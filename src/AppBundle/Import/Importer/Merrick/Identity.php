@@ -4,7 +4,7 @@ namespace AppBundle\Import\Importer\Merrick;
 
 use AppBundle\Core\AccountManager;
 use AppBundle\Import\Importer\Merrick;
-use AppBundle\Import\Segment\Merrick\Customer as Segment;
+use AppBundle\Import\Segment\Merrick\Identity as Segment;
 use As3\SymfonyData\Import\PersisterInterface;
 use As3\SymfonyData\Import\SourceInterface;
 
@@ -13,7 +13,7 @@ use As3\SymfonyData\Import\SourceInterface;
  *
  * @author  Josh Worden <jworden@southcomm.com>
  */
-class Customer extends Merrick
+class Identity extends Merrick
 {
     /**
      * {@inheritdoc}
@@ -23,14 +23,14 @@ class Customer extends Merrick
         parent::__construct($accountManager, $persister, $source);
         $source->setDatabase('merrick');
 
-        // Customer data
-        $this->segments[] = new Segment\Model\CustomerAccount($this, $source);
-        $this->segments[] = new Segment\Model\CustomerIdentity($this, $source);
-        $this->segments[] = new Segment\Model\CustomerAddress($this, $source);
-        $this->segments[] = new Segment\Model\CustomerEmail($this, $source);
+        // Identity data
+        $this->segments[] = new Segment\Model\IdentityAccount($this, $source);
+        $this->segments[] = new Segment\Model\IdentityIdentity($this, $source);
+        $this->segments[] = new Segment\Model\IdentityAddress($this, $source);
+        $this->segments[] = new Segment\Model\IdentityEmail($this, $source);
 
         // Demographics
-        $this->segments[] = new Segment\Model\CustomerAnswer($this, $source);
+        $this->segments[] = new Segment\Model\IdentityAnswer($this, $source);
     }
 
     /**
