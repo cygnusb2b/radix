@@ -21,6 +21,9 @@ class CustomerIdentity extends Customer
     {
         $transformer = new Transformer\Customer();
         $transformer->define('primaryEmail', 'email', 'strtolower');
+        $transformer->define('legacy.external', 'origin', function($value) {
+            return 'link_tracking' === $value;
+        });
         return $transformer->toApp($doc);
     }
 
