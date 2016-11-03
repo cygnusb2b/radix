@@ -7,7 +7,9 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">Inquiry Test</div>
-            {% set notify = { enabled: true, template: 'inquiry.notify', subject: 'Request for More Information', to: [ 'developers@southcomm.com' ], cc: [ 'developers@southcomm.com' ] }|json_encode %}
+            {% set notify = { enabled: true, template: 'inquiry.notify', subject: 'Request for More Information', to: [ 'developers@southcomm.com' ], cc: [ 'developers@southcomm.com' ], extra : {
+                companyName: '80/20, Inc.', productName: 'Ergonomic Workstations', url: '<a href="http://www.vehicleservicepros.com/10096440">http://www.vehicleservicepros.com/10096440</a>'
+            } }|json_encode %}
             {% set description = '<a href="/some-path">Ergonomic Workstations</a> from <a href="/some-path">80/20, Inc.</a>' %}
             <ins class="radix"
                 data-component="Inquiry"

@@ -144,16 +144,23 @@ class NotificationManager
         if (!$notify->get('enabled') || empty($templateName) || empty($notify->get('to', []))) {
             return false;
         }
+        $inflector      = Inflector::get('en');
         $templateName   = TemplateLoader::getTemplateKey('template-notify', $templateName);
         $default        = TemplateLoader::getTemplateKey('template-notify', 'default');
         $answers        = QuestionAnswerFactory::humanizeAnswers($submission->get('answers'));
         $identityValues = $this->humanizeIdentityValues($submission->get('identity'));
+        $extra          = [];
+
+        foreach ((array) $notify->get('extra') as $key => $value) {
+            $extra[$inflector->titleize($key)] = strip_tags($value, '<a><strong><em><b><i><u>');
+        }
 
         $params = [
             'application'    => $this->accountManager->getApplication(),
             'submission'     => $submission,
             'answers'        => $answers,
             'identityValues' => $identityValues,
+            'extra'          => $extra,
             'title'          => $notify->get('subject', 'Submission Notification'),
             'notification'   => [
                 'to'  => $this->formatSendToValues((array) $notify->get('to')),
