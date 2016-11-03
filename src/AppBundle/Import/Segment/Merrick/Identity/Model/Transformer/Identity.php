@@ -47,38 +47,13 @@ class Identity extends Transformer
         $this->defineGlobal('legacy.questions', 'questions');
     }
 
-    public function country($value)
-    {
-        if (strlen($value) > 3) {
-            return $value;
-        }
-    }
-
-    public function countryCode($value)
-    {
-        if (strlen($value) === 3) {
-            return $value;
-        }
-    }
-
-    public function region($value)
-    {
-        if (strlen($value) > 3) {
-            return $value;
-        }
-    }
-
-    public function regionCode($value)
-    {
-        if (strlen($value) <= 3) {
-            return $value;
-        }
-    }
-
     public function addresses($data)
     {
         $transformer = new IdentityAddress();
-        return [$transformer->toApp($data)];
+        $address = $transformer->toApp($data);
+        if (count($address) > 2) {
+            return [$address];
+        }
     }
 
     public function phones($data)

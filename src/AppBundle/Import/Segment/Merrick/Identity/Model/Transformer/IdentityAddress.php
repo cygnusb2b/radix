@@ -13,6 +13,7 @@ class IdentityAddress extends Transformer
     public function __construct()
     {
         $this->defineStatic('identifier', (string) new \MongoId());
+        $this->defineStatic('isPrimary', true);
         $this->define('street', 'address1');
         $this->define('extra', 'address2');
         $this->define('city', 'city');
