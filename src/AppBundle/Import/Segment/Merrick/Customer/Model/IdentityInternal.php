@@ -1,17 +1,17 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model;
+namespace AppBundle\Import\Segment\Merrick\Identity\Model;
 
-use AppBundle\Import\Segment\Merrick\Customer;
+use AppBundle\Import\Segment\Merrick\Identity;
 
-class CustomerIdentity extends Customer
+class IdentityInternal extends Identity
 {
     /**
      * {@inheritdoc}
      */
     public function getKey()
     {
-        return 'merrick_customer_model_customer_identity';
+        return 'merrick_customer_model_identity_internal';
     }
 
     /**
@@ -19,11 +19,7 @@ class CustomerIdentity extends Customer
      */
     protected function formatModel(array $doc)
     {
-        $transformer = new Transformer\Customer();
-        $transformer->define('primaryEmail', 'email', 'strtolower');
-        $transformer->define('legacy.external', 'origin', function($value) {
-            return 'link_tracking' === $value;
-        });
+        $transformer = new Transformer\IdentityInternal();
         return $transformer->toApp($doc);
     }
 
@@ -36,7 +32,11 @@ class CustomerIdentity extends Customer
             '$or'   => [
                 ['pwd'  => ['$exists'  => false]],
                 ['pwd'  => ['$eq'      => '']]
-            ]
+            ],
+            '$or'   => [
+                ['origin'  => ['$exists'  => false]],
+                ['origin'  => ['$ne'      => 'link_tracking']]
+            ],
         ];
         return array_merge(parent::getCriteria(), $criteria);
     }
@@ -46,6 +46,6 @@ class CustomerIdentity extends Customer
      */
     protected function getModelType()
     {
-        return 'customer-identity';
+        return 'identity-internal';
     }
 }
