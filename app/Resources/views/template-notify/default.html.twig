@@ -4,7 +4,7 @@
 
 {% block body %}
     {% block notify_header %}
-    <p>This email is being sent to you because a user submitted a form on <a href="{{ values.get('submission.referringHost') }}">{{values.get('application.settings.branding.name')}}</a>. To ensure that you receive future automatic notifications, please whitelist<br>{{ values.get('application.settings.notifications.email') }}.</p>
+    <p>This email is being sent to you because a user submitted this form on <a href="{{ values.get('submission.referringHost') }}">{{values.get('application.settings.branding.name')}}</a>. To ensure that you receive future automatic notifications, please whitelist<br>{{ values.get('application.settings.notifications.email') }}.</p>
     {% endblock %}
 
     {% block notify_details %}
