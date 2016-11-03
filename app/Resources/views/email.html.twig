@@ -1,7 +1,7 @@
 <html>
     <head>
         {% block styles %}
-        <style type="text/css"> table {width: 630px;margin: 0 auto;} .danger { color: red } body{font-family: sans-serif; color: #333; margin: 0;}h1{font-family: sans-serif; line-height: 58px; margin: 0;}.headline, .footer{border-top: 1px solid #EEE; padding: 1em;}.footer{text-align:center; font-family: monospace; color: #CCC;}</style>
+        <style type="text/css"> table {width: 630px;margin: 0 auto;} .danger { color: red } body{font-family: sans-serif; color: #333; margin: 0;}h1{font-family: sans-serif; line-height: 58px; margin: 0;}.headline, .footer{border-top: 1px solid #EEE;}.footer{text-align:center; font-family: monospace; color: #CCC;}</style>
         {% endblock %}
         <title>{{ values.get('subject') }}</title>
     </head>
@@ -42,9 +42,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="headline"><h2>
-                        {% block headline %}{% endblock %}</h2>
-                    </td>
+                    <td class="headline"><h2>{% block headline %}{% endblock %}</h2></td>
                 </tr>
                 <tr>
                     <td>
