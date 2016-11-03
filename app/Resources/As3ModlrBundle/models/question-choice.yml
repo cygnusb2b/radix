@@ -5,7 +5,7 @@ question-choice:
             db: radix
             schemata:
                 - { keys: { _id: 1, _type: 1 }, options: { unique: true }}
-    mixins: [ 'sequenceable', 'timestampable', 'soft-deleteable' ]
+    mixins: [ 'sequenceable', 'timestampable', 'soft-deleteable', 'integrateable' ]
     attributes:
         name:
             type: string
@@ -16,10 +16,6 @@ question-choice:
         choiceType:
             type: string
             defaultValue: standard # one of standard, other, none, or hidden
-    embeds:
-        integration:
-            type: one
-            entity: question-choice-integration
     relationships:
         question:
             type: one

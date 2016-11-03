@@ -1,0 +1,20 @@
+{% extends 'email.html.twig' %}
+
+{% block headline %}
+    {% if values.get('identity.givenName') %}
+        Hello, {{ values.get('identity.givenName') }}!
+    {% else %}
+        Hello!
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+    <p>A new email address ({{values.get('verificationEmail')}}) has been added to your account.</p>
+    <p><a href='{{values.get('verificationLink')}}'>Click here to confirm</a> your new email address</a>. This link is valid for the next 24 hours.</p>
+
+    <p>If you think you have received this email in error, please contact us at <a href='mailto:{{ values.get('application.settings.support.email') }}'>{{ values.get('application.settings.support.name', values.get('application.settings.support.email')) }}</a>.</p>
+
+    <p>Thanks for using {{values.get('application.settings.branding.name')}}!</p>
+
+{% endblock %}

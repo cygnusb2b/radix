@@ -1,0 +1,13 @@
+integration-meta-detail:
+    attributes:
+        integrationId:
+            type: string
+        identifier:
+            type: string
+        firstRunDate:
+            type: date
+        lastRunDate:
+            type: date
+        timesRan:
+            type: integer
+            defaultValue: 0

@@ -35,7 +35,7 @@ React.createClass({ displayName: 'ComponentVerifyEmail',
         data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
         data['submission:referringHref'] = window.location.href;
 
-        var sourceKey = 'customer-email.verify-submit';
+        var sourceKey = 'identity-account-email.verify-submit';
         var payload   = {
             data: data
         };
@@ -45,8 +45,8 @@ React.createClass({ displayName: 'ComponentVerifyEmail',
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
             locker.unlock();
 
-            CustomerManager.reloadCustomer().then(function() {
-                EventDispatcher.trigger('CustomerManager.customer.loaded');
+            AccountManager.reloadAccount().then(function() {
+                EventDispatcher.trigger('AccountManager.account.loaded');
             });
 
             this.setState({ successful: true, sending: false });
@@ -67,7 +67,7 @@ React.createClass({ displayName: 'ComponentVerifyEmail',
         if (this.state.canResend) {
             resend = React.createElement(Radix.Components.get('ResendVerifyEmail'), {
                 emailAddress : this.state.meta.email,
-                customerId   : this.state.meta.customer
+                accountId    : this.state.meta.account
             });
         } else if (this.state.sending) {
             resend = React.createElement('p', { className: 'alert-info alert', role: 'alert' }, React.createElement('strong', null, 'One moment please.'), ' Verifying...');

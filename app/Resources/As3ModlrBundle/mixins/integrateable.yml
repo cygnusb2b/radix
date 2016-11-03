@@ -1,0 +1,5 @@
+integrateable:
+    embeds:
+        integration:
+            type: one
+            entity: integration-meta

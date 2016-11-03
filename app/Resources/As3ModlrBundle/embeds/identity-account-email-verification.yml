@@ -1,0 +1,15 @@
+identity-account-email-verification:
+    attributes:
+        verified:
+            type: boolean
+            defaultValue: false
+            description: 'Whether the email address has been verified. Accounts cannot log in using an email address until it is verified.'
+        token:
+            type: string
+            description: 'The token used for verification purposes. Is set internally on creation.'
+        completedDate:
+            type: date
+            description: 'The date the email address was verified.'
+        generatedDate:
+            type: date
+            description: 'The date the verification token was generated.'

@@ -1,0 +1,18 @@
+integration-question-pull:
+    entity:
+        extends: integration
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        identifier:
+            type: string
+            description: 'The external, third-party question identifier to use when pulling question data.'
+        boundTo:
+            type: string
+            defaultValue: identity
+            description: 'Determines, when pulled, how the question should be bound: either to the `identity` or to the `submission`.'
+    relationships:
+        tagWith:
+            type: many
+            entity: question-tag

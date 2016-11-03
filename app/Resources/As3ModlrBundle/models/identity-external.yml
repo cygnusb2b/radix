@@ -1,0 +1,14 @@
+identity-external:
+    entity:
+        extends: identity
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'identity-email-embeddable' ]
+    attributes:
+        source:
+            type: string
+            description: 'The external/third-party identity source key.'
+        identifier:
+            type: string
+            description: 'The external/third-party identity source identifier.'

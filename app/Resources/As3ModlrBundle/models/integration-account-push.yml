@@ -1,0 +1,6 @@
+integration-account-push:
+    entity:
+        extends: integration
+        persistence:
+            key: mongodb
+            db: radix

@@ -88,7 +88,7 @@ class InquiryHandler implements SubmissionHandlerInterface
      */
     public function validateWhenLoggedOut(RequestPayload $payload, Model $identity = null)
     {
-        $email = ModelUtility::formatEmailAddress($payload->getCustomer()->get('primaryEmail'));
+        $email = ModelUtility::formatEmailAddress($payload->getIdentity()->get('primaryEmail'));
         if (empty($email)) {
             throw new HttpFriendlyException('The email address field is required.', 400);
         }

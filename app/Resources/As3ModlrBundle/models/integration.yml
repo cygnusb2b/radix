@@ -1,0 +1,34 @@
+integration:
+    entity:
+        abstract: true
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { _type: 1, _id: 1 }, options: { unique: true } }
+                - { keys: { pullKey: 1 } , options: { unique: true, partialFilterExpression: { _type: "integration-identify" } } }
+                - { keys: { "service._id": 1, enabled: 1 } , options: { unique: true, partialFilterExpression: { _type: "integration-account-push" } } }
+    mixins: [ 'timestampable' ]
+    attributes:
+        name:
+            type: string
+        description:
+            type: string
+        enabled:
+            type: boolean
+            defaultValue: true
+        extra:
+            type: object
+            description: 'Any extra parameters that this integration may need.'
+            defaultValue: []
+        firstRunDate:
+            type: date
+        lastRunDate:
+            type: date
+        timesRan:
+            type: integer
+    relationships:
+        service:
+            type: one
+            entity: integration-service

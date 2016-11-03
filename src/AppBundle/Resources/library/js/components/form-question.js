@@ -90,7 +90,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
     _extractAnswer: function() {
         var value = null;
         var question = this.state.question;
-        if ('customer' !== question.boundTo) {
+        if ('identity' !== question.boundTo) {
             return value;
         }
 
@@ -107,12 +107,12 @@ React.createClass({ displayName: 'ComponentFormQuestion',
     _extractAnswerValue: function(answer) {
         var value = answer.value;
 
-        if ('customer-answer-choice' === answer._type) {
+        if ('identity-answer-choice' === answer._type) {
             if (false === Utils.isObject(value)) {
                 return;
             }
             return value._id;
-        } else if ('customer-answer-choices' === answer._type) {
+        } else if ('identity-answer-choices' === answer._type) {
             if (value.length < 1) {
                 return [];
             }

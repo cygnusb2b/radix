@@ -4,7 +4,7 @@ React.createClass({ displayName: 'ComponentModalLinkLoginVerbose',
         return {
             tagName       : 'a',
             wrappingTag   : 'p',
-            wrappingClass : 'muted',
+            wrappingClass : null,
             className     : null,
             label         : 'login',
             prefix        : 'If you already have an account, you can',

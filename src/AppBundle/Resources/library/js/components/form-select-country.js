@@ -13,7 +13,7 @@ React.createClass({ displayName: 'ComponentFormSelectCountry',
 
     getDefaultProps: function() {
         return {
-            name        : 'customer:primaryAddress.countryCode',
+            name        : 'identity:primaryAddress.countryCode',
             label       : 'Country',
             selected    : null,
             onChange    : null,

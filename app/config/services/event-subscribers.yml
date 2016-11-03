@@ -36,3 +36,10 @@ services:
         arguments: [ "@app_bundle.question.type_manager" ]
         tags:
             - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.question_choice:
+        private: true
+        class: AppBundle\EventSubscriber\QuestionChoiceSubscriber
+        arguments: [ "@app_bundle.question.type_manager" ]
+        tags:
+            - { name: as3_modlr.event_subscriber }

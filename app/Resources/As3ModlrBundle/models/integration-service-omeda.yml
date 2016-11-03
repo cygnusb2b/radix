@@ -1,0 +1,18 @@
+integration-service-omeda:
+    entity:
+        extends: integration-service
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        appId:
+            type: string
+        brandKey:
+            type: string
+        clientKey:
+            type: string
+        inputId:
+            type: string
+        useStaging:
+            type: boolean
+            defaultValue: false

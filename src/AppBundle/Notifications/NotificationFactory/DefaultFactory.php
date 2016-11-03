@@ -35,7 +35,7 @@ class DefaultFactory implements NotificationFactoryInterface
      */
     public function supports(Model $submission, Model $template = null)
     {
-        $customer = $submission->get('customer');
-        return null !== $template && null !== $customer && null !== $customer->get('primaryEmail');
+        $identity = $submission->get('identity');
+        return null !== $template && null !== $identity && null !== $identity->get('primaryEmail');
     }
 }

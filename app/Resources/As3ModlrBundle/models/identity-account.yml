@@ -1,0 +1,40 @@
+identity-account:
+    entity:
+        extends: identity
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'integrateable' ]
+    attributes:
+        primaryEmail:
+            type: string
+            description: 'The primary email address of this account.'
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityAccountPrimaryEmail
+        displayName:
+            type: string # should have an intelligent default if empty: try the first part of an email address, try a password username value, try a social nickname, etc.
+        picture:
+            type: string
+        roles:
+            type: array
+            defaultValue: [ USER ]
+    embeds:
+        credentials:
+            type: one
+            entity: identity-account-credentials
+            description: 'The credentials this account owns. Used for signing in.'
+        settings:
+            type: one
+            entity: identity-account-settings
+        history:
+            type: one
+            entity: identity-account-history
+    relationships:
+        emails:
+            type: many
+            inverse: true
+            field: account
+            entity: identity-account-email
+            description: 'The email addresses that this account owns.'
+

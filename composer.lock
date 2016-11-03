@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b97f91ffc0f077a0ffc908ea21fe7e61",
-    "content-hash": "b76e2a7d418b1f1e0addc28c1e124b77",
+    "hash": "dcaea73c7cf56dacbb1dbbea436cc491",
+    "content-hash": "410d97861288c75424faa9e8f50355e3",
     "packages": [
         {
             "name": "aol/transformers",
@@ -252,12 +252,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/omeda-sdk.git",
-                "reference": "afdbc2a44b5ae98e0f0c4cd6645289235f0ff10e"
+                "reference": "6316964b418109fe003c9f07432eed449602b527"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/afdbc2a44b5ae98e0f0c4cd6645289235f0ff10e",
-                "reference": "afdbc2a44b5ae98e0f0c4cd6645289235f0ff10e",
+                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/6316964b418109fe003c9f07432eed449602b527",
+                "reference": "6316964b418109fe003c9f07432eed449602b527",
                 "shasum": ""
             },
             "require": {
@@ -282,7 +282,7 @@
                 }
             ],
             "description": "Provides Omeda API client functionality and SDK tools.",
-            "time": "2016-10-12 18:10:04"
+            "time": "2016-11-01 16:57:56"
         },
         {
             "name": "as3/parameters",
@@ -319,6 +319,47 @@
             ],
             "description": "Common parameter bag classes and parameter formatting/definitions.",
             "time": "2016-09-29 16:29:04"
+        },
+        {
+            "name": "as3/post-process-bundle",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/as3io/PostProcessBundle.git",
+                "reference": "140e642778e841b61344220d955288f2f9e1fb67"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/as3io/PostProcessBundle/zipball/140e642778e841b61344220d955288f2f9e1fb67",
+                "reference": "140e642778e841b61344220d955288f2f9e1fb67",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/framework-bundle": ">=2.5 <2.8 || ^3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "As3\\Bundle\\PostProcessBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Worden",
+                    "email": "solocommand@gmail.com"
+                },
+                {
+                    "name": "Jacob Bare",
+                    "email": "jacob.bare@gmail.com"
+                }
+            ],
+            "description": "Provides centralized support for executing callable code before Symfony framework termination.",
+            "time": "2016-11-01 23:21:12"
         },
         {
             "name": "as3/symfony-data-importer",

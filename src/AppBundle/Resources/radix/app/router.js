@@ -27,13 +27,15 @@ Router.map(function() {
             this.route('edit', { path: '/edit/:id' });
         });
     });
-    this.route('identities');
 
-    this.route('customer', function() {
+    this.route('identity', function() {
         this.route('accounts', function() {
             this.route('edit', { path: '/edit/:id' });
         });
-        this.route('identities', function() {
+        this.route('internal', function() {
+            this.route('edit', { path: '/edit/:id' });
+        });
+        this.route('external', function() {
             this.route('edit', { path: '/edit/:id' });
         });
     });
