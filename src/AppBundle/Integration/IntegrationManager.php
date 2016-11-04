@@ -163,7 +163,6 @@ class IntegrationManager
             $execution->setHandler($handler);
 
             $this->taskManager->addTask(new Task\OptInPushTask($emailAddress, $optedIn, $execution));
-            // $execution->run($emailAddress, $optedIn);
         }
     }
 
