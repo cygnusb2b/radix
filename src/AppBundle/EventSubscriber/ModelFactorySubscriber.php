@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Utility\RequestUtility;
 use As3\Modlr\Events\EventSubscriberInterface;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Events;
@@ -49,7 +50,15 @@ class ModelFactorySubscriber implements EventSubscriberInterface
             $result->throwException();
         }
         $factory->postValidate($model);
-        $factory->postSave($model);
+
+        try {
+            $factory->postSave($model);
+        } catch (\Exception $e) {
+            if (true === $this->container->getParameter('kernel.debug')) {
+                throw $e;
+            }
+            RequestUtility::notifyException($e);
+        }
     }
 
     /**
