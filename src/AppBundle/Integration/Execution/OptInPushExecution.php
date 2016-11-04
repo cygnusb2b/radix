@@ -4,6 +4,7 @@ namespace AppBundle\Integration\Execution;
 
 use AppBundle\Integration\Handler\HandlerInterface;
 use AppBundle\Integration\Handler\OptInPushInterface;
+use AppBundle\Utility\ModelUtility;
 use As3\Modlr\Models\Model;
 
 class OptInPushExecution extends AbstractExecution
