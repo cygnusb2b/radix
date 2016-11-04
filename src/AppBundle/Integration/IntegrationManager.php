@@ -161,7 +161,9 @@ class IntegrationManager
             }
             $execution = new Execution\OptInPushExecution($integration, $service, $this);
             $execution->setHandler($handler);
-            $execution->run($emailAddress, $optedIn);
+
+            $this->taskManager->addTask(new Task\OptInPushTask($emailAddress, $optedIn, $execution));
+            // $execution->run($emailAddress, $optedIn);
         }
     }
 
