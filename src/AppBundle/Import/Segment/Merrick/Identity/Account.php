@@ -1,17 +1,17 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Identity\Model;
+namespace AppBundle\Import\Segment\Merrick\Identity;
 
 use AppBundle\Import\Segment\Merrick\Identity;
 
-class IdentityAccount extends Identity
+class Account extends Identity
 {
     /**
      * {@inheritdoc}
      */
     public function getKey()
     {
-        return 'merrick_customer_model_identity_account';
+        return 'merrick_customer_identity_account';
     }
 
     /**
@@ -23,7 +23,7 @@ class IdentityAccount extends Identity
             return;
         }
 
-        $transformer = new Transformer\IdentityAccount();
+        $transformer = new Transformer\Account();
         return $transformer->toApp($doc);
     }
 

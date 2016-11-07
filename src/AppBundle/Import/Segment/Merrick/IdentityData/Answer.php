@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Identity\Model;
+namespace AppBundle\Import\Segment\Merrick\IdentityData;
 
-use AppBundle\Import\Segment\Merrick\Identity;
+use AppBundle\Import\Segment\Merrick\IdentityData;
 
-class IdentityAnswer extends Identity
+class Answer extends IdentityData
 {
     /**
      * @var     array
@@ -29,7 +29,7 @@ class IdentityAnswer extends Identity
      */
     public function getKey()
     {
-        return 'merrick_customer_model_identity_answer';
+        return 'merrick_customer_identity_data_answer';
     }
 
     /**
