@@ -7,6 +7,16 @@ use As3\Modlr\Models\Model;
 
 class CalculatedFields
 {
+    public static function identityFirstName(Model $model)
+    {
+        return $model->get('givenName');
+    }
+
+    public static function identityLastName(Model $model)
+    {
+        return $model->get('familyName');
+    }
+
     public static function identityEmailEmbeddablePrimaryEmail(Model $model)
     {
         $primary = null;
