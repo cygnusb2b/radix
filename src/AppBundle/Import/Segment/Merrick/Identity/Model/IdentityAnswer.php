@@ -119,7 +119,7 @@ class IdentityAnswer extends Identity
     private function retrieveQuestion($legacyId)
     {
         if (!array_key_exists($legacyId, $this->questions)) {
-            $this->questions[$legacyId] = $this->getCollectionForModel('question')->findOne(['key' => sprintf('omeda-%s', $legacyId)]);
+            $this->questions[$legacyId] = $this->getCollectionForModel('question')->findOne(['key' => sprintf('integration-omeda-%s', $legacyId)]);
         }
         return $this->questions[$legacyId];
     }
@@ -128,7 +128,7 @@ class IdentityAnswer extends Identity
     {
         $legacyId = (string) $legacyId;
         if (!array_key_exists($legacyId, $this->answers)) {
-            $this->answers[$legacyId] = $this->getCollectionForModel('question-choice')->findOne(['integration.clientKey' => 'omeda', 'integration.identifier' => $legacyId]);
+            $this->answers[$legacyId] = $this->getCollectionForModel('question-choice')->findOne(['integration.pull.identifier' => $legacyId]);
         }
         return $this->answers[$legacyId];
     }
