@@ -23,8 +23,13 @@ class IdentityData extends Merrick
         parent::__construct($accountManager, $persister, $source);
         $source->setDatabase('merrick');
 
-        // Answers
+        // Input submissions
+        $this->segments[] = new Segment\InquiryRmi($this, $source);
+
+        // Input Answers
         $this->segments[] = new Segment\Answer($this, $source);
+        $this->segments[] = new Segment\InputAnswerOmeda($this, $source);
+        $this->segments[] = new Segment\InputAnswerComments($this, $source);
     }
 
     /**
