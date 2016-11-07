@@ -19,3 +19,7 @@ product:
     attributes:
         description:
             type: string
+    relationships:
+        tags:
+            type: many
+            entity: product-tag

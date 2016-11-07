@@ -252,12 +252,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/omeda-sdk.git",
-                "reference": "6316964b418109fe003c9f07432eed449602b527"
+                "reference": "a28307466f2efcc7eb5c2985d73842ced82bda85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/6316964b418109fe003c9f07432eed449602b527",
-                "reference": "6316964b418109fe003c9f07432eed449602b527",
+                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/a28307466f2efcc7eb5c2985d73842ced82bda85",
+                "reference": "a28307466f2efcc7eb5c2985d73842ced82bda85",
                 "shasum": ""
             },
             "require": {
@@ -282,7 +282,7 @@
                 }
             ],
             "description": "Provides Omeda API client functionality and SDK tools.",
-            "time": "2016-11-01 16:57:56"
+            "time": "2016-11-04 16:36:22"
         },
         {
             "name": "as3/parameters",

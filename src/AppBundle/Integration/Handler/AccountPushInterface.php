@@ -9,7 +9,6 @@ interface AccountPushInterface extends HandlerInterface
     /**
      * Executes the account-push on account create.
      *
-     * @todo    Should the handler be given the entire model, or a read-only representation?
      * @param   Model   $account
      * @param   Model[] $questions    The third-party, external questions push answers for.
      * @return  string  The external identifier of the created external account record.
@@ -20,7 +19,6 @@ interface AccountPushInterface extends HandlerInterface
     /**
      * Executes the account-push on account delete.
      *
-     * @todo    Should the handler be given the entire model, or a read-only representation?
      * @param   Model   $account
      * @return  string  The external identifier of the deleted external account record.
      * @throws  \Exception  On any internal push error.
@@ -30,7 +28,6 @@ interface AccountPushInterface extends HandlerInterface
     /**
      * Executes the account-push on account update.
      *
-     * @todo    Should the handler be given the entire model, or a read-only representation?
      * @param   Model           $account
      * @param   string|null     $externalId The previously set external id when this data was last pushed via this handler.
      * @param   array           $changeSet  The account model change set.
