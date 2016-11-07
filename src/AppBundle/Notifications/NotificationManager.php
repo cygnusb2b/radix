@@ -284,7 +284,7 @@ class NotificationManager
 
         // @todo Use a different inflector???
         $inflector = Inflector::get('en');
-        foreach (['givenName', 'familyName', 'companyName', 'title', 'primaryEmail'] as $key) {
+        foreach (['firstName', 'lastName', 'companyName', 'title', 'primaryEmail'] as $key) {
             $values[$inflector->titleize($key)] = $identity->get($key);
         }
         if (null !== $address = $identity->get('primaryAddress')) {

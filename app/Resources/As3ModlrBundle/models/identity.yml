@@ -70,6 +70,18 @@ identity:
         extra:
             type: object
             description: 'Any extra, non-defined identity data.'
+        firstName:
+            type: string
+            description: 'An alias for given name.'
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityFirstName
+        lastName:
+            type: string
+            description: 'An alias for famil name.'
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityLastName
     embeds:
         addresses:
             type: many
