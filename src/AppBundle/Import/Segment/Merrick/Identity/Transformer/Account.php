@@ -1,10 +1,8 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
+namespace AppBundle\Import\Segment\Merrick\Identity\Transformer;
 
-use AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
-
-class IdentityAccount extends Identity
+class Account extends Identity
 {
     /**
      * {@inheritdoc}

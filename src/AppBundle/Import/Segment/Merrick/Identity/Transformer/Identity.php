@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
+namespace AppBundle\Import\Segment\Merrick\Identity\Transformer;
 
-use AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
+use AppBundle\Import\Segment\Transformer;
 
 class Identity extends Transformer
 {
@@ -49,7 +49,7 @@ class Identity extends Transformer
 
     public function addresses($data)
     {
-        $transformer = new IdentityAddress();
+        $transformer = new Address();
         $address = $transformer->toApp($data);
         if (count($address) > 2) {
             return [$address];

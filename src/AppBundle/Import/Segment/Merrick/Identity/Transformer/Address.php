@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
+namespace AppBundle\Import\Segment\Merrick\Identity\Transformer;
 
-use AppBundle\Import\Segment\Merrick\Identity\Model\Transformer;
+use AppBundle\Import\Segment\Transformer;
 
-class IdentityAddress extends Transformer
+class Address extends Transformer
 {
     protected $requiredFields = ['identifier'];
     /**

@@ -1,17 +1,17 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Identity\Model;
+namespace AppBundle\Import\Segment\Merrick\Identity;
 
 use AppBundle\Import\Segment\Merrick\Identity;
 
-class IdentityExternal extends Identity
+class External extends Identity
 {
     /**
      * {@inheritdoc}
      */
     public function getKey()
     {
-        return 'merrick_customer_model_identity_external';
+        return 'merrick_customer_identity_external';
     }
 
     /**
@@ -19,7 +19,7 @@ class IdentityExternal extends Identity
      */
     protected function formatModel(array $doc)
     {
-        $transformer = new Transformer\IdentityExternal('omeda', $this->getOmedaBrandKey());
+        $transformer = new Transformer\External('omeda', $this->getOmedaBrandKey());
         return $transformer->toApp($doc);
     }
 
