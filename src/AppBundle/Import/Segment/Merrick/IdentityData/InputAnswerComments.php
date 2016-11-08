@@ -37,27 +37,32 @@ class InputAnswerComments extends InputAnswer
      */
     protected function formatModel(array $doc)
     {
-        try {
-            $question = $this->retrieveQuestionId('comments');
-            if (null === $question) {
-                return;
-            }
+        $question = $this->retrieveQuestionId('comments');
 
-            return [
-                'legacy'    => [
-                    'id'            => (string) $doc['_id'],
-                    'source'        => 'input-submission_comments'
-                ],
-                'createdDate'   => $doc['createdDate'],
-                'touchedDate'   => $doc['createdDate'],
-                'updatedDate'   => $doc['createdDate'],
-                'question'      => ['id' => $question, 'type' => 'question'],
-                'submission'    => ['id' => (string) $doc['_id'], 'type' => 'input-submission'],
-                'value'         => $doc['legacy']['answers']['comments'],
-            ];
-        } catch (\Exception $e) {
-            var_dump(__METHOD__, $e->getMessage(), __METHOD__);
+        return [
+            'legacy'    => [
+                'id'            => (string) $doc['_id'],
+                'source'        => 'input-submission_comments'
+            ],
+            'createdDate'   => $doc['createdDate'],
+            'touchedDate'   => $doc['createdDate'],
+            'updatedDate'   => $doc['createdDate'],
+            'question'      => ['id' => $question, 'type' => 'question'],
+            'submission'    => ['id' => (string) $doc['_id'], 'type' => 'input-submission'],
+            'value'         => $doc['legacy']['answers']['comments'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function retrieveQuestionId($legacyId)
+    {
+        $question = $this->getCollectionForModel('question')->findOne(['key' => 'comments']);
+        if (null === $question) {
+            throw new \InvalidArgumentException('Could not find question with key `comments`. Was it created?');
         }
+        return $question['_id'];
     }
 
     /**

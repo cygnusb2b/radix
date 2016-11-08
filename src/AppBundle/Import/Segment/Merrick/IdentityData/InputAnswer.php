@@ -14,7 +14,6 @@ abstract class InputAnswer extends IdentityData
     protected $mappedQuestions = [
         'ooh_job_title'         => null,
         'ooh_primary_business'  => null,
-        'comments'              => "580f6cc935ab46ff40b015b7"
     ];
 
     /**
