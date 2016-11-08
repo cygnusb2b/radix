@@ -1,0 +1,11 @@
+post-review:
+    entity:
+        extends: post
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        title:
+            type: string
+        rating:
+            type: integer

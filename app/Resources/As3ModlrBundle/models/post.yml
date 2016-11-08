@@ -1,0 +1,53 @@
+post:
+    entity:
+        polymorphic: true
+        abstract: true
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { _type: 1, _id: 1 }, options: { unique: true } }
+    mixins: [ 'soft-deleteable', 'timestampable' ]
+    attributes:
+        body:
+            type: string
+            description: 'The post body.'
+        ipAddress:
+            type: string
+            description: 'The IP address where this post originated from.'
+        anonymize:
+            type: boolean
+            description: 'Flags the comment as anonymized, meaning that even if an identity was logged in, their information will not display on the post.'
+        displayName: #
+            type: string
+            description: 'Used when commenting is allowed without an account.'
+        picture:
+            type: string
+            description: 'Used when commenting is allowed without an account.'
+        banned:
+            type: boolean
+            defaultValue: false
+            description: 'Whether this post has been banned. Is automatically set on the shadowban status of the posting account.'
+        approved:
+            type: boolean
+            description: 'Whether this post has been approved.'
+    relationships:
+        account:
+            type: one
+            entity: identity-account
+        moderator:
+            type: one
+            entity: core-user
+        stream:
+            type: one
+            entity: post-stream
+        upVotedBy:
+            type: many
+            entity: identity-account
+        downVotedBy:
+            type: many
+            entity: identity-account
+        reportedBy:
+            type: many
+            entity: identity-account
+

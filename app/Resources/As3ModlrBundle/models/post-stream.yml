@@ -1,0 +1,25 @@
+post-stream:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { identifier: 1 }, options: { unique: true } }
+    mixins: [ 'timestampable' ]
+    attributes:
+        title:
+            type: string
+            description: 'The title of the stream.'
+        url:
+            type: string
+            description: 'The url where the stream of posts can be viewed.'
+        identifier:
+            type: string
+            description: 'An identifier (set by the application displaying the stream) that uniquely identifies the stream.'
+    relationships:
+        posts:
+            type: many
+            entity: post
+            inverse: true
+            field: stream
+
