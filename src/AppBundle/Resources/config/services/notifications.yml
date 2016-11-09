@@ -53,3 +53,15 @@ services:
             - [ addFactory, [ "@app_bundle.notification_factory.account.reset_password_generate" ] ]
             - [ addFactory, [ "@app_bundle.notification_factory.account_email.verify_generate" ] ]
             - [ addFactory, [ "@app_bundle.notification_factory.product_email_deployment.opt_in" ] ]
+
+    app_bundle.notifications.resend_command:
+        class: AppBundle\Command\Notifications\ResendCommand
+        arguments:
+            - "app:notifications:resend"
+            - "@app_bundle.notifications.manager"
+            - "@app_bundle.core.account_manager"
+            - "@as3_modlr.store"
+            - "@mailer"
+            - "@swiftmailer.transport.real"
+        tags:
+            -  { name: "console.command" }
