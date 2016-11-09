@@ -126,7 +126,7 @@ class ProductController extends AbstractAppController
     private function retrieveAllFor($type)
     {
         $store = $this->get('as3_modlr.store');
-        return $store->findAll($type);
+        return $store->findQuery($type, [], [], ['sequence' => 1]);
     }
 
     /**
