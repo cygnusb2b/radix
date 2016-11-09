@@ -40,6 +40,7 @@ class AccountResetPasswordHandler implements SubmissionHandlerInterface
         $password->set('mechanism', 'platform');
         $password->set('resetCode', null);
         $password->set('value', $payload->getIdentity()->get('password'));
+        $password->set('salt', null);
 
         $submission->set('identity', $this->accountModel);
     }
