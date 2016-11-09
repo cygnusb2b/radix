@@ -138,7 +138,7 @@ class ResendCommand extends Command
         $contacts               = [];
         $notification['to']     = $this->input->getArgument('to');
         $notification['cc']     = [];
-        $notification['bcc']    = $this->input->getArgument('bcc');
+        $notification['bcc']    = explode(',', $this->input->getArgument('bcc'));
 
         if ('Company' === $model['type'] && isset($model['salesContacts'])) {
             $contacts = $model['salesContacts'];
