@@ -37,6 +37,7 @@ class AccountResetPasswordHandler implements SubmissionHandlerInterface
     public function beforeSave(RequestPayload $payload, Model $submission)
     {
         $password = $this->accountModel->get('credentials')->get('password');
+        $password->set('mechanism', 'platform');
         $password->set('resetCode', null);
         $password->set('value', $payload->getIdentity()->get('password'));
 
