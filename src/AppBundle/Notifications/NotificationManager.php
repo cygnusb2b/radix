@@ -347,6 +347,24 @@ class NotificationManager
         return $args;
     }
 
+    private function getTextContents($contents)
+    {
+        $contents = preg_replace('/<style.+?>.*<\/style>/i', '', $contents);
+        $contents = preg_replace('/<\/td>/i', '&nbsp;</td>', $contents);
+        $contents = preg_replace('/<a.*?href="mailto:(.+?)".*>(.+?)<\/a>/i', '$2 [$1]', $contents);
+        $contents = preg_replace('/<a.*?href="(.+?)".*>(.+?)<\/a>/i', '$2 [$1]', $contents);
+        $contents = strip_tags($contents);
+        $lines = explode("\n", $contents);
+        foreach ($lines as $i => $line) {
+            $lines[$i] = trim($line);
+            if (empty($lines[$i])) {
+                unset($lines[$i]);
+            }
+        }
+        $contents = html_entity_decode(implode("\r\n", $lines));
+        return $contents;
+    }
+
     /**
      * Sends a notification using the specified parameters
      *
@@ -368,6 +386,7 @@ class NotificationManager
             ->setCc($cc)
             ->setBcc($cc)
             ->setBody($contents, 'text/html')
+            ->addPart($this->getTextContents($contents), 'text/plain')
         ;
 
         $instance = $this->mailer->send($message);
