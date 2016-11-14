@@ -8,8 +8,9 @@ React.createClass({ displayName: 'ComponentFormCountryPostalCode',
         return {
             postalCode  : null,
             countryCode : null,
+            required    : false,
             onChange    : null,
-            fieldRef   : null,
+            fieldRef    : null,
         };
     },
 
@@ -29,7 +30,7 @@ React.createClass({ displayName: 'ComponentFormCountryPostalCode',
     render: function() {
         return (
             React.createElement('div', null,
-                React.createElement(Radix.Components.get('FormSelectCountry'), { fieldRef: this.props.fieldRef, onChange: this.handleCountryChange, selected: this.state.countryCode, wrapperClass: 'countryCode', name: 'identity:primaryAddress.countryCode' }),
+                React.createElement(Radix.Components.get('FormSelectCountry'), { required: this.props.required, fieldRef: this.props.fieldRef, onChange: this.handleCountryChange, selected: this.state.countryCode, wrapperClass: 'countryCode', name: 'identity:primaryAddress.countryCode' }),
                 this._buildDependentElement()
             )
         );
@@ -39,7 +40,7 @@ React.createClass({ displayName: 'ComponentFormCountryPostalCode',
         var code = this.state.countryCode;
         var element;
         if ('USA' === code || 'CAN' === code) {
-            element = React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, onChange: this.props.onChange, name: 'identity:primaryAddress.postalCode', wrapperClass: 'postalCode', label: 'Zip/Postal Code', value: this.props.postalCode });
+            element = React.createElement(Radix.Components.get('FormInputText'), { required: this.props.required, ref: this.props.fieldRef, onChange: this.props.onChange, name: 'identity:primaryAddress.postalCode', wrapperClass: 'postalCode', label: 'Zip/Postal Code', value: this.props.postalCode });
         } else {
             element = React.createElement(Radix.Components.get('FormInputHidden'), { ref: this.props.fieldRef, onChange: this.props.onChange, name: 'identity:primaryAddress.postalCode', value: this.props.postalCode });
         }

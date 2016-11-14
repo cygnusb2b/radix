@@ -26,6 +26,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
         return {
             keyOrId    : null,
             tagKeyOrId : null,
+            required   : false,
             answers    : [],
             onChange   : null,
             fieldRef   : null
@@ -65,6 +66,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
                     label       : label,
                     options     : options,
                     selected    : answer,
+                    required    : this.props.required,
                     onChange    : this.props.onChange,
                     wrapperClass: question.key + ' question',
                     ref         : this.props.fieldRef
