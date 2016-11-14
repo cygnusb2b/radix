@@ -32,15 +32,15 @@ React.createClass({ displayName: 'FormInquiry',
             ),
             React.createElement('div', null,
                 React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:companyName', wrapperClass: 'companyName', label: 'Company Name', value: account.companyName }),
-                React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:title', wrapperClass: 'title', label: 'Job Title', value: account.title })
+                React.createElement(Radix.Components.get('FormInputText'), { ref: this.props.fieldRef, name: 'identity:title', wrapperClass: 'title', label: 'Job Title', required: true, value: account.title })
             ),
             React.createElement('div', null,
-                React.createElement(Radix.Components.get('CountryPostalCode'), { fieldRef: this.props.fieldRef, postalCode: account.primaryAddress.postalCode, countryCode: account.primaryAddress.countryCode })
+                React.createElement(Radix.Components.get('CountryPostalCode'), { fieldRef: this.props.fieldRef, postalCode: account.primaryAddress.postalCode, countryCode: account.primaryAddress.countryCode, required: true })
             ),
             React.createElement('div', null,
                 React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, keyOrId: 'purchase-intent', answers: account.answers }),
-                React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'business-code', answers: account.answers }),
-                React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'title-code', answers: account.answers }),
+                React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'business-code', required: true, answers: account.answers }),
+                React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, tagKeyOrId: 'title-code', required: true, answers: account.answers }),
                 React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, keyOrId: 'comments', answers: account.answers })
             ),
             React.createElement('button', { type: 'submit'}, 'Submit')
