@@ -539,6 +539,8 @@ ins {
 
 .platform-element input[required]:valid:focus,
 .platform-element textarea[required]:valid:focus,
+.platform-element select[required]:valid:focus,
+.platform-element select:focus,
 .platform-element textarea:focus,
 .platform-element input:focus {
     border-left: 2px solid #008000;
@@ -546,6 +548,7 @@ ins {
     background: rgba(255,255,255,.6);
 }
 .platform-element input[required]:not(:valid),
+.platform-element select[required]:not(:valid),
 .platform-element textarea[required]:not(:valid) {
     border-left: 2px solid #f00;
 }
