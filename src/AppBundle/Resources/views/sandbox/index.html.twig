@@ -48,6 +48,6 @@
             );
         });
 
-        Radix.init({{ initConfig|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
+        Radix.init({{ app.config|json_encode(constant('JSON_PRETTY_PRINT'))|raw }});
     </script>
 {% endblock %}
