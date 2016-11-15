@@ -2,11 +2,18 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Core\AccountManager;
+use AppBundle\Cors\CorsDefinition as Cors;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SandboxController extends AbstractController
 {
+    /**
+     * @var null|array
+     */
+    private $apps;
+
     /**
      * Displays sandbox pages. This is only available on dev environments.
      *
@@ -20,11 +27,15 @@ class SandboxController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        $app  = $this->getActiveApp($request);
+        $apps = $this->getApplications($request->getSchemeAndHttpHost());
+
         $template = (empty($path)) ? 'index' : $path;
         return $this->render(sprintf('@AppBundle/Resources/views/sandbox/%s.html.twig', $template), [
-            'initConfig'    => $this->getInitConfig($request),
-            'libraries'     => $this->getLibraries($request),
-            'navigation'    => $this->buildNavigation($request),
+            'app'        => $app,
+            'apps'       => $apps,
+            'libraries'  => $this->getLibraries($app),
+            'navigation' => $this->buildNavigation($request),
         ]);
     }
 
@@ -61,43 +72,97 @@ class SandboxController extends AbstractController
     }
 
     /**
-     * Gets the library initialization config.
+     * Gets the active application.
      *
      * @param   Request $request
      * @return  array
+     * @throws  \InvalidArgumentException
      */
-    private function getInitConfig(Request $request)
+    private function getActiveApp(Request $request)
     {
-        $config = [
-            'appId'    => '3415bd29-da4c-463a-8c3f-fce02de88347',
-            'host'     => 'http://dev.radix.oemoffhighway.com',
-            'debug'    => true,
-            'logLevel' => 'log'
-        ];
+        $session = $request->getSession();
+        $origin  = $request->getSchemeAndHttpHost();
+        $apps    = $this->getApplications($origin);
 
-        $query = $request->query->all();
-        foreach ($config as $key => $value) {
-            if (isset($query[$key])) {
-                $config[$key] = $query[$key];
+        if (null !== $appId = $request->query->get('appId')) {
+            if (!isset($apps[$appId])) {
+                throw new \InvalidArgumentException('The request app is not supported by this origin.');
             }
+            $session->set('activeSandboxApp', $apps[$appId]);
         }
-        return $config;
+
+        $app = $session->get('activeSandboxApp');
+        if (!is_array($app) || !isset($apps[$app['appId']])) {
+            $app = reset($apps);
+            $session->set('activeSandboxApp', $app);
+        }
+        return $app;
     }
 
     /**
      * Gets the associated Radix libraries (js/css).
      *
-     * @param   Request $request
+     * @param   array   $app
      * @return  array
      */
-    private function getLibraries(Request $request)
+    private function getLibraries(array $app)
     {
-        $config = $this->getInitConfig($request);
+        $config = $app['config'];
         $libraries = [];
         foreach (['js', 'css'] as $extension) {
             $url = sprintf('%s/lib/radix.%s?x-radix-appid=%s', $config['host'], $extension, $config['appId']);
             $libraries[$extension] = ['url' => $url];
         }
         return $libraries;
+    }
+
+    /**
+     * Loads all available applications based on the request origin.
+     *
+     * @param   string  $requestOrigin
+     * @return  array
+     * @throws  \RuntimeException
+     */
+    private function getApplications($requestOrigin)
+    {
+        if (null !== $this->apps) {
+            return $this->apps;
+        }
+        $this->apps = [];
+        foreach ($this->get('as3_modlr.store')->findAll('core-application') as $app) {
+            $origins = array_merge(AccountManager::getGlobalOrigins(), $app->get('allowedOrigins'));
+            foreach ($origins as $origin) {
+                if (true === Cors::isOriginMatch($requestOrigin, $origin)) {
+                    $key         = $app->get('publicKey');
+                    $name        = $app->get('name');
+                    $accountName = $app->get('account')->get('name');
+                    $fullName    = sprintf('%s: %s', $accountName, $name);
+
+                    $this->apps[$key] = [
+                        'id'        => $app->getId(),
+                        'fullName'  => $fullName,
+                        'name'      => $name,
+                        'account'   => $accountName,
+                        'appId'     => $key,
+                        'config'    => [
+                            'appId'     => $key,
+                            'host'      => $requestOrigin,
+                            'debug'     => true,
+                            'logLevel'  => 'log',
+                        ],
+                    ];
+                    continue 2;
+                }
+            }
+        }
+
+        if (empty($this->apps)) {
+            throw new \RuntimeException('Unable to load any applications for the provided request origin.');
+        }
+
+        uasort($this->apps, function($a, $b) {
+            return $a['fullName'] < $b['fullName'] ? -1 : 1;
+        });
+        return $this->apps;
     }
 }
