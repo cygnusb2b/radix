@@ -10,6 +10,42 @@ namespace AppBundle\Utility;
 class LocaleUtility
 {
     /**
+     * Cleans a value for locality comparison purposes.
+     *
+     * @param   mixed   $value
+     * @return  string
+     */
+    public static function cleanValue($value)
+    {
+        $value = trim(strtolower($value));
+        $value = preg_replace_callback('/[^a-z0-9]/i', function($matches) {
+            return '';
+        }, $value);
+        return $value;
+    }
+
+    /**
+     * Determines if two set of locality/address data match.
+     *
+     * @param   array   $current
+     * @param   array   $new
+     * @return  bool
+     */
+    public static function doLocalitiesMatch(array $current, array $new)
+    {
+        foreach (self::getLocalityFieldKeys() as $key) {
+            if (!isset($new[$key])) {
+                continue;
+            }
+
+            if (array_key_exists($key, $current) && self::cleanValue($current[$key]) !== self::cleanValue($new[$key])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Gets address data from Google's geo-code API for the provided address data.
      *
      * @param   string|array    $address
@@ -69,6 +105,16 @@ class LocaleUtility
             }
         }
         return $crc;
+    }
+
+    /**
+     * Gets the field keys used for comparing locality data.
+     *
+     * @return  array
+     */
+    public static function getLocalityFieldKeys()
+    {
+        return ['street', 'extra', 'city', 'postalCode', 'regionCode', 'countryCode'];
     }
 
     /**
