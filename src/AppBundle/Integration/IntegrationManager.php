@@ -57,7 +57,7 @@ class IntegrationManager
     public function accountPushCreate(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution));
+            $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution), 79);
         }
     }
 
@@ -69,7 +69,7 @@ class IntegrationManager
     public function accountPushDelete(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountDeleteCreateTask($account, $execution));
+            $this->taskManager->addTask(new Task\AccountDeleteCreateTask($account, $execution), 77);
         }
     }
 
@@ -82,7 +82,7 @@ class IntegrationManager
     public function accountPushUpdate(Model $account, array $changeSet)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet));
+            $this->taskManager->addTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet), 78);
         }
     }
 
@@ -132,7 +132,7 @@ class IntegrationManager
         $execution->setHandler($handler);
         $execution->setTypeManager($this->typeManager);
 
-        $this->taskManager->addTask(new Task\IdentifyTask($identity, $execution));
+        $this->taskManager->addTask(new Task\IdentifyTask($identity, $execution), 99);
 
         return $identity;
     }
@@ -162,7 +162,7 @@ class IntegrationManager
             $execution = new Execution\OptInPushExecution($integration, $service, $this);
             $execution->setHandler($handler);
 
-            $this->taskManager->addTask(new Task\OptInPushTask($emailAddress, $optedIn, $execution));
+            $this->taskManager->addTask(new Task\OptInPushTask($emailAddress, $optedIn, $execution), 29);
         }
     }
 
