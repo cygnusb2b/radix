@@ -194,6 +194,7 @@ class QuestionPullExecution extends AbstractExecution
                 $choice = $this->createChoice($question, $choiceDef);
             } else {
                 // Update choice.
+                $choice = $current[$externalId];
                 $this->applyChoiceValues($question, $choice, $choiceDef);
                 $choice->save();
                 unset($current[$externalId]);
