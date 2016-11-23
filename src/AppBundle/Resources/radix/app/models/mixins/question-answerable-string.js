@@ -5,5 +5,5 @@ const { Mixin } = Ember;
 const { attr } = DS;
 
 export default Mixin.create({
-    sequence : attr('integer'),
+    value : attr('string'),
 });
