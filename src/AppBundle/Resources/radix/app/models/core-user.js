@@ -9,7 +9,7 @@ export default Model.extend(Timestampable, {
     email      : attr('string'),
     lastLogin  : attr('date'),
     lastSeen   : attr('date'),
-    logins     : attr('number'),
-    remembers  : attr('number'),
+    logins     : attr('integer'),
+    remembers  : attr('integer'),
     details    : hasMany('core-application-user', { inverse: 'user' }),
 });
