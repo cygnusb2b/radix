@@ -1,8 +1,7 @@
-import DS from 'ember-data';
 import Ember from 'ember';
+import attr  from 'ember-data/attr';
 
 const { Mixin } = Ember;
-const { attr } = DS;
 
 export default Mixin.create({
     value : attr('boolean'),

@@ -1,8 +1,7 @@
-import DS from 'ember-data';
-import Ember from 'ember';
+import Ember         from 'ember';
+import { belongsTo } from 'ember-data/relationships';
 
 const { Mixin } = Ember;
-const { belongsTo } = DS;
 
 export default Mixin.create({
     question : belongsTo('question'),
