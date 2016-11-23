@@ -1,7 +1,6 @@
-import DS from 'ember-data';
-import Identity from 'radix/models/identity';
-
-const { attr, hasMany } = DS;
+import Identity    from 'radix/models/identity';
+import attr        from 'ember-data/attr';
+import { hasMany } from 'ember-data/relationships';
 
 export default Identity.extend({
     displayName : attr('string'),

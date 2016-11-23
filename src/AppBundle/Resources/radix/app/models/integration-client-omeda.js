@@ -1,7 +1,6 @@
-import DS from 'ember-data';
+import Model         from 'ember-data/model';
+import attr          from 'ember-data/attr';
 import Timestampable from 'radix/models/mixins/timestampable';
-
-const { Model, attr } = DS;
 
 export default Model.extend(Timestampable, {
     name    : attr('string'),

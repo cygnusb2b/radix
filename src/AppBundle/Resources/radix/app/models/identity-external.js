@@ -1,7 +1,5 @@
-import DS from 'ember-data';
 import Identity from 'radix/models/identity';
-
-const { attr } = DS;
+import attr     from 'ember-data/attr';
 
 export default Identity.extend({
     source     : attr('string'),

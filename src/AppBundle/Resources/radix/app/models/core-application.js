@@ -1,8 +1,8 @@
-import DS from 'ember-data';
-import Keyable from 'radix/models/mixins/keyable';
-import Timestampable from 'radix/models/mixins/timestampable';
-
-const { Model, attr, belongsTo, hasMany } = DS;
+import Model                  from 'ember-data/model';
+import attr                   from 'ember-data/attr';
+import { belongsTo, hasMany } from 'ember-data/relationships';
+import Keyable                from 'radix/models/mixins/keyable';
+import Timestampable          from 'radix/models/mixins/timestampable';
 
 export default Model.extend(Keyable, Timestampable, {
     publicKey      : attr('string'),
