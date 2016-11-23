@@ -6,5 +6,5 @@ const { attr } = DS;
 
 export default Mixin.create({
     name : attr('string'),
-    key  : attr('string')
+    key  : attr('string'),
 });

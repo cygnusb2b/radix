@@ -1,8 +1,11 @@
 import DS from 'ember-data';
 import Ember from 'ember';
 
-export default Ember.Mixin.create({
-    createdDate: DS.attr('date'),
-    touchedDate: DS.attr('date'),
-    updatedDate: DS.attr('date')
+const { Mixin } = Ember;
+const { attr } = DS;
+
+export default Mixin.create({
+    createdDate : attr('date'),
+    touchedDate : attr('date'),
+    updatedDate : attr('date'),
 });
