@@ -16,31 +16,9 @@ export default Identity.extend(Integrateable, {
     history      : fragment('identity-account-history'),
     emails       : hasMany('identity-account-email', { inverse: 'account' }),
     primaryEmail : computed('emails.[]', function() {
-
+        // Triggering a primary email response this way causes all email models to load at once, which causes huge overhead.
+        // Should re-consider how to display primary email address (if needed at all) from a list view.
         let primary = null;
-
-        // Try verified emails first.
-        this.get('emails').forEach(function(email) {
-            let verification = email.get('verification');
-            if (!verification || !verification.get('verified')) {
-                return;
-            }
-            if (!primary || email.get('isPrimary')) {
-                primary = email.get('value');
-            }
-        });
-
-        if (primary) {
-            return primary;
-        }
-
-        // Try again with non-verified.
-        this.get('emails').forEach(function(email) {
-            if (!primary || email.get('isPrimary')) {
-                primary = email.get('value');
-            }
-        });
-
         return primary;
     }),
 });
