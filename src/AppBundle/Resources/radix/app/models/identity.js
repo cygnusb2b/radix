@@ -1,7 +1,8 @@
-import Model          from 'ember-data/model';
-import attr           from 'ember-data/attr';
-import SoftDeleteable from 'radix/models/mixins/soft-deleteable';
-import Timestampable  from 'radix/models/mixins/timestampable';
+import Model             from 'ember-data/model';
+import attr              from 'ember-data/attr';
+import { fragmentArray } from 'model-fragments/attributes';
+import SoftDeleteable    from 'radix/models/mixins/soft-deleteable';
+import Timestampable     from 'radix/models/mixins/timestampable';
 
 export default Model.extend(SoftDeleteable, Timestampable, {
     givenName    : attr('string'),
@@ -12,6 +13,6 @@ export default Model.extend(SoftDeleteable, Timestampable, {
     gender       : attr('string', { defaultValue: 'Unknown' }),
     title        : attr('string'),
     companyName  : attr('string'),
-    primaryEmail : attr('string'), // @todo This should be calculated
-    fullName     : attr('string'), // @todo This should be calculated.
+    addresses    : fragmentArray('identity-address'),
+    phones       : fragmentArray('identity-phone'),
 });
