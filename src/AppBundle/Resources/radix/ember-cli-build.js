@@ -8,7 +8,8 @@ module.exports = function(defaults) {
     'ember-cli-selectize': {
         // valid values are `default`, `bootstrap2`, `bootstrap3` or false
         'theme': 'bootstrap3'
-    }
+    },
+    fingerprint : { enabled : false }
   });
 
   // Use `app.import` to add additional libraries to the generated
