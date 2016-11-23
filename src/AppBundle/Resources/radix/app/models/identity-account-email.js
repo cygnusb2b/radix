@@ -1,9 +1,11 @@
 import DS from 'ember-data';
 import Timestampable from 'radix/models/mixins/timestampable';
 
-export default DS.Model.extend(Timestampable, {
-    name:       DS.attr('string'),
-    isPrimary:  DS.attr('boolean', { defaultValue: false }),
-    value:      DS.attr('string'),
-    account:    DS.belongsTo('identity-account')
+const { Model, attr, belongsTo } = DS;
+
+export default Model.extend(Timestampable, {
+    name      : attr('string'),
+    isPrimary : attr('boolean', { defaultValue: false }),
+    value     : attr('string'),
+    account   : belongsTo('identity-account'),
 });

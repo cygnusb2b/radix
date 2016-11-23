@@ -7,5 +7,5 @@ export default Identity.extend({
     displayName : attr('string'),
     picture     : attr('string'),
     roles       : attr(),
-    emails      : hasMany('identity-account-email', { inverse: 'account' })
+    emails      : hasMany('identity-account-email', { inverse: 'account' }),
 });
