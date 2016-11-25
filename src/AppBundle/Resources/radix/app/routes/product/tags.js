@@ -18,9 +18,6 @@ export default Route.extend({
                 { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'product/tags/-info'     },
             ];
         },
-        recordAdded: function() {
-            this.refresh();
-        }
     }
 
 });

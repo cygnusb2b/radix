@@ -9,11 +9,4 @@ export default Route.extend({
     model: function() {
         return this.get('query').execute('identity-external');
     },
-
-    actions: {
-        recordAdded: function() {
-            this.refresh();
-        }
-    }
-
 });

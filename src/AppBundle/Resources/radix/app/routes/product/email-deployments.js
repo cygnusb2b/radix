@@ -4,16 +4,9 @@ const { inject: { service }, Route } = Ember;
 
 export default Route.extend({
 
-    query   : service('model-query'),
+    query : service('model-query'),
 
-    model: function() {
+    model : function() {
         return this.get('query').execute('product-email-deployment');
     },
-
-    actions: {
-        recordAdded: function() {
-            this.refresh();
-        }
-    }
-
 });

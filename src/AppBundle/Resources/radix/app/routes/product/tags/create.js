@@ -8,18 +8,5 @@ export default Ember.Route.extend({
 
     model: function() {
         return this.store.createRecord('product-tag');
-    },
-
-    actions: {
-        willTransition: function(transition) {
-            let model = this.controller.get('model');
-            this.get('confirm').unsaved(model, model.get('name'), transition, false, function() {
-                model.rollbackAttributes();
-            });
-
-            if (!model.get('hasDirtyAttributes')) {
-                this.send('recordAdded');
-            }
-        }
     }
 });

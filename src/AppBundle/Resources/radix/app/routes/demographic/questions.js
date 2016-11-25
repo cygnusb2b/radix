@@ -17,9 +17,6 @@ export default Route.extend({
                 { key : 'answers', text : 'Choices', icon : 'ion-android-list',        template : 'demographic/questions/-answers' },
                 { key : 'info',    text : 'Info',    icon : 'ion-information-circled', template : 'demographic/questions/-info' },
             ];
-        },
-        recordAdded: function() {
-            this.refresh();
         }
     }
 

@@ -4,16 +4,18 @@ const { inject: { service }, Route } = Ember;
 
 export default Route.extend({
 
-    query: service('model-query'),
+    query : service('model-query'),
 
-    model: function() {
+    model : function() {
         return this.get('query').execute('integration-service-omeda');
     },
 
-    actions: {
-        recordAdded: function() {
-            this.refresh();
-        }
+    actions : {
+        loadTabs: function() {
+            return [
+                { key : 'settings', text : 'Settings', icon : 'ion-gear-a',              template : 'integrations/omeda/-settings', active : true },
+                { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'integrations/omeda/-info' },
+            ];
+        },
     }
-
 });

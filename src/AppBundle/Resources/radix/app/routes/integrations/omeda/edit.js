@@ -6,17 +6,17 @@ export default Ember.Route.extend({
     utility: Ember.inject.service('model-utility'),
 
     model: function(params) {
-        return this.store.findRecord('integration-client-omeda', params.id);
+        return this.store.findRecord('integration-service-omeda', params.id);
     },
 
     actions: {
         willTransition: function(transition) {
-            let _this = this;
-            let model = this.controller.get('model');
+            // let _this = this;
+            // let model = this.controller.get('model');
 
-            this.get('confirm').unsaved(model, model.get('name'), transition, true, function() {
-                _this.get('utility').rollback(model, true);
-            });
+            // this.get('confirm').unsaved(model, model.get('name'), transition, true, function() {
+            //     _this.get('utility').rollback(model, true);
+            // });
         }
     }
 });

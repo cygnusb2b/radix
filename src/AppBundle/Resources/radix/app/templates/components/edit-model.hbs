@@ -1,0 +1,26 @@
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs pull-xs-left">
+        {{#each tabs as |tab|}}
+            {{edit-model/tab icon=tab.icon text=tab.text target=tab.key active=tab.active}}
+        {{/each}}
+    </ul>
+    <button type="button" class="close" aria-label="Close" {{ action 'close' }}>
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form>
+    <div class="card-block">
+        {{#each tabs as |tab|}}
+            {{edit-model/tab-content key=tab.key  model=model template=tab.template}}
+        {{/each}}
+    </div>
+    <div class="card-footer">
+        {{form-button/save onClick='save'}}
+
+        {{#if model.isNew}}
+            {{form-button/discard onClick='close'}}
+        {{else}}
+            {{form-button/undo onClick='undo'}}
+        {{/if}}
+    </div>
+</form>

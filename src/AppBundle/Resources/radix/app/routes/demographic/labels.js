@@ -17,9 +17,6 @@ export default Route.extend({
                 { key : 'demographics', text : 'Demographics', icon : 'ion-pricetag',            template : 'demographic/labels/-demographics' },
                 { key : 'info',         text : 'Info',         icon : 'ion-information-circled', template : 'demographic/labels/-info' },
             ];
-        },
-        recordAdded: function() {
-            this.refresh();
         }
     }
 

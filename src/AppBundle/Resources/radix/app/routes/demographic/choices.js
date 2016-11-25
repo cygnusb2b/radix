@@ -16,9 +16,6 @@ export default Route.extend({
                 { key : 'general',  text : 'General',  icon : 'ion-document',            template : 'demographic/choices/-general', active : true },
                 { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'demographic/choices/-info'     },
             ];
-        },
-        recordAdded: function() {
-            this.refresh();
         }
     }
 
