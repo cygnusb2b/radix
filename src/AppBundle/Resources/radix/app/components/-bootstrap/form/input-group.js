@@ -14,6 +14,8 @@ export default Group.extend({
     hidePlaceholder     : false,
     calculateLabel      : true,
     calculatePlaceholder: true,
+    addOnLeft           : null,
+    addOnRight          : null,
 
     fieldId     : computed('key', function() {
         let key = this.get('key');
