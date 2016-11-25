@@ -10,7 +10,7 @@ export default SecureRoute.extend({
                 [
                     { linkTo: 'product.tags', label: 'Tags' },
                 ],
-            ]
+            ];
         }
     }
 });

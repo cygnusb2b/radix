@@ -1,7 +1,15 @@
-{{#if label}}
-    {{-bootstrap/form/label value=label forId=fieldId srOnly=hideLabel}}
+{{#if calcLabel}}
+    {{-bootstrap/form/label value=calcLabel forId=fieldId srOnly=hideLabel}}
 {{/if}}
-{{-bootstrap/form/input id=fieldId type=type value=value placeholder=placeholder describedBy=helpId}}
+
+{{-bootstrap/form/input
+    id=fieldId
+    type=type
+    value=value
+    placeholder=calcPlaceholder
+    describedBy=helpId
+    required=required
+}}
 
 {{#if helpText}}
     {{-bootstrap/form/help  id=helpId value=helpText}}
