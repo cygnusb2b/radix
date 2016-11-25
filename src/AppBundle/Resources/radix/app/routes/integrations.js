@@ -2,9 +2,11 @@ import SecureRoute from 'radix/routes/secure';
 
 export default SecureRoute.extend({
     actions: {
-        loadNavItems: function() {
+        loadNavigation: function() {
             return [
-                { linkTo: 'integrations.omeda', label: 'Omeda' },
+                [
+                    { linkTo: 'integrations.omeda', label: 'Omeda' },
+                ],
             ];
         }
     }
