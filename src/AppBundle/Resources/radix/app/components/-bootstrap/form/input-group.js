@@ -22,7 +22,7 @@ export default Group.extend({
         if (!key) {
             return;
         }
-        return 'field-' + key;
+        return 'field-' + dasherize(key);
     }),
 
     helpId      : computed('fieldId', 'helpText', function() {
