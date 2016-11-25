@@ -13,7 +13,7 @@ export default Ember.Route.extend({
 
         this.get('loading').show();
 
-        return this.store.query('identity-account', {
+        return this.store.query('product-email-deployment', {
             page: {
                 offset: parseInt(this.get('offset')),
                 limit:  parseInt(this.get('limit'))
@@ -37,12 +37,6 @@ export default Ember.Route.extend({
     },
 
     actions: {
-        loadTabs: function() {
-            return [
-                { key : 'general',  text : 'General',  icon : 'ion-document',            template : 'identity/accounts/-general', active : true },
-                { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'identity/accounts/-info'     },
-            ];
-        },
         recordAdded: function() {
             this.refresh();
         }

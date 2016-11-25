@@ -1,0 +1,24 @@
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs pull-xs-left">
+        {{#each tabs as |tab|}}
+            {{card-tab-item icon=tab.icon text=tab.text target=tab.key active=tab.active}}
+        {{/each}}
+    </ul>
+    {{form-close class='pull-right' transitionTo=routeName}}
+</div>
+<form>
+    <div class="card-block">
+        {{#each tabs as |tab|}}
+            {{card-tab-block key=tab.key  model=model template=tab.template}}
+        {{/each}}
+    </div>
+    <div class="card-footer">
+        {{model-actions/save model=model transitionTo=editRouteName}}
+
+        {{#if model.isNew}}
+            {{model-actions/undo model=model confirmValue=model.name transitionTo=routeName}}
+        {{else}}
+            {{model-actions/undo model=model confirmValue=model.name transitionTo=editRouteName}}
+        {{/if}}
+    </div>
+</form>
