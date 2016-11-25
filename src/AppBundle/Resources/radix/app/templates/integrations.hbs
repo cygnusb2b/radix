@@ -1,8 +1,6 @@
 <div class="row">
-    <div class="col-sm-2">
-        <div class="list-group">
-            {{#link-to 'integrations.omeda' class='list-group-item list-group-item-action'}}Omeda{{/link-to}}
-        </div>
+    <div class="col-sm-2 m-b-1">
+        {{-browse/left-nav navItemLoader=(route-action 'loadNavItems')}}
     </div>
     {{ outlet }}
 </div>

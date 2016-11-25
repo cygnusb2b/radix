@@ -1,11 +1,6 @@
 <div class="row">
     <div class="col-sm-2">
-        <div class="list-group">
-            {{#link-to 'demographic.questions' class='list-group-item list-group-item-action'}}Questions{{/link-to}}
-            {{#link-to 'demographic.choices' class='list-group-item list-group-item-action'}}Choices{{/link-to}}
-            {{#link-to 'demographic.labels' class='list-group-item list-group-item-action'}}Labels{{/link-to}}
-            {{!-- {{#link-to 'demographic.integrations' class='list-group-item list-group-item-action'}}Integrations{{/link-to}} --}}
-        </div>
+        {{-browse/left-nav navItemLoader=(route-action 'loadNavItems')}}
     </div>
     {{ outlet }}
 </div>
