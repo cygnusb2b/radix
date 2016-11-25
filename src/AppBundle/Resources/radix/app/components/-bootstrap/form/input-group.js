@@ -10,6 +10,7 @@ export default Group.extend({
     type        : 'text',
     placeholder : null,
     helpText    : null,
+    hideLabel   : false,
 
     fieldId     : computed('key', function() {
         let key = this.get('key');
