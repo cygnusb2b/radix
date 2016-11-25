@@ -1,0 +1,29 @@
+{{-bootstrap/form/input-group
+    key='name'
+    value=model.name
+    helpText='A user-friendly name for the email deployment. Forms will display this by default.'
+    hideLabel=true
+    required=true
+}}
+
+{{-bootstrap/form/input-group
+    key='description'
+    value=model.description
+    helpText='A detailed description of the product.'
+    hideLabel=true
+    required=true
+}}
+
+<hr>
+<div class="form-group">
+    <label for="field-demographic-labels">Labels</label>
+
+    {{edit-field/selectize/model-find-all
+        modelName="product-tag"
+        highlight=false
+        selection=model.tags
+        multiple=true
+    }}
+
+    <small class="form-text text-muted">Organize products using labels.</small>
+</div>
