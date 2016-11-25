@@ -39,9 +39,9 @@ export default Ember.Route.extend({
     actions: {
         loadTabs: function() {
             return [
-                { key : 'general',      text : 'General',      icon : 'ion-document',            template : 'demographic/choices/-general', active : true },
-                { key : 'demographics', text : 'Demographics', icon : 'ion-pricetag',            template : 'demographic/choices/-demographics' },
-                { key : 'info',         text : 'Info',         icon : 'ion-information-circled', template : 'demographic/choices/-info' },
+                { key : 'general',      text : 'General',      icon : 'ion-document',            template : 'demographic/labels/-general', active : true },
+                { key : 'demographics', text : 'Demographics', icon : 'ion-pricetag',            template : 'demographic/labels/-demographics' },
+                { key : 'info',         text : 'Info',         icon : 'ion-information-circled', template : 'demographic/labels/-info' },
             ];
         },
         recordAdded: function() {

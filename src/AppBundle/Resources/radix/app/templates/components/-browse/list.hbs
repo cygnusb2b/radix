@@ -1,0 +1,31 @@
+{{#if canCreate}}
+    <div class="list-group m-b-1">
+        {{-browse/create-button linkTo=createRoute}}
+    </div>
+{{/if}}
+
+<div class="list-group m-b-1">
+    {{#each items as |item|}}
+        {{#link-to editRoute item.id class='list-group-item list-group-item-action'}}
+            {{yield (hash model=item)}}
+        {{/link-to}}
+    {{else}}
+        <div class="list-group-item list-group-item-action">
+            <p class="list-group-item-text">No results found.</p>
+        </div>
+    {{/each}}
+
+    {{!-- {{#each model as |item|}}
+        {{#link-to 'product.tags.edit' item.id class='list-group-item list-group-item-action'}}
+            <h5 class="list-group-item-heading">
+                {{item.name}}
+            </h5>
+
+            <p class="list-group-item-text">{{item.label}}</p>
+        {{/link-to}}
+    {{else}}
+        <div class="list-group-item list-group-item-action">
+            <p class="list-group-item-text">No results found.</p>
+        </div>
+     --}}
+</div>

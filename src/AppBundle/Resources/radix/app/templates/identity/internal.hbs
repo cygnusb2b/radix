@@ -1,32 +1,13 @@
 <div class="col-md-4">
-    {{!-- <div class="list-group m-b-1">
-        {{#link-to 'identity.internal.create' class='list-group-item list-group-item-action list-group-item-success'}}<i class="ion-plus-round"></i> Create{{/link-to}}
-    </div> --}}
-    <div class="list-group">
+    {{#-browse/list routeName='identity.internal' canCreate=false items=model as |item|}}
+        <small class="list-group-item-text">{{item.model.id}}</small>
+        <h5 class="list-group-item-heading">{{item.model.givenName}} {{item.model.familyName}}</h5>
 
-        {{#each model as |item|}}
-            {{#link-to 'identity.internal.edit' item.id class='list-group-item list-group-item-action'}}
+        {{#if item.model.primaryEmail}}
+            <p class="list-group-item-text"><span>{{item.model.primaryEmail}}</span></p>
+        {{/if}}
 
-                <small class="list-group-item-text">{{item.id}}</small>
-
-                <h5 class="list-group-item-heading">
-                    {{item.givenName}} {{item.familyName}}
-                </h5>
-
-                <p class="list-group-item-text">
-                    {{#if item.primaryEmail}}
-                        <span>{{item.primaryEmail}}</span>
-                    {{/if}}
-                </p>
-                <small class="list-group-item-text">{{item.createdDate}}</small>
-
-
-            {{/link-to}}
-        {{else}}
-            <div class="list-group-item list-group-item-action">
-                <p class="list-group-item-text">No results found.</p>
-            </div>
-        {{/each}}
-    </div>
+        <small class="list-group-item-text">{{item.model.createdDate}}</small>
+    {{/-browse/list}}
 </div>
 <div class="col-md-6">{{ outlet }}</div>
