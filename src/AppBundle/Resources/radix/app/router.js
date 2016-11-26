@@ -66,6 +66,17 @@ Router.map(function() {
             this.route('edit', { path: '/edit/:id' });
         });
     });
+
+    this.route('product', function() {
+        this.route('email-deployments', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+        this.route('tags', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+    });
 });
 
 export default Router;

@@ -1,44 +1,21 @@
 import Ember from 'ember';
 
-export default Ember.Route.extend({
+const { inject: { service }, Route } = Ember;
 
-    loading: Ember.inject.service(),
+export default Route.extend({
 
-    limit:  25,
-    offset: 0,
+    query: service('model-query'),
 
     model: function() {
-        let _this = this;
-        let criteria = {};
-
-        this.get('loading').show();
-
-        return this.store.query('question-choice', {
-            page: {
-                offset: parseInt(this.get('offset')),
-                limit:  parseInt(this.get('limit'))
-            },
-            filter: {
-                query: {
-                    criteria: JSON.stringify(criteria)
-                }
-            },
-            sort: "-createdDate,value",
-        }).then(function(results) {
-            _this.get('loading').hide();
-            return results;
-        }, function() {
-            _this.get('loading').hide();
-        });
-    },
-
-    setupController: function(controller, model) {
-        this._super(controller, model);
+        return this.get('query').execute('question-choice');
     },
 
     actions: {
-        recordAdded: function() {
-            this.refresh();
+        loadTabs: function() {
+            return [
+                { key : 'general',  text : 'General',  icon : 'ion-document',            template : 'demographic/choices/-general', active : true },
+                { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'demographic/choices/-info'     },
+            ];
         }
     }
 

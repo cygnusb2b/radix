@@ -1,9 +1,8 @@
-import DS from 'ember-data';
-import Identity from 'radix/models/identity';
+import Identity                from 'radix/models/identity';
+import attr                    from 'ember-data/attr';
+import IdentityEmailEmbeddable from 'radix/models/mixins/identity-email-embeddable';
 
-const { attr } = DS;
-
-export default Identity.extend({
+export default Identity.extend(IdentityEmailEmbeddable, {
     source     : attr('string'),
     identifier : attr('string')
 });

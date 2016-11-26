@@ -1,44 +1,22 @@
 import Ember from 'ember';
 
-export default Ember.Route.extend({
+const { inject: { service }, Route } = Ember;
 
-    loading: Ember.inject.service(),
+export default Route.extend({
 
-    limit:  25,
-    offset: 0,
+    query: service('model-query'),
 
     model: function() {
-        let _this = this;
-        let criteria = {};
-
-        this.get('loading').show();
-
-        return this.store.query('question', {
-            page: {
-                offset: parseInt(this.get('offset')),
-                limit:  parseInt(this.get('limit'))
-            },
-            filter: {
-                query: {
-                    criteria: JSON.stringify(criteria)
-                }
-            },
-            sort: "-createdDate,name",
-        }).then(function(results) {
-            _this.get('loading').hide();
-            return results;
-        }, function() {
-            _this.get('loading').hide();
-        });
-    },
-
-    setupController: function(controller, model) {
-        this._super(controller, model);
+        return this.get('query').execute('question');
     },
 
     actions: {
-        recordAdded: function() {
-            this.refresh();
+        loadTabs: function() {
+            return [
+                { key : 'general', text : 'General', icon : 'ion-document',            template : 'demographic/questions/-general', active : true },
+                { key : 'answers', text : 'Choices', icon : 'ion-android-list',        template : 'demographic/questions/-answers' },
+                { key : 'info',    text : 'Info',    icon : 'ion-information-circled', template : 'demographic/questions/-info' },
+            ];
         }
     }
 
