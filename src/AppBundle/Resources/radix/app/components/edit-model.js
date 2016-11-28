@@ -25,11 +25,11 @@ export default Component.extend({
         return `${this.get('routeName')}.edit`;
     }),
 
-    routeInfo : computed('model', 'routeName', function() {
+    routeInfo : computed('model.id', 'routeName', function() {
         let id = this.get('model.id');
         return [
-            (id) ? [id] : undefined,
             (id) ? this.get('editRouteName') : this.get('routeName'),
+            (id) ? [id] : undefined,
         ];
     }),
 
