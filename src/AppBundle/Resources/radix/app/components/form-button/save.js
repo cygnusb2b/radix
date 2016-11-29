@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import Button from '../form-button';
 
 export default Button.extend({
