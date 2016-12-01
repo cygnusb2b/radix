@@ -49,6 +49,7 @@ class LibraryExtension extends Twig_Extension
             new Twig_SimpleFunction('loadForm',      [$this, 'loadForm'],      $options),
             new Twig_SimpleFunction('loadComponent', [$this, 'loadComponent'], $options),
             new Twig_SimpleFunction('loadModule',    [$this, 'loadModule'],    $options),
+            new Twig_SimpleFunction('loadVendor',    [$this, 'loadVendor'],    $options),
         ];
     }
 
@@ -101,6 +102,18 @@ class LibraryExtension extends Twig_Extension
     public function loadModule(Twig_Environment $env, $name)
     {
         $name = sprintf('modules/%s', $name);
+        return $this->loadFile($env, $name);
+    }
+
+    /**
+     * Renders a library vendor file.
+     *
+     * @param   string  $name   The component name.
+     * @return  string
+     */
+    public function loadVendor(Twig_Environment $env, $name)
+    {
+        $name = sprintf('vendor/%s', $name);
         return $this->loadFile($env, $name);
     }
 
