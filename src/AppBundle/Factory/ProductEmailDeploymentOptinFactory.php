@@ -2,9 +2,11 @@
 
 namespace AppBundle\Factory;
 
+use AppBundle\Integration\IntegrationManager;
 use AppBundle\Utility\ModelUtility;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
+use As3\Modlr\Store\Store;
 
 /**
  * Factory for email deployment optin models.
@@ -13,6 +15,21 @@ use As3\Modlr\Models\Model;
  */
 class ProductEmailDeploymentOptinFactory extends AbstractModelFactory implements SubscriberFactoryInterface
 {
+    /**
+     * @var IntegrationManager
+     */
+    private $integrationManager;
+
+    /**
+     * @param   Store               $store
+     * @param   IntegrationManager  $integrationManager
+     */
+    public function __construct(Store $store, IntegrationManager $integrationManager)
+    {
+        parent::__construct($store);
+        $this->integrationManager = $integrationManager;
+    }
+
     /**
      * Applies the required fields to the optin model.
      *
@@ -84,6 +101,7 @@ class ProductEmailDeploymentOptinFactory extends AbstractModelFactory implements
      */
     public function postSave(Model $model)
     {
+        $this->integrationManager->optInPush($model->get('product'), $model->get('email'), $model->get('optedIn'));
     }
 
     /**

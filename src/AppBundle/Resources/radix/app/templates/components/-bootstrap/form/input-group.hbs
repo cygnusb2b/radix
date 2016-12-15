@@ -1,0 +1,28 @@
+{{#if calcLabel}}
+    {{-bootstrap/form/label value=calcLabel forId=fieldId srOnly=hideLabel}}
+{{/if}}
+
+<div class="input-group">
+    {{#if addOnLeft}}
+        {{-bootstrap/form/group-addon value=addOnLeft}}
+    {{/if}}
+
+    {{-bootstrap/form/input
+        id=fieldId
+        type=type
+        value=value
+        placeholder=calcPlaceholder
+        describedBy=helpId
+        required=required
+        disabled=disabled
+    }}
+
+    {{#if addOnRight}}
+        {{-bootstrap/form/group-addon value=addOnRight}}
+    {{/if}}
+</div>
+
+{{#if helpText}}
+    {{-bootstrap/form/help  id=helpId value=helpText}}
+{{/if}}
+

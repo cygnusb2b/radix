@@ -1,9 +1,10 @@
-import DS from 'ember-data';
+import Model         from 'ember-data/model';
+import { array }     from 'model-fragments/attributes';
+import { belongsTo } from 'ember-data/relationships';
 import Timestampable from 'radix/models/mixins/timestampable';
 
-const { Model, attr, belongsTo } = DS;
-
 export default Model.extend(Timestampable, {
-    user:        belongsTo('core-user'),
-    application: belongsTo('core-application'),
+    roles       : array(),
+    user        : belongsTo('core-user'),
+    application : belongsTo('core-application'),
 });

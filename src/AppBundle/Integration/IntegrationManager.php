@@ -5,11 +5,11 @@ namespace AppBundle\Integration;
 use AppBundle\Integration\Execution;
 use AppBundle\Integration\Task;
 use AppBundle\Question\TypeManager;
+use As3\Bundle\PostProcessBundle\Task\TaskManager;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
 use As3\Parameters\Parameters;
-use As3\Bundle\PostProcessBundle\Task\TaskManager;
 
 class IntegrationManager
 {
@@ -57,7 +57,7 @@ class IntegrationManager
     public function accountPushCreate(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution));
+            $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution), 79);
         }
     }
 
@@ -69,7 +69,7 @@ class IntegrationManager
     public function accountPushDelete(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountDeleteCreateTask($account, $execution));
+            $this->taskManager->addTask(new Task\AccountDeleteCreateTask($account, $execution), 77);
         }
     }
 
@@ -82,7 +82,7 @@ class IntegrationManager
     public function accountPushUpdate(Model $account, array $changeSet)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet));
+            $this->taskManager->addTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet), 78);
         }
     }
 
@@ -132,9 +132,38 @@ class IntegrationManager
         $execution->setHandler($handler);
         $execution->setTypeManager($this->typeManager);
 
-        $this->taskManager->addTask(new Task\IdentifyTask($identity, $execution));
+        $this->taskManager->addTask(new Task\IdentifyTask($identity, $execution), 99);
 
         return $identity;
+    }
+
+    /**
+     * Runs optin-push integrations
+     *
+     * @param   Model   $emailProduct
+     * @param   string  $emailAddress
+     * @param   bool    $optedIn
+     */
+    public function optInPush(Model $emailProduct, $emailAddress, $optedIn)
+    {
+        $criteria     = [
+            'product'   => $emailProduct->getId(),
+        ];
+        $integrations = $this->getStore()->findQuery('integration-optin-push', $criteria);
+        foreach ($integrations as $integration) {
+            if (false === $integration->get('enabled')) {
+                continue;
+            }
+            $service = $this->loadServiceFor($integration);
+            $handler = $service->getOptInPushHandler();
+            if (null === $handler) {
+                $this->throwUnsupportedError('optin-push', $service->getKey());
+            }
+            $execution = new Execution\OptInPushExecution($integration, $service, $this);
+            $execution->setHandler($handler);
+
+            $this->taskManager->addTask(new Task\OptInPushTask($emailAddress, $optedIn, $execution), 29);
+        }
     }
 
     /**

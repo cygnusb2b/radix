@@ -2,8 +2,28 @@
     <div class="container">
         <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#primary-navigation" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
         <div class="collapse navbar-toggleable-xs" id="primary-navigation">
-            <a class='navbar-brand' href="/">Radix Sandbox</a>
+            <a class='navbar-brand' href="/">Radix</a>
             <ul class="nav navbar-nav">
+                {% if apps|length > 1 %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button">
+                            {{ app.name }}
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-left">
+                            {% for available in apps %}
+                                {% if app.id != available.id %}
+                                    <a class="dropdown-item" href="?appId={{ available.config.appId }}">{{available.fullName}}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <span class="nav-link">{{ app.name }}</span>
+                    </li>
+                {% endif %}
+                <!-- HERE -->
                 {% for item in navigation %}
                     {% set active = item.active ? 'active' : '' %}
                     {% if item.children is empty %}

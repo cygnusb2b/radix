@@ -11,12 +11,12 @@ export default Ember.Route.extend({
 
     actions: {
         willTransition: function(transition) {
-            let _this = this;
-            let model = this.controller.get('model');
+            // let _this = this;
+            // let model = this.controller.get('model');
 
-            this.get('confirm').unsaved(model, model.get('name'), transition, true, function() {
-                _this.get('utility').rollback(model, true);
-            });
+            // this.get('confirm').unsaved(model, model.get('name'), transition, true, function() {
+            //     _this.get('utility').rollback(model, true);
+            // });
         }
     }
 });

@@ -1,3 +1,6 @@
+{{ loadVendor('react.0.13.min') }}
+{{ loadVendor('rsvp.latest.min') }}
+
 ;
 (function(Radix, undefined) {
     'use strict';
@@ -219,40 +222,41 @@
 
     function LibraryLoader()
     {
-        var count = 0,
-            libraries = [
-                '//cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
-                'http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js'
-                // '//cdn.auth0.com/w2/auth0-6.js'
-            ];
+        EventDispatcher.trigger('ready');
+        // var count = 0,
+        //     libraries = [
+        //         '//cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
+        //         'http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js'
+        //         // '//cdn.auth0.com/w2/auth0-6.js'
+        //     ];
 
-        function loadLibraries() {
-            for (var i = 0; i < libraries.length; i++) {
-                Debugger.info('Loading library ' + libraries[i]);
+        // function loadLibraries() {
+        //     for (var i = 0; i < libraries.length; i++) {
+        //         Debugger.info('Loading library ' + libraries[i]);
 
-                $.ajax({
-                    cache: true,
-                    url: libraries[i],
-                    dataType: 'script'
-                }).then(function() {
-                    if ('function' === typeof Auth0) {
-                        // auth0 = new Auth0({
-                        //     domain: ServerConfig.values.external_libraries.auth0.domain,
-                        //     clientID: ServerConfig.values.external_libraries.auth0.client_id,
-                        //     callbackOnLocationHash: true
-                        // });
-                    }
-                    count = count + 1;
-                    if (count >= libraries.length) {
-                        EventDispatcher.trigger('ready');
-                    }
-                }).fail(function() {
-                    Debugger.error('Required library could not be loaded!');
-                })
-            };
-        }
+        //         $.ajax({
+        //             cache: true,
+        //             url: libraries[i],
+        //             dataType: 'script'
+        //         }).then(function() {
+        //             if ('function' === typeof Auth0) {
+        //                 // auth0 = new Auth0({
+        //                 //     domain: ServerConfig.values.external_libraries.auth0.domain,
+        //                 //     clientID: ServerConfig.values.external_libraries.auth0.client_id,
+        //                 //     callbackOnLocationHash: true
+        //                 // });
+        //             }
+        //             count = count + 1;
+        //             if (count >= libraries.length) {
+        //                 EventDispatcher.trigger('ready');
+        //             }
+        //         }).fail(function() {
+        //             Debugger.error('Required library could not be loaded!');
+        //         })
+        //     };
+        // }
 
-        loadLibraries();
+        // loadLibraries();
     }
 
     {{ loadModule('modal') }}

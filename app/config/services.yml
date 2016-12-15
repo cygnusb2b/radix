@@ -90,6 +90,13 @@ services:
     app_bundle.omeda_sdk.api_client:
         class: As3\OmedaSDK\ApiClient
 
+    app_bundle.post_process.plugins.new_relic:
+        private: true
+        class: AppBundle\PostProcess\NewRelicPlugin
+        arguments: [ "@app_bundle.core.account_manager" ]
+        tags:
+            - { name: as3_post_process.plugin }
+
     app_bundle.serializer.public_api:
         class: AppBundle\Serializer\PublicApiSerializer
 

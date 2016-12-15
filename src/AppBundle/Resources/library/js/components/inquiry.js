@@ -69,7 +69,9 @@ React.createClass({ displayName: 'ComponentInquiry',
         Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
 
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
-            locker.unlock();
+            if (!Utils.isString(this.props.successRedirect)) {
+                locker.unlock();
+            }
 
             // Refresh the account, if logged in.
             if (AccountManager.isLoggedIn()) {
@@ -80,7 +82,7 @@ React.createClass({ displayName: 'ComponentInquiry',
 
             // Get the next template to display (thank you page, etc).
             var template = (response.data) ? response.data.template || null : null;
-            if (this.props.successRedirect) {
+            if (Utils.isString(this.props.successRedirect)) {
                 window.location.href = this.props.successRedirect;
             } else {
                 // Set the next template to display.

@@ -15,7 +15,7 @@ React.createClass({ displayName: 'ComponentFormSelect',
         if (props.selected) {
             value = props.selected;
         } else if (this.props.placeholder) {
-            value = this.props.placeholder;
+            value = "";
         }
         this.setState({ value: value});
     },
@@ -25,6 +25,7 @@ React.createClass({ displayName: 'ComponentFormSelect',
             className   : 'form-element-field',
             name        : 'unknown',
             disabled    : false,
+            required    : false,
             label       : null,
             placeholder : 'Please select...',
             selected    : null,
@@ -60,6 +61,7 @@ React.createClass({ displayName: 'ComponentFormSelect',
             className : this.props.className,
             onChange  : this.handleChange,
             disabled  : this.props.disabled,
+            required  : this.props.required,
             ref       : this.props.ref
         };
     },
@@ -76,7 +78,7 @@ React.createClass({ displayName: 'ComponentFormSelect',
             return;
         }
         props.options.unshift({
-            value: this.props.placeholder,
+            value: "",
             label: this.props.placeholder
         });
     },

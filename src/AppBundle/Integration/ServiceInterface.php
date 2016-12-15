@@ -39,6 +39,14 @@ interface ServiceInterface
     public function getKey();
 
     /**
+     * Gets the optin-push integration handler for this service.
+     * If the service does not support this integration, a null value should be returned.
+     *
+     * @return  Handler\OptInPushInterface|null
+     */
+    public function getOptInPushHandler();
+
+    /**
      * Gets the question-pull integration handler for this service.
      * If the service does not support this integration, a null value should be returned.
      *

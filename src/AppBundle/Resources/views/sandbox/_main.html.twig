@@ -12,9 +12,9 @@
         <div class="card">
             <div class="card-header">Configuration</div>
             <div class="card-block">
-                <p class="card-text">Override by setting the keys in the query string, a la <code>?appId={some-app-id}</code></p>
+                <p class="card-text"><strong>{{ app.fullName }}</strong></p>
                 <div class="alert alert-info" role="alert">
-                    <pre><samp>{{ initConfig|json_encode(constant('JSON_PRETTY_PRINT')) }}</samp></pre>
+                    <pre><samp>{{ app.config|json_encode(constant('JSON_PRETTY_PRINT')) }}</samp></pre>
                 </div>
             </div>
         </div>

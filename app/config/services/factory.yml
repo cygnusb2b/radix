@@ -9,6 +9,7 @@ services:
             - [ addFactory, [ "@app_bundle.factory.identity.internal" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_submission" ] ]
             - [ addFactory, [ "@app_bundle.factory.input_answer" ] ]
+            - [ addFactory, [ "@app_bundle.factory.product.email_deployment_optin" ] ]
 
     app_bundle.factory.identity.account_credentials:
         private: true
@@ -78,4 +79,4 @@ services:
     app_bundle.factory.product.email_deployment_optin:
         private: true
         class: AppBundle\Factory\ProductEmailDeploymentOptinFactory
-        arguments: [ "@as3_modlr.store" ]
+        arguments: [ "@as3_modlr.store", "@app_bundle.integration.manager" ]

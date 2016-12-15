@@ -141,19 +141,26 @@ class NotificationManager
     public function notifySubmission(Model $submission, Parameters $notify)
     {
         $templateName = $notify->get('template');
-        if (!$notify->get('enabled') || empty($templateName) || empty($notify->get('to', []))) {
+        if (!$notify->get('enabled')) {
             return false;
         }
-        $templateName   = TemplateLoader::getTemplateKey('template-notify', $templateName);
+        $inflector      = Inflector::get('en');
+        $templateName   = TemplateLoader::getTemplateKey('template-notify', $notify->get('template'));
         $default        = TemplateLoader::getTemplateKey('template-notify', 'default');
         $answers        = QuestionAnswerFactory::humanizeAnswers($submission->get('answers'));
         $identityValues = $this->humanizeIdentityValues($submission->get('identity'));
+        $extra          = [];
+
+        foreach ((array) $notify->get('extra') as $key => $value) {
+            $extra[$inflector->titleize($key)] = strip_tags($value, '<a><strong><em><b><i><u>');
+        }
 
         $params = [
             'application'    => $this->accountManager->getApplication(),
             'submission'     => $submission,
             'answers'        => $answers,
             'identityValues' => $identityValues,
+            'extra'          => $extra,
             'title'          => $notify->get('subject', 'Submission Notification'),
             'notification'   => [
                 'to'  => $this->formatSendToValues((array) $notify->get('to')),
@@ -277,7 +284,7 @@ class NotificationManager
 
         // @todo Use a different inflector???
         $inflector = Inflector::get('en');
-        foreach (['givenName', 'familyName', 'companyName', 'title', 'primaryEmail'] as $key) {
+        foreach (['firstName', 'lastName', 'companyName', 'title', 'primaryEmail'] as $key) {
             $values[$inflector->titleize($key)] = $identity->get($key);
         }
         if (null !== $address = $identity->get('primaryAddress')) {
@@ -340,6 +347,24 @@ class NotificationManager
         return $args;
     }
 
+    private function getTextContents($contents)
+    {
+        $contents = preg_replace('/<style.+?>.*<\/style>/i', '', $contents);
+        $contents = preg_replace('/<\/td>/i', '&nbsp;</td>', $contents);
+        $contents = preg_replace('/<a.*?href="mailto:(.+?)".*>(.+?)<\/a>/i', '$2 [$1]', $contents);
+        $contents = preg_replace('/<a.*?href="(.+?)".*>(.+?)<\/a>/i', '$2 [$1]', $contents);
+        $contents = strip_tags($contents);
+        $lines = explode("\n", $contents);
+        foreach ($lines as $i => $line) {
+            $lines[$i] = trim($line);
+            if (empty($lines[$i])) {
+                unset($lines[$i]);
+            }
+        }
+        $contents = html_entity_decode(implode("\r\n", $lines));
+        return $contents;
+    }
+
     /**
      * Sends a notification using the specified parameters
      *
@@ -361,6 +386,7 @@ class NotificationManager
             ->setCc($cc)
             ->setBcc($cc)
             ->setBody($contents, 'text/html')
+            ->addPart($this->getTextContents($contents), 'text/plain')
         ;
 
         $instance = $this->mailer->send($message);

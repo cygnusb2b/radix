@@ -28,6 +28,11 @@ class OmedaService implements ServiceInterface
     private $identifyHandler;
 
     /**
+     * @var OptInPushHandler
+     */
+    private $optInPushHandler;
+
+    /**
      * @var QuestionPullHandler
      */
     private $questionPullHandler;
@@ -44,6 +49,7 @@ class OmedaService implements ServiceInterface
         $this->env                 = $env;
         $this->accountPushHandler  = new AccountPushHandler();
         $this->identifyHandler     = new IdentifyHandler();
+        $this->optInPushHandler    = new OptInPushHandler();
         $this->questionPullHandler = new QuestionPullHandler();
     }
 
@@ -93,6 +99,15 @@ class OmedaService implements ServiceInterface
     public function getKey()
     {
         return 'omeda';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptInPushHandler()
+    {
+        $this->optInPushHandler->setService($this);
+        return $this->optInPushHandler;
     }
 
     /**

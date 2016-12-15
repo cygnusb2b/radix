@@ -112,6 +112,28 @@ class AbstractHandler extends BaseAbstractHandler
     }
 
     /**
+     * Gets the brand product data from Omeda.
+     *
+     * @return  array
+     */
+    final protected function getProductData(array $filterBy = [])
+    {
+        $products  = [];
+        $brandData = $this->getBrandData();
+        if (!isset($brandData['Products']) || !is_array($brandData['Products'])) {
+            return $products;
+        }
+        $filter = !empty($filterBy);
+        foreach ($brandData['Products'] as $product) {
+            $identifier = $product['Id'];
+            if (false === $filter || isset($filterBy[$identifier])) {
+                $products[$identifier] = $product;
+            }
+        }
+        return $products;
+    }
+
+    /**
      * Gets the internal question type for an Omeda demographic type.
      *
      * @param   int     $omedaType
@@ -146,6 +168,20 @@ class AbstractHandler extends BaseAbstractHandler
     {
         return $this->parseApiResponse(
             $this->getApiClient()->customer()->lookup($customerId)
+        );
+    }
+
+    /**
+     * Looks up an Omeda customer by email address.
+     *
+     * @param   string  $emailAddress
+     * @return  array
+     * @throws  ClientException     On response error (e.g. 404, etc).
+     */
+    final protected function lookupCustomerByEmail($emailAddress)
+    {
+        return $this->parseApiResponse(
+            $this->getApiClient()->customer()->lookupByEmail($emailAddress)
         );
     }
 
@@ -212,5 +248,24 @@ class AbstractHandler extends BaseAbstractHandler
             throw new \RuntimeException('Unable to retrieve an Omeda customer ID from the processor result.');
         }
         return $response['BatchStatus'][0]['OmedaCustomerId'];
+    }
+
+    /**
+     * Updates the opt in/out filter for the provided email address.
+     *
+     * @param   string  $emailAddress
+     * @param   int     $deploymentTypeId
+     * @param   bool    $optedIn
+     * @return  array
+     */
+    final protected function updateFilterFor($emailAddress, $deploymentTypeId, $optedIn)
+    {
+        $omail = $this->getApiClient()->omail();
+        if ($optedIn) {
+            $response = $omail->optInDeployment($emailAddress, $deploymentTypeId);
+        } else {
+            $response = $omail->optOutDeployment($emailAddress, $deploymentTypeId);
+        }
+        return $this->parseApiResponse($response);
     }
 }

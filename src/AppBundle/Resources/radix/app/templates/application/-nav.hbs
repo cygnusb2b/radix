@@ -5,18 +5,11 @@
             {{#link-to 'index' class='navbar-brand'}}Radix{{/link-to}}
             <ul class="nav navbar-nav">
                 {{select-application onAppChange="refreshApp"}}
-                {{!-- <li class="nav-item">
-                    {{#link-to 'modeling' class='nav-link'}}Modeling{{/link-to}}
-                </li> --}}
-                <li class="nav-item">
-                    {{#link-to 'identity' class='nav-link'}}Identities{{/link-to}}
-                </li>
-                <li class="nav-item">
-                    {{#link-to 'demographic' class='nav-link'}}Demographics{{/link-to}}
-                </li>
-                {{!-- <li class="nav-item">
-                    {{#link-to 'integrations' class='nav-link'}}Integrations{{/link-to}}
-                </li> --}}
+
+                {{-bootstrap/nav-item linkTo='identity'     label='Identities'}}
+                {{-bootstrap/nav-item linkTo='demographic'  label='Demographics'}}
+                {{-bootstrap/nav-item linkTo='product'      label='Products'}}
+                {{-bootstrap/nav-item linkTo='integrations' label='Integrations'}}
             </ul>
             <ul class="nav navbar-nav pull-xs-right">
                 {{user-nav}}

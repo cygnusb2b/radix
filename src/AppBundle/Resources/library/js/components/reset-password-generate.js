@@ -84,7 +84,7 @@ React.createClass({ displayName: 'ComponentResetPasswordGenerate',
     _getLoggedOutElements: function() {
         var elements;
         if (this.state.succeeded) {
-            elements = React.createElement('p', { className: 'alert-success alert', role: 'alert' }, 'The password reset email was successfully sent. Please ensure to check your span folders.');
+            elements = React.createElement('p', { className: 'alert-success alert', role: 'alert' }, 'The password reset email was successfully sent. Please ensure to check your spam folders.');
         } else {
             elements = React.createElement(Radix.Forms.get('ResetPasswordGenerate'), {
                 onSubmit : this.handleSubmit,
