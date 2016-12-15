@@ -49,22 +49,46 @@ class QuestionChoiceSubscriber implements EventSubscriberInterface
         if (false === $this->shouldProcess($model)) {
             return;
         }
-        $this->validateChoiceType($model);
 
+        $model->set('name', trim($model->get('name')));
+
+        $this->validate($model);
+        $this->setFullName($model);
     }
 
     /**
-     * Validates that the appropriate choice type was set.
+     * Sets the full name (question name + choice name).
      *
      * @param   Model   $model
      */
-    protected function validateChoiceType(Model $model)
+    protected function setFullName(Model $model)
     {
+        $model->set('fullName', sprintf('%s: %s', $model->get('question')->get('name'), $model->get('name')));
+    }
+
+    /**
+     * Validates that the question choice.
+     *
+     * @param   Model   $model
+     */
+    protected function validate(Model $model)
+    {
+        if (null === $model->get('question')) {
+            throw new \InvalidArgumentException('All question choices must be linked to a question.');
+        }
+
         $type  = $model->get('choiceType');
         $types = $this->typeManager->getQuestionChoiceTypes();
         if (!isset($types[$type])) {
             throw new \InvalidArgumentException(sprintf('The provided question choice type "%s" is not valid. Valid types are "%s"', $type, implode(', ', array_keys($types))));
         }
+
+        $name = $model->get('name');
+        if (empty($name)) {
+            throw new \InvalidArgumentException('The question choice `name` is required.');
+        }
+
+
     }
 
     /**
