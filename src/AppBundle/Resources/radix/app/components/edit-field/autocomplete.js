@@ -1,19 +1,17 @@
 import Ember from 'ember';
 
-const { Component, inject: { service }, run, computed, set } = Ember;
+const { Component, inject: { service }, run, computed, observer, set } = Ember;
 
 export default Component.extend({
     /**
      * Services.
      */
-    query   : service('model-query'),
-    utility : service('model-utility'),
+    query : service('model-query'),
 
     /**
      * Public options
      */
-    model        : null,
-    relField     : null,
+    value        : null,
     delay        : 300,
     placeholder  : 'Begin typing to select...',
     displayField : 'name',
@@ -29,8 +27,8 @@ export default Component.extend({
         return 'hasMany' === this.get('relMeta.kind');
     }),
 
-    relMeta  : computed('model', 'relField', function() {
-        return this.get('utility').extractRelationshipMeta(this.get('model'), this.get('relField'));
+    relMeta  : computed('value', function() {
+        return this.get('value.content.relationship.relationshipMeta');
     }),
 
     /**
@@ -41,28 +39,20 @@ export default Component.extend({
 
     _options           : computed.uniqBy('_optionsMerged', 'id'),
     _optionsMerged     : computed.union('_optionsFromModel', '_optionsFromSearch'),
-    _optionsFromModel  : [],
+    _optionsFromModel  : computed('value', function() {
+        return this.get('multiple') ? this.get('value') : [this.get('value')];
+    }),
+
     _optionsFromSearch : [],
 
     _selection : [],
+
     _textInput : null,
 
-    didInsertElement: function() {
-        this._getRelatedPromise().then((items) => {
-            // Once the related model promise is resovles, add each item to the option and selection stack.
-            // The options must be set before the selection, otherwise selectize will not see it as valid and it will not appear.
-
-            if (this.get('multiple')) {
-                items.forEach((item) => {
-                    this.get('_optionsFromModel').pushObject(item);
-                    this.get('_selection').pushObject(item);
-                });
-            } else if (items) {
-                this.get('_optionsFromModel').pushObject(items);
-                this.set('_selection', items);
-            }
-
-        }).finally(() => {
+    init : function() {
+        this._super(...arguments);
+        this.get('value').finally(() => {
+            this.set('_selection', this.get('value'));
             this.set('_initialized', true);
             this.set('_loading', false);
         });
@@ -70,11 +60,6 @@ export default Component.extend({
 
     _clearSearchOptions: function() {
         this.get('_optionsFromSearch').clear();
-    },
-
-    _getRelatedPromise: function() {
-        let field = this.get('relField');
-        return this.get('model').get(field);
     },
 
     _loadSearchOptions: function() {
@@ -89,10 +74,9 @@ export default Component.extend({
 
             this.set('_loading', true);
 
-            this._getRelatedPromise().then(() => {
+            this.get('value').then(() => {
                 // Ensure the query fires once the choices are loaded from the backened.
                 // Once the promise is resolved, this will fire immediately.
-
                 let field       = this.get('displayField');
                 let criteria    = { };
                 criteria[field] = { $regex : '/' + textInput + '/i' };
@@ -108,12 +92,11 @@ export default Component.extend({
     actions: {
 
         addItem: function(item) {
-            // Add the item to the model option and selection stacks.
-            this.get('_optionsFromModel').pushObject(item);
-            this.get('_selection').pushObject(item);
-
             // Add the item to the model.
-            this._getRelatedPromise().pushObject(item);
+            this.get('value').pushObject(item);
+
+            // Add the item to the selection stack.
+            this.get('_selection').pushObject(item);
         },
 
         onBlur: function() {
@@ -122,26 +105,18 @@ export default Component.extend({
         },
 
         removeItem: function(item) {
-            // Remove the item from the selection and the option stacks.
+            // Remove the item from the selection and option stacks.
             this.get('_selection').removeObject(item);
-            this.get('_optionsFromModel').removeObject(item);
             this.get('_optionsFromSearch').removeObject(item);
 
             // Remove the item from the model.
-            this._getRelatedPromise().removeObject(item);
+            this.get('value').removeObject(item);
         },
 
         selectItem: function(item) {
-            // Clear tje current model option stack.
-            this.get('_optionsFromModel').clear();
-            if (item) {
-                // If an item was selected, push it to the model option stack.
-                this.get('_optionsFromModel').pushObject(item);
-            }
-
             // Set the selection and model relationship to the selected item.
+            this.set('value', item);
             this.set('_selection', item);
-            set(this.get('model'), this.get('relField'), item);
         },
 
         updateFilter : function(value) {
