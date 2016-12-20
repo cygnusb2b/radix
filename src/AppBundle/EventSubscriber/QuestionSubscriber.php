@@ -49,7 +49,9 @@ class QuestionSubscriber implements EventSubscriberInterface
         if (false === $this->shouldProcess($model)) {
             return;
         }
-        $this->validateQuestionType($model);
+        $model->set('name', trim($model->get('name')));
+
+        $this->validate($model);
 
         $type = $this->typeManager->getQuestionTypeFor($model->get('questionType'));
         if (null !== $model->get('allowHtml') && false === $type->supportsHtml()) {
@@ -60,16 +62,21 @@ class QuestionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Validates that the appropriate question type was set.
+     * Validates the question.
      *
      * @param   Model   $model
      */
-    protected function validateQuestionType(Model $model)
+    protected function validate(Model $model)
     {
         $type  = $model->get('questionType');
         if (false === $this->typeManager->hasQuestionTypeFor($type)) {
             $types = $this->typeManager->getQuestionTypes();
             throw new \InvalidArgumentException(sprintf('The type of "%s" is not a valid question type. Valid types are "%s"', $type, implode('", "', array_keys($types))));
+        }
+
+        $name = $model->get('name');
+        if (empty($name)) {
+            throw new \InvalidArgumentException('The question `name` is required.');
         }
     }
 

@@ -5,14 +5,17 @@
 </div>
 
 {{#if (eq model.questionType 'choice-single')}}
-    {{ partial 'demographic/questions/-choice-options' }}
+    {{ partial 'demographic/questions/options/-choice-options' }}
 {{/if}}
 {{#if (eq model.questionType 'choice-multiple')}}
-    {{ partial 'demographic/questions/-choice-options' }}
+    {{ partial 'demographic/questions/options/-choice-options' }}
+{{/if}}
+{{#if (eq model.questionType 'related-choice-single')}}
+    {{ partial 'demographic/questions/options/-related-choice-options' }}
 {{/if}}
 {{#if (eq model.questionType 'string')}}
-    {{ partial 'demographic/questions/-string-options' }}
+    {{ partial 'demographic/questions/options/-string-options' }}
 {{/if}}
 {{#if (eq model.questionType 'textarea')}}
-    {{ partial 'demographic/questions/-string-options' }}
+    {{ partial 'demographic/questions/options/-string-options' }}
 {{/if}}

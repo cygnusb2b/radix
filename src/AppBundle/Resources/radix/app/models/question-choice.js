@@ -10,6 +10,7 @@ export default Model.extend(Integrateable, Sequenceable, SoftDeleteable, Timesta
     alternateId : attr('string'),
     choiceType  : attr('string', { defaultValue: 'standard' }),
     description : attr('string'),
+    fullName    : attr('string'),
     name        : attr('string'),
     question    : belongsTo('question'),
 });

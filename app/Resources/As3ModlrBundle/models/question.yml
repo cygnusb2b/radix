@@ -26,6 +26,9 @@ question:
             entity: question-choice
             inverse: true
             field: question
+        relatedChoices:
+            type: many
+            entity: question-choice
         pull:
             type: one
             entity: integration-question-pull
