@@ -39,36 +39,26 @@ React.createClass({ displayName: 'ComponentComments',
         error.clear();
         locker.lock();
 
-        var data = {};
+        var data = {
+            stream : {
+                identifier : this.props.streamId,
+                title      : this.props.streamTitle,
+                url        : this.props.streamUrl, // need to find a better way to get the URL so it can't be injected
+            }
+        };
         for (var name in this._formRefs) {
             var ref = this._formRefs[name];
             data[name] = ref.state.value;
         }
 
-        data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
-        data['submission:referringHref'] = window.location.href;
-
-        var sourceKey = 'product-email-deployment-optin';
         var payload   = {
             data: data
         };
 
-        Debugger.info('EmailSubscriptionModule', 'handleSubmit', sourceKey, payload);
+        Debugger.info('ComponentComments', 'handleSubmit', payload);
 
-        Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
+        Ajax.send('/app/posts/comment', 'POST', payload).then(function(response) {
             locker.unlock();
-
-            // Refresh the account, if logged in.
-            if (AccountManager.isLoggedIn()) {
-                AccountManager.reloadAccount().then(function() {
-                    EventDispatcher.trigger('AccountManager.account.loaded');
-                });
-            }
-
-            // Set the next template to display (thank you page, etc).
-            var template = (response.data) ? response.data.template || null : null;
-            this.setState({ nextTemplate: template });
-
         }.bind(this), function(jqXHR) {
             locker.unlock();
             this._error.displayAjaxError(jqXHR);
@@ -95,39 +85,59 @@ React.createClass({ displayName: 'ComponentComments',
         if (this.state.settings.enabled) {
             elements = React.createElement('div', { className: className },
                 React.createElement('h2', null, this.props.title),
-                // @todo Need to determine if anonymous commenting is allowed. If so, the login/register isn't required.
-                React.createElement('p', null,
-                    React.createElement(Radix.Components.get('ModalLinkLogin'), {
-                        wrappingTag : 'span',
-                        prefix      : 'This site requires you to',
-                        label       : 'login',
-                        suffix      : 'or ',
-                    }),
-                    React.createElement(Radix.Components.get('ModalLinkRegister'), {
-                        wrappingTag : 'span',
-                        label       : 'register',
-                        suffix      : 'to post a comment.',
-                    })
-                ),
-
-                // React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
+                this._getLoginLinks(),
                 React.createElement('hr'),
-                // React.createElement('div', { className: 'email-subscription-wrapper' },
-                //     React.createElement(Radix.Components.get('FormProductsEmail'), {
-                //         fieldRef : this.handleFieldRef,
-                //         optIns   : this.state.optIns
-                //     }),
-                //     React.createElement(Radix.Forms.get('EmailSubscription'), {
-                //         account  : this.state.account,
-                //         onSubmit : this.handleSubmit,
-                //         fieldRef : this.handleFieldRef
-                //     })
-                // ),
+                React.createElement(Radix.Forms.get('Comment'), {
+                    display        : this._canComment(),
+                    allowAnonymous : this.state.settings.allowAnonymous,
+                    requireCaptcha : this.state.settings.requireCaptcha,
+                    displayName    : this.state.account.displayName || null,
+                    fieldRef       : this.handleFieldRef,
+                    onSubmit       : this.handleSubmit,
+                }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
             );
         }
         return (elements);
+    },
+
+    /**
+     * Determines, based on the current state, if comments can be submitted.
+     * If an account is required to comment, this will be return true.
+     * Otherwise, the value will be based on whether an account is currently logged in.
+     */
+    _canComment: function() {
+        if (!this.state.settings.requireAccount) {
+            return true;
+        }
+        return this.state.loggedIn;
+    },
+
+    /**
+     * Gets the login/register link elements, if required.
+     * Links will only display if the current state does NOT allow comment submissions.
+     *
+     */
+    _getLoginLinks: function() {
+        var elements;
+
+        if (!this._canComment()) {
+            elements = React.createElement('p', null,
+                React.createElement(Radix.Components.get('ModalLinkLogin'), {
+                    wrappingTag : 'span',
+                    prefix      : 'This site requires you to',
+                    label       : 'login',
+                    suffix      : 'or ',
+                }),
+                React.createElement(Radix.Components.get('ModalLinkRegister'), {
+                    wrappingTag : 'span',
+                    label       : 'register',
+                    suffix      : 'to post a comment.',
+                })
+            );
+        }
+        return elements;
     },
 
     _setErrorDisplay: function(ref) {

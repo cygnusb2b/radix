@@ -505,6 +505,10 @@ ins {
     color: #323a45;
 }
 
+.platform-element .form-element-wrapper.anonymize label {
+    padding: 0px;
+}
+
 .platform-element select,
 .platform-element input[type="tel"],
 .platform-element input[type="text"],

@@ -166,6 +166,7 @@
 
     function Forms()
     {
+        this.Comment                = {{ loadForm('comment') }}
         this.EmailSubscription      = {{ loadForm('email-subscription') }}
         this.Inquiry                = {{ loadForm('inquiry') }}
         this.Register               = {{ loadForm('register') }}
