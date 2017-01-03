@@ -12,14 +12,14 @@ export default Ember.Route.extend({
 
     actions: {
         willTransition: function(transition) {
-            let model = this.controller.get('model');
-            this.get('confirm').unsaved(model, model.get('name'), transition, false, function() {
-                model.rollbackAttributes();
-            });
+            // let model = this.controller.get('model');
+            // this.get('confirm').unsaved(model, model.get('name'), transition, false, function() {
+            //     model.rollbackAttributes();
+            // });
 
-            if (!model.get('hasDirtyAttributes')) {
-                this.send('recordAdded');
-            }
+            // if (!model.get('hasDirtyAttributes')) {
+            //     this.send('recordAdded');
+            // }
         }
     }
 });

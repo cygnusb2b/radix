@@ -9,6 +9,8 @@ question-choice:
     attributes:
         name:
             type: string
+        fullName:
+            type: string
         alternateId:
             type: string
         description:

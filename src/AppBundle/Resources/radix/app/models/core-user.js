@@ -1,15 +1,15 @@
-import DS from 'ember-data';
+import Model         from 'ember-data/model';
+import attr          from 'ember-data/attr';
+import { hasMany }   from 'ember-data/relationships';
 import Timestampable from 'radix/models/mixins/timestampable';
 
-const { Model, attr, hasMany } = DS;
-
 export default Model.extend(Timestampable, {
-    givenName:  attr('string'),
-    familyName: attr('string'),
-    email:      attr('string'),
-    lastLogin:  attr('date'),
-    lastSeen:   attr('date'),
-    logins:     attr('number'),
-    remembers:  attr('number'),
-    details:    hasMany('core-application-user', { inverse: 'user' })
+    givenName  : attr('string'),
+    familyName : attr('string'),
+    email      : attr('string'),
+    lastLogin  : attr('date'),
+    lastSeen   : attr('date'),
+    logins     : attr('integer'),
+    remembers  : attr('integer'),
+    details    : hasMany('core-application-user', { inverse: 'user' }),
 });

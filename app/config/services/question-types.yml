@@ -2,15 +2,16 @@ services:
     app_bundle.question.type_manager:
         class: AppBundle\Question\TypeManager
         calls:
-            - [ addQuestionType, [ "@app_bundle.question.type.boolean" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.text" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.textarea" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.choice_single" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.choice_multiple" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.related_choice_single" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.datetime" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.email" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.float" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.integer" ] ]
-            - [ addQuestionType, [ "@app_bundle.question.type.textarea" ] ]
-            - [ addQuestionType, [ "@app_bundle.question.type.text" ] ]
+            - [ addQuestionType, [ "@app_bundle.question.type.boolean" ] ]
             - [ addQuestionType, [ "@app_bundle.question.type.url" ] ]
             - [ addAnswerType, [ "@app_bundle.question.answer_type.boolean" ] ]
             - [ addAnswerType, [ "@app_bundle.question.answer_type.choice" ] ]
@@ -33,6 +34,9 @@ services:
     app_bundle.question.type.choice_multiple:
         private: true
         class: AppBundle\Question\Types\ChoiceMultipleType
+    app_bundle.question.type.related_choice_single:
+        private: true
+        class: AppBundle\Question\Types\RelatedChoiceSingleType
     app_bundle.question.type.datetime:
         private: true
         class: AppBundle\Question\Types\DateTimeType

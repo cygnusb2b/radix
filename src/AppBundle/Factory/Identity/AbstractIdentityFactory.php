@@ -6,6 +6,7 @@ use AppBundle\Factory\AbstractModelFactory;
 use AppBundle\Factory\Error;
 use AppBundle\Factory\SubscriberFactoryInterface;
 use AppBundle\Utility\HelperUtility;
+use AppBundle\Utility\LocaleUtility;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
 use As3\Modlr\Store\Store;
@@ -313,18 +314,37 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
                 // The address is "new" on the front-end. @todo Need to add check to ensure the address value (same country/state, etc) doesn't already exist.
                 $create = true;
             } else {
+                $create = true;
+
                 // Existing address. Attempt to find and update.
                 foreach ($identity->get('addresses') as $address) {
                     if ($address->get('identifier') === $properties['identifier']) {
-                        // Apply the address attributes to the found address.
-                        $factory->apply($address, $properties);
+
+                        // Mark that the address should not be created.
+                        $create = false;
+
+                        $current = [];
+                        foreach (LocaleUtility::getLocalityFieldKeys() as $fieldKey) {
+                            $current[$fieldKey] = $address->get($fieldKey);
+                        }
+
+                        if (true === LocaleUtility::doLocalitiesMatch($current, $properties)) {
+                            // The address is not new. Do not updated.
+                            continue;
+                        }
+
+                        // Apply the address attributes to the found address by creating/removing the address with the same identifier
+                        // This ensures that old values aren't retained on the address.
+                        $newAddress = $factory->create($embedMeta, $properties);
+                        $newAddress->set('identifier', $properties['identifier']);
+                        $factory->apply($newAddress, $properties);
+
+                        $identity->removeEmbed('addresses', $address);
+                        $identity->pushEmbed('addresses', $newAddress);
                     } else {
                         $address->set('isPrimary', false);
                     }
-                    return;
                 }
-                // At this point, the incoming address has an identifier, but it wasn't found on the identity. Treat as a creation.
-                $create = true;
             }
 
             if (true === $create) {

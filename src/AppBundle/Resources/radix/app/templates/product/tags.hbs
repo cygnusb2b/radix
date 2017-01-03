@@ -1,0 +1,8 @@
+<div class="col-md-4">
+    {{#-browse/list routeName='product.tags' items=model as |item|}}
+        <h5 class="list-group-item-heading">{{item.model.name}}</h5>
+        <p class="list-group-item-text">{{item.model.label}}</p>
+    {{/-browse/list}}
+</div>
+
+<div class="col-md-6">{{ outlet }}</div>

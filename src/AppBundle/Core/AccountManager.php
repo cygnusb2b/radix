@@ -7,11 +7,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AccountManager
 {
-    const PUBLIC_KEY_PARAM = 'x-radix-appid';
-    const USING_PARAM      = 'X-Radix-Using';
-    const BUILD_PARAM      = 'X-Radix-Build';
-    const ENV_KEY          = 'APP';
-    const APP_PATH         = '/app';
+    const PUBLIC_KEY_PARAM  = 'x-radix-appid';
+    const USING_PARAM       = 'X-Radix-Using';
+    const BUILD_PARAM       = 'X-Radix-Build';
+    const ENV_KEY           = 'APP';
+    const ENV_NEW_RELIC_APP = 'NEW_RELIC_APP_NAME';
+    const APP_PATH          = '/app';
 
     /**
      * Origins that are considered global.
@@ -58,6 +59,19 @@ class AccountManager
     public function allowDbOperations($bit = true)
     {
         $this->allowDbOps = (boolean) $bit;
+        return $this;
+    }
+
+    /**
+     * Configures New Relic for the loaded acccount/application.
+     *
+     * @return  self
+     */
+    public function configureNewRelic()
+    {
+        if (extension_loaded('newrelic')) {
+            newrelic_add_custom_parameter('application', $this->getCompositeKey());
+        }
         return $this;
     }
 
@@ -148,6 +162,16 @@ class AccountManager
     }
 
     /**
+     * Gets the app name used by New Relic.
+     *
+     * @return  string|false
+     */
+    public function getNewRelicAppName()
+    {
+        return getenv(self::ENV_NEW_RELIC_APP);
+    }
+
+    /**
      * @return  bool
      */
     public function hasApplication()
@@ -163,6 +187,7 @@ class AccountManager
     {
         $this->application = $application;
         $this->account     = $application->get('account');
+        $this->configureNewRelic();
         return $this;
     }
 

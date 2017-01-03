@@ -1,9 +1,10 @@
-import DS from 'ember-data';
-import Timestampable from 'radix/models/mixins/timestampable';
+import Model             from 'ember-data/model';
+import { belongsTo }     from 'ember-data/relationships';
+import { fragment }      from 'model-fragments/attributes';
+import IdentityEmailable from 'radix/models/mixins/identity-emailable';
+import Timestampable     from 'radix/models/mixins/timestampable';
 
-export default DS.Model.extend(Timestampable, {
-    name:       DS.attr('string'),
-    isPrimary:  DS.attr('boolean', { defaultValue: false }),
-    value:      DS.attr('string'),
-    account:    DS.belongsTo('identity-account')
+export default Model.extend(IdentityEmailable, Timestampable, {
+    verification : fragment('identity-account-email-verification'),
+    account      : belongsTo('identity-account'),
 });

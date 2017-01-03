@@ -29,6 +29,15 @@ class ManageController extends AbstractController
      */
     private function getEmberConfiguration()
     {
+        $types = [];
+        $typeManager = $this->get('app_bundle.question.type_manager');
+        foreach ($typeManager->getQuestionTypes() as $type) {
+            $types[] = [
+                'value' => $type->getKey(),
+                'label' => $type->getDescription(),
+            ];
+        }
+
         $prod = 'prod' === $this->get('kernel')->getEnvironment();
         return [
             'APP'                       => [
@@ -42,7 +51,7 @@ class ManageController extends AbstractController
             'environment'               => $prod ? 'production' : 'development',
             'LOG_TRANSITIONS'           => !$prod,
             'LOG_TRANSITIONS_INTERNAL'  => !$prod,
-            'formAnswerTypes'           => ModelUtility::getFormAnswerTypes(true),
+            'formAnswerTypes'           => $types,
             'simpleScheduleTypes'       => ModelUtility::getSimpleScheduleTypes(true),
         ];
     }

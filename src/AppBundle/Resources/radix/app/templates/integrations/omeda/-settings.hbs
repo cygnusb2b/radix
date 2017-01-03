@@ -1,30 +1,39 @@
-<div class="form-group">
-    <label class="sr-only" for="field-integration-client-omeda-name">Name</label>
-    {{ input class='form-control' value=model.name placeholder="Name" }}
-    <small class="form-text text-muted">A friendly name for these integrations settings.</small>
-</div>
+{{-bootstrap/form/input-group
+    key='name'
+    value=model.name
+    helpText='A friendly name for these service settings.'
+    hideLabel=true
+    required=true
+}}
 
-<div class="form-group">
-    <label class="sr-only" for="field-integration-client-omeda-client">Client ID</label>
-    {{ input class='form-control' value=model.client placeholder="Client ID (ex: client_foo)" }}
-    <small class="form-text text-muted">The Omeda client id.</small>
-</div>
+{{-bootstrap/form/input-group
+    key='clientKey'
+    value=model.clientKey
+    helpText='The Omeda Client ID (ex: client_foo).'
+    hideLabel=true
+    required=true
+}}
 
-<div class="form-group">
-    <label class="sr-only" for="field-integration-client-omeda-brand">Brand</label>
-    {{ input class='form-control' value=model.brand placeholder="Brand (ex: somedb)" }}
-    <small class="form-text text-muted">The Omeda brand abbreviation/identifier.</small>
-</div>
+{{-bootstrap/form/input-group
+    key='brandKey'
+    value=model.brandKey
+    helpText='The Omeda brand abbreviation/identifier (ex: somedb).'
+    hideLabel=true
+    required=true
+}}
 
-<div class="form-group">
-    <label class="sr-only" for="field-integration-client-omeda-appid">App ID</label>
-    {{ input class='form-control' value=model.appid placeholder="App ID" }}
-    <small class="form-text text-muted">The Omeda API Application ID.</small>
-</div>
+{{-bootstrap/form/input-group
+    key='appId'
+    value=model.appId
+    helpText='The Omeda API Application ID.'
+    hideLabel=true
+    required=true
+}}
 
-<div class="form-group">
-    <label class="sr-only" for="field-integration-client-omeda-inputid">Input ID</label>
-    {{ input class='form-control' value=model.inputid placeholder="Input ID" }}
-    <small class="form-text text-muted">The Omeda API Input ID.</small>
-</div>
-
+{{-bootstrap/form/input-group
+    key='inputId'
+    value=model.inputId
+    helpText='The Omeda API Input ID.'
+    hideLabel=true
+    required=true
+}}

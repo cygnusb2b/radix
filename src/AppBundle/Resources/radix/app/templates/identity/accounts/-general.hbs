@@ -1,8 +1,42 @@
+{{-bootstrap/form/input-group
+    key='salutation'
+    value=model.salutation
+    helpText='Such as Mr., Ms., Dr., etc...'
+}}
+
+{{-bootstrap/form/input-group
+    key='givenName'
+    value=model.givenName
+}}
+
+{{-bootstrap/form/input-group
+    key='middleName'
+    value=model.middleName
+}}
+
+{{-bootstrap/form/input-group
+    key='familyName'
+    value=model.familyName
+}}
+
+{{-bootstrap/form/input-group
+    key='suffix'
+    value=model.suffix
+    helpText='Such as Jr., Sr., III, etc...'
+}}
+
+{{-bootstrap/form/input-group
+    key='companyName'
+    value=model.companyName
+}}
+
+{{-bootstrap/form/input-group
+    key='title'
+    value=model.title
+    label='Job Title'
+}}
+
 <div class="form-group">
-    <label class="sr-only" for="field-customer-account-given-name">Given Name</label>
-    {{ input class='form-control' value=model.givenName placeholder="Given Name" }}
-</div>
-<div class="form-group">
-    <label class="sr-only" for="field-customer-account-family-name">Family Name</label>
-    {{ input class='form-control' value=model.familyName placeholder="Family Name" }}
+    <label for="field-demographic-answer-type">Gender</label>
+    {{edit-field/select/gender value=model.gender}}
 </div>

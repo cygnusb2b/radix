@@ -1,0 +1,18 @@
+{{#if (eq model.questionType 'related-choice-single')}}
+    <p>Questions with related choices from other questions do not support integrations.</p>
+{{else}}
+    <div class="card">
+        <div class="card-header">Pull</div>
+        <div class="card-block">
+            {{#if model.pull}}
+                <div class="list-group list-group-flush">
+                    <div class="clickable list-group-item list-group-item-action">
+                        {{model.pull.name}} ({{model.pull.identifier}})
+                    </div>
+                </div>
+            {{else}}
+                {{form-button/create}}
+            {{/if}}
+        </div>
+    </div>
+{{/if}}
