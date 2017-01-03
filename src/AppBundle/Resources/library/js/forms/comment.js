@@ -6,8 +6,9 @@ React.createClass({ displayName: 'FormComment',
             allowAnonymous : false,
             requireCaptcha : false,
             displayName    : null,
-            onSubmit       : function(event) { Debugger.error('Nothing handled the form submit.');     },
-            fieldRef       : function(input) { Debugger.error('Nothing handled the field reference.'); }
+            onSubmit       : function(event)   { Debugger.error('Nothing handled the form submit.');       },
+            fieldRef       : function(input)   { Debugger.error('Nothing handled the field reference.');   },
+            captchaRef     : function(captcha) { Debugger.error('Nothing handled the captcha reference.'); },
         }
     },
 
@@ -36,6 +37,10 @@ React.createClass({ displayName: 'FormComment',
                 required    : true,
             }),
             this._getAnonymizeElement(),
+
+            React.createElement(Radix.Components.get('Recaptcha'), {
+                ref : this.props.captchaRef,
+            }),
             React.createElement('button', { type: 'submit'}, 'Submit')
         );
     },

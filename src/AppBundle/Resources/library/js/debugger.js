@@ -3,7 +3,7 @@ function Debugger(enabled, level)
     init();
 
     var level   = level || 'error';
-    var enabled = Boolean(enabled) || false;
+    var enabled = Boolean(enabled) || true;
 
     var levels = {
         log   : 0,
@@ -20,6 +20,14 @@ function Debugger(enabled, level)
     this.disable = function() {
         enabled = false;
         return this;
+    }
+
+    this.isEnabled = function() {
+        return enabled;
+    }
+
+    this.isValid = function() {
+        return -1 !== getLevelIndex();
     }
 
     this.log = function() {
@@ -40,6 +48,10 @@ function Debugger(enabled, level)
     this.error = function() {
         dispatch('error', arguments);
         return this;
+    }
+
+    this.getLevel = function() {
+        return level;
     }
 
     this.setLevel = function(value) {

@@ -33,14 +33,22 @@ React.createClass({ displayName: 'ComponentComments',
     handleSubmit: function(event) {
         event.preventDefault();
 
-        var locker = this._formLock;
-        var error  = this._error;
+        var locker  = this._formLock;
+        var error   = this._error;
+        var captcha = this._captcha.getResponse() || '';
 
         error.clear();
+
+        if (!captcha) {
+            error.display('Please complete the reCaptcha before submitting the form.');
+            return;
+        }
+
         locker.lock();
 
         var data = {
-            stream : {
+            captcha : captcha,
+            stream  : {
                 identifier : this.props.streamId,
                 title      : this.props.streamTitle,
                 url        : this.props.streamUrl, // need to find a better way to get the URL so it can't be injected
@@ -66,6 +74,11 @@ React.createClass({ displayName: 'ComponentComments',
     },
 
     _formRefs: {},
+
+    _captcha: {},
+    handleCaptcha: function(captcha) {
+        this._captcha = captcha;
+    },
 
     handleFieldRef: function(input) {
         if (input) {
@@ -94,6 +107,7 @@ React.createClass({ displayName: 'ComponentComments',
                     displayName    : this.state.account.displayName || null,
                     fieldRef       : this.handleFieldRef,
                     onSubmit       : this.handleSubmit,
+                    captchaRef     : this.handleCaptcha,
                 }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

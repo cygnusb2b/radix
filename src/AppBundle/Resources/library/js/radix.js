@@ -47,7 +47,10 @@
     };
 
     Radix.init = function(config) {
+        checkDependencies();
+
         ClientConfig = new ClientConfig(config);
+
         if (true === ClientConfig.valid()) {
             Debugger.info('Configuration initialized and valid.');
 
@@ -88,6 +91,20 @@
         Debugger.setLevel(level);
         return Radix;
     };
+
+    function checkDependencies () {
+        var dependants = [
+            { label : 'reCaptcha', key : '___grecaptcha_cfg' },
+            { label : 'jQuery',    key : 'jQuery'            },
+        ];
+
+        for (var i = 0; i < dependants.length; i++) {
+            var key = dependants[i].key;
+            if (!window[key]) {
+                throw Error('The required library `' + dependants[i].label + '` was not found. Unable to load Radix.');
+            }
+        }
+    }
 
     function Callbacks()
     {
@@ -145,6 +162,7 @@
         this.Inquiry                        = {{ loadComponent('inquiry') }}
         this.LinkLogout                     = {{ loadComponent('link-logout') }}
         this.Login                          = {{ loadComponent('login') }}
+        this.Recaptcha                      = {{ loadComponent('recaptcha') }}
         this.Register                       = {{ loadComponent('register') }}
         this.Modal                          = {{ loadComponent('modal') }}
         this.ParseQueryString               = {{ loadComponent('parse-query-string') }}
