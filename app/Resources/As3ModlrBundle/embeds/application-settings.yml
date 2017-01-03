@@ -3,6 +3,9 @@ application-settings:
         branding:
             type: one
             entity: application-settings-branding
+        posts:
+            type: one
+            entity: application-settings-posts
         notifications:
             type: one
             entity: application-settings-notifications

@@ -1,0 +1,11 @@
+application-settings-posts:
+    attributes:
+        enabled:
+            type: boolean
+            defaultValue: true
+        allowAnonymous:
+            type: boolean
+            defaultValue: false
+        requireAccount:
+            type: boolean
+            defaultValue: true
