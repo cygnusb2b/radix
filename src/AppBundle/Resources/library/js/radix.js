@@ -118,6 +118,7 @@
     function Components()
     {
         this.AccountBoundLink               = {{ loadComponent('account-bound-link') }}
+        this.Comments                       = {{ loadComponent('comments') }}
         this.ContactSupport                 = {{ loadComponent('contact-support') }}
         this.EmailSubscriptions             = {{ loadComponent('email-subscriptions') }}
         this.ModalLink                      = {{ loadComponent('modal-link') }}
