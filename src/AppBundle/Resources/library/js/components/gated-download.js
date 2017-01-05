@@ -51,7 +51,8 @@ React.createClass({ displayName: 'ComponentGatedDownload',
         var sourceKey = 'gated-download';
         var payload   = {
             data: data,
-            meta: this.props.meta || {}
+            meta: this.props.meta || {},
+            notify : Utils.isObject(this.props.notify) ? this.props.notify : {}
         };
 
         Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
