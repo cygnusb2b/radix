@@ -1,0 +1,19 @@
+{% extends 'email.html.twig' %}
+
+{% block headline %}{{ values.get('title') }}{% endblock %}
+
+{% block body %}
+    {% block notify_contents %}
+    <p>This email is being sent to you because a user completed a submission on <a href="{{ values.get('submission.referringHost') }}">{{values.get('application.settings.branding.name')}}</a>.</p>
+    {% endblock %}
+
+    <p>To ensure that you receive future automatic notifications, please whitelist<br>{{ values.get('application.settings.notifications.email') }}.</p>
+
+    {% block notify_details %}
+    {% include 'template-notify/partials/submission-details.html.twig' with { 'values' : values } %}
+    {% endblock %}
+
+    {% block notify_footer %}
+    <p>The page that the user submitted the form on can be found <a href="{{ values.get('submission.referringHref') }}">here</a>.
+    {% endblock %}
+{% endblock %}
