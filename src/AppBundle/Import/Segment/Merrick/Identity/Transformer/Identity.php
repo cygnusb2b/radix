@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+namespace AppBundle\Import\Segment\Merrick\Identity\Transformer;
 
-use AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+use AppBundle\Import\Segment\Transformer;
 
-class Customer extends Transformer
+class Identity extends Transformer
 {
     /**
      * {@inheritdoc}
@@ -38,83 +38,22 @@ class Customer extends Transformer
             }
         });
 
-        // Set up for reference passes
-        $this->define('legacy.address.street', 'address1');
-        $this->define('legacy.address.extra', 'address2');
-        $this->define('legacy.address.city', 'city');
-        $this->define('legacy.address.postalCode', 'postal_code');
-        $this->defineCallable('legacy.address.country', 'country', 'country');
-        $this->defineCallable('legacy.address.countryCode', 'country', 'countryCode');
-        $this->defineCallable('legacy.address.region', 'region', 'region');
-        $this->defineCallable('legacy.address.regionCode', 'region', 'regionCode');
+        $this->define('legacy.omeda_id', 'omeda_id', 'strval');
+        $this->define('legacy.omeda_encrypted_id', 'omeda_encrypted_id', 'strval');
 
         // Global passes for multi fields
-        $this->defineGlobal('credentials', 'credentials');
+        $this->defineGlobal('addresses', 'addresses');
         $this->defineGlobal('phones', 'phones');
-        $this->defineGlobal('externalIds', 'externalIds');
         $this->defineGlobal('legacy.questions', 'questions');
     }
 
-    public function country($value)
+    public function addresses($data)
     {
-        if (strlen($value) > 3) {
-            return $value;
+        $transformer = new Address();
+        $address = $transformer->toApp($data);
+        if (count($address) > 2) {
+            return [$address];
         }
-    }
-
-    public function countryCode($value)
-    {
-        if (strlen($value) === 3) {
-            return $value;
-        }
-    }
-
-    public function region($value)
-    {
-        if (strlen($value) > 3) {
-            return $value;
-        }
-    }
-
-    public function regionCode($value)
-    {
-        if (strlen($value) <= 3) {
-            return $value;
-        }
-    }
-
-    public function externalIds($data)
-    {
-        $externalIds = [];
-
-        if (isset($data['omeda_id']) && !empty($data['omeda_id'])) {
-            $externalIds[] = [
-                'identifier'    => (string) $data['omeda_id'],
-                'source'        => 'omeda',
-            ];
-        }
-
-        if (isset($data['omeda_encrypted_id']) && !empty($data['omeda_encrypted_id'])) {
-            $externalIds[] = [
-                'identifier'    => (string) $data['omeda_encrypted_id'],
-                'source'        => 'omeda',
-                'extra'         => ['encrypted'  => true]
-            ];
-        }
-        return $externalIds;
-    }
-
-    public function credentials($data)
-    {
-        $credentials = [];
-        if (isset($data['pwd'])) {
-            $credentials['password'] = [
-                'value'     => $data['pwd'],
-                'salt'      => isset($data['salt']) ? $data['salt'] : null,
-                'mechanism' => 'merrick'
-            ];
-        }
-        return $credentials;
     }
 
     public function phones($data)

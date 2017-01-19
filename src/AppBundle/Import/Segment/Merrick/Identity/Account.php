@@ -1,17 +1,17 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model;
+namespace AppBundle\Import\Segment\Merrick\Identity;
 
-use AppBundle\Import\Segment\Merrick\Customer;
+use AppBundle\Import\Segment\Merrick\Identity;
 
-class CustomerAccount extends Customer
+class Account extends Identity
 {
     /**
      * {@inheritdoc}
      */
     public function getKey()
     {
-        return 'merrick_customer_model_customer_account';
+        return 'merrick_customer_identity_account';
     }
 
     /**
@@ -23,8 +23,7 @@ class CustomerAccount extends Customer
             return;
         }
 
-        $transformer = new Transformer\Customer();
-        $transformer->define('legacy.email', 'email', 'strtolower');
+        $transformer = new Transformer\Account();
         return $transformer->toApp($doc);
     }
 
@@ -46,7 +45,7 @@ class CustomerAccount extends Customer
      */
     protected function getModelType()
     {
-        return 'customer-account';
+        return 'identity-account';
     }
 
     /**
