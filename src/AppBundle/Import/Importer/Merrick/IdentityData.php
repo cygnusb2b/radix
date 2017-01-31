@@ -31,6 +31,7 @@ class IdentityData extends Merrick
         $this->segments[] = new Segment\InputAnswerOmeda($this, $source);
         $this->segments[] = new Segment\InputAnswerComments($this, $source);
         $this->segments[] = new Segment\InputAnswerPurchaseIntent($this, $source);
+        $this->segments[] = new Segment\GatedDownloads($this, $source);
     }
 
     /**
