@@ -13,27 +13,18 @@ class GatedDownload extends Transformer
     protected $requiredFields = [
         'legacy.id',
         'legacy.source',
-        //'legacy.email'
     ];
 
     /**
      * {@inheritdoc}
      */
     public function __construct()
-    {
-        $this->define('payload.meta.contentId', 'content_id');
-        $this->define('payload.meta.type', 'type');
-        $this->define('payload.meta.title', 'title');
-
-        $this->defineStatic('sourceKey', 'gated-download');
+    {      
         $this->define('createdDate', 'timestamp', function($timestamp) {
             $date = new \DateTime();
             return $date->setTimestamp($timestamp);
         });
-
-        $this->define('legacy.id', '_id', 'strval');
-        $this->defineStatic('legacy.source', 'content_user_rel');
-        $this->define('legacy.email', 'email', 'strtolower');
+        $this->defineStatic('sourceKey', 'gated-download');
 
         $this->define('payload.identity.givenName', 'first_name');
         $this->define('payload.identity.familyName', 'last_name');
@@ -46,6 +37,16 @@ class GatedDownload extends Transformer
             }
         });
 
+        $this->define('payload.meta.contentId', 'content_id');
+        $this->define('payload.meta.type', 'content_type');
+        $this->define('payload.meta.title', 'content_title');
+
+        $this->define('identity.id', 'identity_id');
+        $this->define('identity.type', 'identity_type');
+
+        $this->define('legacy.id', '_id', 'strval');
+        $this->defineStatic('legacy.source', 'content_user_rel');
+        $this->define('legacy.email', 'email', 'strtolower');
     }
 
     public function primaryAddress($data)

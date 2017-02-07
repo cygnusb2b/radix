@@ -54,4 +54,18 @@ abstract class Merrick extends Importer implements ImporterInterface
         }
         throw new \InvalidArgumentException(sprintf('Could not find legacy site value for account "%s!"', $key));
     }
+
+    /**
+     * Returns the group key for the current context 
+     * @jp - (has to be cleaner way to do this)
+     *
+     * @return  string
+     * @throws  InvalidArgumentException
+     */
+    public function getGroupKey()
+    {
+        $compositeKey = $this->accountManager->getCompositeKey();
+        $keyParts = explode(":", $this->accountManager->getCompositeKey());
+        return $keyParts[1];
+    }
 }
