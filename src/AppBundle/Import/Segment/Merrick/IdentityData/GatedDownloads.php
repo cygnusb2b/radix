@@ -91,7 +91,6 @@ class GatedDownloads extends IdentityData
     }
 
     // Determine if this content_rel is related to the current context
-    // @jp - there has to be a cleaner way of getting groupKey
     public function isPublicationContent(array $doc) 
     {
         // if we are lucky enough that data has site element, check it, otherwise have to query merrick content collection to determine pub

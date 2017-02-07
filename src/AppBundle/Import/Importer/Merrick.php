@@ -57,7 +57,6 @@ abstract class Merrick extends Importer implements ImporterInterface
 
     /**
      * Returns the group key for the current context 
-     * @jp - (has to be cleaner way to do this)
      *
      * @return  string
      * @throws  InvalidArgumentException
