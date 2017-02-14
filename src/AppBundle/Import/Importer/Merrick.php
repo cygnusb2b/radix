@@ -29,6 +29,33 @@ abstract class Merrick extends Importer implements ImporterInterface
     private $domains = [
         'acbm:ooh'      => 'www.oemoffhighway.com',
         'cygnus:vspc'   => 'www.vehicleservicepros.com',
+        'anso'          => 'www.ansommag.com', // not a site anymore, use anyway?
+        'autm'          => 'www.vendingmarketwatch',
+        //'cato'          => 
+        'cavc'          => 'www.aviationpros.com/', 
+        'cgn'           => 'www.printingnews.com', 
+        'cond'          => 'www.forconstructionpros.com',
+        'csn'           => 'www.cpapracticeadvisor.com',
+        //'cygc'          =>
+        'emsr'          => 'www.emsworld.com',
+        'fcp'           => 'www.forconstructionpros.com',
+        'fg'            => 'www.feedandgrain.com',
+        'fhc'           => 'www.firehouse.com',
+        'fl'            => 'www.foodlogistics.com',
+        'fms'           => 'www.vehicleservicepros.com',
+        'frpc'          => 'www.forresidentialpros.com',
+        'gip'           => 'www.greenindustrypros',
+        'idex'          => 'www.idex.com', // not a site, what should we use here?
+        'ido'           => 'www.ido.com', // not a site, what should we use here?
+        'll'            => 'www.locksmithledger.com',
+        'mass'          => 'www.masstransitmag.com',
+        'ofcr'          => 'www.officer.com',
+        'ooh'           => 'www.oemoffhighway.com',
+        'pten'          => 'www.vehicleservicepros.com',
+        'sdce'          => 'www.sdcexec.com',
+        'siw'           => 'www.securityinfowatch.com',
+        'siwi'          => 'www.securityinfowatch.com', // same site as siw?
+        'vspc'          => 'www.vehicleservicepros.com',
     ];
 
     /**
@@ -46,9 +73,11 @@ abstract class Merrick extends Importer implements ImporterInterface
      * @return  string
      * @throws  InvalidArgumentException
      */
-    public function getDomain()
+    public function getDomain($key = null)
     {
-        $key = $this->accountManager->getCompositeKey();
+        if (null === $key) {
+            $key = $this->accountManager->getCompositeKey();
+        }
         if (array_key_exists($key, $this->domains)) {
             return $this->domains[$key];
         }
@@ -63,8 +92,6 @@ abstract class Merrick extends Importer implements ImporterInterface
      */
     public function getGroupKey()
     {
-        $compositeKey = $this->accountManager->getCompositeKey();
-        $keyParts = explode(":", $this->accountManager->getCompositeKey());
-        return $keyParts[1];
+        return $this->accountManager->getApplication()->get('key');
     }
 }
