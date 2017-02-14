@@ -19,19 +19,10 @@ class GatedDownloads extends IdentityData
     /**
      * {@inheritdoc}
      */
-    // can remove this since identiy_data already does this but leaving for reference atm
-    protected function getCollection()
-    {
-        return 'content_user_rel';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    //can't merge parent critera because fully 1/2 of content_user_rel data does not contain site data (the main reason i was trying to iterate over ident
     protected function getCriteria()
     {
-        return  ['action' => 'download_content'];
+        $criteria = ['action' => 'download_content'];
+        return array_merge(parent::getCriteria(), $criteria);
     }
 
     /**
@@ -57,11 +48,6 @@ class GatedDownloads extends IdentityData
 
         // looper per user_content_rel record
         foreach ($docs as $doc) {
-
-            // if this is content rel information for another site, skip it
-            if (!$this->isPublicationContent($doc)) {
-                continue;
-            }
 
             // is content for this publication so get the extra data needed for input-submission meta
             $contentInfo = $this->getContentInfo($doc);
@@ -90,22 +76,16 @@ class GatedDownloads extends IdentityData
         return $kvs;
     }
 
-    // Determine if this content_rel is related to the current context
-    public function isPublicationContent(array $doc) 
+        /**
+     * Returns formatted key-values for the passed legacy document
+     *
+     * @param   array   $doc    The legacy key values
+     * @return  mixed   array of key values or null
+     */
+    protected function formatModel(array $doc)
     {
-        // if we are lucky enough that data has site element, check it, otherwise have to query merrick content collection to determine pub
-        if (!empty($doc['site']) && $doc['site'] == $this->importer->getDomain()) {
-            return true;
-        } else {
-            $criteria = ['content_id' => $doc['content_id']];
-            $contents = $this->source->retrieve('content', $criteria);
-            foreach ($contents as $content) {
-                if ($content['pubgroup'] == $this->importer->getGroupKey()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        $transformer = new Transformer\GatedDownload();
+        return $transformer->toApp($doc);
     }
 
     // get additional content informaiton we need for input-submission that does not exist in legacy content_user_rel collection
@@ -117,18 +97,6 @@ class GatedDownloads extends IdentityData
         foreach ($contents as $content) {
             return $content;
         }
-    }
- 
-    /**
-     * Returns formatted key-values for the passed legacy document
-     *
-     * @param   array   $doc    The legacy key values
-     * @return  mixed   array of key values or null
-     */
-    protected function formatModel(array $doc)
-    {
-        $transformer = new Transformer\GatedDownload();
-        return $transformer->toApp($doc);
     }
 
     public function createSocialIdentity($doc)
