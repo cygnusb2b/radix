@@ -1,6 +1,6 @@
 import Model             from 'ember-data/model';
 import { belongsTo }     from 'ember-data/relationships';
-import { fragment }      from 'model-fragments/attributes';
+import { fragment }      from 'ember-data-model-fragments/attributes';
 import IdentityEmailable from 'radix/models/mixins/identity-emailable';
 import Timestampable     from 'radix/models/mixins/timestampable';
 

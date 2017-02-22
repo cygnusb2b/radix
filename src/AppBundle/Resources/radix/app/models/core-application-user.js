@@ -1,5 +1,5 @@
 import Model         from 'ember-data/model';
-import { array }     from 'model-fragments/attributes';
+import { array }     from 'ember-data-model-fragments/attributes';
 import { belongsTo } from 'ember-data/relationships';
 import Timestampable from 'radix/models/mixins/timestampable';
 
