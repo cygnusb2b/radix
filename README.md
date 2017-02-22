@@ -1,6 +1,6 @@
 radix
 =====
 
-[![CircleCI](https://circleci.com/gh/as3io/radix.svg?style=svg&circle-token=4cea60ee4ed4830553f7606c7ba0aed811e6283c)](https://circleci.com/gh/as3io/radix) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/0edaa355-6e80-4927-8712-1027c6250fc3/mini.png)](https://insight.sensiolabs.com/projects/0edaa355-6e80-4927-8712-1027c6250fc3) [![CircleCI](https://img.shields.io/circleci/token/4cea60ee4ed4830553f7606c7ba0aed811e6283c/project/github/as3io/radix.svg)](https://circleci.com/gh/as3io/radix)
+[![CircleCI](https://circleci.com/gh/cygnusb2b/radix.svg?style=svg&circle-token=ec28dde3a48ef1db08a8c87f8a97e8f5c6ec78fd)](https://circleci.com/gh/cygnusb2b/radix) [![CircleCI](https://img.shields.io/circleci/token/ec28dde3a48ef1db08a8c87f8a97e8f5c6ec78fd/project/github/cygnusb2b/radix.svg)](https://circleci.com/gh/cygnusb2b/radix)
 
 Awesome sauce!!
