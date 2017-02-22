@@ -2,7 +2,7 @@ import Ember               from 'ember';
 import Identity            from 'radix/models/identity';
 import attr                from 'ember-data/attr';
 import { hasMany }         from 'ember-data/relationships';
-import { fragment, array } from 'model-fragments/attributes';
+import { fragment, array } from 'ember-data-model-fragments/attributes';
 import Integrateable       from 'radix/models/mixins/integrateable';
 
 const { computed } = Ember;

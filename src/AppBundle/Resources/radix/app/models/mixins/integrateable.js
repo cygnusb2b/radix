@@ -1,5 +1,5 @@
 import Ember        from 'ember';
-import { fragment } from 'model-fragments/attributes';
+import { fragment } from 'ember-data-model-fragments/attributes';
 
 const { Mixin } = Ember;
 

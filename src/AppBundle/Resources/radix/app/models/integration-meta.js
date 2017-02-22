@@ -1,5 +1,5 @@
-import Fragment     from 'model-fragments/fragment';
-import { fragment, fragmentArray } from 'model-fragments/attributes';
+import Fragment     from 'ember-data-model-fragments/fragment';
+import { fragment, fragmentArray } from 'ember-data-model-fragments/attributes';
 
 export default Fragment.extend({
     pull : fragment('integration-meta-detail'),
