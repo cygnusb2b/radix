@@ -17,6 +17,17 @@
 
 {{partial 'demographic/choices/-options'}}
 
+{{#if model.hasDependents}}
+  <div class="form-group">
+    <label>Will display these dependent choices</label>
+    <ul class="list-group">
+      {{#each model.dependents as |dependent|}}
+        <li class="list-group-item">{{dependent.fullName}}</li>
+      {{/each}}
+    </ul>
+  </div>
+{{/if}}
+
 <div class="form-group">
     {{model-actions/save model=model}}
     {{model-actions/undo model=model confirmValue=model.name rollbackRels=false}}
