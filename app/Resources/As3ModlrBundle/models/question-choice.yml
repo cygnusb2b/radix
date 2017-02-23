@@ -22,3 +22,6 @@ question-choice:
         question:
             type: one
             entity: question
+        dependents:
+            type: many
+            entity: question-choice
