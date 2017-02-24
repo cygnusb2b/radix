@@ -152,7 +152,9 @@ class QuestionController extends AbstractAppController
         $serializer->addRule(new Rules\QuestionChoiceSimpleRule());
 
         $serialized = $serializer->serialize($question);
+        $sequence   = [];
         foreach ($serialized['data']['choices'] as $index => $choice) {
+            $sequence[$index] = $choice['sequence'];
             $serialized['data']['choices'][$index]['option'] = [
                 'value'     => $choice['_id'],
                 'label'     => $choice['name']
@@ -164,6 +166,7 @@ class QuestionController extends AbstractAppController
                 ];
             }
         }
+        array_multisort($sequence, SORT_ASC, $serialized['data']['choices']);
         return $serialized;
     }
 }
