@@ -130,4 +130,9 @@ class CalculatedFields
         }
         return $primary;
     }
+
+    public static function questionChoiceHasDependents(Model $model)
+    {
+        return !empty($model->get('dependents'));
+    }
 }

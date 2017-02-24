@@ -147,6 +147,7 @@ class QuestionController extends AbstractAppController
     private function serializeQuestion(Model $question)
     {
         $serializer = $this->get('app_bundle.serializer.public_api');
+        $serializer->setMaxDepth(2);
         $serializer->addRule(new Rules\QuestionSimpleRule());
         $serializer->addRule(new Rules\QuestionChoiceSimpleRule());
 
@@ -156,6 +157,12 @@ class QuestionController extends AbstractAppController
                 'value'     => $choice['_id'],
                 'label'     => $choice['name']
             ];
+            foreach ($choice['dependents'] as $dIndex => $dependent) {
+                $serialized['data']['choices'][$index]['dependents'][$dIndex]['option'] = [
+                    'value' => $dependent['_id'],
+                    'label' => $dependent['name'],
+                ];
+            }
         }
         return $serialized;
     }

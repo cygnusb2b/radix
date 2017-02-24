@@ -18,6 +18,11 @@ question-choice:
         choiceType:
             type: string
             defaultValue: standard # one of standard, other, none, or hidden
+        hasDependents:
+            type: boolean
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: questionChoiceHasDependents
     relationships:
         question:
             type: one
