@@ -18,6 +18,8 @@ question-choice:
         choiceType:
             type: string
             defaultValue: standard # one of standard, other, none, or hidden
+        dependentLabel:
+            type: string
         hasDependents:
             type: boolean
             calculated:
