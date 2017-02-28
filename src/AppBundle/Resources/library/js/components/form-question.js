@@ -40,13 +40,6 @@ React.createClass({ displayName: 'ComponentFormQuestion',
     return (element);
   },
 
-  _handleChoiceSelect: function(event) {
-    this.setState({ answer: event.target.value });
-    if ('function' === typeof this.props.onChange) {
-      this.props.onChange(event);
-    }
-  },
-
   _buildDependentElement: function() {
     if (!this.state.question.hasChildQuestions) {
       return;
@@ -67,7 +60,6 @@ React.createClass({ displayName: 'ComponentFormQuestion',
   },
 
   _buildElement: function() {
-
     var question = this.state.question;
     var type     = question.questionType;
     var answer   = this.state.answer;
@@ -143,6 +135,13 @@ React.createClass({ displayName: 'ComponentFormQuestion',
       return values;
     }
     return value;
+  },
+
+  _handleChoiceSelect: function(event) {
+    this.setState({ answer: event.target.value });
+    if ('function' === typeof this.props.onChange) {
+      this.props.onChange(event);
+    }
   },
 
   _retrieveQuestion: function(tagKeyOrId, keyOrId) {
