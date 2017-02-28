@@ -159,12 +159,6 @@ class QuestionController extends AbstractAppController
                 'value'     => $choice['_id'],
                 'label'     => $choice['name']
             ];
-            foreach ($choice['dependents'] as $dIndex => $dependent) {
-                $serialized['data']['choices'][$index]['dependents'][$dIndex]['option'] = [
-                    'value' => $dependent['_id'],
-                    'label' => $dependent['name'],
-                ];
-            }
         }
         array_multisort($sequence, SORT_ASC, $serialized['data']['choices']);
         return $serialized;
