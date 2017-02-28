@@ -55,6 +55,9 @@ class QuestionAnswerFactory
                     }
                     $answer['value'] = $values;
                     break;
+                case 'related-choice-single':
+                    $answer['value'] = $value->get('name');
+                    break;
                 default:
                     $answer['value'] = $value;
                     break;
@@ -105,7 +108,10 @@ class QuestionAnswerFactory
             }
             if ('related-choice-single' === $question->get('questionType')) {
                 // If this is a related choice, the question must be reset to the related choice's question.
-                $question = $answer->get('value')->get('question');
+                // We also must retain the original related question.
+                $answer->set('relatedQuestion', $question);
+                $answer->set('question', $answer->get('value')->get('question'));
+                return $answer;
             }
             return $answer->set('question', $question);
         } else {
