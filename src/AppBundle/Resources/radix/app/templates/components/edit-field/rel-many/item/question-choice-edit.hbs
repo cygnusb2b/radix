@@ -17,13 +17,13 @@
 
 {{partial 'demographic/choices/-options'}}
 
-{{#if model.hasDependents}}
+{{#if model.childQuestion}}
   <div class="form-group">
-    <label>Will display these dependent choices</label>
+    <label>Will display this child question when selected.</label>
     <ul class="list-group">
-      {{#each model.dependents as |dependent|}}
-        <li class="list-group-item">{{dependent.fullName}}</li>
-      {{/each}}
+        {{#link-to 'demographic.questions.edit' model.childQuestion.id class='list-group-item list-group-item-action'}}
+            {{model.childQuestion.name}}
+        {{/link-to}}
     </ul>
   </div>
 {{/if}}

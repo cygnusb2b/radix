@@ -20,8 +20,9 @@
 {{partial 'demographic/choices/-options'}}
 
 <div class="card">
-    <div class="card-header">Dependents</div>
+    <div class="card-header">Child Question</div>
     <div class="card-block">
-        {{edit-field/autocomplete value=model.dependents multiple=true modelType='question-choice' displayField='fullName'}}
+        {{edit-field/autocomplete value=model.childQuestion multiple=false modelType='question'}}
+        <small>When a user selects this choice, the above question will be displayed.</small>
     </div>
 </div>
