@@ -149,18 +149,30 @@ class QuestionController extends AbstractAppController
         $serializer = $this->get('app_bundle.serializer.public_api');
         $serializer->setMaxDepth(2);
         $serializer->addRule(new Rules\QuestionSimpleRule());
+
+        if (!in_array($question->get('questionType'), ['choice-single', 'choice-multiple', 'related-choice-single'])) {
+            return $serializer->serialize($question);
+        }
+
         $serializer->addRule(new Rules\QuestionChoiceSimpleRule());
 
         $serialized = $serializer->serialize($question);
         $sequence   = [];
-        foreach ($serialized['data']['choices'] as $index => $choice) {
-            $sequence[$index] = $choice['sequence'];
-            $serialized['data']['choices'][$index]['option'] = [
-                'value'     => $choice['_id'],
-                'label'     => $choice['name']
-            ];
+        foreach (['choices', 'relatedChoices'] as $key) {
+            foreach ($serialized['data'][$key] as $index => $choice) {
+                $sequence[$index] = $choice['sequence'];
+                $serialized['data'][$key][$index]['option'] = [
+                    'value'     => $choice['_id'],
+                    'label'     => $choice['name']
+                ];
+            }
         }
-        array_multisort($sequence, SORT_ASC, $serialized['data']['choices']);
+
+        if ('related-choice-single' !== $question->get('questionType')) {
+            // Sort the choices by sequence, but only for non-related-choice answers.
+            array_multisort($sequence, SORT_ASC, $serialized['data']['choices']);
+        }
+
         return $serialized;
     }
 }
