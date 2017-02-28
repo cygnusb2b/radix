@@ -7,7 +7,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.keyOrId != this.props.keyOrId || nextProps.tagKeyOrId != this.props.keyOrId) {
       // Clear any previosuly selected answer.
-      this.setState({answer: null});
+      this.setState({ answer: null });
       // Re-run the question retrieval.
       this._retrieveQuestion(nextProps.tagKeyOrId, nextProps.keyOrId);
     }
@@ -54,7 +54,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
       };
 
       if (choice._id && choice.childQuestion) {
-        return React.createElement(Radix.Components.get('FormQuestion'), { keyOrId: choice.childQuestion._id, answers: this.props.answers, required: true });
+        return React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, keyOrId: choice.childQuestion._id, answers: this.props.answers, required: this.props.required });
       }
     }
   },
