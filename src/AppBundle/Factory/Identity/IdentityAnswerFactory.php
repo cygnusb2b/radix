@@ -108,7 +108,7 @@ class IdentityAnswerFactory extends AbstractModelFactory implements SubscriberFa
         $answer = $this->answerFactory->createAnswerFor('identity', $question, $rawAnswerValue);
 
         foreach ($identity->get('answers') as $current) {
-            if ($current->get('question')->getId() === $question->getId()) {
+            if ($current->get('question')->getId() === $answer->get('question')->getId()) {
                 // Answer currently exists on the identity... determine update or remove.
                 if (null === $answer) {
                     $current->delete();
@@ -135,6 +135,7 @@ class IdentityAnswerFactory extends AbstractModelFactory implements SubscriberFa
         if (null === $answer) {
             return;
         }
+
         $answer->set('identity', $identity);
     }
 }
