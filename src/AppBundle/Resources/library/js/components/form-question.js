@@ -20,7 +20,8 @@ React.createClass({ displayName: 'ComponentFormQuestion',
       required   : false,
       answers    : [],
       onChange   : null,
-      fieldRef   : null
+      fieldRef   : null,
+      isChild    : false,
     };
   },
 
@@ -54,7 +55,7 @@ React.createClass({ displayName: 'ComponentFormQuestion',
       };
 
       if (choice._id && choice.childQuestion) {
-        return React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, keyOrId: choice.childQuestion._id, answers: this.props.answers, required: this.props.required });
+        return React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, keyOrId: choice.childQuestion._id, answers: this.props.answers, required: this.props.required, isChild: true });
       }
     }
   },
@@ -102,13 +103,15 @@ React.createClass({ displayName: 'ComponentFormQuestion',
   _extractAnswer: function() {
     var value = null;
     var question = this.state.question;
+
     if ('identity' !== question.boundTo) {
       return value;
     }
 
+    var questionKey = this.props.isChild ? 'relatedQuestion' : 'question';
     for (var i = 0; i < this.props.answers.length; i++) {
       var answer = this.props.answers[i];
-      if (answer.question._id !== question._id) {
+      if (answer[questionKey]._id !== question._id) {
         continue;
       }
       return this._extractAnswerValue(answer);
@@ -158,7 +161,8 @@ React.createClass({ displayName: 'ComponentFormQuestion',
 
     Ajax.send(url, 'GET').then(
       function(response) {
-        this.setState({ loaded: true, question: response.data, answer: this._extractAnswer() });
+        this.setState({ loaded: true, question: response.data });
+        this.setState({ answer: this._extractAnswer() });
       }.bind(this),
       function(jqXhr) {
         Debugger.error('Unable to load the question.');
