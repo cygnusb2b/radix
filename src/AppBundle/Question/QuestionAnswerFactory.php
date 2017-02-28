@@ -103,6 +103,10 @@ class QuestionAnswerFactory
             if (null === $answer) {
                 return;
             }
+            if ('related-choice-single' === $question->get('questionType')) {
+                // If this is a related choice, the question must be reset to the related choice's question.
+                $question = $answer->get('value')->get('question');
+            }
             return $answer->set('question', $question);
         } else {
             $answer = $this->store->create($modelType);
@@ -140,8 +144,9 @@ class QuestionAnswerFactory
             $values[$v] = true;
         }
 
-        $choices = [];
-        foreach ($question->get('choices') as $choice) {
+        $choiceKey = 'related-choice-single' === $question->get('questionType') ? 'relatedChoices' : 'choices';
+        $choices   = [];
+        foreach ($question->get($choiceKey) as $choice) {
             $id = $choice->getId();
             if (isset($values[$id])) {
                 $choices[] = $choice;
