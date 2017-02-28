@@ -12,13 +12,14 @@ class QuestionSimpleRule extends QuestionRule implements PublicApiRuleInterface
     protected function getIncludeFields()
     {
         return [
-            'allowHtml'     => true,
-            'boundTo'       => true,
-            'choices'       => true,
-            'key'           => true,
-            'name'          => true,
-            'label'         => true,
-            'questionType'  => true,
+            'allowHtml'         => true,
+            'boundTo'           => true,
+            'choices'           => true,
+            'key'               => true,
+            'name'              => true,
+            'label'             => true,
+            'questionType'      => true,
+            'hasChildQuestions' => true,
         ];
     }
 

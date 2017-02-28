@@ -20,6 +20,9 @@ question:
         questionType:
             type: string
             defaultValue: text
+        hasChildQuestions:
+            type: boolean
+            defaultValue: false
     relationships:
         choices:
             type: many

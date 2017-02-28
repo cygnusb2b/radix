@@ -59,6 +59,14 @@ class QuestionSubscriber implements EventSubscriberInterface
             $model->set('allowHtml', false);
         }
 
+        if (true === $type->supportsChoices()) {
+            foreach ($model->get('choices') as $choice) {
+                if (null !== $choice->get('childQuestion')) {
+                    $model->set('hasChildQuestions', true);
+                    break;
+                }
+            }
+        }
     }
 
     /**
