@@ -22,6 +22,6 @@
 <div class="card">
     <div class="card-header">Dependents</div>
     <div class="card-block">
-        {{edit-field/autocomplete value=model.dependents displayField='fullName'}}
+        {{edit-field/autocomplete value=model.dependents multiple=true modelType='question-choice' displayField='fullName'}}
     </div>
 </div>

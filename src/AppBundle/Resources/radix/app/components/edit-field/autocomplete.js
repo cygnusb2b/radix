@@ -12,6 +12,8 @@ export default Component.extend({
      * Public options
      */
     value        : null,
+    multiple     : false, // @todo If a way can be found to get the rel meta off a belongsTo rel, this wouldn't be needed.
+    modelType    : null,  // @todo If a way can be found to get the rel meta off a belongsTo rel, this wouldn't be needed.
     delay        : 300,
     placeholder  : 'Begin typing to select...',
     displayField : 'name',
@@ -23,14 +25,6 @@ export default Component.extend({
         return (!this.get('_initialized'));
     }),
 
-    multiple : computed('relMeta', function() {
-        return 'hasMany' === this.get('relMeta.kind');
-    }),
-
-    relMeta  : computed('value', function() {
-        return this.get('value.content.relationship.relationshipMeta');
-    }),
-
     /**
      * Private options.
      */
@@ -40,7 +34,12 @@ export default Component.extend({
     _options           : computed.uniqBy('_optionsMerged', 'id'),
     _optionsMerged     : computed.union('_optionsFromModel', '_optionsFromSearch'),
     _optionsFromModel  : computed('value', function() {
-        return this.get('multiple') ? this.get('value') : [this.get('value')];
+        if (this.get('multiple')) {
+            return this.get('value');
+        } else if (this.get('value.id')) {
+            return [this.get('value')];
+        }
+        return [];
     }),
 
     _optionsFromSearch : [],
@@ -81,7 +80,7 @@ export default Component.extend({
                 let criteria    = { };
                 criteria[field] = { $regex : '/' + textInput + '/i' };
 
-                this.get('query').execute(this.get('relMeta.type'), criteria, 0, 0, field).then((results) => {
+                this.get('query').execute(this.get('modelType'), criteria, 0, 0, field).then((results) => {
                     // Set the results to the search options stack.
                     results.forEach((item) => this.get('_optionsFromSearch').pushObject(item));
                 }).finally(() => this.set('_loading', false));
