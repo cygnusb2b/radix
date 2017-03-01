@@ -76,10 +76,6 @@ class RequestUtility
 
         foreach ($data as $key => $value) {
             $value = trim($value);
-            if (empty($value)) {
-                // Skip empty values.
-                continue;
-            }
             $parts = explode(':', $key);
             if (2 !== count($parts)) {
                 throw new HttpFriendlyException('The form submission format is invalid. Expected a field keys formatted as [target]:[fieldPath.fieldName].', 422);
