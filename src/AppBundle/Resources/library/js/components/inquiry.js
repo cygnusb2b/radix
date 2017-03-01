@@ -69,29 +69,22 @@ React.createClass({ displayName: 'ComponentInquiry',
         Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
 
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
-            if (!Utils.isString(this.props.successRedirect)) {
-                locker.unlock();
-            }
-
+          if (Utils.isString(this.props.successRedirect)) {
+            // Redirect the user.
+            window.location.href = this.props.successRedirect;
+          } else {
             // Refresh the account, if logged in.
             if (AccountManager.isLoggedIn()) {
-                AccountManager.reloadAccount().then(function() {
-                    EventDispatcher.trigger('AccountManager.account.loaded');
-                });
+              AccountManager.reloadAccount().then(function() {
+                EventDispatcher.trigger('AccountManager.account.loaded');
+              });
             }
-
-            // Get the next template to display (thank you page, etc).
-            var template = (response.data) ? response.data.template || null : null;
-            if (Utils.isString(this.props.successRedirect)) {
-                window.location.href = this.props.successRedirect;
-            } else {
-                // Set the next template to display.
-                this.setState({ nextTemplate: template });
-            }
-
+            // Set the next template to display.
+            this.setState({ nextTemplate: template });
+          }
         }.bind(this), function(jqXHR) {
-            locker.unlock();
-            error.displayAjaxError(jqXHR);
+          locker.unlock();
+          error.displayAjaxError(jqXHR);
         });
     },
 
