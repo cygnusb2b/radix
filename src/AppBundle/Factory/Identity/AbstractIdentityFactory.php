@@ -304,9 +304,10 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
 
         if (true === $identity->getState()->is('new')) {
             // The identity is new. Create and push.
-            $phone = $factory->create($embedMeta, $properties);
-            $identity->pushEmbed('addresses', $phone);
-
+            $address = $factory->create($embedMeta, $properties);
+            if (false === $address->get('isEmpty')) {
+                $identity->pushEmbed('addresses', $address);
+            }
         } else {
             // The identity is existing. Determine update or create.
             $create = false;
@@ -329,7 +330,7 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
                         }
 
                         if (true === LocaleUtility::doLocalitiesMatch($current, $properties)) {
-                            // The address is not new. Do not updated.
+                            // The address is not new. Do not update.
                             continue;
                         }
 
@@ -340,7 +341,10 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
                         $factory->apply($newAddress, $properties);
 
                         $identity->removeEmbed('addresses', $address);
-                        $identity->pushEmbed('addresses', $newAddress);
+                        if (false === $newAddress->get('isEmpty')) {
+                            // Only set the new value if the incoming address is not empty.
+                            $identity->pushEmbed('addresses', $newAddress);
+                        }
                     } else {
                         $address->set('isPrimary', false);
                     }
@@ -348,11 +352,15 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
             }
 
             if (true === $create) {
+                $address = $factory->create($embedMeta, $properties);
+                if (true === $address->get('isEmpty')) {
+                    // Do not set an empty address.
+                    return;
+                }
                 foreach ($identity->get('addresses') as $address) {
                     // Clear primary status for existing addresses.
                     $address->set('isPrimary', false);
                 }
-                $address = $factory->create($embedMeta, $properties);
                 $identity->pushEmbed('addresses', $address);
             }
         }
