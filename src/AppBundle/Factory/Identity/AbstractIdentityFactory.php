@@ -370,9 +370,13 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
         if (false === HelperUtility::isSetArray($attributes, 'primaryPhone')) {
             return;
         }
-        if (false === HelperUtility::isSetNotEmpty($attributes['primaryPhone'], 'number')) {
+        if (!array_key_exists('number', $attributes['primaryPhone'])) {
+            // Must check the key because an empty value could signify an existing phone removal.
             return;
         }
+
+        // Ensure phone number is trimmed.
+        $number = trim($attributes['primaryPhone']['number']);
 
         $properties = $attributes['primaryPhone'];
         $embedMeta  = $identity->getMetadata()->getEmbed('phones')->embedMeta;
@@ -386,6 +390,10 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
 
         if (true === $identity->getState()->is('new')) {
             // The identity is new. Create and push.
+            if (!empty($number)) {
+                // No number provided. Do not create/assign.
+                return;
+            }
             $phone = $factory->create($embedMeta, $properties);
             $identity->pushEmbed('phones', $phone);
 
@@ -399,8 +407,13 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
                 // Existing phone. Attempt to find and update.
                 foreach ($identity->get('phones') as $phone) {
                     if ($phone->get('identifier') === $properties['identifier']) {
-                        // Apply the phone attributes to the found phone.
-                        $factory->apply($phone, $properties);
+                        // If the incoming number is empty, remove the phone entry.
+                        if (empty($number)) {
+                            $identity->removeEmbed('phones', $phone);
+                        } else {
+                            // Apply the phone attributes to the found phone.
+                            $factory->apply($phone, $properties);
+                        }
                     } else {
                         $phone->set('isPrimary', false);
                     }
@@ -410,7 +423,7 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
                 $create = true;
             }
 
-            if (true === $create) {
+            if (true === $create && !empty($number)) {
                 foreach ($identity->get('phones') as $phone) {
                     // Clear primary status for existing phones.
                     $phone->set('isPrimary', false);
