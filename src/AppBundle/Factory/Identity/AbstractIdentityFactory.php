@@ -398,7 +398,7 @@ abstract class AbstractIdentityFactory extends AbstractModelFactory implements S
 
         if (true === $identity->getState()->is('new')) {
             // The identity is new. Create and push.
-            if (!empty($number)) {
+            if (empty($number)) {
                 // No number provided. Do not create/assign.
                 return;
             }
