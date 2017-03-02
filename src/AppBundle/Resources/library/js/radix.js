@@ -126,6 +126,7 @@
         this.ModalLinkRegister              = {{ loadComponent('modal-link-register') }}
         this.ModalLinkResetPasswordGenerate = {{ loadComponent('modal-link-reset-password-generate') }}
         this.CountryPostalCode              = {{ loadComponent('form-country-postal-code') }}
+        this.Form                           = {{ loadComponent('form') }}
         this.FormErrors                     = {{ loadComponent('form-errors') }}
         this.FormFieldWrapper               = {{ loadComponent('form-field-wrapper') }}
         this.FormInputHidden                = {{ loadComponent('form-input-hidden') }}
