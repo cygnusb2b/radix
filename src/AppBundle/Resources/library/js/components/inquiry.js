@@ -15,23 +15,32 @@ React.createClass({ displayName: 'ComponentInquiry',
 
     componentDidMount: function() {
         EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-            this.setState({ account : AccountManager.getAccount() });
+            this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues() });
         }.bind(this));
 
         EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-            this.setState({ account : AccountManager.getAccount(), nextTemplate: null });
+            this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues(), nextTemplate: null });
         }.bind(this));
     },
 
     getInitialState: function() {
         return {
-            account      : AccountManager.getAccount(),
+            account: AccountManager.getAccount(),
+            values: AccountManager.getAccountValues(),
             nextTemplate : null
         }
     },
 
+    updateFieldValue: function(event) {
+      var stateSlice = this.state.values;
+      stateSlice[event.target.name] = event.target.value;
+      this.setState({ values: stateSlice });
+    },
+
     handleSubmit: function(event) {
         event.preventDefault();
+
+        var formData = this.state.values;
 
         var locker = this._formLock;
         var error  = this._error;
@@ -39,24 +48,18 @@ React.createClass({ displayName: 'ComponentInquiry',
         error.clear();
         locker.lock();
 
-        var data = {};
-        for (var name in this._formRefs) {
-            var ref = this._formRefs[name];
-            data[name] = ref.state.value;
-        }
-
         var referringHost = window.location.protocol + '//' + window.location.host;
         var referringHref = window.location.href;
         if (Utils.isString(this.props.referringPath)) {
             referringHref = referringHost + '/' + this.props.referringPath.replace(/^\//, '');
         }
 
-        data['submission:referringHost'] = referringHost;
-        data['submission:referringHref'] = referringHref;
+        formData['submission:referringHost'] = referringHost;
+        formData['submission:referringHref'] = referringHref;
 
         var sourceKey = 'inquiry';
         var payload   = {
-            data: data,
+            data: formData,
             meta: {
                 model  : {
                     type       : this.props.modelType,
@@ -69,10 +72,12 @@ React.createClass({ displayName: 'ComponentInquiry',
         Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
 
         Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
+          locker.unlock();
           if (Utils.isString(this.props.successRedirect)) {
             // Redirect the user.
             window.location.href = this.props.successRedirect;
           } else {
+            locker.unlock();
             // Refresh the account, if logged in.
             if (AccountManager.isLoggedIn()) {
               AccountManager.reloadAccount().then(function() {
@@ -86,14 +91,6 @@ React.createClass({ displayName: 'ComponentInquiry',
           locker.unlock();
           error.displayAjaxError(jqXHR);
         });
-    },
-
-    _formRefs: {},
-
-    handleFieldRef: function(input) {
-        if (input) {
-            this._formRefs[input.props.name] = input;
-        }
     },
 
     render: function() {
@@ -113,9 +110,10 @@ React.createClass({ displayName: 'ComponentInquiry',
                 React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
                 React.createElement('hr'),
                 React.createElement(Radix.Forms.get('Inquiry'), {
-                    account  : this.state.account,
-                    onSubmit : this.handleSubmit,
-                    fieldRef : this.handleFieldRef
+                    account: this.state.account,
+                    values: this.state.values,
+                    onChange: this.updateFieldValue,
+                    onSubmit: this.handleSubmit
                 }),
                 React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
                 React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })

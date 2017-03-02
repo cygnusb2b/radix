@@ -77,7 +77,7 @@ function AccountManager()
         return account;
     }
 
-    this.getFormValues = function() {
+    this.getAccountValues = function() {
       // @todo -- this should be handled by the backend and/or link their state directly here??
       var account = this.getAccount();
       var values = {
