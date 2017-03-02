@@ -1,6 +1,7 @@
 React.createClass({ displayName: 'ComponentInquiry',
 
     getDefaultProps: function() {
+        // @todo - generic forms should always have these fields of some sort... check the other form components to consolidate.
         return {
             title           : 'Request More Information',
             description     : null,
@@ -20,6 +21,7 @@ React.createClass({ displayName: 'ComponentInquiry',
       var phoneType    = account.primaryPhone.phoneType || 'Phone';
       var phoneLabel   = phoneType + ' #';
       return [
+        // The backend should automatically add these if an address or phone field is displayed below.
         { component: 'FormInputHidden', name: 'identity:primaryAddress.identifier' },
         { component: 'FormInputHidden', name: 'identity:primaryPhone.identifier' },
 
@@ -30,8 +32,12 @@ React.createClass({ displayName: 'ComponentInquiry',
         { component: 'FormInputText', type: 'text',  name: 'identity:companyName',         wrapperClass: 'companyName', label: 'Company Name' },
         { component: 'FormInputText', type: 'text',  name: 'identity:title',               wrapperClass: 'title',       label: 'Job Title',     required: true  },
 
+        // The backend should use this by default when selecting country??
         { component: 'CountryPostalCode', postalCode: 'identity:primaryAddress.postalCode', countryCode: 'identity:primaryAddress.countryCode', required: true },
 
+        // The backend simply needs to know the question id - the boundTo will be generated from that.
+        // Ultimately could build a local storage cache for these, so questions do not need to be requested on each page.
+        // For starters, just caching between questions would probably be helpful.
         { component: 'FormQuestion', questionId: '580f6cff39ab465c2caf74ad', boundTo: 'submission' },
         { component: 'FormQuestion', questionId: '583c410839ab46dd31cbdf6d', boundTo: 'identity', required: false },
         { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041bb', boundTo: 'identity', required: true },
@@ -40,21 +46,21 @@ React.createClass({ displayName: 'ComponentInquiry',
     },
 
     componentDidMount: function() {
-        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-            this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues() });
-        }.bind(this));
+      EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+        this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues() });
+      }.bind(this));
 
-        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-            this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues(), nextTemplate: null });
-        }.bind(this));
+      EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+          this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues(), nextTemplate: null });
+      }.bind(this));
     },
 
     getInitialState: function() {
-        return {
-            account: AccountManager.getAccount(),
-            values: AccountManager.getAccountValues(),
-            nextTemplate : null
-        }
+      return {
+        account: AccountManager.getAccount(),
+        values: AccountManager.getAccountValues(),
+        nextTemplate : null
+      }
     },
 
     updateFieldValue: function(event) {
@@ -101,7 +107,7 @@ React.createClass({ displayName: 'ComponentInquiry',
           locker.unlock();
           if (Utils.isString(this.props.successRedirect)) {
             // Redirect the user.
-            window.location.href = this.props.successRedirect;
+            window.location.replace(this.props.successRedirect);
           } else {
             locker.unlock();
             // Refresh the account, if logged in.
