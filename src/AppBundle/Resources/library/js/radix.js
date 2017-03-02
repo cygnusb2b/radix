@@ -167,12 +167,9 @@
     function Forms()
     {
         this.EmailSubscription      = {{ loadForm('email-subscription') }}
-        this.Inquiry                = {{ loadForm('inquiry') }}
-        this.Register               = {{ loadForm('register') }}
         this.ResetPasswordGenerate  = {{ loadForm('reset-password-generate') }}
         this.ResetPassword          = {{ loadForm('reset-password') }}
         this.Login                  = {{ loadForm('login') }}
-        this.GatedDownload          = {{ loadForm('gated-download') }}
 
         this.get = function(name) {
             return this[name];

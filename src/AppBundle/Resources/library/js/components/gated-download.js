@@ -1,3 +1,10 @@
+// @todo Ultimately, specifying a gate should be a seperate concern from the form.
+// For example, Radix would be told to gate "something," and that directive would then determine what form to use.
+// Gating could be by registration: meaning, if logged in, can view, if not must register
+// Gating could be by a form: meaning, a form must be submitted before completion, regardless if logged in (though logged in would pre-pop)
+// Gating could by by a product subscription: meaning, a user must be subscribed to "something" in order to view
+// The functional response of the form (whether it's to "view" or "download") is simply a different directive, not a different component (which it is now)
+// So, this needs to be re-explored.
 React.createClass({ displayName: 'ComponentGatedDownload',
   // @todo Should gating simply allow any set of "extra metadata", as opposed to requiring properties to be directly set?
   getDefaultProps: function() {
