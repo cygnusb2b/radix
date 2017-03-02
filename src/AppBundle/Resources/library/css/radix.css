@@ -36,7 +36,7 @@ ins {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 99999;
+    z-index: 3000001;
 
     display: none;
     overflow-y: auto;
@@ -53,7 +53,7 @@ ins {
     -webkit-touch-callout: none;
 }
 .platform-element[data-element=modal]#guidrSubmitModal {
-    z-index: 99989;
+    z-index: 3000000;
 
     height: 100vh;
 
