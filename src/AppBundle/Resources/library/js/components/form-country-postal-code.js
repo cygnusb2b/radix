@@ -9,7 +9,6 @@ React.createClass({ displayName: 'ComponentFormCountryPostalCode',
   },
 
   render: function() {
-    console.info('render!!!', this.props.postalCode);
     return (
       React.createElement('div', null,
         this._buildCountryElement(),
