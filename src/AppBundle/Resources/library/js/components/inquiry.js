@@ -161,5 +161,5 @@ React.createClass({ displayName: 'ComponentInquiry',
 
   _setLock: function(ref) {
     this._formLock = ref;
-  },
+  }
 });
