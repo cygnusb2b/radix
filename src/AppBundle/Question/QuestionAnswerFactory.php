@@ -106,13 +106,6 @@ class QuestionAnswerFactory
             if (null === $answer) {
                 return;
             }
-            if ('related-choice-single' === $question->get('questionType')) {
-                // If this is a related choice, the question must be reset to the related choice's question.
-                // We also must retain the original related question.
-                $answer->set('relatedQuestion', $question);
-                $answer->set('question', $answer->get('value')->get('question'));
-                return $answer;
-            }
             return $answer->set('question', $question);
         } else {
             $answer = $this->store->create($modelType);

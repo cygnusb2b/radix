@@ -3,6 +3,3 @@ question-answerable:
         question:
             type: one
             entity: question
-        relatedQuestion:
-            type: one
-            entity: question
