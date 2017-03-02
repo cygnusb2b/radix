@@ -57,7 +57,7 @@ React.createClass({ displayName: 'ComponentInquiry',
 
   getInitialState: function() {
     return {
-      account: AccountManager.getAccount(),
+      account: AccountManager.getAccount(), // @todo Once the form definition comes from the backend, the account state is not needed.
       values: AccountManager.getAccountValues(),
       nextTemplate : null
     }
