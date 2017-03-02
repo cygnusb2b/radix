@@ -1,69 +1,61 @@
 React.createClass({ displayName: 'ComponentFormQuestion',
 
   componentDidMount: function() {
-    this._retrieveQuestion(this.props.tagKeyOrId, this.props.keyOrId);
+    this._retrieveQuestion(this.props.questionId);
   },
 
   componentWillReceiveProps: function(nextProps) {
-    if (nextProps.keyOrId != this.props.keyOrId || nextProps.tagKeyOrId != this.props.keyOrId) {
-      // Clear any previosuly selected answer.
-      this.setState({ answer: null });
+    if (nextProps.questionId !== this.props.questionId) {
       // Re-run the question retrieval.
-      this._retrieveQuestion(nextProps.tagKeyOrId, nextProps.keyOrId);
+      this._retrieveQuestion(nextProps.questionId);
     }
   },
 
   getDefaultProps: function() {
     return {
-      keyOrId    : null,
-      tagKeyOrId : null,
-      required   : false,
-      answers    : [],
-      onChange   : null,
-      fieldRef   : null,
-      isChild    : false,
+      questionId: null,
+      required: false,
+      onChange: null,
+      onLookup: null,
+      value: null
     };
   },
 
   getInitialState: function() {
     return {
       loaded   : false,
-      question : {},
-      answer   : null
+      question : {}
     };
   },
 
   render: function() {
     var element = React.createElement('div');
     if (this.state.loaded) {
-        element = this._buildElement();
+      element = this._buildElement();
     }
     return (element);
   },
 
-  _buildDependentElement: function() {
-    if (!this.state.question.hasChildQuestions) {
+  _buildChildElement: function() {
+    var children = this._findChildQuestions();
+    var answer   = this.props.value;
+    if (!answer) {
       return;
-    } else if (this.state.answer) {
-      var choice = {};
-      var question = this.state.question;
-      for (var i = 0; i < question.choices.length; i++) {
-        if (this.state.answer == question.choices[i]._id) {
-          choice = question.choices[i];
-          break;
-        }
-      };
-
-      if (choice._id && choice.childQuestion) {
-        return React.createElement(Radix.Components.get('FormQuestion'), { fieldRef: this.props.fieldRef, keyOrId: choice.childQuestion._id, answers: this.props.answers, required: this.props.required, isChild: true });
+    }
+    for (var i = 0; i < children.length; i++) {
+      var child = children[i];
+      if (answer != child.parentChoiceId) {
+        continue;
       }
+      var value = this.props.onLookup(child.key);
+      return React.createElement(Radix.Components.get('FormQuestion'), { onLookup: this.props.onLookup, onChange: this.props.onChange, questionId: child.id, value: value, required: this.props.required });
     }
   },
 
   _buildElement: function() {
     var question = this.state.question;
     var type     = question.questionType;
-    var answer   = this.state.answer;
+    var answer   = this.props.value;
     var label    = question.label || question.name;
 
     var element;
@@ -75,94 +67,76 @@ React.createClass({ displayName: 'ComponentFormQuestion',
         options.push(choice.option);
       }
       element = React.createElement(Radix.Components.get('FormSelect'), {
-        name        : question.boundTo + ':answers.' + question._id,
+        name        : this._createQuestionKey(question),
         label       : label,
         options     : options,
         selected    : answer,
         required    : this.props.required,
-        onChange    : this._handleChoiceSelect,
-        wrapperClass: question.key + ' question',
-        ref         : this.props.fieldRef
+        onChange    : this._handleChange,
+        wrapperClass: question.key + ' question'
       });
     } else if ('textarea' === type) {
       element = React.createElement(Radix.Components.get('FormTextArea'), {
-        name        : question.boundTo + ':answers.' + question._id,
+        name        : this._createQuestionKey(question),
         value       : answer,
         label       : label,
+        required    : this.props.required,
         onChange    : this.props.onChange,
-        wrapperClass: question.key + ' question',
-        ref         : this.props.fieldRef
+        wrapperClass: question.key + ' question'
       });
     } else {
       element = React.createElement('p', null, label);
     }
 
-    return React.createElement('div', { className: 'question-wrapper' }, element, this._buildDependentElement());
+    return React.createElement('div', { className: 'question-wrapper' }, element, this._buildChildElement());
   },
 
-  _extractAnswer: function() {
-    var value = null;
+  _createQuestionKey: function(question) {
+    return question.boundTo + ':answers.' + question._id;
+  },
+
+  _findChildQuestions: function() {
+    var children = [];
     var question = this.state.question;
-
-    if ('identity' !== question.boundTo) {
-      return value;
+    if (!question.hasChildQuestions) {
+      return children;
     }
-
-    var questionKey = this.props.isChild ? 'relatedQuestion' : 'question';
-    for (var i = 0; i < this.props.answers.length; i++) {
-      var answer = this.props.answers[i];
-      if (answer[questionKey]._id !== question._id) {
+    for (var i = 0; i < question.choices.length; i++) {
+      var choice = question.choices[i];
+      if (!choice.childQuestion) {
         continue;
       }
-      return this._extractAnswerValue(answer);
-    };
-    return value;
+      var childQuestion = choice.childQuestion;
+      children.push({ id: childQuestion._id, parentChoiceId: choice._id, key: this._createQuestionKey(childQuestion) });
+    }
+    return children;
   },
 
-  _extractAnswerValue: function(answer) {
-    var value = answer.value;
-
-    if ('identity-answer-choice' === answer._type) {
-      if (false === Utils.isObject(value)) {
-        return;
+  _findSelectedChildQuestions: function() {
+    var selected = [];
+    var children = this._findChildQuestions();
+    for (var i = 0; i < children.length; i++) {
+      var key = children[i].key;
+      if (this.props.onLookup(key)) {
+        selected.push(key);
       }
-      return value._id;
-    } else if ('identity-answer-choices' === answer._type) {
-      if (value.length < 1) {
-        return [];
-      }
-      var values = [];
-      for (var i = 0; i < value.length; i++) {
-        values.push(value[i]._id);
-      }
-      return values;
     }
-    return value;
+    return selected;
   },
 
-  _handleChoiceSelect: function(event) {
-    this.setState({ answer: event.target.value });
-    if ('function' === typeof this.props.onChange) {
-      this.props.onChange(event);
+  _handleChange: function(event) {
+    // Clear any child answers, since the parent has changed (if applicable).
+    var children = this._findSelectedChildQuestions();
+    for (var i = 0; i < children.length; i++) {
+      this.props.onChange({ target: { name: children[i], value: '' } });
     }
+    this.props.onChange(event);
   },
 
-  _retrieveQuestion: function(tagKeyOrId, keyOrId) {
-    var url;
-    if (tagKeyOrId) {
-      url = '/app/question/tag/' + tagKeyOrId;
-    } else if (keyOrId) {
-      url = '/app/question/' + keyOrId;
-    }
-    if (!url) {
-      Debugger.error('No question id, key, or tag provided for the question. Unable to retrieve question.');
-      return;
-    }
-
-    Ajax.send(url, 'GET').then(
+  _retrieveQuestion: function(questionId) {
+    Ajax.send('/app/question/' + questionId, 'GET').then(
       function(response) {
         this.setState({ loaded: true, question: response.data });
-        this.setState({ answer: this._extractAnswer() });
       }.bind(this),
       function(jqXhr) {
         Debugger.error('Unable to load the question.');
