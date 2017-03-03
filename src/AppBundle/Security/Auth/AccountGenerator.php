@@ -56,7 +56,10 @@ class AccountGenerator implements AuthGeneratorInterface
             }
         }
 
-        $values['identity:primaryEmail'] = $model->get('primaryEmail');
+        $email = $model->get('primaryEmail');
+        if (!empty($email)) {
+            $values['identity:primaryEmail'] = $email;
+        }
 
         $phoneAttrs = ['identifier', 'description', 'phoneType', 'number', 'isPrimary'];
         if (null !== $item = $model->get('primaryPhone')) {
