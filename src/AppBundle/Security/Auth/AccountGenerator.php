@@ -46,6 +46,7 @@ class AccountGenerator implements AuthGeneratorInterface
      */
     public function serializeModel(Model $model)
     {
+        // @todo Values should only be returned when neeeded, not all the time.
         $values     = [];
         $attributes = ['givenName', 'familyName', 'middleName', 'salutation', 'suffix', 'gender', 'title', 'companyName', 'picture', 'displayName'];
         foreach ($attributes as $key) {
@@ -102,15 +103,13 @@ class AccountGenerator implements AuthGeneratorInterface
                     $values[$name] = implode(',', $choices);
                     break;
                 default:
-                    $values[$name] = $answer->get('value');
+                    $value = $answer->get('value');
+                    if (is_bool($value) && !$value) {
+                        $value = 'false';
+                    }
+                    $values[$name] = (string) $value;
                     break;
             }
-        }
-
-        $optIns = $model->getStore()->findQuery('product-email-deployment-optin', ['email' => $model->get('primaryEmail')]);
-        foreach ($optIns as $optIn) {
-            $name = sprintf('submission:optIns.%s', $optIn->get('product')->getId());
-            $values[$name] = $optIn->get('optedIn');
         }
         if (empty($values)) {
             // Ensure empty values are returned as an object.

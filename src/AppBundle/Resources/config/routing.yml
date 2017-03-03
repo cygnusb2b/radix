@@ -24,7 +24,7 @@ app_bundle_app_init:
 
 app_bundle_app_optins_email_deployment:
     path: /app/opt-ins/email-deployment/{emailAddress}
-    defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
+    defaults: { _controller: AppBundle:App\OptIn:emailDeployment, emailAddress: null }
     methods: [ GET ]
 
 app_bundle_app_product:
