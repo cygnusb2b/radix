@@ -22,8 +22,8 @@ React.createClass({ displayName: 'ComponentGatedDownload',
   getFormDefinition: function() {
     // @todo The backend should dictate these settings.
     var account      = this.state.account;
-    var disableEmail = (account._id) ? true : false;
-    var phoneType    = account.primaryPhone.phoneType || 'Phone';
+    var disableEmail = (account.token) ? true : false;
+    var phoneType    = 'Phone'; //account.primaryPhone.phoneType || 'Phone';
     var phoneLabel   = phoneType + ' #';
     return [
       // The backend should automatically add these if an address or phone field is displayed below.
@@ -114,7 +114,7 @@ React.createClass({ displayName: 'ComponentGatedDownload',
       // Set the next template to display (thank you page, etc).
       var template = (response.data) ? response.data.template || null : null;
       // Redirect.
-      window.location.replace(this.props.fileUrl);
+      window.location.href = this.props.fileUrl;
       // this.setState({ nextTemplate: template });
 
     }.bind(this), function(jqXHR) {

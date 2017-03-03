@@ -17,8 +17,8 @@ React.createClass({ displayName: 'ComponentInquiry',
   getFormDefinition: function() {
     // @todo The backend should dictate these settings.
     var account      = this.state.account;
-    var disableEmail = (account._id) ? true : false;
-    var phoneType    = account.primaryPhone.phoneType || 'Phone';
+    var disableEmail = (account.token) ? true : false;
+    var phoneType    = 'Phone'; //account.primaryPhone.phoneType || 'Phone';
     var phoneLabel   = phoneType + ' #';
     return [
       // The backend should automatically add these if an address or phone field is displayed below.
@@ -107,7 +107,7 @@ React.createClass({ displayName: 'ComponentInquiry',
       locker.unlock();
       if (Utils.isString(this.props.successRedirect)) {
         // Redirect the user.
-        window.location.replace(this.props.successRedirect);
+        window.location.href = this.props.successRedirect;
       } else {
         locker.unlock();
         // Refresh the account, if logged in.

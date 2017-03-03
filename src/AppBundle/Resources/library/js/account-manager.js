@@ -47,7 +47,7 @@ function AccountManager()
     }
 
     this.isLoggedIn = function() {
-        return (account._id) ? true : false;
+        return (account.token) ? true : false;
     }
 
     this.parseDetectionParams = function() {
