@@ -132,11 +132,11 @@ React.createClass({ displayName: 'ComponentInquiry',
     }
     var elements;
     if (this.state.nextTemplate) {
-      elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate } });
+      elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate || '' } });
     } else {
       elements = React.createElement('div', { className: className },
         React.createElement('h2', null, this.props.title),
-        React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description } }),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description || '' } }),
         React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
         React.createElement('hr'),
         React.createElement(Radix.Components.get('Form'), {
