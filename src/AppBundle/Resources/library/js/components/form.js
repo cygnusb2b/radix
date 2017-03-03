@@ -54,11 +54,12 @@ React.createClass({ displayName: 'Form',
 
   _buildFormInputTextProps: function(field) {
     var name = field.name;
+    var valueKey = field.valueKey ? field.valueKey : name;
     return {
       key: name,
       type: field.type,
       name: name,
-      value: this.props.values[name],
+      value: this.props.values[valueKey],
       onChange: this.props.onChange,
       wrapperClass: field.wrapperClass,
       label: field.label,
