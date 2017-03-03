@@ -1,143 +1,188 @@
 React.createClass({ displayName: 'ComponentEmailSubscriptions',
 
-    componentDidMount: function() {
-        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-            var account = AccountManager.getAccount();
-            this._loadOptinsFor(account.primaryEmail);
-            this.setState({ account : account });
-        }.bind(this));
+  getDefaultProps: function() {
+    return {
+      title           : 'Manage Email Subscriptions',
+      description     : null,
+      className       : null,
+      notify          : {}, // Technically the notify value could be an array of notification objects.
+      successRedirect : null,
+      referringPath   : null
+    };
+  },
 
-        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-            var account = AccountManager.getAccount();
-            this._loadOptinsFor(account.primaryEmail);
-            this.setState({ account : account, nextTemplate: null });
-        }.bind(this));
+  getFormDefinition: function() {
+    // @todo The backend should dictate these settings.
+    var disableEmail = false; //(account.token) ? true : false;
+    var phoneType    = 'Phone'; //account.primaryPhone.phoneType || 'Phone';
+    var phoneLabel   = phoneType + ' #';
+    return [
+      // The backend should automatically add these if an address or phone field is displayed below.
+      { component: 'FormInputHidden', name: 'identity:primaryAddress.identifier' },
+      { component: 'FormInputHidden', name: 'identity:primaryPhone.identifier' },
 
-        this._loadOptinsFor(this.state.account.primaryEmail);
-    },
+      // This is a new scenerio: the value comes from the identity, name is bound to the submission.
+      { component: 'FormInputText', type: 'email', name: 'identity:primaryEmail',  wrapperClass: 'email',       label: 'Email Address', required: !disableEmail, readonly: disableEmail },
+      { component: 'FormInputText', type: 'text',  name: 'identity:givenName',           wrapperClass: 'givenName',   label: 'First Name',    required: true  },
+      { component: 'FormInputText', type: 'text',  name: 'identity:familyName',          wrapperClass: 'familyName',  label: 'Last Name',     required: true  },
+      { component: 'FormInputText', type: 'text',  name: 'identity:companyName',         wrapperClass: 'companyName', label: 'Company Name' },
+      { component: 'FormInputText', type: 'text',  name: 'identity:title',               wrapperClass: 'title',       label: 'Job Title',     required: true  },
 
-    getDefaultProps: function() {
-        return {
-            title     : 'Manage Email Subscriptions',
-            className : null,
-        };
-    },
+      // The backend should use this by default when selecting country??
+      { component: 'CountryPostalCode', postalCode: 'identity:primaryAddress.postalCode', countryCode: 'identity:primaryAddress.countryCode', required: true },
 
-    getInitialState: function() {
-        return {
-            account      : AccountManager.getAccount(),
-            optIns       : {},
-            nextTemplate : null
-        }
-    },
+      { component: 'FormInputText', type: 'tel',   name: 'identity:primaryPhone.number', wrapperClass: 'phone',       label: phoneLabel,    },
 
-    handleSubmit: function(event) {
-        event.preventDefault();
+      // The backend simply needs to know the question id - the boundTo will be generated from that.
+      // Ultimately could build a local storage cache for these, so questions do not need to be requested on each page.
+      // For starters, just caching between questions would probably be helpful.
+      { component: 'FormQuestion', questionId: '583c410839ab46dd31cbdf6d', boundTo: 'identity', required: true },
+      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041bb', boundTo: 'identity', required: true },
+      // Employee Size
+      // Sales Volume
+      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041c7', boundTo: 'identity', required: false },
+      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041cf', boundTo: 'identity', required: false }
+    ];
+  },
 
-        var locker = this._formLock;
-        var error  = this._error;
+  componentDidMount: function() {
+    EventDispatcher.subscribe('AccountManager.account.loaded', function(account) {
+      var values = AccountManager.getAccountValues();
+      this.setState({ values: values });
+      this._loadOptinsFor(values['identity:primaryEmail']);
+    }.bind(this));
 
-        error.clear();
-        locker.lock();
+    EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+      this.setState({ values: AccountManager.getAccountValues(), nextTemplate: null });
+    }.bind(this));
 
-        var data = {};
-        for (var name in this._formRefs) {
-            var ref = this._formRefs[name];
-            data[name] = ref.state.value;
-        }
+    this._loadOptinsFor(this.state.values['identity:primaryEmail']);
+  },
 
-        data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
-        data['submission:referringHref'] = window.location.href;
+  getInitialState: function() {
+    return {
+      values       : AccountManager.getAccountValues(),
+      nextTemplate : null
+    }
+  },
 
-        var sourceKey = 'product-email-deployment-optin';
-        var payload   = {
-            data: data
-        };
+  updateFieldValue: function(event) {
+    var stateSlice = this.state.values;
+    stateSlice[event.target.name] = event.target.value;
+    this.setState({ values: stateSlice });
+  },
 
-        Debugger.info('EmailSubscriptionModule', 'handleSubmit', sourceKey, payload);
+  handleSubmit: function(event) {
+      event.preventDefault();
 
-        Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
+      var formData = this.state.values;
+
+      var locker = this._formLock;
+      var error  = this._error;
+
+      error.clear();
+      locker.lock();
+
+      var referringHost = window.location.protocol + '//' + window.location.host;
+      var referringHref = window.location.href;
+      if (Utils.isString(this.props.referringPath)) {
+          referringHref = referringHost + '/' + this.props.referringPath.replace(/^\//, '');
+      }
+
+      formData['submission:referringHost'] = referringHost;
+      formData['submission:referringHref'] = referringHref;
+
+      var sourceKey = 'product-email-deployment-optin';
+      var payload   = {
+          data: formData,
+          meta: this.props.meta || {},
+          notify: Utils.isObject(this.props.notify) ? this.props.notify : {}
+      };
+
+      Debugger.info('EmailSubscriptionModule', 'handleSubmit', sourceKey, payload);
+
+      Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response) {
+          if (Utils.isString(this.props.successRedirect)) {
+            // Redirect the user.
+            window.location.href = this.props.successRedirect;
+          } else {
             locker.unlock();
-
             // Refresh the account, if logged in.
             if (AccountManager.isLoggedIn()) {
-                AccountManager.reloadAccount().then(function() {
-                    EventDispatcher.trigger('AccountManager.account.loaded');
-                });
+              AccountManager.reloadAccount().then(function() {
+                EventDispatcher.trigger('AccountManager.account.loaded');
+              });
             }
-
-            // Set the next template to display (thank you page, etc).
+            // Set the next template to display.
             var template = (response.data) ? response.data.template || null : null;
             this.setState({ nextTemplate: template });
+          }
+      }.bind(this), function(jqXHR) {
+          locker.unlock();
+          this._error.displayAjaxError(jqXHR);
+      }.bind(this));
+  },
 
-        }.bind(this), function(jqXHR) {
-            locker.unlock();
-            this._error.displayAjaxError(jqXHR);
-        }.bind(this));
-    },
+  render: function() {
+    Debugger.log('ComponentEmailSubscriptions', 'render()', this);
 
-    _formRefs: {},
+    var className = 'platform-element';
+    if (this.props.className) {
+      className = className + ' ' + this.props.className;
+    }
+    var elements;
 
-    handleFieldRef: function(input) {
-        if (input) {
-            this._formRefs[input.props.name] = input;
-        }
-    },
+    if (this.state.nextTemplate) {
+      elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate || '' } });
+    } else {
+      elements = React.createElement('div', { className: className },
+        React.createElement('h2', null, this.props.title),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description || '' } }),
+        React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
+        React.createElement('hr'),
+        React.createElement('div', { className: 'email-subscription-wrapper' },
+          React.createElement(Radix.Components.get('FormProductsEmail'), {
+            values: this.state.values,
+            onChange: this.updateFieldValue,
+          }),
+          React.createElement(Radix.Components.get('Form'), {
+            name: 'product-email-deployment-optin',
+            fields: this.getFormDefinition(),
+            values: this.state.values,
+            onChange: this.updateFieldValue,
+            onSubmit: this.handleSubmit
+          })
+        ),
+        React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+        React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+      );
+    }
+    return (elements);
+  },
 
-    render: function() {
-        Debugger.log('ComponentEmailSubscriptions', 'render()', this);
+  _loadOptinsFor: function(emailAddress) {
+      var optIns = {}
+      var endpoint = '/app/opt-ins/email-deployment';
+      endpoint = (emailAddress) ? endpoint + '/' + emailAddress : endpoint;
 
-        var className = 'platform-element';
-        if (this.props.className) {
-            className = className + ' ' + this.props.className;
-        }
-        var elements;
+      Ajax.send(endpoint, 'GET').then(function(response) {
+          var stateSlice = this.state.values;
+          for (var prop in response.data) {
+            if (response.data.hasOwnProperty(prop)) {
+              stateSlice[prop] = response.data[prop];
+            }
+          }
+          this.setState({ values: stateSlice });
+      }.bind(this), function() {
+          Debugger.error('ComponentEmailSubscriptions _loadOptinsFor()', 'Unable to load optins.');
+      }.bind(this));
+  },
 
-        if (this.state.nextTemplate) {
-            elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate } });
-        } else {
-            elements = React.createElement('div', { className: className },
-                React.createElement('h2', null, this.props.title),
-                React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
-                React.createElement('hr'),
-                React.createElement('div', { className: 'email-subscription-wrapper' },
-                    React.createElement(Radix.Components.get('FormProductsEmail'), {
-                        fieldRef : this.handleFieldRef,
-                        optIns   : this.state.optIns
-                    }),
-                    React.createElement(Radix.Forms.get('EmailSubscription'), {
-                        account  : this.state.account,
-                        onSubmit : this.handleSubmit,
-                        fieldRef : this.handleFieldRef
-                    })
-                ),
-                React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-                React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
-            );
-        }
-        return (elements);
-    },
+  _setErrorDisplay: function(ref) {
+    this._error = ref;
+  },
 
-    _loadOptinsFor: function(emailAddress) {
-        var optIns = {}
-        if (emailAddress) {
-            Ajax.send('/app/opt-ins/email-deployment/' + emailAddress, 'GET').then(function(response) {
-                this.setState({ optIns: response.data });
-            }.bind(this), function() {
-                this.setState({ optIns: optIns });
-                Debugger.error('ComponentEmailSubscriptions _loadOptinsFor()', 'Unable to load optins.');
-            }.bind(this));
-        } else {
-            this.setState({ optIns: optIns });
-        }
-    },
-
-    _setErrorDisplay: function(ref) {
-        this._error = ref;
-    },
-
-    _setLock: function(ref) {
-        this._formLock = ref;
-    },
-
+  _setLock: function(ref) {
+    this._formLock = ref;
+  }
 });
