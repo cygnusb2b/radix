@@ -112,6 +112,10 @@ class AccountGenerator implements AuthGeneratorInterface
             $name = sprintf('submission:optIns.%s', $optIn->get('product')->getId());
             $values[$name] = $optIn->get('optedIn');
         }
+        if (empty($values)) {
+            // Ensure empty values are returned as an object.
+            $values = new \stdClass();
+        }
         return [
             'data' => ['values' => $values, 'roles' => $model->get('roles')],
         ];
