@@ -13,7 +13,7 @@ services:
     app_bundle.security.auth.generator.account:
         private: true
         class: AppBundle\Security\Auth\AccountGenerator
-        arguments: [ "@app_bundle.serializer.public_api" ]
+        arguments: [ "@app_bundle.security.jwt.generator_manager" ]
 
     app_bundle.security.auth.schema:
         class: AppBundle\Security\Auth\AuthSchema
@@ -58,6 +58,12 @@ services:
         class: AppBundle\Security\JWT\JWTGeneratorManager
         calls:
             - [ addGenerator, [ "@app_bundle.security.jwt.generator.core_user" ] ]
+            - [ addGenerator, [ "@app_bundle.security.jwt.generator.account" ] ]
+
+    app_bundle.security.jwt.generator.account:
+        private: true
+        class: AppBundle\Security\JWT\AccountGenerator
+        arguments: [ "%secret%" ]
 
     app_bundle.security.jwt.generator.core_user:
         private: true

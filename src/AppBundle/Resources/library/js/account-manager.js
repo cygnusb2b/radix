@@ -78,42 +78,7 @@ function AccountManager()
     }
 
     this.getAccountValues = function() {
-      // @todo -- this should be handled by the backend and/or link their state directly here??
-      var account = this.getAccount();
-      var values = {
-        'identity:givenName': account.givenName || '',
-        'identity:familyName': account.familyName || '',
-        'identity:primaryAddress.identifier': account.primaryAddress.identifier || '',
-        'identity:primaryAddress.postalCode': account.primaryAddress.postalCode || '',
-        'identity:primaryAddress.countryCode': account.primaryAddress.countryCode || '',
-        'identity:primaryEmail': account.primaryEmail || '',
-        'identity:primaryPhone.identifier': account.primaryPhone.identifier || '',
-        'identity:primaryPhone.number': account.primaryPhone.number || '',
-        'identity:companyName': account.companyName || '',
-        'identity:title': account.title || ''
-      };
-      for (var i = 0; i < account.answers.length; i++) {
-        var answer = account.answers[i];
-        if (!answer.question || !answer.question._id || !answer._type || !answer.value) {
-          continue;
-        }
-
-        var key = 'identity:answers.' + answer.question._id;
-        var value;
-        switch (answer._type) {
-          case 'identity-answer-choice':
-            if (!answer.value._id) {
-              continue;
-            }
-            value = answer.value._id;
-            break;
-          default:
-            value = answer.value;
-            break;
-        }
-        values[key] = value;
-      }
-      return values;
+      return this.getAccount()['values'];
     }
 
     this.getIdentityId = function() {
