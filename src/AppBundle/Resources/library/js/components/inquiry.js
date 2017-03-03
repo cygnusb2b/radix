@@ -16,8 +16,7 @@ React.createClass({ displayName: 'ComponentInquiry',
 
   getFormDefinition: function() {
     // @todo The backend should dictate these settings.
-    var account      = this.state.account;
-    var disableEmail = (account.token) ? true : false;
+    var disableEmail = true; //(account.token) ? true : false;
     var phoneType    = 'Phone'; //account.primaryPhone.phoneType || 'Phone';
     var phoneLabel   = phoneType + ' #';
     return [
@@ -47,17 +46,16 @@ React.createClass({ displayName: 'ComponentInquiry',
 
   componentDidMount: function() {
     EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-      this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues() });
+      this.setState({ values: AccountManager.getAccountValues() });
     }.bind(this));
 
     EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-        this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues(), nextTemplate: null });
+        this.setState({ values: AccountManager.getAccountValues(), nextTemplate: null });
     }.bind(this));
   },
 
   getInitialState: function() {
     return {
-      account: AccountManager.getAccount(), // @todo Once the form definition comes from the backend, the account state is not needed.
       values: AccountManager.getAccountValues(),
       nextTemplate : null
     }

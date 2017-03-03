@@ -21,8 +21,7 @@ React.createClass({ displayName: 'ComponentGatedDownload',
 
   getFormDefinition: function() {
     // @todo The backend should dictate these settings.
-    var account      = this.state.account;
-    var disableEmail = (account.token) ? true : false;
+    var disableEmail = true; //(account.token) ? true : false;
     var phoneType    = 'Phone'; //account.primaryPhone.phoneType || 'Phone';
     var phoneLabel   = phoneType + ' #';
     return [
@@ -48,17 +47,16 @@ React.createClass({ displayName: 'ComponentGatedDownload',
 
   componentDidMount: function() {
     EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-      this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues() });
+      this.setState({ values: AccountManager.getAccountValues() });
     }.bind(this));
 
     EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-        this.setState({ account : AccountManager.getAccount(), values: AccountManager.getAccountValues(), nextTemplate: null });
+        this.setState({ values: AccountManager.getAccountValues(), nextTemplate: null });
     }.bind(this));
   },
 
   getInitialState: function() {
     return {
-      account: AccountManager.getAccount(),
       values: AccountManager.getAccountValues(),
       nextTemplate : null
     }
