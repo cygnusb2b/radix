@@ -101,20 +101,20 @@ React.createClass({ displayName: 'ComponentGatedDownload',
 
     Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
       locker.unlock();
-
-      // Refresh the account, if logged in.
-      if (AccountManager.isLoggedIn()) {
-        AccountManager.reloadAccount().then(function() {
-          EventDispatcher.trigger('AccountManager.account.loaded');
-        });
+      if (Utils.isString(this.props.fileUrl)) {
+        // Redirect the user.
+        window.location.href = this.props.fileUrl;
+      } else {
+        // Refresh the account, if logged in.
+        if (AccountManager.isLoggedIn()) {
+          AccountManager.reloadAccount().then(function() {
+            EventDispatcher.trigger('AccountManager.account.loaded');
+          });
+        }
+        // Set the next template to display (thank you page, etc).
+        var template = (response.data) ? response.data.template || null : null;
+        this.setState({ nextTemplate: template });
       }
-
-      // Set the next template to display (thank you page, etc).
-      var template = (response.data) ? response.data.template || null : null;
-      // Redirect.
-      window.location.href = this.props.fileUrl;
-      // this.setState({ nextTemplate: template });
-
     }.bind(this), function(jqXHR) {
       locker.unlock();
       error.displayAjaxError(jqXHR);
@@ -130,11 +130,11 @@ React.createClass({ displayName: 'ComponentGatedDownload',
     }
     var elements;
     if (this.state.nextTemplate) {
-      elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate } });
+      elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate || '' } });
     } else {
       elements = React.createElement('div', { className: className },
         React.createElement('h2', null, this.props.title),
-        React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description } }),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description || '' } }),
         React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
         React.createElement('hr'),
         React.createElement(Radix.Components.get('Form'), {

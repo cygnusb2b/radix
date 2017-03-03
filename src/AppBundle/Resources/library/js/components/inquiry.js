@@ -102,7 +102,6 @@ React.createClass({ displayName: 'ComponentInquiry',
     Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
 
     Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
-      locker.unlock();
       if (Utils.isString(this.props.successRedirect)) {
         // Redirect the user.
         window.location.href = this.props.successRedirect;
@@ -115,6 +114,7 @@ React.createClass({ displayName: 'ComponentInquiry',
           });
         }
         // Set the next template to display.
+        var template = (response.data) ? response.data.template || null : null;
         this.setState({ nextTemplate: template });
       }
     }.bind(this), function(jqXHR) {
