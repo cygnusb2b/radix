@@ -1,0 +1,13 @@
+form-field-question:
+    entity:
+        extends: form-field
+        persistence:
+            key: mongodb
+            db: radix
+    relationships:
+        form:
+            type: one
+            entity: form-definition
+        question:
+            type: one
+            entity: question

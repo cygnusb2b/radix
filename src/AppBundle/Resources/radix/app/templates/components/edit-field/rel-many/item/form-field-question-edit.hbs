@@ -1,0 +1,30 @@
+<div class="form-group clearfix">
+    <p class="d-inline pull-left">Editing <strong>{{ model.question.label }}</strong></p>
+    <button type="button" class="close d-inline pull-right" aria-label="Close" {{action 'close'}}>
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="form-group">
+  <label>Question</label>
+  {{edit-field/autocomplete value=model.question modelType="question"}}
+</div>
+
+<fieldset class="form-group">
+    <small class="form-text text-muted">Additional options</small>
+    <div class="checkbox">
+        {{edit-field/checkbox checked=model.required label='Required'}}
+    </div>
+    <div class="checkbox">
+        {{edit-field/checkbox checked=model.readonly label='Read Only'}}
+    </div>
+</fieldset>
+
+<div class="form-group">
+    {{model-actions/save model=model}}
+    {{model-actions/undo model=model confirmValue=model.key rollbackRels=false}}
+    {{#unless model.isNew}}
+        {{model-actions/delete model=model confirmValue=model.key}}
+    {{/unless}}
+</div>
+

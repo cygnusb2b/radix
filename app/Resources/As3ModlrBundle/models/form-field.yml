@@ -1,0 +1,15 @@
+form-field:
+    entity:
+        abtract: true
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'sequenceable', 'timestampable', 'soft-deleteable' ]
+    attributes:
+        required:
+            type: boolean
+            defaultValue: false
+        readonly:
+            type: boolean
+            defaultValue: false

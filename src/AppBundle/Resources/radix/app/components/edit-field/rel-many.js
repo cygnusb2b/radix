@@ -27,7 +27,7 @@ export default Ember.Component.extend({
 
     sortOptions: null,
     hasSortOptions: Ember.computed('sortOptions', function() {
-        return Ember.isArray(this.get('sortOptions'));
+        return Ember.isArray(this.get('sortOptions')) && this.get('sortOptions.length');
     }),
 
     hasSorted: Ember.computed('sorted.@each.sequence', 'recompute', function() {

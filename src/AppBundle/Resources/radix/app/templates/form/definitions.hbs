@@ -1,7 +1,7 @@
 <div class="col-md-4">
     {{#-browse/list routeName='form.definitions' items=model as |item|}}
         <h5 class="list-group-item-heading">{{item.model.name}}</h5>
-        <p class="list-group-item-text">{{item.model.key}}</p>
+        <p class="list-group-item-text">{{item.model.title}}</p>
     {{/-browse/list}}
 </div>
 <div class="col-md-6">{{ outlet }}</div>
