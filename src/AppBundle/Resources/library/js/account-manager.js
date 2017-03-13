@@ -77,10 +77,6 @@ function AccountManager()
         return account;
     }
 
-    this.getAccountValues = function() {
-      return this.getAccount()['values'];
-    }
-
     this.getIdentityId = function() {
         return identityId;
     }

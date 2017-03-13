@@ -28,7 +28,7 @@ services:
     app_bundle.security.authenticator.account:
         private: true
         class: AppBundle\Security\Authenticator\AccountAuthenticator
-        arguments: [ "@as3_modlr.api.adapter", "@security.http_utils", "@security.encoder_factory", "@app_bundle.security.auth.generator_manager", "@app_bundle.security.encoder.legacy_encoder_manager" ]
+        arguments: [ "@as3_modlr.api.adapter", "@security.http_utils", "@security.encoder_factory", "@app_bundle.identity.manager", "@app_bundle.security.encoder.legacy_encoder_manager" ]
         calls:
             - [ addRoute, [ "app_bundle_app_auth_submit" ] ]
 
