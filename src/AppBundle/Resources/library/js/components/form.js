@@ -68,12 +68,12 @@ React.createClass({ displayName: 'Form',
   },
 
   _buildFormQuestionProps: function(field) {
-    var questionId = field.questionId;
-    var key = field.boundTo + ':answers.' + questionId;
+    var name = field.name;
     return {
-      key: key,
-      questionId: questionId,
-      value: this.props.values[key],
+      key: name,
+      questionId: field.question._id,
+      question: field.question,
+      value: this.props.values[name],
       required: field.required,
       onChange: this.props.onChange,
       onLookup: this._findAnswerFor

@@ -7,13 +7,14 @@ React.createClass({ displayName: 'ComponentFormQuestion',
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.questionId !== this.props.questionId) {
       // Re-run the question retrieval.
-      this._retrieveQuestion(nextProps.questionId);
+      this._retrieveQuestion(nextProps.questionId, true);
     }
   },
 
   getDefaultProps: function() {
     return {
       questionId: null,
+      question: {},
       required: false,
       onChange: null,
       onLookup: null,
@@ -23,8 +24,8 @@ React.createClass({ displayName: 'ComponentFormQuestion',
 
   getInitialState: function() {
     return {
-      loaded   : false,
-      question : {}
+      loaded   : this.props.question._id ? true : false,
+      question : this.props.question
     };
   },
 
@@ -133,14 +134,16 @@ React.createClass({ displayName: 'ComponentFormQuestion',
     this.props.onChange(event);
   },
 
-  _retrieveQuestion: function(questionId) {
-    Ajax.send('/app/question/' + questionId, 'GET').then(
-      function(response) {
-        this.setState({ loaded: true, question: response.data });
-      }.bind(this),
-      function(jqXhr) {
-        Debugger.error('Unable to load the question.');
-      }.bind(this)
-    );
+  _retrieveQuestion: function(questionId, force) {
+    if (force || !this.state.loaded) {
+      Ajax.send('/app/question/' + questionId, 'GET').then(
+        function(response) {
+          this.setState({ loaded: true, question: response.data });
+        }.bind(this),
+        function(jqXhr) {
+          Debugger.error('Unable to load the question.');
+        }.bind(this)
+      );
+    }
   }
 });
