@@ -1,0 +1,6 @@
+form-definition:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+    mixins: [ 'timestampable', 'keyable' ]
