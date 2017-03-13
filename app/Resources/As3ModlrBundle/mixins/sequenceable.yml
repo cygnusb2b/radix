@@ -2,3 +2,4 @@ sequenceable:
     attributes:
         sequence:
             type: integer
+            defaultValue: 0

@@ -61,11 +61,21 @@ class FormController extends AbstractAppController
         $data['form']['fields'] = [];
 
         $fields = [];
-        foreach ($form->get('identityFields') as $field) {
-            $fields[$field->get('sequence')] = $field;
-        }
-        ksort($fields);
-        foreach ($fields as $field) {
+
+        $sort = function(Model $a, Model $b) {
+            if ($a->get('sequence') == $b->get('sequence')) {
+                return 0;
+            }
+            return ($a->get('sequence') < $b->get('sequence')) ? -1 : 1;
+        };
+
+        $identityFields = $form->get('identityFields');
+        $questionFields = $form->get('questionFields');
+
+        usort($identityFields, $sort);
+        usort($questionFields, $sort);
+
+        foreach ($identityFields as $field) {
             $key  = $field->get('key');
             if ('primaryAddress.countryCode' === $key) {
                 $definition = [
@@ -106,12 +116,7 @@ class FormController extends AbstractAppController
             $data['form']['fields'][] = $definition;
         }
 
-        $fields = [];
-        foreach ($form->get('questionFields') as $field) {
-            $fields[$field->get('sequence')] = $field;
-        }
-        ksort($fields);
-        foreach ($fields as $field) {
+        foreach ($questionFields as $field) {
             $question = $field->get('question');
             $data['form']['fields'][] = [
                 'component'  => 'FormQuestion',
