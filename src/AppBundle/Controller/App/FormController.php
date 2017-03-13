@@ -46,8 +46,9 @@ class FormController extends AbstractAppController
         $manager = $this->get('app_bundle.identity.manager');
 
         $typeMap = [
-            'primaryEmail' => 'email',
+            'primaryEmail'        => 'email',
             'primaryPhone.number' => 'tel',
+            'password'            => 'password',
         ];
         $requiresIdentifier = [
             'primaryPhone',

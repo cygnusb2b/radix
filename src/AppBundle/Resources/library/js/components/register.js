@@ -10,36 +10,41 @@ React.createClass({ displayName: 'ComponentRegister',
     };
   },
 
-  getFormDefinition: function() {
-    // @todo The backend should dictate these settings.
-    return [
-      // The backend should automatically add these if an address or phone field is displayed below.
-      { component: 'FormInputHidden', name: 'identity:primaryAddress.identifier' },
+  componentDidMount: function() {
 
-      { component: 'FormInputText', type: 'text',     name: 'identity:givenName',    wrapperClass: 'givenName',   label: 'First Name',    required: true },
-      { component: 'FormInputText', type: 'text',     name: 'identity:familyName',   wrapperClass: 'familyName',  label: 'Last Name',     required: true },
-      { component: 'FormInputText', type: 'email',    name: 'identity:primaryEmail', wrapperClass: 'email',       label: 'Email Address', required: true },
-      { component: 'FormInputText', type: 'password', name: 'identity:password',     wrapperClass: 'password',    label: 'Password',      required: true },
-      { component: 'FormInputText', type: 'text',     name: 'identity:companyName',  wrapperClass: 'companyName', label: 'Company Name',  required: true },
-      { component: 'FormInputText', type: 'text',     name: 'identity:title',        wrapperClass: 'title',       label: 'Job Title',     required: true },
+    this._loadForm('register');
 
-      // The backend should use this by default when selecting country??
-      { component: 'CountryPostalCode', postalCode: 'identity:primaryAddress.postalCode', countryCode: 'identity:primaryAddress.countryCode', required: true },
+    EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+      this.setState({ nextTemplate: null });
+      this._loadForm('register');
+    }.bind(this));
 
-      // The backend simply needs to know the question id - the boundTo will be generated from that.
-      // Ultimately could build a local storage cache for these, so questions do not need to be requested on each page.
-      // For starters, just caching between questions would probably be helpful.
-      { component: 'FormQuestion', questionId: '583c410839ab46dd31cbdf6d', boundTo: 'identity', required: true },
-      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041bb', boundTo: 'identity', required: true }
-    ];
+    EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+      this.setState({ nextTemplate: null });
+      this._loadForm('register');
+    }.bind(this));
   },
 
   getInitialState: function() {
     return {
       loggedIn: AccountManager.isLoggedIn(),
-      values: AccountManager.getAccountValues(),
+      loaded: false,
+      fields: [],
+      values: {},
       verify: null
     };
+  },
+
+  _loadForm: function(key) {
+    var locker = this._formLock;
+    locker.lock();
+
+    Ajax.send('/app/form/' + key, 'GET').then(function(response) {
+      this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
+      locker.unlock();
+    }.bind(this), function() {
+      locker.unlock();
+    });
   },
 
   updateFieldValue: function(event) {
@@ -116,13 +121,7 @@ React.createClass({ displayName: 'ComponentRegister',
     var elements;
     if (!this.state.verify) {
       elements = React.createElement('div', null,
-        React.createElement(Radix.Components.get('Form'), {
-          name: 'register',
-          fields: this.getFormDefinition(),
-          values: this.state.values,
-          onChange: this.updateFieldValue,
-          onSubmit: this.handleSubmit
-        }),
+        this._getForm(),
         React.createElement('p', { className: 'text-center' }, 'Already have an account? ',
           React.createElement(Radix.Components.get('ModalLinkLogin'), { label: 'Sign in!' })
         ),
@@ -135,6 +134,20 @@ React.createClass({ displayName: 'ComponentRegister',
       );
     }
     return elements;
+  },
+
+  _getForm: function() {
+    var form;
+    if (this.state.loaded) {
+      form = React.createElement(Radix.Components.get('Form'), {
+        name: 'register',
+        fields: this.state.fields,
+        values: this.state.values,
+        onChange: this.updateFieldValue,
+        onSubmit: this.handleSubmit
+      });
+    }
+    return form;
   },
 
   _formRefs: {},
