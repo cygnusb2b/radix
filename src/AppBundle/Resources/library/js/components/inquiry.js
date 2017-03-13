@@ -15,23 +15,17 @@ React.createClass({ displayName: 'ComponentInquiry',
   },
 
   componentDidMount: function() {
-    var locker = this._formLock;
 
-    locker.lock();
-
-    Ajax.send('/app/form/inquiry', 'GET').then(function(response) {
-      this.setState({ loaded: true, fields: response.data.form.fields });
-      locker.unlock();
-    }.bind(this), function() {
-      locker.unlock();
-    });
+    this._loadForm();
 
     EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-      this.setState({ values: AccountManager.getAccountValues() });
+      this.setState({ nextTemplate: null });
+      this._loadForm();
     }.bind(this));
 
     EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-        this.setState({ values: AccountManager.getAccountValues(), nextTemplate: null });
+      this.setState({ nextTemplate: null });
+      this._loadForm();
     }.bind(this));
   },
 
@@ -39,9 +33,21 @@ React.createClass({ displayName: 'ComponentInquiry',
     return {
       loaded: false,
       fields: [],
-      values: AccountManager.getAccountValues(),
+      values: {},
       nextTemplate : null
     }
+  },
+
+  _loadForm: function() {
+    var locker = this._formLock;
+    locker.lock();
+
+    Ajax.send('/app/form/inquiry', 'GET').then(function(response) {
+      this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
+      locker.unlock();
+    }.bind(this), function() {
+      locker.unlock();
+    });
   },
 
   updateFieldValue: function(event) {

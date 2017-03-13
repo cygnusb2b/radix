@@ -41,7 +41,7 @@ class FormController extends AbstractAppController
     {
         $data = [
             'form'   => [],
-            'values' => [],
+            'values' => new \stdClass(),
         ];
         $manager = $this->get('app_bundle.identity.manager');
 
@@ -122,6 +122,15 @@ class FormController extends AbstractAppController
             ];
         }
 
+        if (empty($data['form'])) {
+            // Ensure empty forms are returned as an object.
+            $data['form'] = new \stdClass();
+        }
+
+        if (true === $manager->isAccountLoggedIn()) {
+            $data['values'] =  $this->serializeValues($manager->getActiveAccount(), $data['form']['fields']);
+        }
+
         return new JsonResponse(['data' => $data]);
     }
 
@@ -187,5 +196,79 @@ class FormController extends AbstractAppController
         }
 
         return $serialized;
+    }
+
+    private function serializeValues(Model $model, array $fields)
+    {
+        // @todo Values should only be returned when needed, not all the time.
+        $values     = [];
+        $attributes = ['givenName', 'familyName', 'middleName', 'salutation', 'suffix', 'gender', 'title', 'companyName', 'picture', 'displayName'];
+        foreach ($attributes as $key) {
+            $name = sprintf('identity:%s', $key);
+            $value = $model->get($key);
+            if (!empty($value)) {
+                $values[$name] = $value;
+            }
+        }
+
+        $email = $model->get('primaryEmail');
+        if (!empty($email)) {
+            $values['identity:primaryEmail'] = $email;
+        }
+
+        $phoneAttrs = ['identifier', 'description', 'phoneType', 'number', 'isPrimary'];
+        if (null !== $item = $model->get('primaryPhone')) {
+            $item = (array) $item;
+            foreach ($phoneAttrs as $key) {
+                $name = sprintf('identity:primaryPhone.%s', $key);
+                if (isset($item[$key]) && !empty($item[$key])) {
+                    $values[$name] = $item[$key];
+                }
+            }
+        }
+
+        $addrAttrs = ['identifier','description','isPrimary','companyName','street','extra','city','regionCode','countryCode','postalCode'];
+        if (null !== $item = $model->get('primaryAddress')) {
+            $item = (array) $item;
+            foreach ($addrAttrs as $key) {
+                $name = sprintf('identity:primaryAddress.%s', $key);
+                if (isset($item[$key]) && !empty($item[$key])) {
+                    $values[$name] = $item[$key];
+                }
+            }
+        }
+
+        foreach ($model->get('answers') as $answer) {
+            if (null === $question = $answer->get('question')) {
+                continue;
+            }
+            $name = sprintf('identity:answers.%s', $question->getId());
+            switch ($answer->getType()) {
+                case 'identity-answer-choice':
+                    if (null !== $choice = $answer->get('value')) {
+                        $values[$name] = $choice->getId();
+                    }
+                    break;
+                case 'identity-answer-choices':
+                    $choices = [];
+                    foreach ($answer->get('value') as $choice) {
+                        $choices[] = $choice->getId();
+                    }
+                    $values[$name] = implode(',', $choices);
+                    break;
+                default:
+                    $value = $answer->get('value');
+                    if (is_bool($value) && !$value) {
+                        $value = 'false';
+                    }
+                    $values[$name] = (string) $value;
+                    break;
+            }
+        }
+        if (empty($values)) {
+            // Ensure empty values are returned as an object.
+            $values = new \stdClass();
+        }
+        return $values;
     }
 }
