@@ -13,10 +13,10 @@ export default Route.extend({
   actions: {
     loadTabs() {
       return [
-        // { key : 'general',      text : 'General',      icon : 'ion-document',            template : 'demographic/questions/-general', active : true },
+        { key : 'general',      text : 'General',      icon : 'ion-document',            template : 'form/definitions/-general', active : true },
         // { key : 'answers',      text : 'Choices',      icon : 'ion-android-list',        template : 'demographic/questions/-answers'      },
         // { key : 'integrations', text : 'Integrations', icon : 'ion-wrench',              template : 'demographic/questions/-integrations' },
-        // { key : 'info',         text : 'Info',         icon : 'ion-information-circled', template : 'demographic/questions/-info'         },
+        { key : 'info',         text : 'Info',         icon : 'ion-information-circled', template : 'form/definitions/-info'         },
       ];
     },
   },
