@@ -16,16 +16,16 @@ React.createClass({ displayName: 'ComponentInquiry',
 
   componentDidMount: function() {
 
-    this._loadForm();
+    this._loadForm('inquiry');
 
     EventDispatcher.subscribe('AccountManager.account.loaded', function() {
       this.setState({ nextTemplate: null });
-      this._loadForm();
+      this._loadForm('inquiry');
     }.bind(this));
 
     EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
       this.setState({ nextTemplate: null });
-      this._loadForm();
+      this._loadForm('inquiry');
     }.bind(this));
   },
 
@@ -38,11 +38,11 @@ React.createClass({ displayName: 'ComponentInquiry',
     }
   },
 
-  _loadForm: function() {
+  _loadForm: function(key) {
     var locker = this._formLock;
     locker.lock();
 
-    Ajax.send('/app/form/inquiry', 'GET').then(function(response) {
+    Ajax.send('/app/form/' + key, 'GET').then(function(response) {
       this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
       locker.unlock();
     }.bind(this), function() {

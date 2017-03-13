@@ -19,47 +19,41 @@ React.createClass({ displayName: 'ComponentGatedDownload',
     };
   },
 
-  getFormDefinition: function() {
-    // @todo The backend should dictate these settings.
-    var disableEmail = true; //(account.token) ? true : false;
-    var phoneType    = 'Phone'; //account.primaryPhone.phoneType || 'Phone';
-    var phoneLabel   = phoneType + ' #';
-    return [
-      // The backend should automatically add these if an address or phone field is displayed below.
-      { component: 'FormInputHidden', name: 'identity:primaryAddress.identifier' },
-
-      { component: 'FormInputText', type: 'text',  name: 'identity:givenName',           wrapperClass: 'givenName',   label: 'First Name',    required: true  },
-      { component: 'FormInputText', type: 'text',  name: 'identity:familyName',          wrapperClass: 'familyName',  label: 'Last Name',     required: true  },
-      { component: 'FormInputText', type: 'email', name: 'identity:primaryEmail',        wrapperClass: 'email',       label: 'Email Address', required: !disableEmail, readonly: disableEmail },
-      { component: 'FormInputText', type: 'text',  name: 'identity:companyName',         wrapperClass: 'companyName', label: 'Company Name', required: true },
-      { component: 'FormInputText', type: 'text',  name: 'identity:title',               wrapperClass: 'title',       label: 'Job Title',     required: true  },
-
-      // The backend should use this by default when selecting country??
-      { component: 'CountryPostalCode', postalCode: 'identity:primaryAddress.postalCode', countryCode: 'identity:primaryAddress.countryCode', required: true },
-
-      // The backend simply needs to know the question id - the boundTo will be generated from that.
-      // Ultimately could build a local storage cache for these, so questions do not need to be requested on each page.
-      // For starters, just caching between questions would probably be helpful.
-      { component: 'FormQuestion', questionId: '583c410839ab46dd31cbdf6d', boundTo: 'identity', required: false },
-      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041bb', boundTo: 'identity', required: true }
-    ];
-  },
 
   componentDidMount: function() {
+
+    this._loadForm('gated-download');
+
     EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-      this.setState({ values: AccountManager.getAccountValues() });
+      this.setState({ nextTemplate: null });
+      this._loadForm('gated-download');
     }.bind(this));
 
     EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-        this.setState({ values: AccountManager.getAccountValues(), nextTemplate: null });
+      this.setState({ nextTemplate: null });
+      this._loadForm('gated-download');
     }.bind(this));
   },
 
   getInitialState: function() {
     return {
-      values: AccountManager.getAccountValues(),
+      loaded: false,
+      fields: [],
+      values: {},
       nextTemplate : null
     }
+  },
+
+  _loadForm: function(key) {
+    var locker = this._formLock;
+    locker.lock();
+
+    Ajax.send('/app/form/' + key, 'GET').then(function(response) {
+      this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
+      locker.unlock();
+    }.bind(this), function() {
+      locker.unlock();
+    });
   },
 
   updateFieldValue: function(event) {
@@ -133,22 +127,32 @@ React.createClass({ displayName: 'ComponentGatedDownload',
       elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate || '' } });
     } else {
       elements = React.createElement('div', { className: className },
+        this._getForm(),
+        React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+        React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+      );
+    }
+    return (elements);
+  },
+
+  _getForm: function() {
+    var form;
+    if (this.state.loaded) {
+      form = React.createElement('div', null,
         React.createElement('h2', null, this.props.title),
         React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description || '' } }),
         React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
         React.createElement('hr'),
         React.createElement(Radix.Components.get('Form'), {
           name: 'gated-download',
-          fields: this.getFormDefinition(),
+          fields: this.state.fields,
           values: this.state.values,
           onChange: this.updateFieldValue,
           onSubmit: this.handleSubmit
-        }),
-        React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-        React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+        })
       );
     }
-    return (elements);
+    return form;
   },
 
   _setErrorDisplay: function(ref) {
