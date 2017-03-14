@@ -128,6 +128,14 @@ function AccountManager()
 
     }
 
+    this.retrieveIdentityData = function() {
+      return Ajax.send('/app/identity', 'GET').then(function(response) {
+        return response.data;
+      }, function() {
+        return {};
+      });
+    }
+
     function login(payload, headers)
     {
         var promise = Ajax.send('/app/auth', 'POST', payload, headers);

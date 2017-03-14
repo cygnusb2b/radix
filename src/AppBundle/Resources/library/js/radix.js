@@ -36,6 +36,10 @@
         return AccountManager.getIdentityId();
     };
 
+    Radix.retrieveIdentityData = function() {
+      return AccountManager.retrieveIdentityData();
+    };
+
     Radix.hasAccount = function() {
         return AccountManager.isLoggedIn();
     };

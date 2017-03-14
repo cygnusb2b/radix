@@ -22,6 +22,11 @@ app_bundle_app_form:
     defaults: { _controller: AppBundle:App\Form:retrieve }
     methods: [ GET ]
 
+app_bundle_app_identity:
+    path: /app/identity
+    defaults: { _controller: AppBundle:App\Identity:index }
+    methods: [ GET ]
+
 app_bundle_app_init:
     path: /app/init
     defaults: { _controller: AppBundle:App\Init:default }
