@@ -11,40 +11,6 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
     };
   },
 
-  getFormDefinition: function() {
-    // @todo The backend should dictate these settings.
-    var disableEmail = false; //(account.token) ? true : false;
-    var phoneType    = 'Phone'; //account.primaryPhone.phoneType || 'Phone';
-    var phoneLabel   = phoneType + ' #';
-    return [
-      // The backend should automatically add these if an address or phone field is displayed below.
-      { component: 'FormInputHidden', name: 'identity:primaryAddress.identifier' },
-      { component: 'FormInputHidden', name: 'identity:primaryPhone.identifier' },
-
-      // This is a new scenerio: the value comes from the identity, name is bound to the submission.
-      { component: 'FormInputText', type: 'email', name: 'identity:primaryEmail',  wrapperClass: 'email',       label: 'Email Address', required: !disableEmail, readonly: disableEmail },
-      { component: 'FormInputText', type: 'text',  name: 'identity:givenName',           wrapperClass: 'givenName',   label: 'First Name',    required: true  },
-      { component: 'FormInputText', type: 'text',  name: 'identity:familyName',          wrapperClass: 'familyName',  label: 'Last Name',     required: true  },
-      { component: 'FormInputText', type: 'text',  name: 'identity:companyName',         wrapperClass: 'companyName', label: 'Company Name' },
-      { component: 'FormInputText', type: 'text',  name: 'identity:title',               wrapperClass: 'title',       label: 'Job Title',     required: true  },
-
-      // The backend should use this by default when selecting country??
-      { component: 'CountryPostalCode', postalCode: 'identity:primaryAddress.postalCode', countryCode: 'identity:primaryAddress.countryCode', required: true },
-
-      { component: 'FormInputText', type: 'tel',   name: 'identity:primaryPhone.number', wrapperClass: 'phone',       label: phoneLabel,    },
-
-      // The backend simply needs to know the question id - the boundTo will be generated from that.
-      // Ultimately could build a local storage cache for these, so questions do not need to be requested on each page.
-      // For starters, just caching between questions would probably be helpful.
-      { component: 'FormQuestion', questionId: '583c410839ab46dd31cbdf6d', boundTo: 'identity', required: true },
-      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041bb', boundTo: 'identity', required: true },
-      // Employee Size
-      // Sales Volume
-      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041c7', boundTo: 'identity', required: false },
-      { component: 'FormQuestion', questionId: '580f6b3bd78c6a78830041cf', boundTo: 'identity', required: false }
-    ];
-  },
-
   componentDidMount: function() {
 
     this._loadForm('email-subscriptions');
