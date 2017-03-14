@@ -166,7 +166,6 @@
 
     function Forms()
     {
-        this.EmailSubscription      = {{ loadForm('email-subscription') }}
         this.ResetPasswordGenerate  = {{ loadForm('reset-password-generate') }}
         this.ResetPassword          = {{ loadForm('reset-password') }}
         this.Login                  = {{ loadForm('login') }}
