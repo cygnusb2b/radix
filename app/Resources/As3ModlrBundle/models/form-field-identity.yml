@@ -9,7 +9,3 @@ form-field-identity:
             type: string
         label:
             type: string
-    relationships:
-        form:
-            type: one
-            entity: form-definition

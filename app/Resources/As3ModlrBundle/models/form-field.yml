@@ -5,6 +5,8 @@ form-field:
         persistence:
             key: mongodb
             db: radix
+            schemata:
+                - { keys: { form: 1 }, options: { } }
     mixins: [ 'sequenceable', 'timestampable', 'soft-deleteable' ]
     attributes:
         required:
@@ -13,3 +15,7 @@ form-field:
         readonly:
             type: boolean
             defaultValue: false
+    relationships:
+        form:
+            type: one
+            entity: form-definition

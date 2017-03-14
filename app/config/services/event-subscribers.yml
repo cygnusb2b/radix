@@ -5,6 +5,12 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.event_subscriber.form_field:
+        private: true
+        class: AppBundle\EventSubscriber\FormFieldSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
     app_bundle.event_subscriber.model_factories:
         private: true
         class: AppBundle\EventSubscriber\ModelFactorySubscriber
