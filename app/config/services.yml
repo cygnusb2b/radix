@@ -102,6 +102,5 @@ services:
 
     app_bundle.twig.library_extension:
         class: AppBundle\Twig\LibraryExtension
-        arguments: [ "@app_bundle.core.account_manager" ]
         tags:
             - { name: twig.extension }
