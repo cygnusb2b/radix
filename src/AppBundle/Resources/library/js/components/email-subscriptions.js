@@ -46,22 +46,25 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
   },
 
   componentDidMount: function() {
-    EventDispatcher.subscribe('AccountManager.account.loaded', function(account) {
-      var values = AccountManager.getAccountValues();
-      this.setState({ values: values });
-      this._loadOptinsFor(values['identity:primaryEmail']);
+
+    this._loadForm('email-subscriptions');
+
+    EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+      this.setState({ nextTemplate: null });
+      this._loadForm('email-subscriptions');
     }.bind(this));
 
     EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-      this.setState({ values: AccountManager.getAccountValues(), nextTemplate: null });
+      this.setState({ nextTemplate: null });
+      this._loadForm('email-subscriptions');
     }.bind(this));
-
-    this._loadOptinsFor(this.state.values['identity:primaryEmail']);
   },
 
   getInitialState: function() {
     return {
-      values       : AccountManager.getAccountValues(),
+      loaded: false,
+      fields: [],
+      values: {},
       nextTemplate : null
     }
   },
@@ -136,6 +139,18 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
       elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate || '' } });
     } else {
       elements = React.createElement('div', { className: className },
+        this._getForm(),
+        React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+        React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+      );
+    }
+    return (elements);
+  },
+
+  _getForm: function() {
+    var form;
+    if (this.state.loaded) {
+      form = React.createElement('div', null,
         React.createElement('h2', null, this.props.title),
         React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description || '' } }),
         React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
@@ -146,36 +161,28 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
             onChange: this.updateFieldValue,
           }),
           React.createElement(Radix.Components.get('Form'), {
-            name: 'product-email-deployment-optin',
-            fields: this.getFormDefinition(),
+            name: 'email-subscriptions', // 'product-email-deployment-optin',
+            fields: this.state.fields,
             values: this.state.values,
             onChange: this.updateFieldValue,
             onSubmit: this.handleSubmit
           })
-        ),
-        React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-        React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+        )
       );
     }
-    return (elements);
+    return form;
   },
 
-  _loadOptinsFor: function(emailAddress) {
-      var optIns = {}
-      var endpoint = '/app/opt-ins/email-deployment';
-      endpoint = (emailAddress) ? endpoint + '/' + emailAddress : endpoint;
+  _loadForm: function(key) {
+    var locker = this._formLock;
+    locker.lock();
 
-      Ajax.send(endpoint, 'GET').then(function(response) {
-          var stateSlice = this.state.values;
-          for (var prop in response.data) {
-            if (response.data.hasOwnProperty(prop)) {
-              stateSlice[prop] = response.data[prop];
-            }
-          }
-          this.setState({ values: stateSlice });
-      }.bind(this), function() {
-          Debugger.error('ComponentEmailSubscriptions _loadOptinsFor()', 'Unable to load optins.');
-      }.bind(this));
+    Ajax.send('/app/form/' + key, 'GET').then(function(response) {
+      this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
+      locker.unlock();
+    }.bind(this), function() {
+      locker.unlock();
+    });
   },
 
   _setErrorDisplay: function(ref) {
