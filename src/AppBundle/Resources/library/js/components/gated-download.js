@@ -99,12 +99,6 @@ React.createClass({ displayName: 'ComponentGatedDownload',
         // Redirect the user.
         window.location.href = this.props.fileUrl;
       } else {
-        // Refresh the account, if logged in.
-        if (AccountManager.isLoggedIn()) {
-          AccountManager.reloadAccount().then(function() {
-            EventDispatcher.trigger('AccountManager.account.loaded');
-          });
-        }
         // Set the next template to display (thank you page, etc).
         var template = (response.data) ? response.data.template || null : null;
         this.setState({ nextTemplate: template });

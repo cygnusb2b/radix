@@ -110,12 +110,6 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
             window.location.href = this.props.successRedirect;
           } else {
             locker.unlock();
-            // Refresh the account, if logged in.
-            if (AccountManager.isLoggedIn()) {
-              AccountManager.reloadAccount().then(function() {
-                EventDispatcher.trigger('AccountManager.account.loaded');
-              });
-            }
             // Set the next template to display.
             var template = (response.data) ? response.data.template || null : null;
             this.setState({ nextTemplate: template });
