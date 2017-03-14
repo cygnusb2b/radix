@@ -4,7 +4,6 @@ namespace AppBundle\Controller\App;
 
 use \DateTime;
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Serializer\PublicApiRules as Rules;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -134,7 +133,7 @@ class FormController extends AbstractAppController
         }
 
         if (true === $manager->isAccountLoggedIn()) {
-            $data['values'] =  $this->serializeValues($manager->getActiveAccount(), $data['form']['fields']);
+            $data['values'] =  $this->serializeValues($manager->getActiveAccount(), $data['form']['fields'], $form->get('key'));
         }
 
         return new JsonResponse(['data' => $data]);
@@ -164,47 +163,7 @@ class FormController extends AbstractAppController
         return $this->get('as3_modlr.store')->findQuery('form-definition', $criteria)->getSingleResult();
     }
 
-
-    /**
-     * Serializes the provided question.
-     *
-     * @todo    This needs to be consolidated into a service or helper so this and the question controller can share.
-     * @param   Model   $question
-     * @return  array
-     */
-    private function serializeQuestion(Model $question)
-    {
-        $serializer = $this->get('app_bundle.serializer.public_api');
-        $serializer->setMaxDepth(2);
-        $serializer->addRule(new Rules\QuestionSimpleRule());
-
-        if (!in_array($question->get('questionType'), ['choice-single', 'choice-multiple', 'related-choice-single'])) {
-            return $serializer->serialize($question);
-        }
-
-        $serializer->addRule(new Rules\QuestionChoiceSimpleRule());
-
-        $serialized = $serializer->serialize($question);
-        $sequence   = [];
-        foreach (['choices', 'relatedChoices'] as $key) {
-            foreach ($serialized['data'][$key] as $index => $choice) {
-                $sequence[$index] = $choice['sequence'];
-                $serialized['data'][$key][$index]['option'] = [
-                    'value'     => $choice['_id'],
-                    'label'     => $choice['name']
-                ];
-            }
-        }
-
-        if ('related-choice-single' !== $question->get('questionType')) {
-            // Sort the choices by sequence, but only for non-related-choice answers.
-            array_multisort($sequence, SORT_ASC, $serialized['data']['choices']);
-        }
-
-        return $serialized;
-    }
-
-    private function serializeValues(Model $model, array $fields)
+    private function serializeValues(Model $model, array $fields, $formKey)
     {
         // @todo Values should only be returned when needed, not all the time.
         $values     = [];
@@ -271,6 +230,13 @@ class FormController extends AbstractAppController
                     break;
             }
         }
+
+        if ('email-subscriptions' === $formKey && isset($values['identity:primaryEmail'])) {
+            // Hack to add optin values. This should be removed once email deployment products are added as a question type.
+            $optIns = $this->loadOptInValues($values['identity:primaryEmail']);
+            $values = array_merge($values, $optIns);
+        }
+
         if (empty($values)) {
             // Ensure empty values are returned as an object.
             $values = new \stdClass();

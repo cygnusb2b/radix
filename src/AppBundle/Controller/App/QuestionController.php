@@ -4,7 +4,6 @@ namespace AppBundle\Controller\App;
 
 use \DateTime;
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Serializer\PublicApiRules as Rules;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,43 +135,5 @@ class QuestionController extends AbstractAppController
     {
         $criteria = ['key' => $key];
         return $this->get('as3_modlr.store')->findQuery('question-tag', $criteria)->getSingleResult();
-    }
-
-    /**
-     * Serializes the provided question.
-     *
-     * @param   Model   $question
-     * @return  array
-     */
-    private function serializeQuestion(Model $question)
-    {
-        $serializer = $this->get('app_bundle.serializer.public_api');
-        $serializer->setMaxDepth(2);
-        $serializer->addRule(new Rules\QuestionSimpleRule());
-
-        if (!in_array($question->get('questionType'), ['choice-single', 'choice-multiple', 'related-choice-single'])) {
-            return $serializer->serialize($question);
-        }
-
-        $serializer->addRule(new Rules\QuestionChoiceSimpleRule());
-
-        $serialized = $serializer->serialize($question);
-        $sequence   = [];
-        foreach (['choices', 'relatedChoices'] as $key) {
-            foreach ($serialized['data'][$key] as $index => $choice) {
-                $sequence[$index] = $choice['sequence'];
-                $serialized['data'][$key][$index]['option'] = [
-                    'value'     => $choice['_id'],
-                    'label'     => $choice['name']
-                ];
-            }
-        }
-
-        if ('related-choice-single' !== $question->get('questionType')) {
-            // Sort the choices by sequence, but only for non-related-choice answers.
-            array_multisort($sequence, SORT_ASC, $serialized['data']['choices']);
-        }
-
-        return $serialized;
     }
 }
