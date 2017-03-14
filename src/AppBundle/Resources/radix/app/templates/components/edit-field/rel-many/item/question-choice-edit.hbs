@@ -17,6 +17,17 @@
 
 {{partial 'demographic/choices/-options'}}
 
+{{#if model.childQuestion}}
+  <div class="form-group">
+    <label>Will display this child question when selected.</label>
+    <ul class="list-group">
+        {{#link-to 'demographic.questions.edit' model.childQuestion.id class='list-group-item list-group-item-action'}}
+            {{model.childQuestion.name}}
+        {{/link-to}}
+    </ul>
+  </div>
+{{/if}}
+
 <div class="form-group">
     {{model-actions/save model=model}}
     {{model-actions/undo model=model confirmValue=model.name rollbackRels=false}}

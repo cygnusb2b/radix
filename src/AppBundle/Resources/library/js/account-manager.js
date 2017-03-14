@@ -47,7 +47,7 @@ function AccountManager()
     }
 
     this.isLoggedIn = function() {
-        return (account._id) ? true : false;
+        return (account.token) ? true : false;
     }
 
     this.parseDetectionParams = function() {
@@ -126,6 +126,14 @@ function AccountManager()
         });
         return promise;
 
+    }
+
+    this.retrieveIdentityData = function() {
+      return Ajax.send('/app/identity', 'GET').then(function(response) {
+        return response.data;
+      }, function() {
+        return {};
+      });
     }
 
     function login(payload, headers)

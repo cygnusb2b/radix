@@ -118,6 +118,7 @@ class IdentityAnswerFactory extends AbstractModelFactory implements SubscriberFa
                 return;
             }
         }
+
         // Answer doesn't exist on identity, add it.
         if (null !== $answer) {
             $answer->set('identity', $identity);
@@ -135,6 +136,7 @@ class IdentityAnswerFactory extends AbstractModelFactory implements SubscriberFa
         if (null === $answer) {
             return;
         }
+
         $answer->set('identity', $identity);
     }
 }

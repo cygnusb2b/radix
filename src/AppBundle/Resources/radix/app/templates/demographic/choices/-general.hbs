@@ -1,3 +1,7 @@
+<div class="alert alert-info" role="alert">
+    Demographic choice for {{#link-to 'demographic.questions.edit' model.question.id class="alert-link"}}{{model.question.name}}{{/link-to}}.
+</div>
+
 {{-bootstrap/form/input-group
     key='name'
     value=model.name
@@ -15,6 +19,10 @@
 
 {{partial 'demographic/choices/-options'}}
 
-<div class="alert alert-info" role="alert">
-    Demographic choice for {{#link-to 'demographic.questions.edit' model.question.id class="alert-link"}}{{model.question.name}}{{/link-to}}.
+<div class="card">
+    <div class="card-header">Child Question</div>
+    <div class="card-block">
+        {{edit-field/autocomplete value=model.childQuestion multiple=false modelType='question'}}
+        <small>When a user selects this choice, the above question will be displayed.</small>
+    </div>
 </div>

@@ -1,0 +1,11 @@
+form-field-identity:
+    entity:
+        extends: form-field
+        persistence:
+            key: mongodb
+            db: radix
+    attributes:
+        key:
+            type: string
+        label:
+            type: string

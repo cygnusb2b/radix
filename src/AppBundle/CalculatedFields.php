@@ -7,6 +7,19 @@ use As3\Modlr\Models\Model;
 
 class CalculatedFields
 {
+    public static function identityAddressIsEmpty(Embed $address)
+    {
+        $set  = [];
+        $keys = ['companyName', 'street', 'extra', 'city', 'region', 'regionCode', 'country', 'countryCode', 'postalCode'];
+        foreach ($keys as $key) {
+            $value = trim($address->get($key));
+            if (!empty($value)) {
+                $set[$key] = true;
+            }
+        }
+        return empty($set);
+    }
+
     public static function identityFirstName(Model $model)
     {
         return $model->get('givenName');
@@ -129,5 +142,10 @@ class CalculatedFields
             }
         }
         return $primary;
+    }
+
+    public static function questionChoiceHasDependents(Model $model)
+    {
+        return !empty($model->get('dependents'));
     }
 }

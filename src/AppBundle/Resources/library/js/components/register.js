@@ -1,130 +1,179 @@
 React.createClass({ displayName: 'ComponentRegister',
-    getDefaultProps: function() {
-        return {
-            title     : 'Register',
-            onSuccess : null,
-            onFailure : null
-        };
-    },
+  getDefaultProps: function() {
+    return {
+      title: 'Register',
+      description: null,
+      className: null,
+      referringPath: null,
+      onSuccess: null,
+      onFailure: null
+    };
+  },
 
-    getInitialState: function() {
-        return {
-            loggedIn : AccountManager.isLoggedIn(),
-            verify   : null
-        };
-    },
+  componentDidMount: function() {
 
-    handleFieldRef: function(input) {
-        if (input) {
-            this._formRefs[input.props.name] = input;
-        }
-    },
+    this._loadForm('register');
 
-    handleSubmit: function(event) {
-        event.preventDefault();
+    EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+      this.setState({ nextTemplate: null });
+      this._loadForm('register');
+    }.bind(this));
 
-        var locker = this._formLock;
-        var error  = this._error;
+    EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+      this.setState({ nextTemplate: null });
+      this._loadForm('register');
+    }.bind(this));
+  },
 
-        error.clear();
-        locker.lock();
+  getInitialState: function() {
+    return {
+      loggedIn: AccountManager.isLoggedIn(),
+      loaded: false,
+      fields: [],
+      values: {},
+      verify: null
+    };
+  },
 
-        var data = {};
-        for (var name in this._formRefs) {
-            var ref = this._formRefs[name];
-            data[name] = ref.state.value;
-        }
+  _loadForm: function(key) {
+    var locker = this._formLock;
+    locker.lock();
 
-        data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
-        data['submission:referringHref'] = window.location.href;
+    Ajax.send('/app/form/' + key, 'GET').then(function(response) {
+      this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
+      locker.unlock();
+    }.bind(this), function() {
+      locker.unlock();
+    });
+  },
 
-        var payload   = {
-            data: data
-        };
+  updateFieldValue: function(event) {
+    var stateSlice = this.state.values;
+    stateSlice[event.target.name] = event.target.value;
+    this.setState({ values: stateSlice });
+  },
 
-        Debugger.info('ComponentRegister', 'handleSubmit()', payload);
+  handleSubmit: function(event) {
+    event.preventDefault();
 
-        if (false === this._validateSubmit(data)) {
-            locker.unlock();
-            return;
-        }
+    var formData = this.state.values;
 
-        AccountManager.register(payload).then(function(response) {
-            locker.unlock();
-            var verify = {
-                emailAddress : response.data.email,
-                accountId    : response.data.account
-            };
-            this.setState({ verify: verify });
-        }.bind(this), function(response) {
-            locker.unlock();
-            error.displayAjaxError(response);
-        });
-    },
+    var locker = this._formLock;
+    var error  = this._error;
 
+    error.clear();
+    locker.lock();
 
-    render: function() {
-        var elements = (this.state.loggedIn) ? this._getLoggedInElements() : this._getLoggedOutElements();
-        return (
-            React.createElement('div', { className: 'login-list' },
-                React.createElement('h2', { className: 'name' }, this.props.title),
-                elements
-            )
-        );
-    },
-
-    _getLoggedInElements: function() {
-        return React.createElement('div', null,
-            React.createElement('h5', null, 'You are currently logged in.')
-        );
-    },
-
-    _getLoggedOutElements: function() {
-        var elements;
-        if (!this.state.verify) {
-            elements = React.createElement('div', null,
-                React.createElement(Radix.Forms.get('Register'), {
-                    onSubmit : this.handleSubmit,
-                    fieldRef : this.handleFieldRef
-                }),
-                React.createElement('p', { className: 'text-center' }, 'Already have an account? ',
-                    React.createElement(Radix.Components.get('ModalLinkLogin'), { label: 'Sign in!' })
-                ),
-                React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-                React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
-            );
-        } else {
-            elements = React.createElement('div', null,
-                React.createElement(Radix.Components.get('RegisterVerify'), this.state.verify)
-            );
-        }
-        return elements;
-    },
-
-    _formRefs: {},
-
-    _setErrorDisplay: function(ref) {
-        this._error = ref;
-    },
-
-    _setLock: function(ref) {
-        this._formLock = ref;
-    },
-
-    _validateSubmit: function(data) {
-        var error = this._error;
-        if (!data['identity:password']) {
-            error.display('The password field is required.');
-            return false;
-        }
-        if (data['identity:password'].length < 4) {
-            error.display('The password must be at least 4 characters long.');
-            return false;
-        }
-        if (data['identity:password'].length > 72) {
-            error.display('The password cannot be longer than 72 characters.');
-            return false;
-        }
-        return true;
+    var referringHost = window.location.protocol + '//' + window.location.host;
+    var referringHref = window.location.href;
+    if (Utils.isString(this.props.referringPath)) {
+      referringHref = referringHost + '/' + this.props.referringPath.replace(/^\//, '');
     }
+
+    formData['submission:referringHost'] = referringHost;
+    formData['submission:referringHref'] = referringHref;
+
+    var payload   = {
+      data: formData,
+      meta: this.props.meta || {},
+      notify : Utils.isObject(this.props.notify) ? this.props.notify : {}
+    };
+
+    Debugger.info('ComponentRegister', 'handleSubmit()', payload);
+
+    if (false === this._validateSubmit(formData)) {
+      locker.unlock();
+      return;
+    }
+
+    AccountManager.register(payload).then(function(response) {
+      locker.unlock();
+      var verify = {
+        emailAddress : response.data.email,
+        accountId    : response.data.account
+      };
+      this.setState({ verify: verify });
+    }.bind(this), function(response) {
+      locker.unlock();
+      error.displayAjaxError(response);
+    });
+  },
+
+  render: function() {
+    Debugger.log('ComponentRegister', 'render()', this);
+
+    var elements = (this.state.loggedIn) ? this._getLoggedInElements() : this._getLoggedOutElements();
+    return (
+      React.createElement('div', { className: 'login-list' },
+        React.createElement('h2', { className: 'name' }, this.props.title),
+        elements
+      )
+    );
+  },
+
+  _getLoggedInElements: function() {
+    return React.createElement('div', null,
+      React.createElement('h5', null, 'You are currently logged in.')
+    );
+  },
+
+  _getLoggedOutElements: function() {
+    var elements;
+    if (!this.state.verify) {
+      elements = React.createElement('div', null,
+        this._getForm(),
+        React.createElement('p', { className: 'text-center' }, 'Already have an account? ',
+          React.createElement(Radix.Components.get('ModalLinkLogin'), { label: 'Sign in!' })
+        ),
+        React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+        React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+      );
+    } else {
+      elements = React.createElement('div', null,
+        React.createElement(Radix.Components.get('RegisterVerify'), this.state.verify)
+      );
+    }
+    return elements;
+  },
+
+  _getForm: function() {
+    var form;
+    if (this.state.loaded) {
+      form = React.createElement(Radix.Components.get('Form'), {
+        name: 'register',
+        fields: this.state.fields,
+        values: this.state.values,
+        onChange: this.updateFieldValue,
+        onSubmit: this.handleSubmit
+      });
+    }
+    return form;
+  },
+
+  _formRefs: {},
+
+  _setErrorDisplay: function(ref) {
+    this._error = ref;
+  },
+
+  _setLock: function(ref) {
+    this._formLock = ref;
+  },
+
+  _validateSubmit: function(data) {
+    var error = this._error;
+    if (!data['identity:password']) {
+      error.display('The password field is required.');
+      return false;
+    }
+    if (data['identity:password'].length < 4) {
+      error.display('The password must be at least 4 characters long.');
+      return false;
+    }
+    if (data['identity:password'].length > 72) {
+      error.display('The password cannot be longer than 72 characters.');
+      return false;
+    }
+    return true;
+  }
 });

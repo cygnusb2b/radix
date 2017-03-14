@@ -23,6 +23,8 @@ class PublicApiSerializer
 {
     private $depth = 0;
 
+    private $maxDepth = 1;
+
     private $rules = [];
 
     public function __construct()
@@ -66,6 +68,12 @@ class PublicApiSerializer
         return isset($this->rules[$class][$type]) ? $this->rules[$class][$type] : null;
     }
 
+    public function resetMaxDepth()
+    {
+        $this->maxDepth = 1;
+        return $this;
+    }
+
     /**
      * Serializes a Model object into a "flattened" array.
      *
@@ -79,6 +87,7 @@ class PublicApiSerializer
             $serialized['data'] = $this->serializeModel($model);
             ksort($serialized['data']);
         }
+        $this->resetMaxDepth();
         return $serialized;
     }
 
@@ -101,7 +110,17 @@ class PublicApiSerializer
             ksort($data);
             $serialized[] = $data;
         }
+
+        if (1 === $this->depth) {
+            $this->resetMaxDepth();
+        }
         return $serialized;
+    }
+
+    public function setMaxDepth($depth)
+    {
+        $this->maxDepth = (integer) $depth;
+        return $this;
     }
 
     /**
@@ -262,7 +281,7 @@ class PublicApiSerializer
             '_id'    => $model->getState()->is('new') ? null : $model->getId(),
             '_type'  => $model->getType(),
         ];
-        if ($this->depth > 1) {
+        if ($this->depth > $this->maxDepth) {
             return $serialized;
         }
 

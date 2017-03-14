@@ -36,7 +36,7 @@ ins {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 99999;
+    z-index: 3000001;
 
     display: none;
     overflow-y: auto;
@@ -53,7 +53,7 @@ ins {
     -webkit-touch-callout: none;
 }
 .platform-element[data-element=modal]#guidrSubmitModal {
-    z-index: 99989;
+    z-index: 3000000;
 
     height: 100vh;
 
@@ -634,45 +634,12 @@ ins {
 
 
 
-.platform-element .form-element-wrapper.givenName,
-.platform-element .form-element-wrapper.familyName,
-.platform-element .form-element-wrapper.companyName,
-.platform-element .form-element-wrapper.password,
-.platform-element .form-element-wrapper.confirmPassword,
-.platform-element .form-element-wrapper.username,
-.platform-element .form-element-wrapper.displayName,
-.platform-element .form-element-wrapper.email,
-.platform-element .form-element-wrapper.primaryEmail,
-.platform-element .form-element-wrapper.confirmEmail,
-.platform-element .form-element-wrapper.title,
-.platform-element .form-element-wrapper.phone,
-.platform-element .form-element-wrapper.fax,
-.platform-element .form-element-wrapper.city,
-.platform-element .form-element-wrapper.region,
-.platform-element .form-element-wrapper.countryCode,
-.platform-element .form-element-wrapper.postalCode,
-.platform-element .form-element-wrapper.question {
+.platform-element .form-element-wrapper {
     width: 100%;
 }
 
 @media screen and (min-width: 800px) {
-    .platform-element .form-element-wrapper.givenName,
-    .platform-element .form-element-wrapper.familyName,
-    .platform-element .form-element-wrapper.companyName,
-    .platform-element .form-element-wrapper.password,
-    .platform-element .form-element-wrapper.confirmPassword,
-    .platform-element .form-element-wrapper.username,
-    .platform-element .form-element-wrapper.displayName,
-    .platform-element .form-element-wrapper.email,
-    .platform-element .form-element-wrapper.confirmEmail,
-    .platform-element .form-element-wrapper.title,
-    .platform-element .form-element-wrapper.phone,
-    .platform-element .form-element-wrapper.fax,
-    .platform-element .form-element-wrapper.city,
-    .platform-element .form-element-wrapper.region,
-    .platform-element .form-element-wrapper.countryCode,
-    .platform-element .form-element-wrapper.postalCode,
-    .platform-element .form-element-wrapper.question {
+    .platform-element .form-element-wrapper {
         width: 50%;
     }
 

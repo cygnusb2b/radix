@@ -1,0 +1,13 @@
+<div class="form-group">
+    <label for="field-form-definition-name">Type</label>
+    {{edit-field/select/form-keys value=model.name}}
+    <small class="form-text text-muted">The type of form.</small>
+</div>
+
+{{-bootstrap/form/input-group
+    key='title'
+    value=model.title
+    helpText='The form title.'
+    hideLabel=true
+    required=true
+}}

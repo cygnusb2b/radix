@@ -53,6 +53,13 @@ class ManageController extends AbstractController
             'LOG_TRANSITIONS_INTERNAL'  => !$prod,
             'formAnswerTypes'           => $types,
             'simpleScheduleTypes'       => ModelUtility::getSimpleScheduleTypes(true),
+            'formKeys'                  => [
+                ['value' => '', 'label' => ''],
+                ['value' => 'Inquiry', 'label' => 'Inquiry'],
+                ['value' => 'Register', 'label' => 'Register'],
+                ['value' => 'Gated Download', 'label' => 'Gated Download'],
+                ['value' => 'Email Subscriptions', 'label' => 'Email Subscriptions'],
+            ],
         ];
     }
 }

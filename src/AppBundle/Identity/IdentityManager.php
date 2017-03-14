@@ -107,7 +107,7 @@ class IdentityManager
     public function createDefaultAuthResponse()
     {
         $model = $this->getStore()->create('identity-account');
-        $serialized = $this->authGenerator->getSerializer()->serialize($model);
+        $serialized = $this->authGenerator->serializeModel($model);
         $serialized = $this->appendIdentityId($serialized);
         return new JsonResponse($serialized);
     }
@@ -259,8 +259,6 @@ class IdentityManager
     {
         return null !== $this->getActiveIdentity();
     }
-
-
 
     /**
      * Interactively logs in a customer account.

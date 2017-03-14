@@ -2,10 +2,10 @@
 
 namespace AppBundle\Security\Authenticator;
 
-use AppBundle\Utility\RequestUtility;
-use AppBundle\Security\Auth\AuthGeneratorManager;
+use AppBundle\Identity\IdentityManager;
 use AppBundle\Security\Encoder\LegacyEncoderManager;
 use AppBundle\Security\User\AccountProvider;
+use AppBundle\Utility\RequestUtility;
 use As3\Modlr\Api\AdapterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +23,9 @@ class AccountAuthenticator extends AbstractCoreAuthenticator
     const PASSWORD = 'password';
 
     /**
-     * @var AuthGeneratorManager
+     * @var IdentityManager
      */
-    private $authManager;
+    private $identityManager;
 
     /**
      * @var EncoderFactory
@@ -41,15 +41,15 @@ class AccountAuthenticator extends AbstractCoreAuthenticator
      * @param   AdapterInterface        $adapter
      * @param   HttpUtils               $httpUtils
      * @param   EncoderFactory          $encoderFactory
-     * @param   AuthGeneratorManager    $authManager
+     * @param   IdentityManager         $identityManager
      * @param   LegacyEncoderManager    $legacyEncoders
      */
-    public function __construct(AdapterInterface $adapter, HttpUtils $httpUtils, EncoderFactory $encoderFactory, AuthGeneratorManager $authManager, LegacyEncoderManager $legacyEncoders)
+    public function __construct(AdapterInterface $adapter, HttpUtils $httpUtils, EncoderFactory $encoderFactory, IdentityManager $identityManager, LegacyEncoderManager $legacyEncoders)
     {
         parent::__construct($adapter, $httpUtils);
-        $this->authManager    = $authManager;
-        $this->encoderFactory = $encoderFactory;
-        $this->legacyEncoders = $legacyEncoders;
+        $this->identityManager = $identityManager;
+        $this->encoderFactory  = $encoderFactory;
+        $this->legacyEncoders  = $legacyEncoders;
     }
 
     /**
@@ -116,7 +116,7 @@ class AccountAuthenticator extends AbstractCoreAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return $this->authManager->createResponseFor($token->getUser());
+        return $this->identityManager->createAuthResponse();
     }
 
     /**

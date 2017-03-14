@@ -36,6 +36,10 @@
         return AccountManager.getIdentityId();
     };
 
+    Radix.retrieveIdentityData = function() {
+      return AccountManager.retrieveIdentityData();
+    };
+
     Radix.hasAccount = function() {
         return AccountManager.isLoggedIn();
     };
@@ -126,6 +130,7 @@
         this.ModalLinkRegister              = {{ loadComponent('modal-link-register') }}
         this.ModalLinkResetPasswordGenerate = {{ loadComponent('modal-link-reset-password-generate') }}
         this.CountryPostalCode              = {{ loadComponent('form-country-postal-code') }}
+        this.Form                           = {{ loadComponent('form') }}
         this.FormErrors                     = {{ loadComponent('form-errors') }}
         this.FormFieldWrapper               = {{ loadComponent('form-field-wrapper') }}
         this.FormInputHidden                = {{ loadComponent('form-input-hidden') }}
@@ -165,13 +170,9 @@
 
     function Forms()
     {
-        this.EmailSubscription      = {{ loadForm('email-subscription') }}
-        this.Inquiry                = {{ loadForm('inquiry') }}
-        this.Register               = {{ loadForm('register') }}
         this.ResetPasswordGenerate  = {{ loadForm('reset-password-generate') }}
         this.ResetPassword          = {{ loadForm('reset-password') }}
         this.Login                  = {{ loadForm('login') }}
-        this.GatedDownload          = {{ loadForm('gated-download') }}
 
         this.get = function(name) {
             return this[name];

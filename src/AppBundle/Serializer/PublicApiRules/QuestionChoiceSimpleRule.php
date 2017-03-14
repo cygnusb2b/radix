@@ -40,6 +40,7 @@ class QuestionChoiceSimpleRule extends AbstractRule implements PublicApiRuleInte
             'description'   => true,
             'name'          => true,
             'sequence'      => true,
+            'childQuestion' => true,
         ];
     }
 

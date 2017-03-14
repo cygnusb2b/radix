@@ -118,7 +118,16 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
             $questionModel = $answerModel->get('question');
             $value         = $answerModel->get('value');
 
-            if (null === $value || null === $questionModel || !isset($questions[$questionModel->getId()])) {
+            if (null === $value || null === $questionModel) {
+                continue;
+            }
+
+            if ('related-choice-single' === $questionModel->get('questionType')) {
+                // A related choice. Must use the answer's question instead.
+                $questionModel = $value->get('question');
+            }
+
+            if (null === $questionModel || !isset($questions[$questionModel->getId()])) {
                 continue;
             }
             if (null === $pull = $questionModel->get('pull')) {

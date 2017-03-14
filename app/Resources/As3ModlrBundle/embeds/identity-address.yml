@@ -26,3 +26,8 @@ identity-address:
             type: string # ISO 3166-1 alpha-3
         postalCode:
             type: string
+        isEmpty:
+            type: boolean
+            calculated:
+                class: AppBundle\CalculatedFields
+                method: identityAddressIsEmpty

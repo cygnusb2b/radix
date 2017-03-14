@@ -1,0 +1,24 @@
+form-definition:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { key: 1 }, options: { unique: true } }
+    mixins: [ 'timestampable', 'keyable' ]
+    attributes:
+        title:
+            type: string
+        description:
+            type: string
+    relationships:
+        identityFields:
+            type: many
+            entity: form-field-identity
+            inverse: true
+            field: form
+        questionFields:
+            type: many
+            entity: form-field-question
+            inverse: true
+            field: form
