@@ -79,8 +79,6 @@ class ExportController extends AbstractAppController
                 $item[$answer['name']] = $answer['value'];
                 $labels[$answer['name']] = true;
             }
-            var_dump($item);
-            die();
             $items[] = $item;
         }
         $labels = array_keys($labels);
