@@ -41,6 +41,7 @@ class QuestionAnswerFactory
             $answer   = [
                 'type'     => $type,
                 'question' => $question->get('label') ?: $question->get('name'),
+                'name'     => $question->get('name'),
             ];
 
             $value = $model->get('value');

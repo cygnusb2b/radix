@@ -322,16 +322,16 @@
         },
         {
             "name": "as3/post-process-bundle",
-            "version": "1.0.4",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/PostProcessBundle.git",
-                "reference": "140e642778e841b61344220d955288f2f9e1fb67"
+                "reference": "9c88278352282afbc26d52b34951e9eac97641f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/PostProcessBundle/zipball/140e642778e841b61344220d955288f2f9e1fb67",
-                "reference": "140e642778e841b61344220d955288f2f9e1fb67",
+                "url": "https://api.github.com/repos/as3io/PostProcessBundle/zipball/9c88278352282afbc26d52b34951e9eac97641f5",
+                "reference": "9c88278352282afbc26d52b34951e9eac97641f5",
                 "shasum": ""
             },
             "require": {
@@ -359,7 +359,7 @@
                 }
             ],
             "description": "Provides centralized support for executing callable code before Symfony framework termination.",
-            "time": "2016-11-01 23:21:12"
+            "time": "2017-03-16 15:26:57"
         },
         {
             "name": "as3/symfony-data-importer",
