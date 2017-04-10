@@ -10,6 +10,7 @@ use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestUtility;
 use AppBundle\Question\QuestionAnswerFactory;
 use Swift_Mailer;
+use \DateTime;
 
 use ICanBoogie\Inflector;
 
@@ -121,7 +122,8 @@ class NotificationManager
                 $notification->getFrom(),
                 $notification->getTo(),
                 $notification->getCc(),
-                $notification->getBcc()
+                $notification->getBcc(),
+                $submission->get('createdDate')
             );
 
         } catch (\Exception $e) {
@@ -186,7 +188,8 @@ class NotificationManager
                 [ $this->getFromEmail() => $this->getFromName() ],
                 (array) $notify->get('to'),
                 (array) $notify->get('cc'),
-                (array) $notify->get('bcc')
+                (array) $notify->get('bcc'),
+                $submission->get('createdDate')
             );
         } catch (\Exception $e) {
             RequestUtility::notifyException($e);
@@ -374,10 +377,11 @@ class NotificationManager
      * @param   array   $to             An array of addresses to send to. Can be associative [name -> email] or not [email, email2]
      * @param   array   $cc             An array of addresses to send to. Can be associative [name -> email] or not [email, email2]
      * @param   array   $bcc            An array of addresses to send to. Can be associative [name -> email] or not [email, email2]
+     * @param   DateTime $date          The date the message was created
      *
      * @return  bool    If the send was sucessfully queued.
      */
-    private function sendNotification($contents, $subject, array $from, array $to, array $cc = [], array $bcc = [])
+    private function sendNotification($contents, $subject, array $from, array $to, array $cc = [], array $bcc = [], DateTime $date = null)
     {
         $message = $this->mailer->createMessage()
             ->setSubject($subject)
@@ -388,6 +392,9 @@ class NotificationManager
             ->setBody($contents, 'text/html')
             ->addPart($this->getTextContents($contents), 'text/plain')
         ;
+        if (null !== $date) {
+            $message->setDate($date->getTimestamp());
+        }
 
         $instance = $this->mailer->send($message);
         return $instance;
