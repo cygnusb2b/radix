@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model;
+namespace AppBundle\Import\Segment;
 
 use Aol\Transformers\Transformer as BaseTransformer;
 
@@ -153,6 +153,10 @@ class Transformer extends BaseTransformer
 
         // Translate dot-notated fields
         foreach ($data as $k => $v) {
+            if (null === $v || [] === $v) {
+                unset($data[$k]);
+                continue;
+            }
             if (false !== stripos($k, '.')) {
                 $keys = explode('.', $k);
                 $c = &$data[array_shift($keys)];

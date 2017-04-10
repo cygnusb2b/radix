@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model;
+namespace AppBundle\Import\Segment\Merrick\IdentityData;
 
-use AppBundle\Import\Segment\Merrick\Customer;
+use AppBundle\Import\Segment\Merrick\IdentityData;
 
-class CustomerAnswer extends Customer
+class Answer extends IdentityData
 {
     /**
      * @var     array
@@ -29,7 +29,7 @@ class CustomerAnswer extends Customer
      */
     public function getKey()
     {
-        return 'merrick_customer_model_customer_answer';
+        return 'merrick_customer_identity_data_answer';
     }
 
     /**
@@ -42,7 +42,7 @@ class CustomerAnswer extends Customer
 
         foreach ($docs as $doc) {
             foreach ($doc['legacy']['questions'] as $question) {
-                $question['customer'] = ['id' => (string) $doc['_id'], 'type' => $doc['_type']];
+                $question['identity'] = ['id' => (string) $doc['_id'], 'type' => $doc['_type']];
                 $kv = $this->formatModel($question);
                 if (null !== $kv) {
                     $kvs[] = $kv;
@@ -75,10 +75,10 @@ class CustomerAnswer extends Customer
 
         return [
             'legacy'    => [
-                'id'        => (string) $doc['customer']['id'],
-                'source'    => sprintf('customer-omeda_%s', $doc['question'])
+                'id'        => (string) $doc['identity']['id'],
+                'source'    => sprintf('identity-omeda_%s', $doc['question'])
             ],
-            'customer'  => $doc['customer'],
+            'identity'  => $doc['identity'],
             'question'  => ['id' => $question['_id'], 'type' => 'question'],
             'value'     => ['id' => $answer['_id'], 'type' => 'question-choice']
         ];
@@ -89,7 +89,7 @@ class CustomerAnswer extends Customer
      */
     protected function getCollection()
     {
-        return 'customer';
+        return 'identity';
     }
 
     /**
@@ -113,13 +113,13 @@ class CustomerAnswer extends Customer
      */
     protected function getModelType()
     {
-        return 'customer-answer-choice';
+        return 'identity-answer-choice';
     }
 
     private function retrieveQuestion($legacyId)
     {
         if (!array_key_exists($legacyId, $this->questions)) {
-            $this->questions[$legacyId] = $this->getCollectionForModel('question')->findOne(['key' => sprintf('omeda-%s', $legacyId)]);
+            $this->questions[$legacyId] = $this->getCollectionForModel('question')->findOne(['key' => sprintf('integration-omeda-%s', $legacyId)]);
         }
         return $this->questions[$legacyId];
     }
@@ -128,7 +128,7 @@ class CustomerAnswer extends Customer
     {
         $legacyId = (string) $legacyId;
         if (!array_key_exists($legacyId, $this->answers)) {
-            $this->answers[$legacyId] = $this->getCollectionForModel('question-choice')->findOne(['integration.clientKey' => 'omeda', 'integration.identifier' => $legacyId]);
+            $this->answers[$legacyId] = $this->getCollectionForModel('question-choice')->findOne(['integration.pull.identifier' => $legacyId]);
         }
         return $this->answers[$legacyId];
     }

@@ -367,12 +367,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/as3io/symfony-data-importer.git",
-                "reference": "ef74374c5ba8144486a64f541b8b4b2c6e537e54"
+                "reference": "cc8bfdc84860baadda97b3f82a2f8defbb71038f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/symfony-data-importer/zipball/ef74374c5ba8144486a64f541b8b4b2c6e537e54",
-                "reference": "ef74374c5ba8144486a64f541b8b4b2c6e537e54",
+                "url": "https://api.github.com/repos/as3io/symfony-data-importer/zipball/cc8bfdc84860baadda97b3f82a2f8defbb71038f",
+                "reference": "cc8bfdc84860baadda97b3f82a2f8defbb71038f",
                 "shasum": ""
             },
             "require": {
@@ -396,7 +396,7 @@
                 }
             ],
             "description": "Symfony console application to handle data importing.",
-            "time": "2016-09-21 17:19:01"
+            "time": "2016-11-07 16:06:37"
         },
         {
             "name": "doctrine/annotations",

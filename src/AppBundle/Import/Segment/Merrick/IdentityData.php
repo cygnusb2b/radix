@@ -4,7 +4,7 @@ namespace AppBundle\Import\Segment\Merrick;
 
 use AppBundle\Import\Segment\Merrick;
 
-abstract class Customer extends Merrick
+abstract class IdentityData extends Merrick
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ abstract class Customer extends Merrick
      */
     protected function getCollection()
     {
-        return 'users_v2';
+        return 'content_user_rel';
     }
 
     /**
