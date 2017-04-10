@@ -7,4 +7,6 @@ export default IntegrationService.extend({
     clientKey  : attr('string'),
     inputId    : attr('string'),
     useStaging : attr('boolean', { defaultValue: false }),
+    accountBehaviorId  : attr('number'),
+    identityBehaviorId : attr('number'),
 });
