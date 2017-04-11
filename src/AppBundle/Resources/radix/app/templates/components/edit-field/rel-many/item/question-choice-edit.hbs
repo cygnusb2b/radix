@@ -14,6 +14,11 @@
     {{ input class='form-control' value=model.description placeholder='Description' }}
     <small class="form-text text-muted">A short description of the choice.</small>
 </div>
+<div class="form-group">
+    <label class="sr-only" for="field-demographic-choice-alternate-id">Alternate ID</label>
+    {{ input class='form-control' value=model.alternateId placeholder='Alternate ID' }}
+    <small class="form-text text-muted">An alternate identifier of your choosing.</small>
+</div>
 
 {{partial 'demographic/choices/-options'}}
 
