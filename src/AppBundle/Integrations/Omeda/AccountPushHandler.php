@@ -211,7 +211,9 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
      */
     private function applyBehaviorsFor(Model $account, array $payload, array $customer)
     {
-        if (null === $identifier = $this->service->getBehaviorIdFor('account')) {
+        $behaviorType = 'identity-account' === $account->getType() ? 'account' : 'identity';
+
+        if (null === $identifier = $this->service->getBehaviorIdFor($behaviorType)) {
             return $payload;
         }
 
@@ -316,17 +318,23 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
     private function getRelatedEmails(Model $account)
     {
         $emails = [];
-        foreach ($account->getStore()->getModelCache()->getAllForType('identity-account-email') as $email) {
-            if (null === $email->get('account')) {
-                continue;
+        if ('identity-account' === $account->getType()) {
+            foreach ($account->getStore()->getModelCache()->getAllForType('identity-account-email') as $email) {
+                if (null === $email->get('account')) {
+                    continue;
+                }
+                if ($email->get('account')->getId() === $account->getId()) {
+                    $emails[$email->getId()] = $email;
+                }
             }
-            if ($email->get('account')->getId() === $account->getId()) {
-                $emails[$email->getId()] = $email;
+            foreach ($account->get('emails') as $email) {
+                if (!isset($emails[$email->getId()])) {
+                    $emails[$email->getId()] = $email;
+                }
             }
-        }
-        foreach ($account->get('emails') as $email) {
-            if (!isset($emails[$email->getId()])) {
-                $emails[$email->getId()] = $email;
+        } else {
+            foreach ($account->get('emails') as $email) {
+                $emails[$email->get('identifier')] = $email;
             }
         }
         return $emails;

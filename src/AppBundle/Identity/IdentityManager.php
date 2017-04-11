@@ -323,16 +323,11 @@ class IdentityManager
      */
     public function upsertIdentitiesFor($emailAddress, array $attributes = [])
     {
-        $identity = $this->getActiveIdentity();
-        if (null !== $identity && 'identity-account' === $identity->getType()) {
-            // Cannot update an identity account in this fashion.
-            return [];
-        }
-
         $emailAddress = ModelUtility::formatEmailAddress($emailAddress);
 
         if (empty($emailAddress)) {
             // No email address provided.
+            $identity = $this->getActiveIdentity();
             if (null === $identity) {
                 // No active identity. Create new.
                 return [$this->getIdentityFactoryFor('identity-internal')->create($attributes)];
