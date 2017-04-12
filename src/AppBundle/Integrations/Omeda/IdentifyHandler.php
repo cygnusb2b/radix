@@ -23,7 +23,32 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
         $this->applyEmails($definition, $payload);
         $this->applyAddresses($definition, $payload);
         $this->applyAnswers($definition, $payload, $questionIds);
+
+        $this->updateBehavior($payload);
+
         return $definition;
+    }
+
+    /**
+     * Ensures the identity behavior is set to the incoming Omeda customer.
+     * Will only set if behaviors are enabled and the customer is missing it.
+     *
+     * @param   array   $customer
+     */
+    private function updateBehavior(array $customer)
+    {
+        if (null === $identifier = $this->service->getBehaviorIdFor('identity')) {
+            return;
+        }
+        if (false === $this->customerHasBehavior($customer, $identifier)) {
+            $payload = [
+                'OmedaCustomerId'   => $customer['Id'],
+                'CustomerBehaviors' => [
+                    $this->createIdentityBehavior($identifier, new \DateTime(), 'identity-external')
+                ],
+            ];
+            $response = $this->saveCustomer($payload);
+        }
     }
 
     /**

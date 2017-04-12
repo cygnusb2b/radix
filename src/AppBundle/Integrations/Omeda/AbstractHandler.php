@@ -43,6 +43,23 @@ class AbstractHandler extends BaseAbstractHandler
     }
 
     /**
+     * Creates the Omeda identity behavior to add to the Omeda customer.
+     *
+     * @param   int         $identifier
+     * @param   \DateTime   $createdDate
+     * @param   string      $identityType
+     * @return  array
+     */
+    final protected function createIdentityBehavior($identifier, \DateTime $createdDate, $identityType)
+    {
+        return [
+            'BehaviorId' => $identifier,
+            'BehaviorDate' => $createdDate->format('Y-m-d H:i:s'),
+            'BehaviorPromoCode' => sprintf('Radix Type: %s', $identityType),
+        ];
+    }
+
+    /**
      * Extracts an external id value from the provided customer for a namespace.
      *
      * @param   array   $customer
