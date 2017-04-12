@@ -219,11 +219,7 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
 
         if (false === $this->customerHasBehavior($customer, $identifier)) {
             $payload['CustomerBehaviors'] = [
-                [
-                    'BehaviorId' => $identifier,
-                    'BehaviorDate' => $account->get('createdDate')->format('Y-m-d H:i:s'),
-                    'BehaviorPromoCode' => sprintf('Radix Type: %s', $account->getType()),
-                ],
+                $this->createIdentityBehavior($identifier, $account->get('createdDate'), $account->getType()),
             ];
         }
         return $payload;

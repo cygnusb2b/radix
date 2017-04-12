@@ -43,7 +43,8 @@ class IdentifyExecution extends AbstractExecution
     }
 
     /**
-     * @return  TypeManager
+     * @param   TypeManager
+     * @return  self
      */
     public function setTypeManager(TypeManager $typeManager)
     {
