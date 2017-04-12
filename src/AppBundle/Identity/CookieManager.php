@@ -62,8 +62,11 @@ class CookieManager
         if ('identity-account' === $identity->getType()) {
             $cookies = [
                 new IdentityCookie(self::VISITOR_COOKIE, self::VISITOR_EXPIRE, $identity->getId(), $identity->getType()),
-                new IdentityCookie(self::SESSION_COOKIE, self::SESSION_EXPIRE, $identity->getId(), $identity->getType()),
             ];
+            if (false == $identitySet) {
+                // Only set the session cookie if the identity logged in "naturally" (in other words, negate session cookies for internally set accounts).
+                $cookies[] = new IdentityCookie(self::SESSION_COOKIE, self::SESSION_EXPIRE, $identity->getId(), $identity->getType());
+            }
         } else {
             if (true == $identitySet) {
                 // Identity was set by the application (not from a previous session cookie).

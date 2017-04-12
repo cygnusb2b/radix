@@ -39,9 +39,8 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
         $customer = $this->lookupCustomer($customer['Id']);
         $radixId  = $this->extractExternalIdFrom($customer);
 
-        // @todo If a Radix ID is present, should a "two-way" push be executed - e.g. update the Radix data as well?
         // @todo Should this only send the current changeset, not the entire model...??
-        $payload  = $this->createCustomerPayloadFor($account, $questions);
+        $payload  = $this->createCustomerPayloadFor($account, $questions, $customer);
 
         if (empty($radixId)) {
             // Add the Omeda customer id if a Radix id is currently missing from the customer.
@@ -203,6 +202,30 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
     }
 
     /**
+     * Applies behavior information from the account model to the Omeda customer payload.
+     *
+     * @param   Model   $account
+     * @param   array   $payload
+     * @param   array   $customer
+     * @return  array
+     */
+    private function applyBehaviorsFor(Model $account, array $payload, array $customer)
+    {
+        $behaviorType = 'identity-account' === $account->getType() ? 'account' : 'identity';
+
+        if (null === $identifier = $this->service->getBehaviorIdFor($behaviorType)) {
+            return $payload;
+        }
+
+        if (false === $this->customerHasBehavior($customer, $identifier)) {
+            $payload['CustomerBehaviors'] = [
+                $this->createIdentityBehavior($identifier, $account->get('createdDate'), $account->getType()),
+            ];
+        }
+        return $payload;
+    }
+
+    /**
      * Applies email information from the account model to the Omeda customer payload.
      *
      * @param   Model   $account
@@ -263,9 +286,10 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
      *
      * @param   Model   $account
      * @param   Model[] $questions
+     * @param   array   $customer   The currently found Omeda customer, if applicable.
      * @return  array
      */
-    private function createCustomerPayloadFor(Model $account, array $questions)
+    private function createCustomerPayloadFor(Model $account, array $questions, array $customer = [])
     {
         $payload = [
             'ExternalCustomerId'            => $account->getId(),
@@ -275,6 +299,7 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
         $payload = $this->applyEmailsFor($account, $payload);
         $payload = $this->applyAddressesFor($account, $payload);
         $payload = $this->applyPhonesFor($account, $payload);
+        $payload = $this->applyBehaviorsFor($account, $payload, $customer);
         $payload = $this->applyAnswersFor($account, $payload, $questions);
         return $payload;
     }
@@ -289,17 +314,23 @@ class AccountPushHandler extends AbstractHandler implements AccountPushInterface
     private function getRelatedEmails(Model $account)
     {
         $emails = [];
-        foreach ($account->getStore()->getModelCache()->getAllForType('identity-account-email') as $email) {
-            if (null === $email->get('account')) {
-                continue;
+        if ('identity-account' === $account->getType()) {
+            foreach ($account->getStore()->getModelCache()->getAllForType('identity-account-email') as $email) {
+                if (null === $email->get('account')) {
+                    continue;
+                }
+                if ($email->get('account')->getId() === $account->getId()) {
+                    $emails[$email->getId()] = $email;
+                }
             }
-            if ($email->get('account')->getId() === $account->getId()) {
-                $emails[$email->getId()] = $email;
+            foreach ($account->get('emails') as $email) {
+                if (!isset($emails[$email->getId()])) {
+                    $emails[$email->getId()] = $email;
+                }
             }
-        }
-        foreach ($account->get('emails') as $email) {
-            if (!isset($emails[$email->getId()])) {
-                $emails[$email->getId()] = $email;
+        } else {
+            foreach ($account->get('emails') as $email) {
+                $emails[$email->get('identifier')] = $email;
             }
         }
         return $emails;

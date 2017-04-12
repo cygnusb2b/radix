@@ -43,7 +43,8 @@ class IdentifyExecution extends AbstractExecution
     }
 
     /**
-     * @return  TypeManager
+     * @param   TypeManager
+     * @return  self
      */
     public function setTypeManager(TypeManager $typeManager)
     {
@@ -140,6 +141,8 @@ class IdentifyExecution extends AbstractExecution
             $answerType = $this->typeManager->getQuestionTypeFor($question->get('questionType'))->getAnswerType();
             $answer     = $this->getStore()->create(sprintf('identity-answer-%s', $answerType));
 
+            $relatedAnswers = [];
+
             switch ($question->get('questionType')) {
                 case 'choice-single':
                     foreach ($question->get('choices') as $choice) {
@@ -152,6 +155,17 @@ class IdentifyExecution extends AbstractExecution
                         }
                         if ($answerDef->getValue() == $pull->get('identifier')) {
                             $answer->set('value', $choice);
+
+                            // Check for related questions.
+                            $cursor = $this->getStore()->findQuery('question', ['questionType' => 'related-choice-single', 'relatedChoices' => $choice->getId()]);
+                            if (!$cursor->isEmpty()) {
+                                foreach ($cursor as $relatedQuestion) {
+                                    $relatedAnswer = $this->getStore()->create(sprintf('identity-answer-%s', $answerType));
+                                    $relatedAnswer->set('question', $relatedQuestion);
+                                    $relatedAnswer->set('value', $choice);
+                                    $relatedAnswers[] = $relatedAnswer;
+                                }
+                            }
                         }
                     }
                     break;
@@ -191,6 +205,10 @@ class IdentifyExecution extends AbstractExecution
             $answer->set('question', $question);
             $answer->set('identity', $identity);
             $answer->save();
+        }
+        foreach ($relatedAnswers as $relatedAnswer) {
+            $relatedAnswer->set('identity', $identity);
+            $relatedAnswer->save();
         }
     }
 }

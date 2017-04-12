@@ -11,6 +11,43 @@ use As3\Modlr\Models\Model;
 class AccountPushExecution extends AbstractExecution
 {
     /**
+     * Get valid identity model types that can push.
+     *
+     * @return  string[]
+     */
+    public static function getValidModelTypes()
+    {
+        return ['identity-account' => true, 'identity-internal' => true];
+    }
+
+    /**
+     * Determines if the provided model type can be pushed.
+     *
+     * @param   string  $type
+     * @return  bool
+     */
+    public static function isModelTypeValid($type)
+    {
+        $types = self::getValidModelTypes();
+        return isset($types[$type]);
+    }
+
+    /**
+     * @param   string
+     * @throws  \InvalidArgumentException
+     */
+    public static function validateModelType($type)
+    {
+        if (false === self::isModelTypeValid($type)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The provided model type of `%s` is not supported. Expected type(s) of `%s`',
+                $type,
+                implode('`, `', self::getValidModelTypes())
+            ));
+        }
+    }
+
+    /**
      * Executes the account-push integration on create.
      * Any logic contained in this method will be run for ALL integration services!
      *
@@ -18,7 +55,7 @@ class AccountPushExecution extends AbstractExecution
      */
     public function runCreate(Model $account)
     {
-        $this->validateAccountModel($account);
+        $this->validateIdentityModel($account);
         $identifier = $this->getHandler()->onCreate(
             $account,
             $this->retrieveExternalQuestions()
@@ -35,7 +72,7 @@ class AccountPushExecution extends AbstractExecution
      */
     public function runDelete(Model $account)
     {
-        $this->validateAccountModel($account);
+        $this->validateIdentityModel($account);
         $this->getHandler()->onDelete($account);
     }
 
@@ -48,7 +85,7 @@ class AccountPushExecution extends AbstractExecution
      */
     public function runUpdate(Model $account, array $changeSet)
     {
-        $this->validateAccountModel($account);
+        $this->validateIdentityModel($account);
         $identifier = $this->getHandler()->onUpdate(
             $account,
             $this->extractExternalIdFor($account),
@@ -148,15 +185,13 @@ class AccountPushExecution extends AbstractExecution
     }
 
     /**
-     * Ensures that the provided model is an `identity-account.`
+     * Ensures that the provided model is supported.
      *
      * @param   Model   $account
      * @throws  \InvalidArgumentException
      */
-    private function validateAccountModel(Model $account)
+    private function validateIdentityModel(Model $account)
     {
-        if ('identity-account' !== $account->getType()) {
-            throw new \InvalidArgumentException(sprintf('The provided model type of `%s` is not supported. Expected type of `identity-account`', $account->getType()));
-        }
+        self::validateModelType($account->getType());
     }
 }

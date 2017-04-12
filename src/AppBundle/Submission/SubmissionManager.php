@@ -81,8 +81,12 @@ class SubmissionManager
         // Create the submission.
         $submission = $this->createSubmission($sourceKey, $payload);
 
-        // Do the identity/submission "dance."
-        $identity = $this->determineIdentity($submission, $payload);
+        $identity = $this->callHookFor($sourceKey, 'createIdentityFor', [$payload]);
+        if (!$identity instanceof Model) {
+            // The submission did not handle its own identification.
+            // Do the native identity/submission "dance."
+            $identity = $this->determineIdentity($submission, $payload);
+        }
 
         if (null !== $identity) {
             $identityFactory = $this->identityManager->getidentityFactoryForModel($identity);
@@ -113,7 +117,7 @@ class SubmissionManager
         $this->callHookFor($sourceKey, 'save', []);
 
         // Set the active identity, if applicable.
-        if (null !== $identity && 'identity-internal' === $identity->getType()) {
+        if (null !== $identity) {
             $this->identityManager->setActiveIdentity($identity);
         }
 
@@ -136,6 +140,9 @@ class SubmissionManager
     {
         if (isset($this->handlers[$sourceKey])) {
             $handler = $this->handlers[$sourceKey];
+            if ('createIdentityFor' === $method && !$handler instanceof IdentifiableSubmissionHandlerInterface) {
+                return;
+            }
             return call_user_func_array([$handler, $method], $args);
         }
     }

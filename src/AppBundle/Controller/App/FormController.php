@@ -134,6 +134,12 @@ class FormController extends AbstractAppController
 
         if (true === $manager->isAccountLoggedIn()) {
             $data['values'] =  $this->serializeValues($manager->getActiveAccount(), $data['form']['fields'], $form->get('key'));
+        } else {
+            // Must append all, empty opt-outs.
+            if ('email-subscriptions' === $form->get('key')) {
+                // Hack to add optin values. This should be removed once email deployment products are added as a question type.
+                $data['values'] = $this->loadOptInValues(null);
+            }
         }
 
         return new JsonResponse(['data' => $data]);

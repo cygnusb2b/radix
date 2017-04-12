@@ -155,7 +155,7 @@ class IdentityManager
      * Gets the active identity, if present.
      * Will return in the following order:
      * 1. If account logged in, will return account.
-     * 2. If anset, active identity is found (internal or external), will return the set value.
+     * 2. If a specifically set identity is found, will return the set value.
      * 3. If an identity visitor cookie is found, will return the associated identity.
      * Invalid cookies, exceptions, and deleted identities will trigger a null response.
      *
@@ -172,7 +172,7 @@ class IdentityManager
         }
 
         $cookie = $this->cookieManager->getVisitorCookie();
-        if (null === $cookie || null === $cookie->getType() || 'identity-account' === $cookie->getType()) {
+        if (null === $cookie || null === $cookie->getType()) {
             return;
         }
 
@@ -283,8 +283,7 @@ class IdentityManager
 
     /**
      * Sets the active identity.
-     * Only supports non-account identities.
-     * Note: this will set the appropriate identity cookies to the response, if an account is not logged in.
+     * Note: this will set the appropriate identity cookies to the response.
      *
      * @param   Model   $model
      * @return  self
@@ -292,7 +291,7 @@ class IdentityManager
      */
     public function setActiveIdentity(Model $model)
     {
-        $allowed = ['identity-internal' => true, 'identity-external' => true];
+        $allowed = ['identity-internal' => true, 'identity-external' => true, 'identity-account' => true];
         if (!isset($allowed[$model->getType()])) {
             throw new \InvalidArgumentException('The wrong model type was provided. Unable to set the active identity.');
         }
@@ -324,16 +323,11 @@ class IdentityManager
      */
     public function upsertIdentitiesFor($emailAddress, array $attributes = [])
     {
-        $identity = $this->getActiveIdentity();
-        if (null !== $identity && 'identity-account' === $identity->getType()) {
-            // Cannot update an identity account in this fashion.
-            return [];
-        }
-
         $emailAddress = ModelUtility::formatEmailAddress($emailAddress);
 
         if (empty($emailAddress)) {
             // No email address provided.
+            $identity = $this->getActiveIdentity();
             if (null === $identity) {
                 // No active identity. Create new.
                 return [$this->getIdentityFactoryFor('identity-internal')->create($attributes)];
