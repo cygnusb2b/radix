@@ -23,6 +23,26 @@ class AbstractHandler extends BaseAbstractHandler
     }
 
     /**
+     * Determines if the provided Omeda customer object has the requested behavior id.
+     *
+     * @param   array   $customer
+     * @param   int     $identifier
+     * @return  bool
+     */
+    final protected function customerHasBehavior(array $customer, $identifier)
+    {
+        if (!isset($customer['Behavior']) || !is_array($customer['Behavior'])) {
+            return false;
+        }
+        foreach ($customer['Behavior'] as $behavior) {
+            if ($behavior['BehaviorId'] == $identifier) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Extracts an external id value from the provided customer for a namespace.
      *
      * @param   array   $customer

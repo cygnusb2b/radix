@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
+use AppBundle\Integration\Execution\AccountPushExecution;
 use AppBundle\Utility\RequestUtility;
 use As3\Modlr\Events\EventSubscriberInterface;
 use As3\Modlr\Models\Model;
@@ -159,7 +160,7 @@ class AccountPushSubscriber implements EventSubscriberInterface
      */
     protected function shouldProcess(Model $model)
     {
-        return 'identity-account' === $model->getType() && true == static::$enabled;
+        return AccountPushExecution::isModelTypeValid($model->getType()) && true == static::$enabled;
     }
 
     /**

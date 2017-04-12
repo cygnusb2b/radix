@@ -16,3 +16,7 @@ integration-service-omeda:
         useStaging:
             type: boolean
             defaultValue: false
+        accountBehaviorId:
+            type: integer
+        identityBehaviorId:
+            type: integer
