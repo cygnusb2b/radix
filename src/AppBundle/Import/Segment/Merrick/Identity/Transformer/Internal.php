@@ -7,9 +7,9 @@ class Internal extends Identity
     /**
      * {@inheritdoc}
      */
-    public function __construct()
+    public function __construct($serviceKey, $pushIntegrationId)
     {
-        parent::__construct();
+        parent::__construct($serviceKey, $pushIntegrationId);
 
         $this->defineCallable('emails', 'email', 'identityEmail');
     }

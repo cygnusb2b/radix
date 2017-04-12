@@ -26,8 +26,13 @@ class IdentityData extends Merrick
         // Input submissions
         $this->segments[] = new Segment\InquiryRmi($this, $source);
 
+        // Identity Answers
+        $this->segments[] = new Segment\IdentityAnswerOmeda($this, $source);
+        $this->segments[] = new Segment\IdentityAnswerIndustry($this, $source);
+
+        $this->segments[] = new Segment\IdentityOptIn($this, $source);
+
         // Input Answers
-        $this->segments[] = new Segment\Answer($this, $source);
         $this->segments[] = new Segment\InputAnswerOmeda($this, $source);
         $this->segments[] = new Segment\InputAnswerComments($this, $source);
         $this->segments[] = new Segment\InputAnswerPurchaseIntent($this, $source);

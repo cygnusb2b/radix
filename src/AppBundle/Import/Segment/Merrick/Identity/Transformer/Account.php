@@ -7,9 +7,9 @@ class Account extends Identity
     /**
      * {@inheritdoc}
      */
-    public function __construct()
+    public function __construct($serviceKey, $pushIntegrationId)
     {
-        parent::__construct();
+        parent::__construct($serviceKey, $pushIntegrationId);
 
         $this->define('legacy.email', 'email', 'strtolower');
         $this->defineGlobal('credentials', 'credentials');

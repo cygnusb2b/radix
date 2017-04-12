@@ -4,6 +4,10 @@ namespace AppBundle\Import\Segment\Merrick\Identity;
 
 use AppBundle\Import\Segment\Merrick\Identity;
 
+/**
+ * @todo: Skip duplicate key errors
+ */
+
 class External extends Identity
 {
     /**
@@ -31,9 +35,13 @@ class External extends Identity
         $criteria = [
             '$or'   => [
                 ['pwd'  => ['$exists'  => false]],
-                ['pwd'  => ['$eq'      => '']]
+                ['pwd'  => ['$in'      => [null, '']]]
             ],
-            'origin'  => 'link_tracking'
+            'origin'  => 'link_tracking',
+            '$and'  => [
+                ['omeda_id'  => ['$exists' => true]],
+                ['omeda_id'  => ['$nin' => [null, '']]],
+            ]
         ];
         return array_merge(parent::getCriteria(), $criteria);
     }
@@ -46,13 +54,18 @@ class External extends Identity
         return 'identity-external';
     }
 
+    private $integrationKey;
+
     private function getOmedaBrandKey()
     {
-        $store = $this->getPersister()->getStorageEngine();
-        $integration = $store->findQuery('integration-service', ['_type' => 'integration-service-omeda'])->getSingleResult();
-        if (null !== $integration) {
-            return $integration->get('brandKey');
+        if (null === $this->integrationKey) {
+            $store = $this->getPersister()->getStorageEngine();
+            $integration = $store->findQuery('integration-service', ['_type' => 'integration-service-omeda'])->getSingleResult();
+            if (null === $integration) {
+                throw new \RuntimeException('Unable to find an omeda integration service!');
+            }
+            $this->integrationKey = $integration->get('brandKey');
         }
-        throw new \RuntimeException('Unable to find an omeda integration service!');
+        return $this->integrationKey;
     }
 }

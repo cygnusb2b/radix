@@ -29,4 +29,19 @@ abstract class Identity extends Merrick
     {
         return ['site' => $this->importer->getDomain()];
     }
+
+    protected function getPushIntegration()
+    {
+        $store = $this->getPersister()->getStorageEngine();
+        $integration = $store->findQuery('integration-service', ['_type' => 'integration-service-omeda'])->getSingleResult();
+        if (null !== $integration) {
+
+            $push = $store->findQuery('integration-account-push', ['service.id' => $integration->getId()])->getSingleResult();
+            if (null !== $push) {
+                return $push->getId();
+            }
+            throw new \RuntimeException('Unable to find an omeda push integration ');
+        }
+        throw new \RuntimeException('Unable to find an omeda integration service!');
+    }
 }

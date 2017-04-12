@@ -9,7 +9,7 @@ class External extends Internal
      */
     public function __construct($serviceKey, $brandKey)
     {
-        parent::__construct();
+        parent::__construct($serviceKey, $brandKey);
 
         $this->define('identifier', 'omeda_id');
         $this->defineStatic('source', sprintf('identify:%s:%s', $serviceKey, $brandKey));

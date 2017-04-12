@@ -4,17 +4,12 @@ namespace AppBundle\Import\Segment\Merrick\IdentityData;
 
 use AppBundle\Import\Segment\Merrick\IdentityData;
 
-class Answer extends IdentityData
+class IdentityOptIn extends IdentityData
 {
     /**
      * @var     array
      */
-    private $questions = [];
-
-    /**
-     * @var     array
-     */
-    private $answers = [];
+    private $integrations = [];
 
     /**
      * {@inheritdoc}
@@ -29,7 +24,7 @@ class Answer extends IdentityData
      */
     public function getKey()
     {
-        return 'merrick_customer_identity_data_answer';
+        return 'merrick_customer_identity_data_identity_optin';
     }
 
     /**
@@ -43,7 +38,8 @@ class Answer extends IdentityData
         foreach ($docs as $doc) {
             foreach ($doc['legacy']['questions'] as $question) {
                 $question['identity'] = ['id' => (string) $doc['_id'], 'type' => $doc['_type']];
-                $kv = $this->formatModel($question);
+                $question['email'] = $doc['legacy']['email'];
+                $kv = $this->formatModel($question, $doc);
                 if (null !== $kv) {
                     $kvs[] = $kv;
                 }
@@ -60,27 +56,23 @@ class Answer extends IdentityData
      */
     protected function formatModel(array $doc)
     {
-        $question = $this->retrieveQuestion($doc['question']);
-        $answer = $this->retrieveAnswer($doc['answer']);
+        // $question = $this->retrieveQuestion($doc['question']);
+        $integration = $this->retrieveProductIntegration($doc['question']);
 
-        if (null === $question) {
-            // var_dump(sprintf('Could not find question using "%s"', $doc['question']));
-            return;
-        }
-
-        if (null === $answer) {
+        if (null === $integration) {
             // var_dump(sprintf('Could not find answer using "%s" (question %s)', $doc['answer'], $doc['question']));
             return;
         }
 
+        $productId = $integration['product'];
         return [
             'legacy'    => [
                 'id'        => (string) $doc['identity']['id'],
                 'source'    => sprintf('identity-omeda_%s', $doc['question'])
             ],
-            'identity'  => $doc['identity'],
-            'question'  => ['id' => $question['_id'], 'type' => 'question'],
-            'value'     => ['id' => $answer['_id'], 'type' => 'question-choice']
+            'email'     => $doc['email'],
+            'product'   => ['id' => $productId, 'type' => 'product-email-deployment'],
+            'optedIn'   => (bool) $doc['answer'],
         ];
     }
 
@@ -105,7 +97,7 @@ class Answer extends IdentityData
      */
     protected function getCriteria()
     {
-        return ['legacy.questions' => ['$exists' => true]];
+        return ['_type' => 'identity-account', 'legacy.questions' => ['$exists' => true]];
     }
 
     /**
@@ -113,23 +105,15 @@ class Answer extends IdentityData
      */
     protected function getModelType()
     {
-        return 'identity-answer-choice';
+        return 'product-email-deployment-optin';
     }
 
-    private function retrieveQuestion($legacyId)
+    private function retrieveProductIntegration($legacyId)
     {
-        if (!array_key_exists($legacyId, $this->questions)) {
-            $this->questions[$legacyId] = $this->getCollectionForModel('question')->findOne(['key' => sprintf('integration-omeda-%s', $legacyId)]);
+        if (!array_key_exists($legacyId, $this->integrations)) {
+            $this->integrations[$legacyId] = $this->getCollectionForModel('integration-optin-push')->findOne(['_type' => 'integration-optin-push', 'identifier' => $legacyId]);
         }
-        return $this->questions[$legacyId];
+        return $this->integrations[$legacyId];
     }
 
-    private function retrieveAnswer($legacyId)
-    {
-        $legacyId = (string) $legacyId;
-        if (!array_key_exists($legacyId, $this->answers)) {
-            $this->answers[$legacyId] = $this->getCollectionForModel('question-choice')->findOne(['integration.pull.identifier' => $legacyId]);
-        }
-        return $this->answers[$legacyId];
-    }
 }

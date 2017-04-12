@@ -28,6 +28,7 @@ abstract class Merrick extends Importer implements ImporterInterface
      */
     private $domains = [
         'acbm:ooh'      => 'www.oemoffhighway.com',
+        'acbm:fcp'      => 'www.forconstructionpros.com',
         'cygnus:vspc'   => 'www.vehicleservicepros.com',
     ];
 
@@ -58,7 +59,7 @@ abstract class Merrick extends Importer implements ImporterInterface
     }
 
     /**
-     * Returns the group key for the current context 
+     * Returns the group key for the current context
      *
      * @return  string
      * @throws  InvalidArgumentException

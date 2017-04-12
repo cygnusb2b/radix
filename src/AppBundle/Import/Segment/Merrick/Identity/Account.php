@@ -23,7 +23,7 @@ class Account extends Identity
             return;
         }
 
-        $transformer = new Transformer\Account();
+        $transformer = new Transformer\Account('omeda', $this->getPushIntegration());
         return $transformer->toApp($doc);
     }
 

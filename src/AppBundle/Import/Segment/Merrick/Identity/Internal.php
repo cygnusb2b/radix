@@ -19,7 +19,7 @@ class Internal extends Identity
      */
     protected function formatModel(array $doc)
     {
-        $transformer = new Transformer\Internal();
+        $transformer = new Transformer\Account('omeda', $this->getPushIntegration());
         return $transformer->toApp($doc);
     }
 
