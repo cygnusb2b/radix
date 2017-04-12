@@ -1,23 +1,31 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+namespace AppBundle\Import\Segment\Merrick\Identity\Transformer;
 
-use AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+use AppBundle\Import\Segment\Transformer;
 
-class Customer extends Transformer
+class Identity extends Transformer
 {
+    protected $serviceKey;
+    protected $pushIntegrationId;
+
     /**
      * {@inheritdoc}
      */
-    public function __construct()
+    public function __construct($serviceKey = null, $pushIntegrationId = null)
     {
+        $this->serviceKey = $serviceKey;
+        $this->pushIntegrationId = $pushIntegrationId;
+
         $this->defineId('_id');
         $this->define('legacy.id', '_id', 'strval');
         $this->defineStatic('legacy.source', 'users_v2');
+        $this->defineGlobal('legacy.industry', 'industry');
 
         $this->defineStatic('settings', ['enabled' => true, 'locked' => false, 'shadowbanned' => false]);
         $this->defineStatic('roles', ['USER']);
         $this->defineStatic('deleted', false);
+
 
         $this->define('history.lastLogin', 'last_login');
         $this->define('createdDate', 'created');
@@ -38,83 +46,49 @@ class Customer extends Transformer
             }
         });
 
-        // Set up for reference passes
-        $this->define('legacy.address.street', 'address1');
-        $this->define('legacy.address.extra', 'address2');
-        $this->define('legacy.address.city', 'city');
-        $this->define('legacy.address.postalCode', 'postal_code');
-        $this->defineCallable('legacy.address.country', 'country', 'country');
-        $this->defineCallable('legacy.address.countryCode', 'country', 'countryCode');
-        $this->defineCallable('legacy.address.region', 'region', 'region');
-        $this->defineCallable('legacy.address.regionCode', 'region', 'regionCode');
+        $this->define('legacy.omeda_id', 'omeda_id', 'strval');
+        $this->define('legacy.omeda_encrypted_id', 'omeda_encrypted_id', 'strval');
 
         // Global passes for multi fields
-        $this->defineGlobal('credentials', 'credentials');
+        $this->defineGlobal('addresses', 'addresses');
         $this->defineGlobal('phones', 'phones');
-        $this->defineGlobal('externalIds', 'externalIds');
         $this->defineGlobal('legacy.questions', 'questions');
+        $this->defineGlobal('integration.push', 'integrationPush');
     }
 
-    public function country($value)
+    public function industry($data)
     {
-        if (strlen($value) > 3) {
-            return $value;
-        }
-    }
-
-    public function countryCode($value)
-    {
-        if (strlen($value) === 3) {
-            return $value;
+        foreach ($data as $k => $v) {
+            if (false !== stristr($k, '_industry')) {
+                return $v;
+            }
         }
     }
 
-    public function region($value)
+    public function addresses($data)
     {
-        if (strlen($value) > 3) {
-            return $value;
+        $transformer = new Address();
+        $address = $transformer->toApp($data);
+        if (count($address) > 2) {
+            return [$address];
         }
     }
 
-    public function regionCode($value)
+    public function integrationPush($data)
     {
-        if (strlen($value) <= 3) {
-            return $value;
+        if (null === $this->pushIntegrationId || null == $this->serviceKey) {
+            return;
         }
-    }
-
-    public function externalIds($data)
-    {
-        $externalIds = [];
-
-        if (isset($data['omeda_id']) && !empty($data['omeda_id'])) {
-            $externalIds[] = [
-                'identifier'    => (string) $data['omeda_id'],
-                'source'        => 'omeda',
-            ];
+        if (!isset($data['omeda_id'])) {
+            return;
         }
-
-        if (isset($data['omeda_encrypted_id']) && !empty($data['omeda_encrypted_id'])) {
-            $externalIds[] = [
-                'identifier'    => (string) $data['omeda_encrypted_id'],
-                'source'        => 'omeda',
-                'extra'         => ['encrypted'  => true]
-            ];
-        }
-        return $externalIds;
-    }
-
-    public function credentials($data)
-    {
-        $credentials = [];
-        if (isset($data['pwd'])) {
-            $credentials['password'] = [
-                'value'     => $data['pwd'],
-                'salt'      => isset($data['salt']) ? $data['salt'] : null,
-                'mechanism' => 'merrick'
-            ];
-        }
-        return $credentials;
+        return [
+            [
+                'identifier'    => $data['omeda_id'],
+                'integrationId' => $this->pushIntegrationId,
+                'timesRan'      => 0,
+            ]
+        ];
     }
 
     public function phones($data)
@@ -124,6 +98,7 @@ class Customer extends Transformer
             $value = trim($data['phone']);
             if (!empty($value)) {
                 $phones[] = [
+                    'identifier' => (string) new \MongoId(),
                     'isPrimary' => 0 === count($phones),
                     'number'    => $value,
                     'phoneType' => 'Phone'
@@ -135,6 +110,7 @@ class Customer extends Transformer
             $value = trim($data['mobile']);
             if (!empty($value)) {
                 $phones[] = [
+                    'identifier' => (string) new \MongoId(),
                     'isPrimary' => 0 === count($phones),
                     'number'    => $value,
                     'phoneType' => 'Mobile'

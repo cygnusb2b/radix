@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+namespace AppBundle\Import\Segment\Merrick\Identity\Transformer;
 
-use AppBundle\Import\Segment\Merrick\Customer\Model\Transformer;
+use AppBundle\Import\Segment\Transformer;
 
-class CustomerEmail extends Transformer
+class AccountEmail extends Transformer
 {
     /**
      * {@inheritdoc}
@@ -15,7 +15,7 @@ class CustomerEmail extends Transformer
         $this->defineStatic('legacy.source', 'customer');
         $this->define('value', 'value', 'strtolower');
         $this->define('account', 'account', function($value) {
-            return ['id' => $value, 'type' => 'customer-account'];
+            return ['id' => $value, 'type' => 'identity-account'];
         });
         $this->defineStatic('isPrimary', true);
         $this->defineStatic('verification.verified', true);

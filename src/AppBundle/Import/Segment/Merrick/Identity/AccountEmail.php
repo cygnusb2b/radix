@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Import\Segment\Merrick\Customer\Model;
+namespace AppBundle\Import\Segment\Merrick\Identity;
 
-use AppBundle\Import\Segment\Merrick\Customer;
+use AppBundle\Import\Segment\Merrick\Identity;
 
-class CustomerEmail extends Customer
+class AccountEmail extends Identity
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class CustomerEmail extends Customer
      */
     public function getKey()
     {
-        return 'merrick_customer_model_customer_email';
+        return 'merrick_customer_identity_account_email';
     }
 
     /**
@@ -35,7 +35,7 @@ class CustomerEmail extends Customer
             'value'     => $doc['legacy']['email'],
             'account'   => $doc['_id']
         ];
-        $transformer = new Transformer\CustomerEmail();
+        $transformer = new Transformer\AccountEmail();
         return $transformer->toApp($email);
     }
 
@@ -44,7 +44,7 @@ class CustomerEmail extends Customer
      */
     protected function getCollection()
     {
-        return 'customer';
+        return 'identity';
     }
 
     /**
@@ -60,7 +60,7 @@ class CustomerEmail extends Customer
      */
     protected function getCriteria()
     {
-        return ['legacy.email' => ['$exists' => true]];
+        return ['_type' => 'identity-account'];
     }
 
     /**
@@ -68,6 +68,6 @@ class CustomerEmail extends Customer
      */
     protected function getModelType()
     {
-        return 'customer-email';
+        return 'identity-account-email';
     }
 }

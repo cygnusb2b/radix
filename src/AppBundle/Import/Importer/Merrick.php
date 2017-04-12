@@ -28,6 +28,7 @@ abstract class Merrick extends Importer implements ImporterInterface
      */
     private $domains = [
         'acbm:ooh'      => 'www.oemoffhighway.com',
+        'acbm:fcp'      => 'www.forconstructionpros.com',
         'cygnus:vspc'   => 'www.vehicleservicepros.com',
     ];
 
@@ -46,12 +47,25 @@ abstract class Merrick extends Importer implements ImporterInterface
      * @return  string
      * @throws  InvalidArgumentException
      */
-    public function getDomain()
+    public function getDomain($key = null)
     {
-        $key = $this->accountManager->getCompositeKey();
+        if (null === $key) {
+            $key = $this->accountManager->getCompositeKey();
+        }
         if (array_key_exists($key, $this->domains)) {
             return $this->domains[$key];
         }
         throw new \InvalidArgumentException(sprintf('Could not find legacy site value for account "%s!"', $key));
+    }
+
+    /**
+     * Returns the group key for the current context
+     *
+     * @return  string
+     * @throws  InvalidArgumentException
+     */
+    public function getGroupKey()
+    {
+        return $this->accountManager->getApplication()->get('key');
     }
 }
