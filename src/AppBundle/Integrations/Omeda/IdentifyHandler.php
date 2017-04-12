@@ -6,6 +6,7 @@ use AppBundle\Integration\Definition\ExternalIdentityDefinition;
 use AppBundle\Integration\Definition\IdentityAddressDefinition;
 use AppBundle\Integration\Definition\IdentityAnswerDefinition;
 use AppBundle\Integration\Definition\IdentityEmailDefinition;
+use AppBundle\Integration\Handler\Exception\ExtractIdentityException;
 use AppBundle\Integration\Handler\IdentifyInterface;
 
 class IdentifyHandler extends AbstractHandler implements IdentifyInterface
@@ -59,7 +60,7 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
         $this->validateIdentifier($externalId);
         $payload = $this->parseApiResponse($this->getApiClient()->customer->lookupById($externalId));
         if (!isset($payload['Id'])) {
-            throw new \RuntimeException('No identifier found in the Omeda customer response.');
+            throw new ExtractIdentityException('No identifier found in the Omeda customer response.');
         }
         return [ $this->getSourceKey(), (string) $payload['Id'] ];
     }
@@ -271,7 +272,7 @@ class IdentifyHandler extends AbstractHandler implements IdentifyInterface
     private function validateIdentifier($externalId)
     {
         if (false === $this->isIdentifierValid($externalId)) {
-            throw new \InvalidArgumentException(sprintf('The provided identifier `%s` is invalid.', $externalId));
+            throw new ExtractIdentityException(sprintf('The provided identifier `%s` is invalid.', $externalId));
         }
     }
 }

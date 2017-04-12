@@ -3,6 +3,7 @@
 namespace AppBundle\Integration;
 
 use AppBundle\Integration\Execution;
+use AppBundle\Integration\Handler\Exception\ExtractIdentityException;
 use AppBundle\Integration\Task;
 use AppBundle\Question\TypeManager;
 use As3\Bundle\PostProcessBundle\Task\TaskManager;
@@ -125,7 +126,13 @@ class IntegrationManager
             $this->throwUnsupportedError('identify', $service->getKey());
         }
 
-        list($source, $identifier) = $handler->getSourceAndIdentifierFor($externalId);
+        try {
+            list($source, $identifier) = $handler->getSourceAndIdentifierFor($externalId);
+        } catch (ExtractIdentityException $e) {
+            // Invalid externalId format or value. Stop running.
+            return;
+        }
+
         $identity = $this->retrieveExternalIdentityFor($source, $identifier);
 
         $execution = new Execution\IdentifyExecution($integration, $service, $this);

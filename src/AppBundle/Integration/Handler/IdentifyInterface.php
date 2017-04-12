@@ -23,7 +23,8 @@ interface IdentifyInterface extends HandlerInterface
      *
      * @param   string  $externalId
      * @return  array
-     * @throws  \Exception  On a retrieval error.
+     * @throws  \Handler\Exception\ExtractIdentityException  On a source or identifier format error.
+     * @throws  \Exception On any other error.
      */
     public function getSourceAndIdentifierFor($externalId);
 
