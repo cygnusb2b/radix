@@ -32,6 +32,14 @@ abstract class AbstractIntegrationCommand extends Command
     }
 
     /**
+     * @return  \As3\Modlr\Store\Store
+     */
+    final protected function getStore()
+    {
+        return $this->getManager()->getStore();
+    }
+
+    /**
      * Gets the integration type.
      *
      * @return  string
