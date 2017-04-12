@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\App;
 
 use AppBundle\Exception\HttpFriendlyException;
+use AppBundle\Integration\Handler\Exception\ExtractIdentityException;
 use AppBundle\Utility\RequestUtility;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,6 +85,11 @@ class AuthController extends AbstractAppController
                 if (null !== $identity) {
                     $this->get('app_bundle.identity.manager')->setActiveIdentity($identity);
                 }
+            } catch(ExtractIdentityException $e) {
+                if (true === $this->getParameter('kernel.debug')) {
+                    throw $e;
+                }
+                // Do not send to New Relic.
             } catch(\Exception $e) {
                 if (true === $this->getParameter('kernel.debug')) {
                     throw $e;
