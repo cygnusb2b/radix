@@ -5,6 +5,7 @@ namespace AppBundle\Integration;
 use AppBundle\Integration\Execution;
 use AppBundle\Integration\Task;
 use AppBundle\Question\TypeManager;
+use As3\Bundle\PostProcessBundle\Task\TaskInterface;
 use As3\Bundle\PostProcessBundle\Task\TaskManager;
 use As3\Modlr\Models\AbstractModel;
 use As3\Modlr\Models\Model;
@@ -17,6 +18,11 @@ class IntegrationManager
      * @var null|Execution\AccountPushExecution[]
      */
     private $accountPushExecutions;
+
+    /**
+     * @var boolean
+     */
+    private $postProcess = true;
 
     /**
      * @var ServiceInterface[]
@@ -57,7 +63,7 @@ class IntegrationManager
     public function accountPushCreate(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountPushCreateTask($account, $execution), 79);
+            $this->scheduleTask(new Task\AccountPushCreateTask($account, $execution), 79);
         }
     }
 
@@ -69,7 +75,7 @@ class IntegrationManager
     public function accountPushDelete(Model $account)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountDeleteCreateTask($account, $execution), 77);
+            $this->scheduleTask(new Task\AccountDeleteTask($account, $execution), 77);
         }
     }
 
@@ -82,7 +88,7 @@ class IntegrationManager
     public function accountPushUpdate(Model $account, array $changeSet)
     {
         foreach ($this->loadAccountPushExecutions() as $execution) {
-            $this->taskManager->addTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet), 78);
+            $this->scheduleTask(new Task\AccountPushUpdateTask($account, $execution, $changeSet), 78);
         }
     }
 
@@ -95,6 +101,18 @@ class IntegrationManager
     public function addService(ServiceInterface $service)
     {
         $this->services[$service->getKey()] = $service;
+        return $this;
+    }
+
+    /**
+     * Enables/disables post processing of integrations.
+     *
+     * @param   bool    $bit
+     * @return  true
+     */
+    public function enablePostProcess($bit = true)
+    {
+        $this->postProcess = (boolean) $bit;
         return $this;
     }
 
@@ -132,7 +150,7 @@ class IntegrationManager
         $execution->setHandler($handler);
         $execution->setTypeManager($this->typeManager);
 
-        $this->taskManager->addTask(new Task\IdentifyTask($identity, $execution), 99);
+        $this->scheduleTask(new Task\IdentifyTask($identity, $execution), 99);
 
         return $identity;
     }
@@ -162,7 +180,7 @@ class IntegrationManager
             $execution = new Execution\OptInPushExecution($integration, $service, $this);
             $execution->setHandler($handler);
 
-            $this->taskManager->addTask(new Task\OptInPushTask($emailAddress, $optedIn, $execution), 29);
+            $this->scheduleTask(new Task\OptInPushTask($emailAddress, $optedIn, $execution), 29);
         }
     }
 
@@ -304,6 +322,22 @@ class IntegrationManager
             throw new \InvalidArgumentException(sprintf('No `%s` integration found for criteria: %s', $type, json_encode($criteria)));
         }
         return $integration;
+    }
+
+    /**
+     * Schedules an integration task.
+     * Will run immediately if post processing is disabled.
+     *
+     * @param   TaskInterface   $task
+     * @param   int             $priority
+     */
+    private function scheduleTask(TaskInterface $task, $priority = 0)
+    {
+        if (true === $this->postProcess) {
+            $this->taskManager->addTask($task, $priority);
+        } else {
+            $task->run();
+        }
     }
 
     /**

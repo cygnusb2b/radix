@@ -42,7 +42,7 @@ class AccountPushExecution extends AbstractExecution
             throw new \InvalidArgumentException(sprintf(
                 'The provided model type of `%s` is not supported. Expected type(s) of `%s`',
                 $type,
-                implode('`, `', self::getValidModelTypes())
+                implode('`, `', array_keys(self::getValidModelTypes()))
             ));
         }
     }
