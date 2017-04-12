@@ -205,11 +205,10 @@ class IdentifyExecution extends AbstractExecution
             $answer->set('question', $question);
             $answer->set('identity', $identity);
             $answer->save();
-
-            foreach ($relatedAnswers as $relatedAnswer) {
-                $relatedAnswer->set('identity', $identity);
-                $relatedAnswer->save();
-            }
+        }
+        foreach ($relatedAnswers as $relatedAnswer) {
+            $relatedAnswer->set('identity', $identity);
+            $relatedAnswer->save();
         }
     }
 }
