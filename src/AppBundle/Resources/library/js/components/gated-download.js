@@ -51,6 +51,7 @@ React.createClass({ displayName: 'ComponentGatedDownload',
     Ajax.send('/app/form/' + key, 'GET').then(function(response) {
       this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
       locker.unlock();
+      EventDispatcher.trigger('GatedDownload.form.loaded');
     }.bind(this), function() {
       locker.unlock();
     });
