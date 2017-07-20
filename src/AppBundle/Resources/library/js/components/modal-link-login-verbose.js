@@ -7,7 +7,7 @@ React.createClass({ displayName: 'ComponentModalLinkLoginVerbose',
             wrappingClass : null,
             className     : null,
             label         : 'login',
-            prefix        : 'To complete your request, please provide us with the following information. If you already have an account, you can',
+            prefix        : 'If you already have an account, you can',
             suffix        : 'to speed up this request.',
             title         : 'Log In'
         };
