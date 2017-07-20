@@ -10,7 +10,9 @@ React.createClass({ displayName: 'ComponentInquiry',
       modelIdentifier : null,
       notify          : {}, // Technically the notify value could be an array of notification objects.
       successRedirect : null,
-      referringPath   : null
+      referringPath   : null,
+      prefix          : 'If you already have an account, you can',
+      suffix          : 'to speed up this request.'
     };
   },
 
@@ -132,7 +134,16 @@ React.createClass({ displayName: 'ComponentInquiry',
       form = React.createElement('div', null,
         React.createElement('h2', null, this.props.title),
         React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description || '' } }),
-        React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
+        React.createElement(Radix.Components.get('ModalLinkLogin'), {
+            tagName       : 'a',
+            wrappingTag   : 'p',
+            wrappingClass : null,
+            className     : null,
+            label         : 'login',
+            prefix        : this.props.prefix,
+            suffix        : this.props.suffix,
+            title         : 'Log In'
+        }),
         React.createElement('hr'),
         React.createElement(Radix.Components.get('Form'), {
           name: 'inquiry',

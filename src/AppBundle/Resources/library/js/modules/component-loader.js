@@ -27,7 +27,7 @@ function ComponentLoaderModule()
                 usesChildren : false
             },
             Inquiry : {
-                allowed      : [ 'title', 'description', 'modelType', 'modelIdentifier', 'className', 'notify', 'successRedirect' ],
+                allowed      : [ 'title', 'description', 'modelType', 'modelIdentifier', 'className', 'notify', 'successRedirect', 'prefix', 'suffix' ],
                 required     : [ 'modelType', 'modelIdentifier' ],
                 usesChildren : false
             },
