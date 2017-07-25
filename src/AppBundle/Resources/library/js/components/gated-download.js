@@ -35,6 +35,10 @@ React.createClass({ displayName: 'ComponentGatedDownload',
     }.bind(this));
   },
 
+  componentDidUpdate: function() {
+    EventDispatcher.trigger('GatedDownload.form.updated');
+  },
+
   getInitialState: function() {
     return {
       loaded: false,
