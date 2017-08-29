@@ -20,4 +20,4 @@ dependencies:
         - echo "date.timezone = \"America/Chicago\"" > /opt/circleci/php/$(phpenv global)/etc/conf.d/date.ini
 test:
     override:
-        - bin/phpunit -c app/ --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
+        - bin/phpunit --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
