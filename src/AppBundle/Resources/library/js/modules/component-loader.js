@@ -37,7 +37,7 @@ function ComponentLoaderModule()
                 usesChildren : false
             },
             GatedDownload : {
-                allowed      : [ 'title', 'description', 'fileUrl', 'webhookUrl', 'className', 'enableNotify', 'notifyEmail' ],
+                allowed      : [ 'title', 'description', 'fileUrl', 'webhookUrl', 'className', 'notify' ],
                 required     : [ 'fileUrl' ],
                 usesChildren : false
             },

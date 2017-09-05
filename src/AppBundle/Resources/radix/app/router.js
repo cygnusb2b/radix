@@ -49,6 +49,13 @@ Router.map(function() {
         });
     });
 
+    this.route('form', function() {
+        this.route('definitions', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+    });
+
     this.route('demographic', function() {
         this.route('questions', function() {
             this.route('create');

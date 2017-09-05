@@ -2,8 +2,9 @@
 
 namespace AppBundle\Security\Auth;
 
+use AppBundle\Security\JWT\JWTGeneratorManager;
 use AppBundle\Security\User\Account;
-use AppBundle\Serializer\PublicApiSerializer;
+use As3\Modlr\Models\Model;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -14,16 +15,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class AccountGenerator implements AuthGeneratorInterface
 {
     /**
-     * @var PublicApiSerializer
+     * @var JWTGeneratorManager
      */
-    private $serializer;
+    private $jwtManager;
 
     /**
+     * @param   JWTGeneratorManager     $jwtManager
      * @param   PublicApiSerializer     $serializer
      */
-    public function __construct(PublicApiSerializer $serializer)
+    public function __construct(JWTGeneratorManager $jwtManager)
     {
-        $this->serializer = $serializer;
+        $this->jwtManager = $jwtManager;
     }
 
     /**
@@ -31,16 +33,23 @@ class AccountGenerator implements AuthGeneratorInterface
      */
     public function generateFor(UserInterface $user)
     {
-        $model = $user->getModel();
-        return $this->serializer->serialize($model);
+        $serialized = $this->serializeModel($user->getModel());
+        $serialized['data']['token'] = $this->jwtManager->createFor($user);
+        return $serialized;
     }
 
     /**
-     * @return  PublicApiSerializer
+     * Serializes an identity account model.
+     *
+     * @todo    Need to return a sensible set of key/values for front-end purposes... maybe.
+     * @param   Model   $model
+     * @return  array
      */
-    public function getSerializer()
+    public function serializeModel(Model $model)
     {
-        return $this->serializer;
+        return [
+            'data' => ['roles' => $model->get('roles')],
+        ];
     }
 
     /**

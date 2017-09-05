@@ -4,7 +4,6 @@ namespace AppBundle\Controller\App;
 
 use \DateTime;
 use AppBundle\Exception\HttpFriendlyException;
-use AppBundle\Serializer\PublicApiRules as Rules;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,27 +135,5 @@ class QuestionController extends AbstractAppController
     {
         $criteria = ['key' => $key];
         return $this->get('as3_modlr.store')->findQuery('question-tag', $criteria)->getSingleResult();
-    }
-
-    /**
-     * Serializes the provided question.
-     *
-     * @param   Model   $question
-     * @return  array
-     */
-    private function serializeQuestion(Model $question)
-    {
-        $serializer = $this->get('app_bundle.serializer.public_api');
-        $serializer->addRule(new Rules\QuestionSimpleRule());
-        $serializer->addRule(new Rules\QuestionChoiceSimpleRule());
-
-        $serialized = $serializer->serialize($question);
-        foreach ($serialized['data']['choices'] as $index => $choice) {
-            $serialized['data']['choices'][$index]['option'] = [
-                'value'     => $choice['_id'],
-                'label'     => $choice['name']
-            ];
-        }
-        return $serialized;
     }
 }

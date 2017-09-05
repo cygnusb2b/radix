@@ -18,7 +18,12 @@ class OmedaService implements ServiceInterface
     private $apiClient;
 
     /**
-     * @var
+     * @var array
+     */
+    private $behaviorIds = [];
+
+    /**
+     * @var string
      */
     private $env;
 
@@ -54,6 +59,17 @@ class OmedaService implements ServiceInterface
     }
 
     /**
+     * @param   string  $type
+     * @param   int     $identifier
+     * @return  self
+     */
+    public function addBehaviorIdFor($type, $identifier)
+    {
+        $this->behaviorIds[strtolower($type)] = (integer) $identifier;
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function configure(array $parameters)
@@ -64,6 +80,12 @@ class OmedaService implements ServiceInterface
             $useStaging = true;
         }
         $this->apiClient->useStaging($useStaging);
+
+        foreach (['account' => 'accountBehaviorId', 'identity' => 'identityBehaviorId'] as $type => $key) {
+            if (isset($parameters[$key])) {
+                $this->addBehaviorIdFor($type, $parameters[$key]);
+            }
+        }
         return $this;
     }
 
@@ -82,6 +104,25 @@ class OmedaService implements ServiceInterface
     public function getApiClient()
     {
         return $this->apiClient;
+    }
+
+    /**
+     * @param   string  $type
+     * @return  integer|null
+     */
+    public function getBehaviorIdFor($type)
+    {
+        if (isset($this->behaviorIds[$type])) {
+            return (integer) $this->behaviorIds[$type];
+        }
+    }
+
+    /**
+     * @return  array
+     */
+    public function getBehaviorIds()
+    {
+        return $this->behaviorIds;
     }
 
     /**

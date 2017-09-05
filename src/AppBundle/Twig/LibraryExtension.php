@@ -13,22 +13,9 @@ class LibraryExtension extends Twig_Extension
     const ROOT = '@AppBundle/Resources/library/js';
 
     /**
-     * @var AccountManager
-     */
-    private $manager;
-
-    /**
      * @var Twig_Environment
      */
     private $twigEnv;
-
-    /**
-     * @param   AccountManager  $manager
-     */
-    public function __construct(AccountManager $manager)
-    {
-        $this->manager = $manager;
-    }
 
     /**
      * {@inheritDoc}
@@ -85,12 +72,8 @@ class LibraryExtension extends Twig_Extension
      */
     public function loadForm(Twig_Environment $env, $name)
     {
-        $appKey = $this->manager->getDatabaseSuffix();
-        $order  = [
-            sprintf('forms/%s/%s', $appKey, $name),
-            sprintf('forms/%s', $name)
-        ];
-        return $this->loadFile($env, $order);
+        $name = sprintf('forms/%s', $name);
+        return $this->loadFile($env, $name);
     }
 
     /**

@@ -1,7 +1,7 @@
 import Model             from 'ember-data/model';
 import attr              from 'ember-data/attr';
 import { hasMany }       from 'ember-data/relationships';
-import { fragmentArray } from 'model-fragments/attributes';
+import { fragmentArray } from 'ember-data-model-fragments/attributes';
 import SoftDeleteable    from 'radix/models/mixins/soft-deleteable';
 import Timestampable     from 'radix/models/mixins/timestampable';
 

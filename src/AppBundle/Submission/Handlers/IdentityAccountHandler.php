@@ -4,13 +4,13 @@ namespace AppBundle\Submission\Handlers;
 
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Factory\Identity\IdentityAccountFactory;
-use AppBundle\Submission\SubmissionHandlerInterface;
+use AppBundle\Submission\IdentifiableSubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class IdentityAccountHandler implements SubmissionHandlerInterface
+class IdentityAccountHandler implements IdentifiableSubmissionHandlerInterface
 {
     /**
      * @var IdentityAccountFactory
@@ -35,12 +35,6 @@ class IdentityAccountHandler implements SubmissionHandlerInterface
      */
     public function beforeSave(RequestPayload $payload, Model $submission)
     {
-        // Reset any previous.
-        $this->newAccount = null;
-
-        // Create the new account and override the identity set by the manager.
-        $this->newAccount = $this->accountFactory->create($payload->getIdentity()->all());
-        $submission->set('identity', $this->newAccount);
     }
 
     /**
@@ -51,6 +45,19 @@ class IdentityAccountHandler implements SubmissionHandlerInterface
         if (true !== $result = $this->accountFactory->canSave($this->newAccount)) {
             $result->throwException();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createIdentityFor(RequestPayload $payload)
+    {
+        // Reset any previous.
+        $this->newAccount = null;
+
+        // Create the new account and override the identity set by the manager.
+        $this->newAccount = $this->accountFactory->create($payload->getIdentity()->all());
+        return $this->newAccount;
     }
 
     /**

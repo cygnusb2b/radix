@@ -1,0 +1,21 @@
+form-field:
+    entity:
+        abtract: true
+        polymorphic: true
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { form: 1 }, options: { } }
+    mixins: [ 'sequenceable', 'timestampable', 'soft-deleteable' ]
+    attributes:
+        required:
+            type: boolean
+            defaultValue: false
+        readonly:
+            type: boolean
+            defaultValue: false
+    relationships:
+        form:
+            type: one
+            entity: form-definition

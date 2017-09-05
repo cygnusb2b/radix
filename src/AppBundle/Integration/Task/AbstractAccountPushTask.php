@@ -25,9 +25,7 @@ abstract class AbstractAccountPushTask implements TaskInterface
      */
     public function __construct(Model $account, AccountPushExecution $execution)
     {
-        if ('identity-account' !== $account->getType()) {
-            throw new \InvalidArgumentException(sprintf('Expected a model type of `identity-account` but received `%s`', $account->getType()));
-        }
+        AccountPushExecution::validateModelType($account->getType());
         $this->account   = $account;
         $this->execution = $execution;
     }

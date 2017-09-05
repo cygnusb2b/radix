@@ -1,0 +1,17 @@
+{{edit-field/rel-many
+  header="Identity Fields"
+  model=model
+  relField='identityFields'
+  items=model.identityFields
+  enableSort=true
+  confirmField='label'
+}}
+
+{{edit-field/rel-many
+  header="Question Fields"
+  model=model
+  relField='questionFields'
+  items=model.questionFields
+  enableSort=true
+  confirmField='question.label'
+}}

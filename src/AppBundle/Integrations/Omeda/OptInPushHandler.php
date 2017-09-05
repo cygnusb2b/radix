@@ -54,7 +54,6 @@ class OptInPushHandler extends AbstractHandler implements OptInPushInterface
             }
         } catch (ClientException $e) {
             if (404 == $e->getCode()) {
-                // Do we do an insert here?
                 return;
             }
             throw $e;

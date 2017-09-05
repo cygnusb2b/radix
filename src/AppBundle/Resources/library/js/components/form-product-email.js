@@ -7,8 +7,7 @@ React.createClass({ displayName: 'FormProductEmail',
             productKey  : null,
             productName : null,
             description : null,
-            onChange    : null,
-            fieldRef    : null
+            onChange    : null
         };
     },
 
@@ -26,8 +25,7 @@ React.createClass({ displayName: 'FormProductEmail',
                     selected : optedIn,
                     options  : options,
                     className: 'form-element-field toggle',
-                    onChange : this.props.onChange,
-                    ref      : this.props.fieldRef
+                    onChange : this.props.onChange
                 }),
                 React.createElement(Radix.Components.get('ProductEmailDeployment'), {
                     id          : this.props.productId,

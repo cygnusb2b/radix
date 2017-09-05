@@ -17,6 +17,21 @@ app_bundle_app_auth_verify_reset_token:
     defaults: { _controller: AppBundle:App\Auth:verifyResetToken }
     methods: [ GET ]
 
+app_bundle_app_export:
+    path: /app/export
+    defaults: { _controller: AppBundle:App\Export:index, _format: csv }
+    methods: [ POST ]
+
+app_bundle_app_form:
+    path: /app/form/{keyOrId}
+    defaults: { _controller: AppBundle:App\Form:retrieve }
+    methods: [ GET ]
+
+app_bundle_app_identity:
+    path: /app/identity
+    defaults: { _controller: AppBundle:App\Identity:index }
+    methods: [ GET ]
+
 app_bundle_app_init:
     path: /app/init
     defaults: { _controller: AppBundle:App\Init:default }
@@ -24,7 +39,7 @@ app_bundle_app_init:
 
 app_bundle_app_optins_email_deployment:
     path: /app/opt-ins/email-deployment/{emailAddress}
-    defaults: { _controller: AppBundle:App\OptIn:emailDeployment }
+    defaults: { _controller: AppBundle:App\OptIn:emailDeployment, emailAddress: null }
     methods: [ GET ]
 
 app_bundle_app_product:

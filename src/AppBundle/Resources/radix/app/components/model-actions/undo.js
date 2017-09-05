@@ -8,6 +8,12 @@ export default Button.extend({
     confirmValue: null,
     rollbackRels: false,
 
+    classNameBindings: ['buttonClassName'],
+
+    buttonClassName: Ember.computed('model.isNew', function() {
+        return this.get('model.isNew') ? 'btn-danger' : 'btn-warning';
+    }),
+
     label: Ember.computed('model.isNew', function() {
         // @todo This should support a direct set as well, so this can be overriden from a template.
         return this.get('model.isNew') ? 'Discard' : 'Undo';
@@ -44,11 +50,6 @@ export default Button.extend({
             _this.get('utility').rollback(model, _this.get('rollbackRels'));
             _this._redirectToRoute();
         });
-    },
-
-    didReceiveAttrs: function() {
-        let className = this.get('model.isNew') ? 'btn-danger' : 'btn-warning';
-        this.get('classNames').push(className);
     },
 
     _redirectToRoute: function() {

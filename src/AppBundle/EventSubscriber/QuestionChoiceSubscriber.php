@@ -54,6 +54,26 @@ class QuestionChoiceSubscriber implements EventSubscriberInterface
 
         $this->validate($model);
         $this->setFullName($model);
+        $this->setDependentLabel($model);
+    }
+
+    /**
+     * Sets the depedent label for the choice, if dependents exist.
+     *
+     * @param   Model   $model
+     */
+    protected function setDependentLabel(Model $model)
+    {
+        if ($model->get('hasDependents')) {
+            foreach ($model->get('dependents') as $dependent) {
+                if (null !== $question = $dependent->get('question')) {
+                    $model->set('dependentLabel', $question->get('label'));
+                    break;
+                }
+            }
+        } else {
+            $model->set('dependentLabel', null);
+        }
     }
 
     /**

@@ -35,8 +35,6 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function beforeSave(RequestPayload $payload, Model $submission)
     {
-        $emailAddress = ModelUtility::formatEmailAddress($payload->getSubmission()->get('emailAddress'));
-        $this->setOptInModelsFor($emailAddress, $payload->getSubmission()->getAsArray('optIns'));
     }
 
     /**
@@ -86,13 +84,15 @@ class EmailOptInHandler implements SubmissionHandlerInterface
      */
     public function validateAlways(RequestPayload $payload)
     {
-        $email = ModelUtility::formatEmailAddress($payload->getSubmission()->get('emailAddress'));
+        $email = ModelUtility::formatEmailAddress($payload->getIdentity()->get('primaryEmail'));
         if (empty($email)) {
             throw new HttpFriendlyException('The email address field is required.', 400);
         }
         if (false === ModelUtility::isEmailAddressValid($email)) {
             throw new HttpFriendlyException('The provided email address is invalid.', 400);
         }
+        // This must run here so that the model data can be applied before the submission manager strips the email address.
+        $this->setOptInModelsFor($email, $payload->getSubmission()->getAsArray('optIns'));
     }
 
     /**

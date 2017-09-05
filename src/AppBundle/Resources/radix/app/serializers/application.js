@@ -24,13 +24,6 @@ export default DS.JSONAPISerializer.extend({
         normalized.meta.links = normalized.links;
         return normalized;
     },
-    extractMeta: function(store, typeClass, payload) {
-        if (payload && payload.hasOwnProperty('links')) {
-            let meta = payload.links;
-            delete payload.links;
-            return meta;
-        }
-    },
     normalizeQueryResponse: function(store, clazz, payload) {
         const result = this._super(...arguments);
         result.meta = result.meta || {};

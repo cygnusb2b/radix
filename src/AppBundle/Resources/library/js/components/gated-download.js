@@ -1,125 +1,164 @@
+// @todo Ultimately, specifying a gate should be a seperate concern from the form.
+// For example, Radix would be told to gate "something," and that directive would then determine what form to use.
+// Gating could be by registration: meaning, if logged in, can view, if not must register
+// Gating could be by a form: meaning, a form must be submitted before completion, regardless if logged in (though logged in would pre-pop)
+// Gating could by by a product subscription: meaning, a user must be subscribed to "something" in order to view
+// The functional response of the form (whether it's to "view" or "download") is simply a different directive, not a different component (which it is now)
+// So, this needs to be re-explored.
 React.createClass({ displayName: 'ComponentGatedDownload',
-    // @todo Should gating simply allow any set of "extra metadata", as opposed to requiring properties to be directly set?
-    getDefaultProps: function() {
-        return {
-            title           : 'Download',
-            description     : 'To access this piece of premium content, please verify that the questions below have been answered and are accurate.',
-            fileUrl         : null, // The file to download on submit
-            webhookUrl      : null, // The webhook url to request to retrieve the file (in case you want to hide the url from the component/frontend): note, the hook must utilize CORs
-            className       : null,
-            enableNotify    : false,
-            notifyEmail     : null, // Notifications should be abstracted and (optionally) be handled by all components
-        };
-    },
+  // @todo Should gating simply allow any set of "extra metadata", as opposed to requiring properties to be directly set?
+  getDefaultProps: function() {
+    return {
+      title         : 'Download',
+      description   : 'To access this piece of premium content, please verify that the questions below have been answered and are accurate.',
+      fileUrl       : null, // The file to download on submit - this should be renamed to `sucessRedirect` to match other forms.
+      webhookUrl    : null, // The webhook url to request to retrieve the file (in case you want to hide the url from the component/frontend): note, the hook must utilize CORs
+      className     : null,
+      referringPath : null,
+      notify        : {} // Technically the notify value could be an array of notification objects.
+    };
+  },
 
-    componentDidMount: function() {
-        EventDispatcher.subscribe('AccountManager.account.loaded', function() {
-            this.setState({ account : AccountManager.getAccount() });
-        }.bind(this));
 
-        EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
-            this.setState({ account : AccountManager.getAccount(), nextTemplate: null });
-        }.bind(this));
-    },
+  componentDidMount: function() {
 
-    getInitialState: function() {
-        return {
-            account      : AccountManager.getAccount(),
-            nextTemplate : null
-        }
-    },
+    this._loadForm('gated-download');
 
-    handleSubmit: function(event) {
-        event.preventDefault();
+    EventDispatcher.subscribe('AccountManager.account.loaded', function() {
+      this.setState({ nextTemplate: null });
+      this._loadForm('gated-download');
+    }.bind(this));
 
-        var locker = this._formLock;
-        var error  = this._error;
+    EventDispatcher.subscribe('AccountManager.account.unloaded', function() {
+      this.setState({ nextTemplate: null });
+      this._loadForm('gated-download');
+    }.bind(this));
+  },
 
-        error.clear();
-        locker.lock();
+  componentDidUpdate: function() {
+    EventDispatcher.trigger('GatedDownload.form.updated');
+  },
 
-        var data = {};
-        for (var name in this._formRefs) {
-            var ref = this._formRefs[name];
-            data[name] = ref.state.value;
-        }
+  getInitialState: function() {
+    return {
+      loaded: false,
+      fields: [],
+      values: {},
+      nextTemplate : null
+    }
+  },
 
-        data['submission:referringHost'] = window.location.protocol + '//' + window.location.host;
-        data['submission:referringHref'] = window.location.href;
-        data['submission:fileUrl'] = this.props.fileUrl;
+  _loadForm: function(key) {
+    var locker = this._formLock;
+    locker.lock();
 
-        var sourceKey = 'gated-download';
-        var payload   = {
-            data: data,
-            meta: this.props.meta || {}
-        };
+    Ajax.send('/app/form/' + key, 'GET').then(function(response) {
+      this.setState({ loaded: true, fields: response.data.form.fields, values: response.data.values });
+      locker.unlock();
+      EventDispatcher.trigger('GatedDownload.form.loaded');
+    }.bind(this), function() {
+      locker.unlock();
+    });
+  },
 
-        Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
+  updateFieldValue: function(event) {
+    var stateSlice = this.state.values;
+    stateSlice[event.target.name] = event.target.value;
+    this.setState({ values: stateSlice });
+  },
 
-        Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
-            locker.unlock();
+  handleSubmit: function(event) {
+    event.preventDefault();
 
-            // Refresh the account, if logged in.
-            if (AccountManager.isLoggedIn()) {
-                AccountManager.reloadAccount().then(function() {
-                    EventDispatcher.trigger('AccountManager.account.loaded');
-                });
-            }
+    var formData = this.state.values;
 
-            // Set the next template to display (thank you page, etc).
-            var template = (response.data) ? response.data.template || null : null;
-            // Redirect.
-            window.location.replace(this.props.fileUrl);
-            // this.setState({ nextTemplate: template });
+    var locker = this._formLock;
+    var error  = this._error;
 
-        }.bind(this), function(jqXHR) {
-            locker.unlock();
-            error.displayAjaxError(jqXHR);
-        });
-    },
+    error.clear();
+    locker.lock();
 
-    _formRefs: {},
+    var referringHost = window.location.protocol + '//' + window.location.host;
+    var referringHref = window.location.href;
+    if (Utils.isString(this.props.referringPath)) {
+      referringHref = referringHost + '/' + this.props.referringPath.replace(/^\//, '');
+    }
 
-    handleFieldRef: function(input) {
-        if (input) {
-            this._formRefs[input.props.name] = input;
-        }
-    },
+    formData['submission:referringHost'] = referringHost;
+    formData['submission:referringHref'] = referringHref;
 
-    render: function() {
-        Debugger.log('ComponentGatedDownload', 'render()', this);
+    formData['submission:fileUrl'] = this.props.fileUrl;
 
-        var className = 'platform-element';
-        if (this.props.className) {
-            className = className + ' ' + this.props.className;
-        }
-        var elements;
-        if (this.state.nextTemplate) {
-            elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate } });
-        } else {
-            elements = React.createElement('div', { className: className },
-                React.createElement('h2', null, this.props.title),
-                React.createElement('p', null, this.props.description),
-                React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
-                React.createElement('hr'),
-                React.createElement(Radix.Forms.get('GatedDownload'), {
-                    account  : this.state.account,
-                    onSubmit : this.handleSubmit,
-                    fieldRef : this.handleFieldRef
-                }),
-                React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
-                React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
-            );
-        }
-        return (elements);
-    },
+    var sourceKey = 'gated-download';
+    var payload   = {
+      data: formData,
+      meta: this.props.meta || {},
+      notify : Utils.isObject(this.props.notify) ? this.props.notify : {}
+    };
 
-    _setErrorDisplay: function(ref) {
-        this._error = ref;
-    },
+    Debugger.info('InquiryModule', 'handleSubmit', sourceKey, payload);
 
-    _setLock: function(ref) {
-        this._formLock = ref;
-    },
+    Ajax.send('/app/submission/' + sourceKey, 'POST', payload).then(function(response, xhr) {
+      locker.unlock();
+      if (Utils.isString(this.props.fileUrl)) {
+        // Redirect the user.
+        window.location.href = this.props.fileUrl;
+      } else {
+        // Set the next template to display (thank you page, etc).
+        var template = (response.data) ? response.data.template || null : null;
+        this.setState({ nextTemplate: template });
+      }
+    }.bind(this), function(jqXHR) {
+      locker.unlock();
+      error.displayAjaxError(jqXHR);
+    });
+  },
 
+  render: function() {
+    Debugger.log('ComponentGatedDownload', 'render()', this);
+
+    var className = 'platform-element';
+    if (this.props.className) {
+      className = className + ' ' + this.props.className;
+    }
+    var elements;
+    if (this.state.nextTemplate) {
+      elements = React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: this.state.nextTemplate || '' } });
+    } else {
+      elements = React.createElement('div', { className: className },
+        this._getForm(),
+        React.createElement(Radix.Components.get('FormErrors'), { ref: this._setErrorDisplay }),
+        React.createElement(Radix.Components.get('FormLock'),   { ref: this._setLock })
+      );
+    }
+    return (elements);
+  },
+
+  _getForm: function() {
+    var form;
+    if (this.state.loaded) {
+      form = React.createElement('div', null,
+        React.createElement('h2', null, this.props.title),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: this.props.description || '' } }),
+        React.createElement(Radix.Components.get('ModalLinkLoginVerbose')),
+        React.createElement('hr'),
+        React.createElement(Radix.Components.get('Form'), {
+          name: 'gated-download',
+          fields: this.state.fields,
+          values: this.state.values,
+          onChange: this.updateFieldValue,
+          onSubmit: this.handleSubmit
+        })
+      );
+    }
+    return form;
+  },
+
+  _setErrorDisplay: function(ref) {
+    this._error = ref;
+  },
+
+  _setLock: function(ref) {
+    this._formLock = ref;
+  }
 });

@@ -1,52 +1,56 @@
 React.createClass({ displayName: 'ComponentFormCountryPostalCode',
+  getDefaultProps: function() {
+    return {
+      postalCode: { name: null, value: null },
+      countryCode: { name: null, value: null },
+      required: false,
+      onChange: null,
+    };
+  },
 
-    componentWillReceiveProps: function(props) {
-        this.setState({ countryCode: props.countryCode, postalCode: props.postalCode });
-    },
+  render: function() {
+    return (
+      React.createElement('div', null,
+        this._buildCountryElement(),
+        this._buildPostalCodeElement()
+      )
+    );
+  },
 
-    getDefaultProps: function() {
-        return {
-            postalCode  : null,
-            countryCode : null,
-            required    : false,
-            onChange    : null,
-            fieldRef    : null,
-        };
-    },
-
-    getInitialState: function() {
-        return {
-            countryCode : this.props.countryCode,
-            postalCode  : this.props.postalCode
-        };
-    },
-
-    handleCountryChange: function(event) {
-        var code = event.target.value;
-        this.setState({ countryCode: code, postalCode: null });
-
-        if (Utils.isFunction(this.props.onChange)) {
-            this.props.onChange(event);
-        }
-    },
-
-    render: function() {
-        return (
-            React.createElement('div', null,
-                React.createElement(Radix.Components.get('FormSelectCountry'), { required: this.props.required, fieldRef: this.props.fieldRef, onChange: this.handleCountryChange, selected: this.state.countryCode, wrapperClass: 'countryCode', name: 'identity:primaryAddress.countryCode' }),
-                this._buildDependentElement()
-            )
-        );
-    },
-
-    _buildDependentElement: function() {
-        var code = this.state.countryCode;
-        var element;
-        if ('USA' === code || 'CAN' === code) {
-            element = React.createElement(Radix.Components.get('FormInputText'), { required: this.props.required, ref: this.props.fieldRef, onChange: this.props.onChange, name: 'identity:primaryAddress.postalCode', wrapperClass: 'postalCode', label: 'Zip/Postal Code', value: this.state.postalCode });
-        } else {
-            element = React.createElement(Radix.Components.get('FormInputHidden'), { ref: this.props.fieldRef, onChange: this.props.onChange, name: 'identity:primaryAddress.postalCode', value: this.state.postalCode });
-        }
-        return element;
+  updateFieldValue: function(event) {
+    if (this.props.countryCode.name == event.target.name) {
+      // Country field was changed. Also wipe the postal code.
+      this.updateFieldValue({ target: { name: this.props.postalCode.name, value: '' } });
     }
+    if ('function' === typeof this.props.onChange) {
+      // Send parent event.
+      this.props.onChange(event);
+    }
+  },
+
+  _buildCountryElement: function() {
+    return React.createElement(Radix.Components.get('FormSelectCountry'), {
+      name: this.props.countryCode.name,
+      selected: this.props.countryCode.value,
+      wrapperClass: 'countryCode',
+      required: this.props.required,
+      onChange: this.updateFieldValue
+    });
+  },
+
+  _buildPostalCodeElement: function() {
+    var code = this.props.countryCode.value;
+    var element;
+    if ('USA' === code || 'CAN' === code) {
+      return React.createElement(Radix.Components.get('FormInputText'), {
+        label: 'Zip/Postal Code',
+        name: this.props.postalCode.name,
+        value: this.props.postalCode.value,
+        wrapperClass: 'postalCode',
+        required: this.props.required,
+        onChange: this.updateFieldValue
+      });
+    }
+    return element;
+  }
 });

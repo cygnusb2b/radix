@@ -21,7 +21,7 @@
                                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Sort
                                 </button>
-                                <div class="dropdown-menu">
+                                <div class="dropdown-menu dropdown-menu-right">
                                     {{#each sortOptions as |option|}}
                                         <a class="clickable dropdown-item" {{action 'sortBy' option.key}}>By {{option.label}}</a>
                                     {{/each}}

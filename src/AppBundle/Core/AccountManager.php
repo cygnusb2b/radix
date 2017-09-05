@@ -69,8 +69,10 @@ class AccountManager
      */
     public function configureNewRelic()
     {
+        $request = Request::createFromGlobals();
         if (extension_loaded('newrelic')) {
             newrelic_add_custom_parameter('application', $this->getCompositeKey());
+            newrelic_add_custom_parameter('queryString', $request->getQueryString());
         }
         return $this;
     }

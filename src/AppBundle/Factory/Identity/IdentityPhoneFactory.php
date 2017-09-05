@@ -32,7 +32,7 @@ class IdentityPhoneFactory extends AbstractEmbedFactory
 
         $number = $phone->get('number');
         if (empty($number)) {
-            return new Error(sprintf('The phone number cannot be empty.', $type), 400);
+            return new Error('The phone number cannot be empty.', 400);
         }
 
         $type = $phone->get('phoneType');

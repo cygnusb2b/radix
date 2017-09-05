@@ -13,8 +13,8 @@ React.createClass({ displayName: 'FormProductsEmail',
 
     getDefaultProps: function() {
         return {
-            optIns      : {},
-            fieldRef    : function(input) { Debugger.error('Nothing handled the field reference.'); }
+            values: {},
+            onChange: null
         };
     },
 
@@ -28,12 +28,12 @@ React.createClass({ displayName: 'FormProductsEmail',
     render: function() {
         var Products = this.state.products.map(function(product, index) {
             return React.createElement(Radix.Components.get('FormProductEmail'), {
-                key         : index,
+                key         : product._id,
                 productId   : product._id,
                 productKey  : product.key,
                 productName : product.name,
                 description : product.description,
-                fieldRef    : this.props.fieldRef,
+                onChange    : this.props.onChange,
                 optedIn     : this._isOptedIn(product._id)
             });
         }.bind(this));
@@ -41,6 +41,7 @@ React.createClass({ displayName: 'FormProductsEmail',
     },
 
     _isOptedIn: function(productId) {
-        return (this.props.optIns.hasOwnProperty(productId) && true === this.props.optIns[productId]);
+        var key = 'submission:optIns.' + productId;
+        return (this.props.values.hasOwnProperty(key) && 'true' === this.props.values[key]);
     }
 });

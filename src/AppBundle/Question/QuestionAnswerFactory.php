@@ -41,6 +41,7 @@ class QuestionAnswerFactory
             $answer   = [
                 'type'     => $type,
                 'question' => $question->get('label') ?: $question->get('name'),
+                'name'     => $question->get('name'),
             ];
 
             $value = $model->get('value');
@@ -54,6 +55,9 @@ class QuestionAnswerFactory
                         $values[] = $v->get('name');
                     }
                     $answer['value'] = $values;
+                    break;
+                case 'related-choice-single':
+                    $answer['value'] = $value->get('name');
                     break;
                 default:
                     $answer['value'] = $value;
@@ -140,8 +144,9 @@ class QuestionAnswerFactory
             $values[$v] = true;
         }
 
-        $choices = [];
-        foreach ($question->get('choices') as $choice) {
+        $choiceKey = 'related-choice-single' === $question->get('questionType') ? 'relatedChoices' : 'choices';
+        $choices   = [];
+        foreach ($question->get($choiceKey) as $choice) {
             $id = $choice->getId();
             if (isset($values[$id])) {
                 $choices[] = $choice;
