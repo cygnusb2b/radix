@@ -23,6 +23,8 @@ class AccountManager
     private static $globalOrigins = [
         'http://radix.as3.io',
         'http://*.radix.as3.io',
+        'https://radix.as3.io',
+        'https://*.radix.as3.io'
     ];
 
     /**

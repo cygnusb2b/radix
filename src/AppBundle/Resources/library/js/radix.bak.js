@@ -90,10 +90,10 @@
 
         var count = 0,
             libraries = [
-                '//cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
-                'http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js',
-                '//checkout.stripe.com/checkout.js',
-                '//cdn.auth0.com/w2/auth0-6.js'
+                'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.min.js',
+                'https://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.min.js',
+                'https://checkout.stripe.com/checkout.js',
+                'https://cdn.auth0.com/w2/auth0-6.js'
             ];
 
         function loadLibraries() {
@@ -3202,7 +3202,7 @@
             }
             method = method || 'POST';
             headers = 'object' === typeof headers ? headers : {};
-            var url =  'http://' + ClientConfig.values.host + endpoint;
+            var url =  location.protocol + "//" + ClientConfig.values.host + endpoint;
 
             return new RSVP.Promise(function(resolve, reject) {
                 var xhr = new XMLHttpRequest();
