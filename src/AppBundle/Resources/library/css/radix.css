@@ -341,7 +341,7 @@ ins {
 
     display: none;
 }
-.platform-element .commentForm .pc-stars {
+.platform-element .comment-form .pc-stars {
     float: left;
     margin: 8px 0;
     clear: left;
@@ -584,7 +584,7 @@ ins {
     line-height: 1.5 !important;
 }
 
-.platform-element .comments-container h3 {
+.platform-element.comments-container h3 {
     margin: 16px 0 !important;
 }
 
@@ -651,7 +651,7 @@ ins {
         width: 100%;
     }
 
-    .platform-element .form-element-wrapper.comments {
+    .platform-element .comment-form .form-element-wrapper {
         width: 100%;
     }
 }

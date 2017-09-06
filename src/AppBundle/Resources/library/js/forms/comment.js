@@ -20,7 +20,18 @@ React.createClass({ displayName: 'FormComment',
         if (!this.props.display) {
             return React.createElement('div');
         }
-        return React.createElement('form', { autocomplete: false, className: 'database-form', onSubmit: this.props.onSubmit },
+        var className = 'database-form';
+        if (this.props.className) {
+            className = className + ' ' + this.props.className;
+        }
+        var captcha;
+        if (this.props.requireCaptcha) {
+            captcha = React.createElement(Radix.Components.get('Recaptcha'), {
+                ref : this.props.captchaRef,
+            });
+        }
+
+        return React.createElement('form', { autocomplete: false, className: className, onSubmit: this.props.onSubmit },
             React.createElement(Radix.Components.get('FormInputText'), {
                 ref          : this.props.fieldRef,
                 name         : 'displayName',
@@ -30,17 +41,14 @@ React.createClass({ displayName: 'FormComment',
                 required     : true,
             }),
             React.createElement(Radix.Components.get('FormTextArea'), {
-                name        : 'comment',
+                name        : 'body',
                 label       : 'Your Comment',
                 wrapperClass: 'inputBody',
                 ref         : this.props.fieldRef,
                 required    : true,
             }),
             this._getAnonymizeElement(),
-
-            React.createElement(Radix.Components.get('Recaptcha'), {
-                ref : this.props.captchaRef,
-            }),
+            captcha,
             React.createElement('button', { type: 'submit'}, 'Submit')
         );
     },

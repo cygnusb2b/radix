@@ -3,14 +3,14 @@ React.createClass({ displayName: 'ComponentRecaptcha',
     _readyCheck : null,
 
     getResponse: function() {
-        return (this.state.ready) ? grecaptcha.getResponse() : '';
+        return (this.state.ready) ? grecaptcha.getResponse(this.state.widgetId) : '';
     },
 
     componentDidMount: function() {
         if (!this.state.ready) {
             this._readyCheck = setInterval(this._updateReadyState, 200);
         } else {
-            grecaptcha.render(this.props.elementId, {
+            var widgetId = grecaptcha.render(this.props.elementId, {
                 sitekey            : this.props.sitekey,
                 callback           : this._verifyCallback,
                 type               : this.props.type,
@@ -18,16 +18,18 @@ React.createClass({ displayName: 'ComponentRecaptcha',
                 size               : this.props.size,
                 tabindex           : this.props.tabindex,
             });
+            this.setState({ widgetId: widgetId });
         }
     },
 
     componentWillUnmount: function() {
+        this.reset();
         clearInterval(this._readyCheck);
     },
 
     getDefaultProps: function() {
         return {
-            elementId : 'g-recaptcha',
+            elementId : 'g-recaptcha-radix',
             sitekey   : '6LcUfhAUAAAAAPB5BpkPBzTGeAPhobLZusL1Y78W',
             type      : 'image',
             theme     : 'light',
@@ -38,7 +40,8 @@ React.createClass({ displayName: 'ComponentRecaptcha',
 
     getInitialState: function() {
         return {
-            ready : this._isReady(),
+            ready: this._isReady(),
+            widgetId: null,
         }
     },
 
@@ -54,7 +57,7 @@ React.createClass({ displayName: 'ComponentRecaptcha',
 
     reset: function() {
         if (this.state.ready) {
-            grecaptcha.reset();
+            grecaptcha.reset(this.state.widgetId);
         }
     },
 
