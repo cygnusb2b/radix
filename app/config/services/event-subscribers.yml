@@ -18,6 +18,18 @@ services:
         tags:
             - { name: as3_modlr.event_subscriber }
 
+    app_bundle.event_subscriber.post:
+        private: true
+        class: AppBundle\EventSubscriber\PostSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
+    app_bundle.event_subscriber.post_stream:
+        private: true
+        class: AppBundle\EventSubscriber\PostStreamSubscriber
+        tags:
+            - { name: as3_modlr.event_subscriber }
+
     app_bundle.event_subscriber.keyable:
         private: true
         class: AppBundle\EventSubscriber\KeyableSubscriber

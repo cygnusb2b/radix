@@ -8,7 +8,7 @@ post-comment:
         parent:
             type: one
             entity: post-comment
-        child:
+        children:
             type: many
             inverse: true
             field: parent

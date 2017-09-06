@@ -5,7 +5,7 @@ post-stream:
             db: radix
             schemata:
                 - { keys: { identifier: 1 }, options: { unique: true } }
-    mixins: [ 'timestampable' ]
+    mixins: [ 'soft-deleteable', 'timestampable' ]
     attributes:
         title:
             type: string
@@ -16,6 +16,10 @@ post-stream:
         identifier:
             type: string
             description: 'An identifier (set by the application displaying the stream) that uniquely identifies the stream.'
+        active:
+            type: boolean
+            defaultValue: true
+            description: 'Whether the stream is currently active. Inactive streams will still display posts, but will prevent new posts from being submitted.'
     relationships:
         posts:
             type: many
