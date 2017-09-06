@@ -23,6 +23,8 @@ class AccountManager
     private static $globalOrigins = [
         'http://radix.as3.io',
         'http://*.radix.as3.io',
+        'https://radix.as3.io',
+        'https://*.radix.as3.io',
     ];
 
     /**
@@ -187,6 +189,7 @@ class AccountManager
      */
     public function setApplication(Model $application)
     {
+        $this->appendApplicationSettings($application);
         $this->application = $application;
         $this->account     = $application->get('account');
         $this->configureNewRelic();
@@ -204,5 +207,26 @@ class AccountManager
             return true;
         }
         return $this->hasApplication();
+    }
+
+    /**
+     * Ensures that the settings are pre-filled with defaults if empty.
+     *
+     * @param   Model   $application
+     * @return  self
+     */
+    private function appendApplicationSettings(Model $application)
+    {
+
+        $settings = $application->get('settings');
+        if (null === $settings) {
+            $settings = $application->createEmbedFor('settings');
+            $application->set('settings', $settings);
+        }
+        foreach ($settings->getMetadata()->getEmbeds() as $key => $embedMeta) {
+            if (null === $settings->get($key)) {
+                $settings->set($key, $settings->createEmbedFor($key));
+            }
+        }
     }
 }
