@@ -3,7 +3,7 @@ function Debugger(enabled, level)
     init();
 
     var level   = level || 'error';
-    var enabled = Boolean(enabled) || true;
+    var enabled = Boolean(enabled) || false;
 
     var levels = {
         log   : 0,
