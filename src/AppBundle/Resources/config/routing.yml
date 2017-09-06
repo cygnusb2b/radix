@@ -42,6 +42,18 @@ app_bundle_app_optins_email_deployment:
     defaults: { _controller: AppBundle:App\OptIn:emailDeployment, emailAddress: null }
     methods: [ GET ]
 
+app_bundle_app_posts_comment:
+    path: /app/posts/comment
+    defaults: { _controller: AppBundle:App\Post:comment }
+    methods: [ POST ]
+
+app_bundle_app_posts:
+    path: /app/posts/{type}/{streamId}/{page}
+    defaults: { _controller: AppBundle:App\Post:list, page: 1 }
+    methods: [ GET ]
+    requirements:
+        type: comment|review
+
 app_bundle_app_product:
     path: /app/product/{type}
     defaults: { _controller: AppBundle:App\Product:all, type: null }
