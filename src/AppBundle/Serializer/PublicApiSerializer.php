@@ -124,6 +124,18 @@ class PublicApiSerializer
     }
 
     /**
+     * Determines if the field for the provided model has a custom serializer function.
+     *
+     * @param   AbstractModel   $model
+     * @param   FieldMetadata   $fieldMeta
+     * @return  \Closure|null
+     */
+    private function getCustomSerializer(AbstractModel $model, FieldMetadata $fieldMeta)
+    {
+        return $this->getRule($model)->getCustomSerializer($fieldMeta->getKey());
+    }
+
+    /**
      * Increases the serializer depth.
      *
      * @return  self
@@ -290,8 +302,9 @@ class PublicApiSerializer
             if (false === $this->shouldSerialize($model, $attrMeta)) {
                 continue;
             }
+            $serializer = $this->getCustomSerializer($model, $attrMeta);
             $value = $model->get($key);
-            $serialized[$key] = $this->serializeAttribute($value, $attrMeta);
+            $serialized[$key] = $serializer ? $serializer($model, $value) : $this->serializeAttribute($value, $attrMeta);
         }
 
         // Embeds.
@@ -299,8 +312,9 @@ class PublicApiSerializer
             if (false === $this->shouldSerialize($model, $embeddedPropMeta)) {
                 continue;
             }
+            $serializer = $this->getCustomSerializer($model, $embeddedPropMeta);
             $value = $model->get($key);
-            $serialized[$key] = $this->serializeEmbed($value, $embeddedPropMeta);
+            $serialized[$key] = $serializer ? $serializer($model, $value) : $this->serializeEmbed($value, $embeddedPropMeta);
         }
 
         // Relationships.
@@ -310,8 +324,9 @@ class PublicApiSerializer
             if (false === $this->shouldSerialize($model, $relMeta)) {
                 continue;
             }
+            $serializer = $this->getCustomSerializer($model, $relMeta);
             $relationship = $model->get($key);
-            $serialized[$key] = $this->serializeRelationship($model, $relationship, $relMeta);
+            $serialized[$key] = $serializer ? $serializer($model, $relationship) : $this->serializeRelationship($model, $relationship, $relMeta);
         }
         $this->decreaseDepth();
         $model->enableCollectionAutoInit(true);

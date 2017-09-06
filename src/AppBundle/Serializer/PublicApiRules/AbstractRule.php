@@ -7,6 +7,17 @@ use AppBundle\Serializer\PublicApiRuleInterface;
 abstract class AbstractRule
 {
     /**
+     * Gets all registered custom field serializers.
+     * Must be overloaded by the implementing class in order to set.
+     *
+     * @return \Closure[]
+     */
+    protected function getCustomFieldSerializers()
+    {
+        return [];
+    }
+
+    /**
      * Determines the fields to exclude. Is used with include all by default is true.
      *
      * @return  array
@@ -38,5 +49,19 @@ abstract class AbstractRule
         }
         $fields = $this->getIncludeFields();
         return isset($fields[$fieldKey]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCustomSerializer($fieldKey)
+    {
+        if (false === $this->shouldSerialize($fieldKey)) {
+            return;
+        }
+        $custom = $this->getCustomFieldSerializers();
+        if (isset($custom[$fieldKey]) && $custom[$fieldKey] instanceof \Closure) {
+            return $custom[$fieldKey];
+        }
     }
 }
