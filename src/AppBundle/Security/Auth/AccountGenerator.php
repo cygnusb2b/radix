@@ -48,7 +48,10 @@ class AccountGenerator implements AuthGeneratorInterface
     public function serializeModel(Model $model)
     {
         return [
-            'data' => ['roles' => $model->get('roles')],
+            'data' => [
+                'roles'       => $model->get('roles'),
+                'displayName' => $model->get('displayName'),
+            ],
         ];
     }
 
