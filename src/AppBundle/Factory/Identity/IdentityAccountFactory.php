@@ -152,6 +152,36 @@ class IdentityAccountFactory extends AbstractIdentityFactory
                 $identity->set('displayName', $username);
             }
         }
+        $this->updateRelatedPostsFor($identity);
+    }
+
+    private function updateRelatedPostsFor(AbstractModel $identity)
+    {
+        $changeset = $identity->getChangeSet();
+        $postUpdates = [];
+        if ($identity->getState()->is('new')) {
+            return;
+        }
+        foreach (['displayName', 'picture'] as $key) {
+            if (isset($changeset['attributes'][$key])) {
+                // Update all posts with the new values.
+                $postUpdates[$key] = $identity->get($key);
+            }
+        }
+        if (empty($postUpdates)) {
+            return;
+        }
+        $store = $identity->getStore();
+        $metadata = $store->getMetadataForType('post');
+        $store->getPersisterFor('post')->getQuery()->createQueryBuilder($metadata)
+            ->update()
+            ->upsert(true)
+            ->multiple(true)
+            ->setQueryArray(['account' => new \MongoId($identity->getId())])
+            ->setNewObj(['$set' => $postUpdates])
+            ->getQuery()
+            ->execute()
+        ;
     }
 
     /**
