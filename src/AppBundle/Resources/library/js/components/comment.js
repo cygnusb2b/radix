@@ -25,7 +25,7 @@ React.createClass({ displayName: 'ComponentComment',
    *
    */
   render: function() {
-    var postedBy = 'Posted by ' + this.props.displayName || 'Unknown';
+    var postedBy = null !== this.props.displayName ? 'Posted by ' + this.props.displayName : 'Posted by Unknown';
     if (!this.props.approved) {
       postedBy = postedBy + ' (Pending Moderation)';
     }

@@ -1,0 +1,11 @@
+<div class="btn-group float-right" role="group" aria-label="Pagination Controls">
+  {{#-bs/button "info" size="small" outline=true disabled=(eq page 1) click=(action 'resetPagination')}}
+    {{-ion "chevron-left"}}{{-ion "chevron-left"}}
+  {{/-bs/button}}
+  {{#-bs/button "info" size="small" outline=true disabled=isPageLeftDisabled click=(action 'incrementPage' -1)}}{{-ion "chevron-left"}}{{/-bs/button}}
+  {{#-bs/button "info" size="small" outline=true disabled=true}}{{ page }}{{/-bs/button}}
+  {{#-bs/button "info" size="small" outline=true disabled=isPageRightDisabled click=(action 'incrementPage' 1)}}{{-ion "chevron-right"}}{{/-bs/button}}
+  {{#-bs/button "info" size="small" outline=true disabled=true}}
+    {{-ion "chevron-right"}}{{-ion "chevron-right"}}
+  {{/-bs/button}}
+</div>

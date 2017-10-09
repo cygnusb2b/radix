@@ -1,0 +1,18 @@
+<div class="col-md-12">
+    <div class="jumbotron">
+        <h1 class="display-3">Comments</h1>
+    </div>
+    {{ partial 'list/pagination' }}
+    <div class="list-group m-b-1">
+        {{#each model as |post|}}
+            {{post-item post=post}}
+        {{else}}
+            <div class="list-group-item list-group-item-action">
+                <p class="list-group-item-text">No results found.</p>
+            </div>
+        {{/each}}
+    </div>
+    {{ partial 'list/pagination' }}
+</div>
+<div class="col-md-12">{{ outlet }}</div>
+

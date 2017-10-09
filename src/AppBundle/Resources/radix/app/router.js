@@ -13,6 +13,9 @@ Router.map(function() {
         this.route('settings');
     });
 
+    this.route('comments', function() {
+    });
+
     this.route('modeling', function() {
         this.route('models', function() {
             this.route('create');
