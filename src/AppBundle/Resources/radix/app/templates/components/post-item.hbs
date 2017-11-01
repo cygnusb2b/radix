@@ -1,0 +1,21 @@
+{{#if post.deleted}}
+{{else}}
+<div class="small list-group-item list-group-item-action{{if post.approved '' ' list-group-item-warning'}}">
+    <div class="d-flex w-100 justify-content-between">
+        <div class="mb-1">
+            <p class="text-muted">
+                <a href="{{post.stream.url}}" target="_blank">{{post.stream.title}} &nbsp;<i class="fa fa-external-link"></i></a>
+                <br>
+                {{post.createdDate}} &bull; {{#if post.displayName}}{{post.displayName}}{{else}}Unkown{{/if}}
+            </p>
+            <p>{{post.body}}</p>
+        </div>
+        <div>
+            {{#unless post.approved}}
+                {{model-actions/toggle-property model=post classNames='btn-success testing' icon='ion-android-checkmark-circle' field='approved' label='Approve'}}
+            {{/unless}}
+            {{model-actions/soft-delete model=post confirmValue=post.body icon='ion-ios-trash' label='Delete'}}
+        </div>
+    </div>
+</div>
+{{/if}}
