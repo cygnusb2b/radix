@@ -5,13 +5,17 @@
             {{#link-to 'index' class='navbar-brand'}}Radix{{/link-to}}
             <ul class="nav navbar-nav">
                 {{select-application onAppChange="refreshApp"}}
-
-                {{-bootstrap/nav-item linkTo='comments'     label='Comments'}}
-                {{-bootstrap/nav-item linkTo='identity'     label='Identities'}}
-                {{-bootstrap/nav-item linkTo='demographic'  label='Demographics'}}
-                {{-bootstrap/nav-item linkTo='product'      label='Products'}}
-                {{-bootstrap/nav-item linkTo='form'         label='Forms'}}
-                {{-bootstrap/nav-item linkTo='integrations' label='Integrations'}}
+                {{log userManager.permissions.comments}}
+                {{#unless userManager.permissions.allowAll}}
+                    {{-bootstrap/nav-item linkTo='comments'     label='Comments'}}
+                {{else}}
+                    {{-bootstrap/nav-item linkTo='comments'     label='Comments'}}
+                    {{-bootstrap/nav-item linkTo='identity'     label='Identities'}}
+                    {{-bootstrap/nav-item linkTo='demographic'  label='Demographics'}}
+                    {{-bootstrap/nav-item linkTo='product'      label='Products'}}
+                    {{-bootstrap/nav-item linkTo='form'         label='Forms'}}
+                    {{-bootstrap/nav-item linkTo='integrations' label='Integrations'}}
+                {{/unless}}
 
             </ul>
             <ul class="nav navbar-nav pull-xs-right">
