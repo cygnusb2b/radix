@@ -5,7 +5,6 @@
             {{#link-to 'index' class='navbar-brand'}}Radix{{/link-to}}
             <ul class="nav navbar-nav">
                 {{select-application onAppChange="refreshApp"}}
-                {{log userManager.permissions.comments}}
                 {{#unless userManager.permissions.allowAll}}
                     {{-bootstrap/nav-item linkTo='comments'     label='Comments'}}
                 {{else}}
