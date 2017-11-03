@@ -24,4 +24,11 @@ interface PublicApiRuleInterface
      * @return  bool
      */
     public function shouldSerialize($fieldKey);
+
+    /**
+     * Gets a custom serializer closure, or null if it doesn't exist.
+     *
+     * @return \Closure|null
+     */
+    public function getCustomSerializer($fieldKey);
 }

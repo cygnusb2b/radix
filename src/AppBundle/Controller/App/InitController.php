@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\App;
 
+use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

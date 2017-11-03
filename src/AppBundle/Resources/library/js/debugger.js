@@ -22,6 +22,14 @@ function Debugger(enabled, level)
         return this;
     }
 
+    this.isEnabled = function() {
+        return enabled;
+    }
+
+    this.isValid = function() {
+        return -1 !== getLevelIndex();
+    }
+
     this.log = function() {
         dispatch('log', arguments);
         return this;
@@ -40,6 +48,10 @@ function Debugger(enabled, level)
     this.error = function() {
         dispatch('error', arguments);
         return this;
+    }
+
+    this.getLevel = function() {
+        return level;
     }
 
     this.setLevel = function(value) {

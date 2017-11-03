@@ -2,6 +2,11 @@
 
 {% block title %}Radix Sandbox{% endblock %}
 
+{% block head_content %}
+    {# Note, in order to use recaptcha with Radix, this must be included along with the radix script#}
+    <script src='https://www.google.com/recaptcha/api.js?render=explicit'></script>
+{% endblock %}
+
 {% block body %}
 
 {% include '@AppBundle/Resources/views/sandbox/_nav.html.twig' %}

@@ -48,6 +48,7 @@ class SandboxController extends AbstractController
     private function buildNavigation(Request $request)
     {
         $nav = [
+            ['label' => 'Comments', 'path' => '/comments', 'children' => []],
             ['label' => 'Inquiry', 'path' => '/inquiry', 'children' => []],
             ['label' => 'Email Subs', 'path' => '/email-subscriptions', 'children' => []],
             ['label' => 'Gating', 'path' => '#', 'children' => [

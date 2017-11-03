@@ -11,6 +11,16 @@ use As3\Modlr\Models\Model;
 abstract class AbstractAppController extends AbstractController
 {
     /**
+     * Gets the Application instance.
+     *
+     * @return Model
+     */
+    protected function getApplication()
+    {
+       return $this->get('app_bundle.core.account_manager')->getApplication();
+    }
+
+    /**
      * Gets the Customer security user instance, if available.
      *
      * @return  Customer|null

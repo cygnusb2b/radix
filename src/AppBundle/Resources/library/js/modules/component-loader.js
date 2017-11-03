@@ -21,6 +21,11 @@ function ComponentLoaderModule()
      */
     function propertyMapping() {
         return {
+            Comments : {
+                allowed      : [ 'title', 'className', 'streamId', 'streamTitle', 'streamUrl' ],
+                required     : [ 'streamId', 'streamTitle' ],
+                usesChildren : false
+            },
             EmailSubscriptions : {
                 allowed      : [ 'title', 'className' ],
                 required     : [  ],

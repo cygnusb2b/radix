@@ -1,0 +1,23 @@
+application-settings-posts:
+    attributes:
+        enabled:
+            type: boolean
+            defaultValue: true
+        allowAnonymous:
+            type: boolean
+            defaultValue: false
+        requireAccount:
+            type: boolean
+            defaultValue: true
+        requireCaptcha:
+            type: boolean
+            defaultValue: true
+        requireModeration:
+            type: boolean
+            defaultValue: false
+        defaultPicture:
+            type: string
+            defaultValue: '//s3.amazonaws.com/cygnusimages/base/anonymous.jpg'
+        pageSize:
+            type: integer
+            defaultValue: 25

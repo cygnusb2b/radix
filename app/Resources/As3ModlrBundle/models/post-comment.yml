@@ -1,0 +1,16 @@
+post-comment:
+    entity:
+        extends: post
+        persistence:
+            key: mongodb
+            db: radix
+    relationships:
+        parent:
+            type: one
+            entity: post-comment
+        children:
+            type: many
+            inverse: true
+            field: parent
+            entity: post-comment
+
