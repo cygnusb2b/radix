@@ -132,7 +132,7 @@ class PublicApiSerializer
      */
     private function getCustomSerializer(AbstractModel $model, FieldMetadata $fieldMeta)
     {
-        return $this->getRule($model)->getCustomSerializer($fieldMeta->getKey());
+        return $this->hasRule($model) ? $this->getRule($model)->getCustomSerializer($fieldMeta->getKey()) : null;
     }
 
     /**
