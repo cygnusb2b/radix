@@ -17,7 +17,7 @@ node {
           }
         }
     } catch (e) {
-      slackSend channel: '@solocommand', color: 'bad', message: "Failed testing ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
+      slackSend color: 'bad', channel: '#codebot', message: "Failed testing ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
       process.exit(1)
     }
 
@@ -41,7 +41,7 @@ node {
 
         stage('Ember') {
           nodeBuilder.inside("-v ${env.WORKSPACE}:/var/www/html -u 0:0") {
-            sh 'cd src/AppBundle/Resources/radix && npm install --silent';
+            sh 'cd src/AppBundle/Resources/radix && npm install --silent --no-summary';
             sh 'cd src/AppBundle/Resources/radix && bower install --quiet --allow-root'
             sh 'cd src/AppBundle/Resources/radix && ember build --silent --environment=production'
             sh 'cd src/AppBundle/Resources/radix && rm -rf tmp node_modules bower_components'
@@ -58,7 +58,7 @@ node {
         }
       }
     } catch (e) {
-      slackSend channel: '@solocommand', color: 'bad', message: "Failed building ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
+      slackSend color: 'bad', channel: '#codebot', message: "Failed building ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
       process.exit(1)
     }
 
@@ -74,10 +74,10 @@ node {
           rancher confirm: true, credentialId: 'rancher', endpoint: 'https://rancher.as3.io/v2-beta', environmentId: '1a18', image: "664537616798.dkr.ecr.us-east-1.amazonaws.com/radix-server:v${env.BUILD_NUMBER}", service: 'radix/server', environments: '', ports: '', timeout: 30
         }
         stage('Notify Upgrade') {
-          slackSend channel: '@solocommand', color: 'good', message: "Finished deploying ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
+          slackSend color: 'good', channel: '#deployments', message: "Finished deploying ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
         }
       } catch (e) {
-        slackSend channel: '@solocommand', color: 'bad', message: "Failed deploying ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
+        slackSend color: 'bad', channel: '#deployments', message: "Failed deploying ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
         process.exit(1)
       }
     }
