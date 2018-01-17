@@ -12,7 +12,7 @@ node {
             withEnv(['SYMFONY_ENV=test', 'APP_ENV=test']) {
               sh 'php bin/composer install --no-interaction --prefer-dist'
               sh 'php bin/console assetic:dump --env=test'
-              sh 'bin/phpunit -c app'
+              sh 'php bin/phpunit'
             }
           }
         }
