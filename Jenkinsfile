@@ -23,34 +23,37 @@ node {
 
     try {
       docker.withRegistry('https://registry.hub.docker.com', 'docker-registry-login') {
-        def builder = docker.image('scomm/php5.6:latest')
+        def builder = docker.image('limit0/php56:latest')
+        def nodeBuilder = docker.image('limit0/node-build:latest')
         builder.pull()
-        builder.inside("-v ${env.WORKSPACE}:/var/www/html -u 0:0") {
-          withEnv(['SYMFONY_ENV=prod', 'APP_ENV=prod']) {
+        nodeBuilder.pull()
 
-            stage('Install') {
-              // Reset cache for production build
-              sh 'rm -rf var/cache/*';
-              sh "sed -i.bak \'s/framework_version:.*/framework_version: ${env.BRANCH_NAME}_${env.BUILD_NUMBER}/g\' app/config/parameters.yml"
-              sh 'php bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev'
+        stage('Composer') {
+          builder.inside("-v ${env.WORKSPACE}:/var/www/html -u 0:0") {
+            withEnv(['SYMFONY_ENV=prod', 'APP_ENV=prod']) {
+                // Reset cache for production build
+                sh 'rm -rf var/cache/*';
+                sh "sed -i.bak \'s/framework_version:.*/framework_version: ${env.BRANCH_NAME}_${env.BUILD_NUMBER}/g\' app/config/parameters.yml"
+                sh 'php bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev'
+              }
             }
+        }
 
-            stage('Install Ember') {
-              sh 'cd src/AppBundle/Resources/radix && npm install'
-              sh 'cd src/AppBundle/Resources/radix && bower install --quiet --allow-root'
-              sh 'cd src/AppBundle/Resources/radix && ember build --environment=production'
+        stage('Ember') {
+          nodeBuilder.inside("-v ${env.WORKSPACE}:/var/www/html -u 0:0") {
+            sh 'cd src/AppBundle/Resources/radix && npm install --silent';
+            sh 'cd src/AppBundle/Resources/radix && bower install --quiet --allow-root'
+            sh 'cd src/AppBundle/Resources/radix && ember build --silent --environment=production'
+            sh 'cd src/AppBundle/Resources/radix && rm -rf tmp node_modules bower_components'
+          }
+        }
 
-              sh 'cd src/AppBundle/Resources/radix && rm -rf tmp node_modules bower_components'
-            }
-
-            stage('Cache Warmup') {
+        stage ('Cache & Assets') {
+          builder.inside("-v ${env.WORKSPACE}:/var/www/html -u 0:0") {
+            withEnv(['SYMFONY_ENV=prod', 'APP_ENV=prod']) {
               sh 'php bin/console cache:warm --env=prod'
-            }
-
-            stage('Assetic Dump') {
               sh 'php bin/console assetic:dump --env=prod'
             }
-
           }
         }
       }
@@ -61,12 +64,9 @@ node {
 
     if (!env.BRANCH_NAME.contains('PR-')) {
       try {
-        docker.withRegistry('https://664537616798.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-jenkins-login') {
-          stage('Build Container') {
+        stage('Build Container') {
+          docker.withRegistry('https://664537616798.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-jenkins-login') {
             myDocker = docker.build("radix-server:v${env.BUILD_NUMBER}", '.')
-          }
-          stage('Push Container') {
-            myDocker.push("latest");
             myDocker.push("v${env.BUILD_NUMBER}");
           }
         }
