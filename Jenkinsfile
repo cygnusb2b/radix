@@ -10,7 +10,7 @@ node {
         tester.inside("-v ${env.WORKSPACE}:/var/www/html -u 0:0") {
           stage('Testing') {
             withEnv(['SYMFONY_ENV=test', 'APP_ENV=test']) {
-              sh 'php bin/composer install --no-interaction --prefer-dist --no-dev'
+              sh 'php bin/composer install --no-interaction --prefer-dist'
               sh 'php bin/console assetic:dump --env=test'
               sh 'bin/phpunit -c app'
             }
@@ -32,7 +32,7 @@ node {
 
             stage('Install') {
               // Reset cache & vendor for production build
-              sh 'rm -rf vendor var/cache/*';
+              sh 'rm -rf var/cache/*';
               sh "sed -i.bak \'s/framework_version:.*/framework_version: ${env.BRANCH_NAME}_${env.BUILD_NUMBER}/g\' app/config/parameters.yml"
               sh 'php bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev'
             }
