@@ -35,7 +35,7 @@ class InquiryHandler implements SubmissionHandlerInterface
     {
         return new JsonResponse([
             'data' => [
-                'template'  => '<h3>Thank you!</h3><p>Your submission has been received.</p>',
+                'template'  => '<h3>Thank you!</h3><p>Your submission has been received.</p><br><a href="/">Click here to return to the home page</a>',
             ]
         ], 201);
     }
