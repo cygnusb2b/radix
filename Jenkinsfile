@@ -16,7 +16,6 @@ node {
             }
           }
         }
-      }
     } catch (e) {
       slackSend channel: '@solocommand', color: 'bad', message: "Failed testing ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|View>)"
       process.exit(1)
