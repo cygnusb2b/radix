@@ -45,7 +45,7 @@ React.createClass({ displayName: 'ComponentComment',
             React.createElement('span', null, postedBy)
           ),
           React.createElement('p', { className: 'comment-body' }, this.props.body)
-        ),
+        )
       )
     );
   },
