@@ -176,7 +176,7 @@ React.createClass({ displayName: 'ComponentComments',
 
         //@TODO make this selector configurable.
         var check = 'platformCommentsCount';
-        if (null !== document.getElementById(check)) {
+        if (document.getElementById(check)) {
             // update detached count if item is found
             var identifier = document.getElementById(check).getAttribute('data-identifier');
             if (identifier) {
