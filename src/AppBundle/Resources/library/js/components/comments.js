@@ -173,6 +173,21 @@ React.createClass({ displayName: 'ComponentComments',
                 loadMore = React.createElement('button', { onClick: this._loadMoreComments }, 'Load older comments...');
             }
         }
+
+        //@TODO make this selector configurable.
+        var check = 'platformCommentsCount';
+        if (null !== document.getElementById(check)) {
+            // update detached count if item is found
+            var identifier = document.getElementById(check).getAttribute('data-identifier');
+            if (identifier) {
+                document.getElementById(check).innerHTML = this.state.count;
+            } else {
+                Debugger.error('CommentComponent: No `identifier` data attribute found on `#'+check+'`!');
+            }
+        } else {
+            Debugger.warn('CommentComponent: Could not find comments.detachedCount.bindTarget #`'+check+'`.');
+        }
+
         return (
             React.createElement('div', { className: className },
                 React.createElement('h3', null, this.props.title),
