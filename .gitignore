@@ -19,3 +19,4 @@
 /web/css
 /web/js
 .DS_Store
+.env
