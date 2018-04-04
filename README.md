@@ -74,7 +74,7 @@ db.copyDatabase('radix-cygnus-fhc', 'radix-cygnus-fhc', 'mongo.platform.baseplat
 
 ### Usage
 
-A note on the documentation below: It assumes direct CLI entry on the host machine. Because the new Docker Compose environment uses a `.env` file which is passed to the underlying services, the recommended method of modifying the ATAG/`ACTIVE_CONTEXT` is to specify it in this file.
+A note on the documentation below: It assumes direct CLI entry on the host machine. Because the new Docker Compose environment uses a `.env` file which is passed to the underlying services, the recommended method of modifying the `APP` is to specify it in this file.
 
-If accessing the terminal directly (see interactive shell above), you can still specify the `ACTIVE_CONTEXT` manually, though it is recommended to still use the `.env` file and restart the docker stack for consistency.
+If accessing the terminal directly (see interactive shell above), you can still specify the `APP` manually, though it is recommended to still use the `.env` file and restart the docker stack for consistency.
 
