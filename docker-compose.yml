@@ -1,0 +1,100 @@
+version: '3'
+services:
+  radix:
+    image: radix_apache:latest
+    entrypoint: /app/entrypoint.sh
+    volumes:
+      - .:/var/www/html:cached
+      - ./vendor:/var/www/html/vendor:cached
+      - radix_cache:/var/www/html/app/cache:cached
+      - radix_composer:/var/www/.composer/cache:cached
+    depends_on:
+      - redis
+      - mongo
+      - elastic
+    restart: on-failure
+    environment:
+      APP_ENV: dev
+      SYMFONY_ENV: dev
+      APP: ${APP-acbm:fcp}
+      COMPOSER_AUTH: '{"github-oauth": {"github.com": "1e9892034accfe50d10595125d12eb67645afca8"}}'
+      COMPOSER_ALLOW_SUPERUSER: 1
+      COMPOSER_NO_INTERACTION: 1
+    networks:
+      - default
+  mongo:
+    image: mongo:3.4
+    volumes:
+      - radix_mongo:/data/db:cached
+    ports:
+      - "${RADIX_DB_PORT-8701}:27017"
+    networks:
+      default:
+        aliases:
+          - "${RADIX_MONGO_HOST-mongo}"
+  redis:
+    image: redis:alpine
+    ports:
+      - "${RADIX_REDIS_PORT-8702}:6379"
+    networks:
+      default:
+        aliases:
+          - "${RADIX_REDIS_HOST-redis}"
+  elastic:
+    image: elasticsearch:1.4.5
+    volumes:
+      - radix_elastic:/usr/share/elasticsearch/data:cached
+    ports:
+      - "${RADIX_ES_PORT-8703}:9200"
+    networks:
+      default:
+        aliases:
+          - "${RADIX_ELASTIC_HOST-elastic}"
+  ember:
+    image: danlynn/ember-cli:2.11.1-node_6.10
+    volumes:
+      - ./src/AppBundle/Resources/radix:/myapp:cached
+      - ember_node_modules:/myapp/node_modules
+      - ember_bower_components:/myapp/bower_components
+      - ember_tmp:/myapp/tmp
+    entrypoint: /myapp/watch.sh
+    depends_on:
+      - radix
+    networks:
+      - default
+  apache:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "${RADIX_APP_PORT-8700}:80"
+    volumes:
+      - .:/var/www/html:cached
+      - ./vendor:/var/www/html/vendor:cached
+      - radix_cache:/var/www/html/app/cache
+    environment:
+      APP_ENV: dev
+      SYMFONY_ENV: dev
+    depends_on:
+      - radix
+    networks:
+      - default
+volumes:
+  radix_cache:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  radix_composer:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  radix_mongo: {}
+  radix_elastic: {}
+  ember_node_modules: {}
+  ember_bower_components: {}
+  ember_tmp:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+networks:
+  default: ~
