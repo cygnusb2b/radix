@@ -93,7 +93,7 @@ class RequestPayload
         $this->debug['method'] = $request->getMethod();
         $this->debug['body'] = $request->getContent();
         foreach ($request->headers AS $key => $value) {
-            $this->debug['headers'][$key] = $value[0];
+            $this->debug['headers'][$key] = $value;
         }
         $this->identity->set('debug', $this->debug);
 
