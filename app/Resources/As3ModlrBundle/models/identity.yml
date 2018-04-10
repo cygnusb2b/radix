@@ -82,6 +82,8 @@ identity:
             calculated:
                 class: AppBundle\CalculatedFields
                 method: identityLastName
+        debug:
+            type: object
     embeds:
         addresses:
             type: many
