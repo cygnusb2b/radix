@@ -5,14 +5,14 @@ namespace AppBundle\Submission\Handlers;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Identity\IdentityManager;
 use AppBundle\Identity\ResetPasswordTokenGenerator;
-use AppBundle\Submission\SubmissionHandlerInterface;
+use AppBundle\Submission\IdentifiableSubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AccountResetPasswordHandler implements SubmissionHandlerInterface
+class AccountResetPasswordHandler implements IdentifiableSubmissionHandlerInterface
 {
     private $identityManager;
 
@@ -29,6 +29,25 @@ class AccountResetPasswordHandler implements SubmissionHandlerInterface
     public function getStore()
     {
         return $this->identityManager->getStore();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createIdentityFor(RequestPayload $payload)
+    {
+        if (!empty($this->accountModel)) {
+            return $this->accountModel;
+        }
+
+        $token = $payload->getSubmission()->get('token');
+        if (empty($token)) {
+            throw new HttpFriendlyException('Unable to reset password: No password reset token was provided.', 400);
+        }
+        $criteria = ['credentials.password.resetCode' => $token];
+        $identity  = $this->getStore()->findQuery('identity-account', $criteria)->getSingleResult();
+
+        return $identity;
     }
 
     /**
