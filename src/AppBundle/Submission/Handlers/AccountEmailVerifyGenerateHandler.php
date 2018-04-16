@@ -4,14 +4,14 @@ namespace AppBundle\Submission\Handlers;
 
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Factory\Identity\AccountEmailFactory;
-use AppBundle\Submission\SubmissionHandlerInterface;
+use AppBundle\Submission\IdentifiableSubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AccountEmailVerifyGenerateHandler implements SubmissionHandlerInterface
+class AccountEmailVerifyGenerateHandler implements IdentifiableSubmissionHandlerInterface
 {
     /**
      * @var AccountEmailFactory
@@ -37,6 +37,25 @@ class AccountEmailVerifyGenerateHandler implements SubmissionHandlerInterface
     public function getStore()
     {
         return $this->emailFactory->getStore();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createIdentityFor(RequestPayload $payload)
+    {
+        $id = $payload->getIdentity()->get('id');
+        $email = $payload->getIdentity()->get('primaryEmail');
+
+        if (empty($id)) {
+            $record = $this->getStore()->findQuery('identity-account-email', ['value' => $email])->getSingleResult();
+            $id = $record->get('account')->getId();
+        }
+
+        $criteria = ['_id' => new \MongoId($id)];
+        $identity = $this->getStore()->findQuery('identity', $criteria)->getSingleResult();
+
+        return $identity;
     }
 
     /**
