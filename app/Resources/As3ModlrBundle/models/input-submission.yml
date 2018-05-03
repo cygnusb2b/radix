@@ -5,6 +5,7 @@ input-submission:
             db: radix
             schemata:
                 - { keys: { sourceKey: 1 } }
+                - { keys: { createdDate: -1 } }
     mixins: [ 'timestampable' ]
     attributes:
         ipFour:
