@@ -6,13 +6,13 @@ use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Factory\Identity\IdentityAccountFactory;
 use AppBundle\Identity\ResetPasswordTokenGenerator;
 use AppBundle\Security\User\AccountProvider;
-use AppBundle\Submission\SubmissionHandlerInterface;
+use AppBundle\Submission\IdentifiableSubmissionHandlerInterface;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
-class AccountResetPasswordGenerateHandler implements SubmissionHandlerInterface
+class AccountResetPasswordGenerateHandler implements IdentifiableSubmissionHandlerInterface
 {
     /**
      * @var IdentityAccountFactory
@@ -52,6 +52,25 @@ class AccountResetPasswordGenerateHandler implements SubmissionHandlerInterface
     public function getStore()
     {
         return $this->accountProvider->getStore();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createIdentityFor(RequestPayload $payload)
+    {
+        $id = $payload->getIdentity()->get('id');
+        $email = $payload->getIdentity()->get('primaryEmail');
+
+        if (empty($id)) {
+            $record = $this->getStore()->findQuery('identity-account-email', ['value' => $email])->getSingleResult();
+            $id = $record->get('account')->getId();
+        }
+
+        $criteria = ['_id' => new \MongoId($id)];
+        $identity = $this->getStore()->findQuery('identity', $criteria)->getSingleResult();
+
+        return $identity;
     }
 
     /**

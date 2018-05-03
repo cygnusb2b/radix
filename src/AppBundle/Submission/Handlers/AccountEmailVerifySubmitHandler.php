@@ -5,14 +5,14 @@ namespace AppBundle\Submission\Handlers;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Identity\EmailVerifyTokenGenerator;
 use AppBundle\Identity\IdentityManager;
-use AppBundle\Submission\SubmissionHandlerInterface;
+use AppBundle\Submission\IdentifiableSubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AccountEmailVerifySubmitHandler implements SubmissionHandlerInterface
+class AccountEmailVerifySubmitHandler implements IdentifiableSubmissionHandlerInterface
 {
     private $identityManager;
 
@@ -29,6 +29,25 @@ class AccountEmailVerifySubmitHandler implements SubmissionHandlerInterface
     public function getStore()
     {
         return $this->identityManager->getStore();
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function createIdentityFor(RequestPayload $payload)
+    {
+        $token = $payload->getSubmission()->get('token');
+        if (empty($token)) {
+            throw new HttpFriendlyException('No email verification token was provided. Unable to verify.', 400);
+        }
+
+        $model = $this->getStore()->findQuery('identity-account-email', ['verification.token' => $token])->getSingleResult();
+        $accountId = $model->get('account')->getId();
+
+        $criteria = ['_id' => new \MongoId($accountId)];
+        $identity = $this->getStore()->findQuery('identity', $criteria)->getSingleResult();
+
+        return $identity;
     }
 
     /**
