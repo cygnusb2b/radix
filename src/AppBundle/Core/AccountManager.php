@@ -21,6 +21,7 @@ class AccountManager
      * @var array
      */
     private static $globalOrigins = [
+        'http://localhost:*',
         'http://radix.as3.io',
         'http://*.radix.as3.io',
         'https://radix.as3.io',
