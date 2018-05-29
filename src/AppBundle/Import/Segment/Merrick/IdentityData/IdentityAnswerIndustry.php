@@ -39,11 +39,10 @@ class IdentityAnswerIndustry extends Identity
      */
     protected function formatModel(array $doc)
     {
-        // $question = $this->retrieveQuestion($doc['question']);
         $choice = $this->retrieveChoice($doc['legacy']['industry']);
 
         if (null === $choice) {
-            // var_dump(sprintf('Could not find answer using "%s" (question %s)', $doc['answer'], $doc['question']));
+            var_dump(sprintf('Could not find answer using "%s" (question %s)', $doc['answer'], $doc['question']));
             return;
         }
 

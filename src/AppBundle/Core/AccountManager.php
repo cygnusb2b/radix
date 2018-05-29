@@ -21,7 +21,6 @@ class AccountManager
      * @var array
      */
     private static $globalOrigins = [
-        'http://localhost:*',
         'http://radix.as3.io',
         'http://*.radix.as3.io',
         'https://radix.as3.io',
@@ -151,6 +150,22 @@ class AccountManager
             return;
         }
         return sprintf('%s-%s', $this->account->get('key'), $this->application->get('key'));
+    }
+
+    /**
+     * @return  string|null
+     */
+    public function getAccountKey()
+    {
+        return $this->account->get('key');
+    }
+
+    /**
+     * @return  string|null
+     */
+    public function getApplicationKey()
+    {
+        return $this->application->get('key');
     }
 
     /**
