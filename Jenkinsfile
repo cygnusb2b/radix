@@ -16,7 +16,7 @@ node {
           withCredentials([usernamePassword(credentialsId: 'github-login-scommbot', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
             sh "bin/composer config -g github-oauth.github.com $TOKEN"
           }
-          sh "bin/composer install --no-interaction --prefer-dist --no-dev"
+          sh "bin/composer install --no-interaction --prefer-dist"
         }
         stage('Test Assets') {
           sh "php app/console assetic:dump --env=test --no-debug"
