@@ -10,6 +10,21 @@ node {
       checkout scm
     }
 
+    nodeBuilder.inside("-v ${env.WORKSPACE}/src/AppBundle/Resources/radix:/var/www/html -u 0:0 --entrypoint=''") {
+      stage('App Yarn') {
+        sh "cd /var/www/html && yarn install --silent"
+      }
+      stage('App Bower') {
+        sh "cd /var/www/html && bower install --quiet --allow-root"
+      }
+      stage('App Ember') {
+        sh "cd /var/www/html && ember build --environment='production'"
+      }
+      stage('App Cleanup') {
+        sh "cd /var/www/html && rm -rf tmp node_modules bower_components"
+      }
+    }
+
     phpBuilder.inside("-v ${env.WORKSPACE}:/var/www/html -u 0:0 --entrypoint=''") {
       withEnv(['SYMFONY_ENV=test', 'APP_ENV=test']) {
         stage('Test Install') {
@@ -18,18 +33,11 @@ node {
           }
           sh "bin/composer install --no-interaction --prefer-dist"
         }
-        stage('Build Ember') {
-          nodeBuilder.inside("-v ${env.WORKSPACE}/src/AppBundle/Resources/radix:/var/www/html -u 0:0 --entrypoint=''") {
-            sh "npm install --silent"
-            sh "bower install --quiet --allow-root"
-            sh "ember build --environment='production'"
-          }
-        }
         stage('Test Assets') {
           sh "php bin/console assetic:dump --env=test --no-debug"
         }
         stage('Test Execute') {
-          sh "bin/phpunit -c app --log-junit unitTestReport.xml"
+          sh "bin/phpunit --log-junit unitTestReport.xml"
           junit "unitTestReport.xml"
         }
       }
