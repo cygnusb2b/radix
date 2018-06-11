@@ -18,7 +18,7 @@ node {
         sh "cd /var/www/html && bower install --quiet --allow-root"
       }
       stage('App Ember') {
-        sh "cd /var/www/html && ember build --environment='production'"
+        sh "cd /var/www/html && ember build --environment='production' --silent"
       }
       stage('App Cleanup') {
         sh "cd /var/www/html && rm -rf tmp node_modules bower_components"
@@ -39,6 +39,9 @@ node {
         stage('Test Execute') {
           sh "bin/phpunit --log-junit unitTestReport.xml"
           junit "unitTestReport.xml"
+        }
+        stage('Cleanup') {
+          sh "rm -rf app/config/parameters.yml"
         }
       }
     }
