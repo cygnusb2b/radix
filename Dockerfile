@@ -12,10 +12,6 @@ COPY web /var/www/html/web
 ENV SYMFONY_ENV=prod
 ENV APP_ENV=prod
 
-# Allow build args
-ARG APP="*"
-ENV APP=$APP
-
 # Make sure cache in clean
 RUN rm -fr var/cache/*
 
