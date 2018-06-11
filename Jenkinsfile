@@ -18,6 +18,13 @@ node {
           }
           sh "bin/composer install --no-interaction --prefer-dist"
         }
+        stage('Build Ember') {
+          nodeBuilder.inside("-v ${env.WORKSPACE}/src/AppBundle/Resources/radix:/var/www/html -u 0:0 --entrypoint=''") {
+            sh "npm install --silent"
+            sh "bower install --quiet --allow-root"
+            sh "ember build --environment='production'"
+          }
+        }
         stage('Test Assets') {
           sh "php bin/console assetic:dump --env=test --no-debug"
         }
@@ -49,13 +56,6 @@ node {
             sh "sed -i.bak \'s/framework_version:.*/framework_version: ${env.BRANCH_NAME}_${env.BUILD_NUMBER}/g\' app/config/parameters.yml"
             sh "bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev --no-scripts"
           }
-        }
-      }
-      stage('Build Ember') {
-        nodeBuilder.inside("-v ${env.WORKSPACE}/src/AppBundle/Resources/radix:/var/www/html -u 0:0 --entrypoint=''") {
-          sh "npm install --silent"
-          sh "bower install --quiet --allow-root"
-          sh "ember build --environment='production'"
         }
       }
       stage('Build Container') {
