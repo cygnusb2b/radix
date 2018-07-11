@@ -9,6 +9,10 @@ function ComponentLoaderModule()
             VerifyEmail : {
                 allowed      : [ 'token' ],
                 required     : [ 'token' ]
+            },
+            Register : {
+                allowed      : [ ],
+                required     : [ ]
             }
         };
     }
