@@ -154,6 +154,22 @@ class AccountManager
     }
 
     /**
+     * @return  string|null
+     */
+    public function getAccountKey()
+    {
+        return $this->account->get('key');
+    }
+
+    /**
+     * @return  string|null
+     */
+    public function getApplicationKey()
+    {
+        return $this->application->get('key');
+    }
+
+    /**
      * Origins that are considered global.
      * Is used for determining CORs access and management user access.
      *

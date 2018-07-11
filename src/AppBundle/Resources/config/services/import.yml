@@ -5,6 +5,7 @@ services:
         calls:
             - ['addImporter', [ "@app_bundle.import.importer.merrick.identity" ]]
             - ['addImporter', [ "@app_bundle.import.importer.merrick.identity_data" ]]
+            - ['addImporter', [ "@app_bundle.import.importer.platform.post" ]]
 
     app_bundle.import.importer.merrick:
         abstract: true
@@ -25,6 +26,18 @@ services:
             - "@app_bundle.import.persister.as3_modlr"
             - "@app_bundle.import.source.mongo.legacy"
 
+    app_bundle.import.importer.platform:
+        abstract: true
+        arguments:
+            - "@app_bundle.core.account_manager"
+
+    app_bundle.import.importer.platform.post:
+        class: AppBundle\Import\Importer\Platform\Post
+        parent: app_bundle.import.importer.platform
+        arguments:
+            - "@app_bundle.import.persister.as3_modlr"
+            - "@app_bundle.import.source.mongo.legacy"
+
     app_bundle.import.persister.as3_modlr:
         class: As3\SymfonyData\Import\Persister\As3Modlr
         arguments:
@@ -34,6 +47,11 @@ services:
         class: As3\SymfonyData\Import\Source\Mongo
         tags:
             - { name: "app_bundle.import.connection.legacy" }
+
+    app_bundle.import.source.mongo.platform:
+        class: As3\SymfonyData\Import\Source\Mongo
+        tags:
+            - { name: "app_bundle.import.connection.platform" }
 
     app_bundle.console.import:
         class: As3\SymfonyData\Console\Import

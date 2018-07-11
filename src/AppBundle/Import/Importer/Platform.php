@@ -8,7 +8,7 @@ use As3\SymfonyData\Import\ImporterInterface;
 use As3\SymfonyData\Import\PersisterInterface;
 use As3\SymfonyData\Import\SourceInterface;
 
-abstract class Merrick extends Importer implements ImporterInterface
+abstract class Platform extends Importer implements ImporterInterface
 {
     /**
      * @var     AccountManager
@@ -30,9 +30,9 @@ abstract class Merrick extends Importer implements ImporterInterface
         'acbm:ooh'      => 'www.oemoffhighway.com',
         'acbm:fcp'      => 'www.forconstructionpros.com',
         'cygnus:vspc'   => 'www.vehicleservicepros.com',
+        'cygnus:ofcr'   => 'www.officer.com',
         'acbm:sdce'     => 'www.sdcexec.com',
         'acbm:fl'       => 'www.foodlogistics.com',
-        'cygnus:fhc'    => 'www.firehouse.com',
     ];
 
     /**
@@ -45,13 +45,21 @@ abstract class Merrick extends Importer implements ImporterInterface
     }
 
     /**
+     *  Set source for base collections
+     */
+    public function setSourceDatabase($collection = 'platform') {
+        $dbName = sprintf('%s_%s_%s', $this->accountManager->getAccountKey(), $this->accountManager->getApplicationKey(), $collection);
+        $this->source->setDatabase($dbName);
+    }
+
+    /**
      * Returns the legacy domain for the current application context
      *
      * @return  string
      * @throws  InvalidArgumentException
      */
     public function getDomain($key = null)
-    {
+    {    
         if (null === $key) {
             $key = $this->accountManager->getCompositeKey();
         }
