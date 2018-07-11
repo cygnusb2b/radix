@@ -15,7 +15,7 @@ node {
         sh "cd /var/www/html && yarn install --silent"
       }
       stage('App Bower') {
-        sh "cd /var/www/html && bower install --quiet --allow-root"
+        sh "npm install -g bower && cd /var/www/html && bower install --quiet --allow-root"
       }
       stage('App Ember') {
         sh "cd /var/www/html && ember build --environment='production' --silent"
