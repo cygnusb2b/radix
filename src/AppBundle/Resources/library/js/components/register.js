@@ -1,8 +1,8 @@
 React.createClass({ displayName: 'ComponentRegister',
   getDefaultProps: function() {
     return {
-      title: 'Register',
-      description: null,
+      title: 'Title here - Register',
+      description: 'Description Goes Here',
       className: null,
       referringPath: null,
       onSuccess: null,
@@ -122,6 +122,11 @@ React.createClass({ displayName: 'ComponentRegister',
     if (!this.state.verify) {
       elements = React.createElement('div', null,
         this._getForm(),
+        React.createElement('p', { className: 'text-center' }, 'I accept that the data provided on this form will be processed, stored and used ',
+          React.createElement('br', { className: 'text-center' }, 'in accordance with the terms set out in our ',
+          React.createElement('a', { href: '/privacy-policy' }, 'privacy policy.')
+        )),
+        React.createElement('hr'),
         React.createElement('p', { className: 'text-center' }, 'Already have an account? ',
           React.createElement(Radix.Components.get('ModalLinkLogin'), { label: 'Sign in!' })
         ),
@@ -139,13 +144,15 @@ React.createClass({ displayName: 'ComponentRegister',
   _getForm: function() {
     var form;
     if (this.state.loaded) {
-      form = React.createElement(Radix.Components.get('Form'), {
-        name: 'register',
-        fields: this.state.fields,
-        values: this.state.values,
-        onChange: this.updateFieldValue,
-        onSubmit: this.handleSubmit
-      });
+      form = React.createElement('div', null,
+        React.createElement(Radix.Components.get('Form'), {
+          name: 'register',
+          fields: this.state.fields,
+          values: this.state.values,
+          onChange: this.updateFieldValue,
+          onSubmit: this.handleSubmit
+        })
+      );
     }
     return form;
   },

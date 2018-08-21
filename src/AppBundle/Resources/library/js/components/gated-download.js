@@ -148,7 +148,10 @@ React.createClass({ displayName: 'ComponentGatedDownload',
           values: this.state.values,
           onChange: this.updateFieldValue,
           onSubmit: this.handleSubmit
-        })
+        }),
+        React.createElement('p', { className: 'text-left' }, 'I accept that the data provided on this form will be processed, stored and used in accordance with the terms set out in our ',
+          React.createElement('a', { href: '/privacy-policy' }, 'privacy policy.')
+        ),
       );
     }
     return form;
