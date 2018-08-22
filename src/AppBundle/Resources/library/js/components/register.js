@@ -1,8 +1,8 @@
 React.createClass({ displayName: 'ComponentRegister',
   getDefaultProps: function() {
     return {
-      title: 'Title here - Register',
-      description: 'Description Goes Here',
+      title: 'Register',
+      description: null,
       className: null,
       referringPath: null,
       onSuccess: null,
@@ -144,15 +144,13 @@ React.createClass({ displayName: 'ComponentRegister',
   _getForm: function() {
     var form;
     if (this.state.loaded) {
-      form = React.createElement('div', null,
-        React.createElement(Radix.Components.get('Form'), {
-          name: 'register',
-          fields: this.state.fields,
-          values: this.state.values,
-          onChange: this.updateFieldValue,
-          onSubmit: this.handleSubmit
-        })
-      );
+      form = React.createElement(Radix.Components.get('Form'), {
+        name: 'register',
+        fields: this.state.fields,
+        values: this.state.values,
+        onChange: this.updateFieldValue,
+        onSubmit: this.handleSubmit
+      });
     }
     return form;
   },
