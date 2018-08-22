@@ -7,7 +7,9 @@ Awesome sauce!!
 
 Developing in Radix
 -------------------------------
-To get started, check out this repository and execute `docker-compose up` in the repository root folder. Your radix instance is now available via http://localhost:8700/manage/ (or whatever port you have configured).
+To get started, check out this repository and execute `docker-compose up` in the repository root folder. Your radix instance is now available via http://dev.radix.as3.io:8700/manage/ (or whatever port you have configured). Due to how cookies are stored for `localhost`, ensure that you add a host entry and use the configured domain name `dev.radix.as3.io`.
+
+If you are testing integration with another application, ensure that your application is added to the Allowed Origins field for the application you are accessing.
 
 To change the `APP` or other run-time environment variables, add the values into a `.env` file at the project root.
 ```sh
