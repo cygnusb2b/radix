@@ -66,6 +66,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    image: radix_apache:latest
     ports:
       - "${RADIX_APP_PORT-8700}:80"
     volumes:

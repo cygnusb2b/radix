@@ -1,4 +1,5 @@
 FROM limit0/php56:imagick-latest
+RUN pecl install xdebug-2.5.5 && docker-php-ext-enable xdebug
 
 COPY docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/zzz_php.ini
