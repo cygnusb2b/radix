@@ -5,14 +5,14 @@ namespace AppBundle\Submission\Handlers;
 use AppBundle\Exception\HttpFriendlyException;
 use AppBundle\Identity\IdentityManager;
 use AppBundle\Identity\ResetPasswordTokenGenerator;
-use AppBundle\Submission\IdentifiableSubmissionHandlerInterface;
+use AppBundle\Submission\SubmissionHandlerInterface;
 use AppBundle\Utility\HelperUtility;
 use AppBundle\Utility\ModelUtility;
 use AppBundle\Utility\RequestPayload;
 use As3\Modlr\Models\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AccountResetPasswordHandler implements IdentifiableSubmissionHandlerInterface
+class AccountResetPasswordHandler implements SubmissionHandlerInterface
 {
     private $identityManager;
 
@@ -29,25 +29,6 @@ class AccountResetPasswordHandler implements IdentifiableSubmissionHandlerInterf
     public function getStore()
     {
         return $this->identityManager->getStore();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createIdentityFor(RequestPayload $payload)
-    {
-        if (!empty($this->accountModel)) {
-            return $this->accountModel;
-        }
-
-        $token = $payload->getSubmission()->get('token');
-        if (empty($token)) {
-            throw new HttpFriendlyException('Unable to reset password: No password reset token was provided.', 400);
-        }
-        $criteria = ['credentials.password.resetCode' => $token];
-        $identity  = $this->getStore()->findQuery('identity-account', $criteria)->getSingleResult();
-
-        return $identity;
     }
 
     /**
@@ -140,8 +121,6 @@ class AccountResetPasswordHandler implements IdentifiableSubmissionHandlerInterf
      */
     public function validateWhenLoggedIn(RequestPayload $payload, Model $account)
     {
-        // Disallow reset while logged in.
-        throw new HttpFriendlyException('An account is already logged in. Reset password is not available while logged in - use change password instead.', 400);
     }
 
     /**
