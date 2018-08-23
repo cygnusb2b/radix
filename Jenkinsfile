@@ -30,7 +30,7 @@ node {
         }
         stage('Test Server') {
           sh "cd /var/www/html && bin/phpunit --log-junit unitTestReport.xml"
-          junit "unitTestReport.xml"
+          junit "server/unitTestReport.xml"
         }
       }
     }
