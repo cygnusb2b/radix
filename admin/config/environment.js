@@ -4,7 +4,7 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'radix',
     environment: environment,
-    rootURL: '/',
+    rootURL: '/manage/',
     locationType: 'auto',
     EmberENV: {
       FEATURES: {
