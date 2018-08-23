@@ -1,5 +1,5 @@
 node {
-  def phpBuilder = docker.image("scomm/php5.6:latest")
+  def phpBuilder = docker.image("danlynn/ember-cli:2.11.1-node_6.10")
   def nodeBuilder = docker.image("scomm/node-build:latest")
   phpBuilder.pull()
   nodeBuilder.pull()
@@ -12,8 +12,7 @@ node {
 
     nodeBuilder.inside("-v ${env.WORKSPACE}/admin:/var/www/html -u 0:0 --entrypoint=''") {
       stage('Build App') {
-        sh "cd /var/www/html && yarn install --silent"
-        sh "npm install -g bower && cd /var/www/html && bower install --quiet --allow-root"
+        sh "cd /var/www/html && ./install.sh"
       }
       stage('Test App') {
         sh "cd /var/www/html && ember test"
