@@ -122,17 +122,14 @@ app_bundle_auth_user_submit:
     path: /auth/user/submit
     methods: [ POST ]
 
+app_bundle_manage_config:
+    path: /admin-config.js
+    defaults: { _controller: AppBundle:Manage:config, path: '' }
+
 app_bundle_sandbox:
     path: /
     defaults: { _controller: AppBundle:Sandbox:index, path: null, _format: html }
 
-app_bundle_manage:
-    path: /manage{path}
-    defaults: { _controller: AppBundle:Manage:index, path: '' }
-    requirements:
-        path: .*
-
 app_bundle_sandbox_sections:
     path: /{path}
     defaults: { _controller: AppBundle:Sandbox:index, _format: html }
-

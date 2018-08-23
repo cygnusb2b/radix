@@ -23,9 +23,7 @@ class SandboxController extends AbstractController
      */
     public function indexAction($path, Request $request)
     {
-        if ('dev' !== $this->getParameter('kernel.environment')) {
-            throw $this->createNotFoundException();
-        }
+        if ('dev' !== $this->getParameter('kernel.environment')) return $this->redirect('/manage/');
 
         $app  = $this->getActiveApp($request);
         $apps = $this->getApplications($request->getSchemeAndHttpHost());

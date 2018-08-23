@@ -15,11 +15,17 @@ class ManageController extends AbstractController
      * @param   Request $request
      * @return  Response
      */
-    public function indexAction(Request $request)
+    public function configAction(Request $request)
     {
-        return $this->render('@AppBundle/Resources/views/radix.html.twig', [
-            'emberConfig' => rawurlencode(json_encode($this->getEmberConfiguration()))
-        ]);
+        $config = $this->getEmberConfiguration();
+        $contents = rawurlencode(json_encode($config));
+        return new Response(str_replace('__CONFIG__', $contents, "(function(document) {
+                var meta = document.createElement('meta');
+                meta.setAttribute('name', 'app/config/environment')
+                meta.setAttribute('content', '__CONFIG__');
+                document.getElementsByTagName('head')[0].appendChild(meta);
+            })(document);
+            "));
     }
 
     /**

@@ -12,3 +12,11 @@ _errors:
 
 _main:
     resource: routing.yml
+
+app_bundle_sandbox:
+    path: /
+    defaults: { _controller: AppBundle:Sandbox:index, path: null, _format: html }
+
+app_bundle_sandbox_sections:
+    path: /{path}
+    defaults: { _controller: AppBundle:Sandbox:index, _format: html }
