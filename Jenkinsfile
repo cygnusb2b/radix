@@ -12,10 +12,10 @@ node {
 
     nodeBuilder.inside("-v ${env.WORKSPACE}/admin:/var/www/html -u 0:0 --entrypoint=''") {
       stage('Build App') {
-        sh "cd /var/www/html/admin && ./install.sh"
+        sh "cd /var/www/html && ./install.sh"
       }
       stage('Test App') {
-        sh "cd /var/www/html/admin && ember build"
+        sh "cd /var/www/html && ./node_modules/.bin/ember build"
       }
     }
 
@@ -23,12 +23,12 @@ node {
       withEnv(['SYMFONY_ENV=test', 'APP_ENV=test']) {
         stage('Build Server') {
           withCredentials([usernamePassword(credentialsId: 'github-login-scommbot', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
-            sh "cd /var/www/html/server && bin/composer config -g github-oauth.github.com $TOKEN"
+            sh "cd /var/www/html && bin/composer config -g github-oauth.github.com $TOKEN"
           }
-          sh "cd /var/www/html/server && bin/composer install --no-interaction"
+          sh "cd /var/www/html && bin/composer install --no-interaction"
         }
         stage('Test Server') {
-          sh "cd /var/www/html/server && bin/phpunit --log-junit unitTestReport.xml"
+          sh "cd /var/www/html && bin/phpunit --log-junit unitTestReport.xml"
           junit "unitTestReport.xml"
         }
       }
