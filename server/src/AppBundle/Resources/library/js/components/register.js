@@ -122,10 +122,7 @@ React.createClass({ displayName: 'ComponentRegister',
     if (!this.state.verify) {
       elements = React.createElement('div', null,
         this._getForm(),
-        React.createElement('p', { className: 'text-center' }, 'I accept that the data provided on this form will be processed, stored and used ',
-          React.createElement('br', { className: 'text-center' }, 'in accordance with the terms set out in our ',
-          React.createElement('a', { href: '/privacy-policy' }, 'privacy policy.')
-        )),
+        React.createElement(Radix.Components.get('PrivacyPolicy')),
         React.createElement('hr'),
         React.createElement('p', { className: 'text-center' }, 'Already have an account? ',
           React.createElement(Radix.Components.get('ModalLinkLogin'), { label: 'Sign in!' })

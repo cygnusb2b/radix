@@ -149,9 +149,7 @@ React.createClass({ displayName: 'ComponentGatedDownload',
           onChange: this.updateFieldValue,
           onSubmit: this.handleSubmit
         }),
-        React.createElement('p', { className: 'text-left' }, 'I accept that the data provided on this form will be processed, stored and used in accordance with the terms set out in our ',
-          React.createElement('a', { href: '/privacy-policy' }, 'privacy policy.')
-        ),
+        React.createElement(Radix.Components.get('PrivacyPolicy')),
       );
     }
     return form;

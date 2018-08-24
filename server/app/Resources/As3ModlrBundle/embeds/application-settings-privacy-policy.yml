@@ -1,0 +1,4 @@
+application-settings-privacy-policy:
+    attributes:
+        html:
+            type: string

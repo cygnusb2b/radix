@@ -12,3 +12,6 @@ application-settings:
         support:
             type: one
             entity: application-settings-support
+        privacyPolicy:
+            type: one
+            entity: application-settings-privacy-policy

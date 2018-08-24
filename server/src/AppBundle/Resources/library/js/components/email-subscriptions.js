@@ -127,10 +127,7 @@ React.createClass({ displayName: 'ComponentEmailSubscriptions',
             onChange: this.updateFieldValue,
             onSubmit: this.handleSubmit
           }),
-          React.createElement('p', { className: 'database-form text-center' }, 'I accept that the data provided on this form will be processed, stored and used in accordance with the terms ',
-            React.createElement('br', { className: 'dabase-form text-center' }, 'set out in our ',
-            React.createElement('a', { href: '/privacy-policy' }, 'privacy policy.')
-          ))
+          React.createElement(Radix.Components.get('PrivacyPolicy'))
         )
       );
     }
