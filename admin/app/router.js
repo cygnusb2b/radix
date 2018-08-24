@@ -16,6 +16,21 @@ Router.map(function() {
     this.route('comments', function() {
     });
 
+    this.route('core', function() {
+        this.route('accounts', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+        this.route('applications', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+        this.route('users', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+    });
+
     this.route('modeling', function() {
         this.route('models', function() {
             this.route('create');
