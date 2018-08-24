@@ -1,0 +1,95 @@
+<div class="card">
+  <div class="card-header">Branding</div>
+  <div class="card-block">
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        {{-bootstrap/form/input-group
+          key='settings.branding.name'
+          value=model.settings.branding.name
+          helpText='The Application\'s user-facing name.'
+          hideLabel=true
+          required=true
+        }}
+      </div>
+      <div class="col-xs-12 col-md-6">
+        {{-bootstrap/form/input-group
+          key='settings.branding.logo'
+          value=model.settings.branding.logo
+          helpText='The Application\'s user-facing logo URL.'
+          hideLabel=true
+          required=true
+        }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Notifications</div>
+  <div class="card-block">
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        {{-bootstrap/form/input-group
+          key='settings.notifications.name'
+          value=model.settings.notifications.name
+          helpText='The Application\'s sending email name.'
+          hideLabel=true
+          required=true
+        }}
+      </div>
+      <div class="col-xs-12 col-md-6">
+        {{-bootstrap/form/input-group
+          key='settings.notifications.email'
+          value=model.settings.notifications.email
+          helpText='The Application\'s sending email address.'
+          hideLabel=true
+          required=true
+        }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Support</div>
+  <div class="card-block">
+    {{-bootstrap/form/input-group
+      key='settings.support.email'
+      value=model.settings.support.email
+      helpText='The Application\'s support email address.'
+      hideLabel=true
+      required=true
+    }}
+
+    {{-bootstrap/form/input-group
+      key='settings.support.name'
+      value=model.settings.support.name
+      helpText='The Application\'s support name address.'
+      hideLabel=true
+      required=true
+    }}
+
+    {{-bootstrap/form/input-group
+      key='settings.support.phone'
+      value=model.settings.support.phone
+      helpText='The Application\'s support phone number.'
+      hideLabel=true
+      required=true
+    }}
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Privacy Policy</div>
+  <div class="card-block">
+
+    <fieldset class="form-group">
+      <textarea class="form-control">
+        {{ model.privacyPolicy.html }}
+      </textarea>
+      <small class="form-text text-muted">Custom privacy policy text (HTML supported)</small>
+    </fieldset>
+
+  </div>
+</div>
+

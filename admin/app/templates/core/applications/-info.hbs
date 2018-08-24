@@ -1,0 +1,29 @@
+{{-bootstrap/form/input-group
+    key='id'
+    value=model.id
+    label='Identifier'
+    hideLabel=true
+    disabled=true
+    addOnLeft='ID'
+}}
+
+{{-bootstrap/form/input-group
+    key='createdDate'
+    value=model.createdDate
+    hideLabel=true
+    disabled=true
+    addOnLeft='Created'
+}}
+
+{{-bootstrap/form/input-group
+    key='updatedDate'
+    value=model.updatedDate
+    hideLabel=true
+    disabled=true
+    addOnLeft='Updated'
+}}
+
+<div class="alert alert-danger" role="alert">
+    <p><strong>Danger Zone!</strong> Take care when using these actions...</p>
+    {{ model-actions/delete model=model disabled=model.isNew disabledReason="You cannot delete an unsaved item." confirmValue=model.name transitionTo='core.applications' }}
+</div>

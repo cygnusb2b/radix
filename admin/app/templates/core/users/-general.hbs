@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col">
+        {{-bootstrap/form/input-group
+            key='givenName'
+            value=model.givenName
+            helpText='The user\'s first name.'
+            hideLabel=true
+            required=true
+        }}
+    </div>
+    <div class="col">
+        {{-bootstrap/form/input-group
+            key='familyName'
+            value=model.familyName
+            helpText='The user\'s last name.'
+            hideLabel=true
+            required=true
+        }}
+    </div>
+</div>
+
+{{-bootstrap/form/input-group
+    key='email'
+    value=model.email
+    helpText='The user\'s email address.'
+    hideLabel=true
+    required=true
+}}

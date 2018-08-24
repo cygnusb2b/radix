@@ -1,0 +1,61 @@
+{{-bootstrap/form/input-group
+    key='id'
+    value=model.id
+    label='Identifier'
+    hideLabel=true
+    disabled=true
+    addOnLeft='ID'
+}}
+
+{{-bootstrap/form/input-group
+    key='createdDate'
+    value=model.createdDate
+    hideLabel=true
+    disabled=true
+    addOnLeft='Created'
+}}
+
+{{-bootstrap/form/input-group
+    key='updatedDate'
+    value=model.updatedDate
+    hideLabel=true
+    disabled=true
+    addOnLeft='Updated'
+}}
+
+{{-bootstrap/form/input-group
+    key='lastLogin'
+    value=model.lastLogin
+    hideLabel=true
+    disabled=true
+    addOnLeft='Last Login'
+}}
+
+{{-bootstrap/form/input-group
+    key='lastSeen'
+    value=model.lastSeen
+    hideLabel=true
+    disabled=true
+    addOnLeft='Last Seen'
+}}
+
+{{-bootstrap/form/input-group
+    key='logins'
+    value=model.logins
+    hideLabel=true
+    disabled=true
+    addOnLeft='Number of logins'
+}}
+
+{{-bootstrap/form/input-group
+    key='remembers'
+    value=model.remembers
+    hideLabel=true
+    disabled=true
+    addOnLeft='Number of remembered logins'
+}}
+
+<div class="alert alert-danger" role="alert">
+    <p><strong>Danger Zone!</strong> Take care when using these actions...</p>
+    {{ model-actions/delete model=model disabled=model.isNew disabledReason="You cannot delete an unsaved item." confirmValue=model.name transitionTo='core.users' }}
+</div>

@@ -1,0 +1,45 @@
+<div class="alert alert-info" role="alert">
+    Core application for {{#link-to 'core.accounts.edit' model.account.id class="alert-link"}}{{model.account.name}}{{/link-to}}.
+</div>
+
+{{-bootstrap/form/input-group
+    key='name'
+    value=model.name
+    helpText='The name of the application.'
+    hideLabel=true
+    required=true
+}}
+
+{{-bootstrap/form/input-group
+    key='key'
+    value=model.key
+    helpText='The key of the application.'
+    hideLabel=true
+    required=true
+}}
+
+{{-bootstrap/form/input-group
+    key='publicKey'
+    value=model.publicKey
+    helpText='The publicKey of the application.'
+    hideLabel=true
+    required=true
+}}
+
+<div class="input-group">
+    {{ember-selectize
+        multiple=true
+        selection=model.allowedOrigins
+        content=model.allowedOrigins
+        create-item=(route-action "addAllowedOrigin")
+    }}
+    {{-bootstrap/form/help  value="The allowed Origin URLs for the application."}}
+</div>
+
+<hr>
+
+<div class="form-group">
+    <label for="field-applications-account">Account</label>
+    {{edit-field/autocomplete value=model.account multiple=false modelType='core-account'}}
+    <small class="form-text text-muted">The core-account this application belongs to. <span class="text-danger">Changing this value will change where data is stored!</span></small>
+</div>
