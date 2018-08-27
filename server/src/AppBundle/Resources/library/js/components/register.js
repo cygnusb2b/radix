@@ -122,6 +122,8 @@ React.createClass({ displayName: 'ComponentRegister',
     if (!this.state.verify) {
       elements = React.createElement('div', null,
         this._getForm(),
+        React.createElement(Radix.Components.get('PrivacyPolicy')),
+        React.createElement('hr'),
         React.createElement('p', { className: 'text-center' }, 'Already have an account? ',
           React.createElement(Radix.Components.get('ModalLinkLogin'), { label: 'Sign in!' })
         ),

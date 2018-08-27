@@ -148,6 +148,7 @@
         this.ModalLinkLoginVerbose          = {{ loadComponent('modal-link-login-verbose') }}
         this.ModalLinkRegister              = {{ loadComponent('modal-link-register') }}
         this.ModalLinkResetPasswordGenerate = {{ loadComponent('modal-link-reset-password-generate') }}
+        this.PrivacyPolicy                  = {{ loadComponent('privacy-policy') }}
         this.CountryPostalCode              = {{ loadComponent('form-country-postal-code') }}
         this.Form                           = {{ loadComponent('form') }}
         this.FormErrors                     = {{ loadComponent('form-errors') }}

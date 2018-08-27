@@ -148,7 +148,8 @@ React.createClass({ displayName: 'ComponentGatedDownload',
           values: this.state.values,
           onChange: this.updateFieldValue,
           onSubmit: this.handleSubmit
-        })
+        }),
+        React.createElement(Radix.Components.get('PrivacyPolicy')),
       );
     }
     return form;
