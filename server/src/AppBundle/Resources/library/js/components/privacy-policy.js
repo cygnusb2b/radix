@@ -3,7 +3,7 @@ React.createClass({ displayName: 'PrivacyPolicy',
     getDefaultProps: function() {
         return {
             className : 'database-form text-center',
-            message : 'By submitting this form, I accept that the data provided on this form will be processed, stored and used in accordance with the terms set out in our <a href="/privacy-policy" target="_blank">privacy policy.</a>'
+            message : 'By submitting this form, I accept that the data provided here will be processed, stored and used in accordance with the terms set out in our <a href="/privacy-policy" target="_blank">privacy policy.</a>'
         };
     },
 
