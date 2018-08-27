@@ -2,6 +2,7 @@ services:
     app_bundle.event_subscriber.core_user:
         private: true
         class: AppBundle\EventSubscriber\CoreUserSubscriber
+        arguments: [ "@security.encoder_factory" ]
         tags:
             - { name: as3_modlr.event_subscriber }
 

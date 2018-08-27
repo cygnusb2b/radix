@@ -14,7 +14,6 @@ export default Route.extend({
         loadTabs: function() {
             return [
                 { key : 'general',      text : 'General',      icon : 'ion-document',            template : 'core/users/-general', active : true },
-                { key : 'credentials',  text : 'Credentials',  icon : 'ion-locked',              template : 'core/users/-credentials'         },
                 { key : 'info',         text : 'Info',         icon : 'ion-information-circled', template : 'core/users/-info'         },
             ];
         }

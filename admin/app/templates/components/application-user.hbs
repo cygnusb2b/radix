@@ -1,0 +1,34 @@
+{{#if isEditing}}
+  <td>
+    {{edit-field/autocomplete value=model.user displayField='email' placeholder="Search by email" multiple=false modelType='core-user'}}
+  </td>
+  <td>
+      {{ember-selectize
+        multiple=true
+        selection=model.roles
+        content=roles
+        onSelect=(action (mut model.roles))
+      }}
+  </td>
+{{else}}
+  <td>{{#link-to 'core.users.edit' model.user.id}}
+    {{model.user.givenName}} {{model.user.familyName}}<br>
+    <small>&lsaquo;{{ model.user.email }}&rsaquo;</small>{{/link-to}}</td>
+  <td>{{#each model.roles as |role|}} {{ role }} {{else}}<span class="text-muted">No roles assigned</span>{{/each}}</td>
+{{/if}}
+
+  <td>
+    <div class="btn-group">
+      {{#if isEditing}}
+      {{#if canSave}}
+      <button class="btn btn-sm btn-primary" title="Save" {{action 'save'}}>{{-ion "archive"}}</button>
+      {{else}}
+      <button disabled class="btn btn-sm btn-disabled disabled" title="Save">{{-ion "archive"}}</button>
+      {{/if}}
+      <button class="btn btn-sm btn-warning" title="Cancel"{{action 'reset'}}>{{-ion "close"}}</button>
+      {{else}}
+      <button class="btn btn-sm btn-success" title="Edit" {{action 'toggleEdit'}}>{{-ion "edit"}}</button>
+      <button class="btn btn-sm btn-danger" title="Delete"{{action 'confirmDelete'}}>{{-ion "trash-a"}}</button>
+      {{/if}}
+    </div>
+  </td>

@@ -1,0 +1,27 @@
+<table class="table">
+  <thead>
+    <tr>
+      <td>User</td>
+      <td>Role</td>
+      <td>Actions</td>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items as |item|}}
+      {{application-user model=item cancelNew="cancelNew" onUpdate="refresh"}}
+    {{else}}
+      <tr>
+        <td colspan="3" class="text-muted text-center">No users have been assigned to this application.</td>
+      </tr>
+    {{/each}}
+
+    <tr>
+      <td colspan="3">
+        <button class="btn btn-success btn-block" {{action "create"}}>
+          {{-ion "plus"}}
+          Add user to this application
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
