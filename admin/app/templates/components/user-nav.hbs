@@ -1,14 +1,24 @@
 {{#if session.isAuthenticated}}
-    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button"><i class="ion-ios-gear" title="User Options" aria-label="User Options"></i></a>
-    <div class="dropdown-menu dropdown-menu-right">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button">
+        {{entypo-icon "user"}} <span class="d-none d-md-inline">{{userManager.user.givenName}} {{userManager.user.familyName}}</span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-left">
 
-        {{#link-to 'user.settings' class='dropdown-item' title="User Settings"}}
-            <i class="ion-person"></i> {{userManager.user.givenName}} {{userManager.user.familyName}}
+      <a class="dropdown-item dropdown-item d-flex justify-content-between" href="javascript:void(0)" title="Change Password" {{action "displayChangePassword"}}>
+        Change Password
+        {{entypo-icon "key"}}
+      </a>
+
+        {{#link-to 'user.settings' class='dropdown-item d-flex justify-content-between' title="User Settings"}}
+            Update Profile
+            {{entypo-icon "v-card"}}
         {{/link-to}}
 
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" title="Logout" {{action 'logout'}}>
-            <i class="ion-log-out"></i> Logout
-        </a>
+
+      <a class="dropdown-item d-flex justify-content-between" href="javascript:void(0)" title="Logout of the Application" {{action "logout"}}>
+        Logout
+        {{entypo-icon "log-out"}}
+      </a>
     </div>
 {{/if}}

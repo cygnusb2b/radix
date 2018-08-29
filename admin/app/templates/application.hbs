@@ -5,9 +5,9 @@
 
 {{#if session.isAuthenticated}}
     {{!-- User is logged in: display the application, with wrapping elements --}}
-    {{ partial 'application/-nav' }}
+    {{ partial 'navigation' }}
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-xl-12">
                 {{ outlet }}

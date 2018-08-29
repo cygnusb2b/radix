@@ -1,9 +1,10 @@
 import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
+import ActionMixin from 'radix/mixins/action-mixin';
 
-const { inject: { service }, Route } = Ember;
+const { inject: { service }, Route, get } = Ember;
 
-export default Route.extend(ApplicationRouteMixin, {
+export default Route.extend(ApplicationRouteMixin, ActionMixin, {
 
     userManager: service(),
 
@@ -31,7 +32,48 @@ export default Route.extend(ApplicationRouteMixin, {
             let loading = this.get('loading');
             loading.show();
             this.refresh().finally(() => loading.hide());
-        }
+        },
+
+        showLoading() {
+            this.showLoading();
+          },
+
+          hideLoading() {
+            this.hideLoading();
+          },
+
+          transitionTo(name) {
+            return this.transitionTo(name);
+          },
+
+          transitionWithModel(routeName, model) {
+            return this.transitionTo(routeName, get(model, 'id'));
+          },
+
+          scrollToTop() {
+            window.scrollTo(0, 0);
+          },
+
+          /**
+           *
+           * @param {*} transition
+           */
+          loading(transition) {
+            this.showLoading();
+            transition.finally(() => this.hideLoading());
+          },
+
+          /**
+           *
+           * @param {Error} e
+           */
+          error(e) {
+            if (this.get('graphErrors').isReady()) {
+              this.get('graphErrors').show(e);
+            } else {
+              this.intermediateTransitionTo('application_error', e);
+            }
+          },
     },
 
     _loadCurrentUser: function() {

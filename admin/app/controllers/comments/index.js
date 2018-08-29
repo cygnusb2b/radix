@@ -1,9 +1,11 @@
-import ListController from 'radix/controllers/-list-controller';
+import ListController from '../abstract-list';
 
 export default ListController.extend({
-  sort: 'createdDate',
-
-  init : function() {
+  init() {
     this._super(...arguments);
+    this.set('sortOptions', [
+      { key: 'createdDate', label: 'Created' },
+    ]);
+    this.set('sortBy', 'createdDate');
   },
 });

@@ -1,19 +1,12 @@
-<div class="card">
-    <div class="card-header">
-        Filter
-    </div>
-    <form>
-        <div class="card-block">
-            <div class="form-group">
-                <label class="sr-only" for="field-demographic-choice-id">Search phrase</label>
-                <div class="input-group">
-                    <div class="input-group-addon"><i class="ion-search"></i></div>
-                    {{ input class='form-control' placeholder="Enter search phrase..." }}
-                </div>
-            </div>
-        </div>
-        <div class="card-footer">
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item active=true}}{{entypo-icon "network"}} Core Accounts{{/crumbs.item}}
+{{/nav-breadcrumbs}}
 
-        </div>
-    </form>
+<div class="row">
+    <div class="col">
+        {{#-browse/list routeName='core.accounts' canCreate=true items=model as |item|}}
+            <h5 class="list-group-item-heading">{{item.model.name}}</h5>
+            <p class="list-group-item-text">{{item.model.key}}</p>
+        {{/-browse/list}}
+    </div>
 </div>

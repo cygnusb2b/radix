@@ -1,0 +1,17 @@
+#import 'radix/gql/fragments/post/list'
+
+query SearchPosts($pagination: PaginationInput, $phrase: String!) {
+  searchPosts(pagination: $pagination, phrase: $phrase) {
+    totalCount
+    edges {
+      node {
+        ...PostListFragment
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

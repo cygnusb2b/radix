@@ -1,0 +1,22 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item active=true}}{{entypo-icon "users"}} Account Identities{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
+<div class="row">
+    <div class="col">
+        {{#-browse/list routeName='identity.accounts' canCreate=false items=model as |item|}}
+          <small class="list-group-item-text">{{item.model.id}}</small>
+          <h5 class="list-group-item-heading">{{item.model.givenName}} {{item.model.familyName}}</h5>
+
+          <p class="list-group-item-text">
+              {{#if item.model.displayName}}
+                  <span>{{item.model.displayName}}</span>
+              {{/if}}
+              {{#if item.model.credentials.password.username}}
+                  <span>{{item.model.credentials.password.username}}</span>
+              {{/if}}
+          </p>
+          <small class="list-group-item-text">{{item.model.createdDate}}</small>
+        {{/-browse/list}}
+    </div>
+</div>

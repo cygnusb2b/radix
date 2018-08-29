@@ -1,0 +1,136 @@
+@import "node_modules/bootswatch/dist/cosmo/variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootswatch/dist/cosmo/bootswatch";
+
+// @import "ember-power-select/themes/bootstrap";
+// @import "ember-power-select";
+
+.in-modal-dropdown {
+  z-index: 1100;
+}
+
+.ember-power-select-trigger {
+  padding: 2px;
+}
+
+// @import "ember-power-calendar";
+// .ember-power-calendar {
+//   @include ember-power-calendar($cell-size: 30px);
+// }
+
+@import "z-depth";
+
+// Fluid container that acts like fixed. Main wrapper.
+@include media-breakpoint-up(xl) {
+  .container-fluid .col.main {
+    padding-left: 6.0rem;
+    padding-right: 6.0rem;
+  }
+}
+.container-fluid .col.main {
+  padding-bottom: 1rem;
+}
+
+
+// Utility for removing underlines in links.
+a.no-underline {
+  text-decoration: none;
+}
+
+nav.navbar {
+    padding-top: 1em;
+}
+
+.loading.progress {
+    border-radius: 0!important;
+    height: .3rem;
+}
+
+a[data-ember-action]:not(:disabled),
+.clickable {
+  cursor: pointer;
+}
+
+.sort-handle {
+    padding: 0 .5em;
+    cursor: move;
+}
+
+.loading-overlay {
+    position: fixed;
+    display: none;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99999;
+
+    opacity: 1;
+    background: rgba(0,0,0,.5);
+}
+
+.spin {
+    -webkit-animation: spin 1s infinite linear;
+       -moz-animation: spin 1s infinite linear;
+         -o-animation: spin 1s infinite linear;
+            animation: spin 1s infinite linear;
+    -webkit-animation-timing-function: steps(8, start);
+       -moz-animation-timing-function: steps(8, start);
+            animation-timing-function: steps(8, start);
+}
+
+.loading-overlay .spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    padding: 0;
+    margin-top: -25px;
+    margin-left: -25px;
+
+    color: #444;
+    font-size: 50px;
+}
+
+@-moz-keyframes spin {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(359deg);
+    }
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+    }
+}
+@-o-keyframes spin {
+    0% {
+        -o-transform: rotate(0deg);
+    }
+    100% {
+        -o-transform: rotate(359deg);
+    }
+}
+@-ms-keyframes spin {
+    0% {
+        -ms-transform: rotate(0deg);
+    }
+    100% {
+        -ms-transform: rotate(359deg);
+    }
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+
