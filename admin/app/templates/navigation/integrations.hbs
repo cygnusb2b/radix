@@ -1,11 +1,11 @@
+{{#if userManager.permissions.allowAll}}
 <li class="nav-item">
   {{#link-to "integrations.omeda" class="nav-item nav-link" title="Manage Integrations"}}
     {{entypo-icon "power-plug"}} <span class="d-none d-md-inline">Integrations</span>
   {{/link-to}}
 </li>
 
-{{!-- {{#if userManager.permissions.allowAll}}
-  <li class="nav-item dropdown">
+{{!-- <li class="nav-item dropdown">
     <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="nav-link dropdown-toggle" aria-expanded="true">
       {{entypo-icon "power-plug"}} <span class="d-none d-md-inline">Integrations</span>
     </a>
@@ -14,5 +14,5 @@
         Omeda
       {{/link-to}}
     </div>
-  </li>
-{{/if}} --}}
+  </li> --}}
+{{/if}}

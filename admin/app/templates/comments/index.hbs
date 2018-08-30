@@ -20,7 +20,7 @@
         resultKey=resultKey as |fetch|
       }}
         <ul class="list-group list-group-flush">
-          <li class="list-group-item pt-0"><h5 class="mb-0 text-muted">Total Results: {{model.totalCount}}</h5></li>
+          <li class="list-group-item pt-0 mb-1"><h5 class="mb-0 text-muted">Total Results: {{model.totalCount}}</h5></li>
           {{#each fetch.nodes as |item|}}
             {{comment-post item=item}}
           {{/each}}
@@ -28,7 +28,7 @@
 
         <div class="card-footer border-0">
           {{#if fetch.hasNextPage}}
-            <button class="btn btn-primary btn-lg" disabled={{fetch.isFetching}} {{action fetch.actions.loadMore}}>
+            <button class="btn btn-block btn-primary" disabled={{fetch.isFetching}} {{action fetch.actions.loadMore}}>
               {{entypo-icon "download"}} {{#if fetch.isFetching}}Loading...{{else}}Load More{{/if}}
             </button>
           {{/if}}

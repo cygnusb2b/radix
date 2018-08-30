@@ -1,0 +1,9 @@
+fragment PostApprovalFragment on Post {
+  approved
+  banned
+  account {
+    settings {
+      shadowbanned
+    }
+  }
+}

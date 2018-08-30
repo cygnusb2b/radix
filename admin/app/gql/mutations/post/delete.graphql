@@ -1,0 +1,7 @@
+#import 'radix/gql/fragments/post/approval'
+
+mutation DeletePost($input: ModelIdInput!) {
+  deletePost(input: $input) {
+    ...PostApprovalFragment
+  }
+}

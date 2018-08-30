@@ -1,3 +1,6 @@
+#import 'radix/gql/fragments/post/approval'
+#import 'radix/gql/fragments/post/account'
+#import 'radix/gql/fragments/post/stream'
 #import 'radix/gql/fragments/timestampable'
 
 fragment PostListFragment on Post {
@@ -5,36 +8,10 @@ fragment PostListFragment on Post {
   body
   displayName
   ipAddress
-  anonymize
-  displayName
   picture
-  banned
-  approved
-  _type
-  account {
-    id
-    primaryEmail
-    displayName
-    familyName
-    givenName
-    history {
-      lastLogin
-      lastSeen
-      logins
-      remembers
-    }
-    settings {
-      enabled
-      locked
-      shadowbanned
-    }
-  }
-  stream {
-    id
-    title
-    url
-    identifier
-    active
-  }
+
+  ...PostApprovalFragment
+  ...PostAccountFragment
+  ...PostStreamFragment
   ...TimestampableFragment
 }

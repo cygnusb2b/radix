@@ -15,6 +15,9 @@ Router.map(function() {
 
     this.route('comments', function() {
     });
+    this.route('identities', function() {
+        this.route('edit', { path: '/edit/:id' });
+    });
 
     this.route('core', function() {
         this.route('accounts', function() {

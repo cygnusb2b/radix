@@ -1,0 +1,9 @@
+
+fragment IdentityHistoryFragment on Identity {
+  history {
+    lastLogin
+    lastSeen
+    logins
+    remembers
+  }
+}

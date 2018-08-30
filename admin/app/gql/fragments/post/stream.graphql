@@ -1,0 +1,10 @@
+
+fragment PostStreamFragment on Post {
+  stream {
+    id
+    title
+    url
+    identifier
+    active
+  }
+}

@@ -1,11 +1,11 @@
+{{#if userManager.permissions.allowAll}}
 <li class="nav-item">
   {{#link-to "product.email-deployments" class="nav-item nav-link" title="Manage Products"}}
     {{entypo-icon "browser"}} <span class="d-none d-md-inline">Products</span>
   {{/link-to}}
 </li>
 
-{{!-- {{#if userManager.permissions.allowAll}}
-  <li class="nav-item dropdown">
+{{!-- <li class="nav-item dropdown">
     <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="nav-link dropdown-toggle" aria-expanded="true">
       {{entypo-icon "browser"}} <span class="d-none d-md-inline">Products</span>
     </a>
@@ -17,5 +17,5 @@
         Tags
       {{/link-to}}
     </div>
-  </li>
-{{/if}} --}}
+  </li> --}}
+{{/if}}

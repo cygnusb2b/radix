@@ -1,0 +1,7 @@
+#import 'radix/gql/fragments/post/approval'
+
+mutation ApprovePost($input: ModelIdInput!) {
+  approvePost(input: $input) {
+    ...PostApprovalFragment
+  }
+}
