@@ -1,0 +1,8 @@
+mutation UpdateIdentity($input: ModelIdInput!) {
+  updateIdentity(input: $input) {
+    displayName
+    picture
+    givenName
+    familyName
+  }
+}

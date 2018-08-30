@@ -1,21 +1,63 @@
-{{#if post.deleted}}
-{{else}}
-<div class="small list-group-item list-group-item-action{{if post.approved '' ' list-group-item-warning'}}">
-    <div class="d-flex w-100 justify-content-between">
-        <div class="mb-1">
-            <p class="text-muted">
-                <a href="{{post.stream.url}}" target="_blank">{{post.stream.title}} &nbsp;<i class="fa fa-external-link"></i></a>
-                <br>
-                {{post.createdDate}} &bull; {{#if post.displayName}}{{post.displayName}}{{else}}Unkown{{/if}}
-            </p>
-            <p>{{post.body}}</p>
+<li class="list-group-item flex-column align-items-start">
+  <div class="d-flex flex-row justify-content-between">
+    <div class="d-flex flex-column flex-fill">
+      <div class="d-flex flex-row">
+        <div class="d-flex flex-column mr-3 flex-fill">
+          <h4 class="mb-3">
+            <img src="{{ avatar }}" style="width: 50px; height: 50px">
+            {{#if item.title}}
+              {{item.title}}
+            {{else}}
+              Untitled Post
+            {{/if}}
+          </h4>
+          <p class="mb-3">{{item.body}}</p>
+          <div class="d-flex flex-fill flex-row">
+            <small class="flex-fill" title="{{moment item.createdDate}}">{{entypo-icon "clock"}}  <code>{{moment-from-now item.createdDate}}</code></small>
+            <small class="flex-fill">{{entypo-icon "user"}} <code>{{displayName}}</code></small>
+            <small class="flex-fill">{{entypo-icon "network"}} <code>{{item.ipAddress}}</code></small>
+          </div>
         </div>
-        <div>
-            {{#unless post.approved}}
-                {{model-actions/toggle-property model=post classNames='btn-success testing' icon='ion-android-checkmark-circle' field='approved' label='Approve'}}
-            {{/unless}}
-            {{model-actions/soft-delete model=post confirmValue=post.body icon='ion-ios-trash' label='Delete'}}
-        </div>
+      </div>
     </div>
-</div>
-{{/if}}
+    <div class="d-none d-md-flex flex-column align-items-end text-right">
+      <div class="mt-auto">
+
+        {{!-- Post actions --}}
+        <div class="btn-group-vertical">
+
+          <button class="d-flex justify-content-between btn btn-sm btn-outline-success" {{action "moderate"}} title="Moderate User">
+            Moderate User
+            {{entypo-icon "user" class="ml-1"}}
+          </button>
+          <button class="d-flex justify-content-between btn btn-sm btn-outline-primary" {{action "edit"}} title="Edit Post">
+            Edit Post
+            {{entypo-icon "pencil" class="ml-1"}}
+          </button>
+          {{#if item.approved}}
+          <button class="d-flex justify-content-between btn btn-sm btn-outline-warning" {{action "unapprove"}} title="Unapprove Post">
+             Unapprove Post
+            {{entypo-icon "cross" class="ml-1"}}
+          </button>
+          {{else}}
+          <button class="d-flex justify-content-between btn btn-sm btn-outline-success" {{action "approve"}} title="Approve Post">
+             Approve Post
+            {{entypo-icon "check" class="ml-1"}}
+          </button>
+          {{/if}}
+
+          <button class="d-flex justify-content-between btn btn-sm btn-outline-danger" {{action "delete"}} title="Delete Post">
+             Delete Post
+            {{entypo-icon "trash" class="ml-1"}}
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</li>
+
+{{post-edit-modal isOpen=isEditPostOpen model=item}}
+{{post-delete-modal isOpen=isDeletePostOpen model=item}}
+{{post-account-modal isOpen=isModerateAccountOpen model=item.account}}

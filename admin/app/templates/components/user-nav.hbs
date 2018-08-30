@@ -9,12 +9,12 @@
       {{entypo-icon "key"}}
     </a>
 
-      {{#link-to 'user.settings' class='dropdown-item d-flex justify-content-between' title="User Settings"}}
-          Update Profile
-          {{entypo-icon "v-card"}}
-      {{/link-to}}
+    <a class="dropdown-item dropdown-item d-flex justify-content-between" href="javascript:void(0)" title="Change Settings" {{action "displayUpdateProfile"}}>
+      Change Settings
+      {{entypo-icon "v-card"}}
+    </a>
 
-      <div class="dropdown-divider"></div>
+    <div class="dropdown-divider"></div>
 
     <a class="dropdown-item d-flex justify-content-between" href="javascript:void(0)" title="Logout of the Application" {{action "logout"}}>
       Logout
@@ -23,4 +23,5 @@
   </div>
 
   {{change-password-modal isOpen=isChangePasswordOpen model=userManager.user}}
+  {{change-profile-modal isOpen=isUpdateProfileOpen model=userManager.user}}
 {{/if}}

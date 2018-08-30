@@ -25,6 +25,8 @@ type Post implements Timestampable {
   ipAddress: String!
   anonymize: Boolean
   displayName: String
+  title: String
+  rating: Int
   picture: String
   banned: Boolean
   approved: Boolean

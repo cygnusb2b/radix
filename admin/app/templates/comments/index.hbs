@@ -22,7 +22,7 @@
         <ul class="list-group list-group-flush">
           <li class="list-group-item pt-0 mb-1"><h5 class="mb-0 text-muted">Total Results: {{model.totalCount}}</h5></li>
           {{#each fetch.nodes as |item|}}
-            {{comment-post item=item}}
+            {{post-item item=item}}
           {{/each}}
         </ul>
 

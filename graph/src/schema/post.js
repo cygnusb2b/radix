@@ -8,6 +8,8 @@ const schema = new Schema({
   anonymize: Boolean,
   displayName: String,
   picture: String,
+  title: String,
+  rating: Number,
   banned: Boolean,
   approved: Boolean,
   _type: String,

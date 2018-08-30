@@ -1,0 +1,62 @@
+{{#bs-modal show=isOpen onHidden=(action "clear") as |modal|}}
+  <form {{action "updateIdentity" on="submit"}}>
+    {{#modal.header}}
+      <h5 class="modal-title">Moderate User</h5>
+      <button {{action modal.actions.hide}} type="button" class="close" aria-label="Close">
+        {{entypo-icon "cross"}}
+      </button>
+    {{/modal.header}}
+
+    {{#modal.body}}
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="name">First Name</label>
+            {{input type="text" autocomplete="off" class="form-control" value=givenName disabled=true}}
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="name">Last Name</label>
+            {{input type="text" autocomplete="off" class="form-control" value=familyName disabled=true}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group mb-0">
+            <label for="name">Email Address</label>
+            {{input type="email" autocomplete="off" class="form-control" value=primaryEmail disabled=true}}
+          </div>
+          <div class="form-group mb-0">
+            <label for="name">Display Name</label>
+            {{input type="text" autocomplete="off" class="form-control" value=displayName}}
+          </div>
+          <div class="form-group mb-0">
+            <label for="name">Picture URL</label>
+            {{input type="text" autocomplete="off" class="form-control" value=picture}}
+          </div>
+          {{#if (eq canChange false)}}
+            <small class="d-block text-info mt-3">In order to save, {{ reasonForPreventChange }}</small>
+          {{/if}}
+        </div>
+      </div>
+    {{/modal.body}}
+
+    {{#modal.footer}}
+    {{#if banned}}
+      <button class="btn btn-success" type="submit" {{action "unbanIdentity"}}>
+        {{entypo-icon "block"}} Unban User
+      </button>
+    {{else}}
+      <button class="btn btn-danger" type="submit" {{action "banIdentity"}}>
+        {{entypo-icon "block"}} Ban User
+      </button>
+    {{/if}}
+      <button class="btn btn-success" type="submit" disabled={{isSubmitDisabled}}>
+        {{entypo-icon "check"}} Update
+      </button>
+    {{/modal.footer}}
+    {{progress-bar show=isActionRunning}}
+  </form>
+{{/bs-modal}}
