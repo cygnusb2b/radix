@@ -1,0 +1,64 @@
+type Query {
+  allPosts(pagination: PaginationInput = {}, sort: PostSortInput = {}): PostConnection!
+  searchPosts(pagination: PaginationInput = {}, phrase: String!): PostConnection!
+  post(input: ModelIdInput!): Post!
+}
+
+type Mutation {
+  deletePost(input: ModelIdInput!): Post!
+  undeletePost(input: ModelIdInput!): Post!
+
+  approvePost(input: ModelIdInput!): Post!
+  unapprovePost(input: ModelIdInput!): Post!
+
+  updatePost(input: UpdatePostInput!): Post!
+}
+
+enum PostSortField {
+  name
+  createdDate
+}
+
+type Post implements Timestampable {
+  id: String!
+  body: String!
+  ipAddress: String!
+  anonymize: Boolean
+  displayName: String
+  picture: String
+  banned: Boolean
+  approved: Boolean
+  _type: String!
+  stream: PostStream!
+  account: Identity!
+
+  createdDate: Date
+}
+
+type PostConnection {
+  totalCount: Int!
+  edges: [PostEdge]!
+  pageInfo: PageInfo!
+}
+
+type PostEdge {
+  node: Post!
+  cursor: Cursor!
+}
+
+input PostSortInput {
+  field: PostSortField! = createdDate
+  order: Int! = -1
+}
+
+input UpdatePostInput {
+  id: String!
+  payload: PostPayloadInput!
+}
+
+input PostPayloadInput {
+  body: String
+  anonymize: Boolean
+  displayName: String
+  picture: String
+}

@@ -1,0 +1,37 @@
+type Query {
+  allPostStreams(pagination: PaginationInput = {}, sort: PostStreamSortInput = {}): PostStreamConnection!
+  searchPostStreams(pagination: PaginationInput = {}, phrase: String!): PostStreamConnection!
+  postStream(input: ModelIdInput!): PostStream!
+}
+
+enum PostStreamSortField {
+  title
+  createdDate
+}
+
+type PostStream implements Timestampable {
+  id: String!
+  title: String
+  url: String!
+  identifier: String!
+  active: Boolean
+  posts: [Post]
+
+  createdDate: Date
+}
+
+type PostStreamConnection {
+  totalCount: Int!
+  edges: [PostStreamEdge]!
+  pageInfo: PageInfo!
+}
+
+type PostStreamEdge {
+  node: PostStream!
+  cursor: Cursor!
+}
+
+input PostStreamSortInput {
+  field: PostStreamSortField! = createdDate
+  order: Int! = -1
+}
