@@ -1,15 +1,14 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 import ComponentQueryManager from 'ember-apollo-client/mixins/component-query-manager';
 import ActionMixin from 'radix/mixins/action-mixin';
 import deletePost from 'radix/gql/mutations/post/delete';
-
-const { computed, Component } = Ember;
 
 export default Component.extend(ComponentQueryManager, ActionMixin, {
   model: null,
 
   isOpen: false,
-  isSubmitDisabled: computed.not('isActionRunning'),
+  isSubmitDisabled: computed.bool('isActionRunning'),
 
   actions: {
     async deletePost() {

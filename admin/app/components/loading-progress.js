@@ -1,7 +1,6 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 import LoadingMixin from 'radix/mixins/loading-mixin';
-
-const { Component, computed } = Ember;
 
 export default Component.extend(LoadingMixin, {
   classNames: ['loading', 'progress'],

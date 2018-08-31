@@ -1,6 +1,7 @@
-import Ember from 'ember';
-
-const { Component, computed, assign, isArray } = Ember;
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { assign } from '@ember/polyfills';
+import { isArray } from '@ember/array';
 
 export default Component.extend({
 

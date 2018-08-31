@@ -1,7 +1,6 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { isPresent } from '@ember/utils';
 import $ from 'jquery';
-
-const { Component, isPresent } = Ember;
 
 export default Component.extend({
   classNames: ['modal'],

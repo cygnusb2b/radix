@@ -1,6 +1,4 @@
-import Ember from 'ember';
-
-const { Service } = Ember;
+import Service from '@ember/service';
 
 export default Service.extend({
   isShowing: false,
@@ -13,3 +11,6 @@ export default Service.extend({
     window.setTimeout(() => this.set('isShowing', false), 100);
   },
 });
+
+
+

@@ -10,5 +10,8 @@ ENV APP_ENV=dev
 
 ADD docker/entrypoint.sh /app/entrypoint.sh
 
+VOLUME /var/www/html
+VOLUME /var/www/html/vendor
+
 RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/sbin/apache2
-USER www-data
+# USER www-data

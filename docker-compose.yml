@@ -19,23 +19,23 @@ services:
       - graph_install
       - mongo
       - elastic
-      - apache
+      - server
     ports:
       - "${PORT-8700}:${PORT-8700}"
     environment:
       APP: ${APP-acbm:fcp}
       PORT: ${PORT-8700}
-      APP_HOST: "${APP_HOST-apache}:80"
+      APP_HOST: "${APP_HOST-server}:80"
       MONGO_DSN: ${MONGO_DSN-mongodb://mongo/radix}
       MONGOOSE_DEBUG: ${MONGOOSE_DEBUG-false}
       ELASTIC_HOST: ${ELASTIC_HOST-http://elastic}
 
   server_install:
-    image: radix_apache:latest
+    image: radix_server:latest
     entrypoint: /app/entrypoint.sh
     volumes:
       - ./server:/var/www/html:cached
-      - ./server/vendor:/var/www/html/vendor:cached
+      - server_vendor:/var/www/html/vendor:cached
       - server_cache:/var/www/html/app/cache:cached
       - server_composer:/var/www/.composer/cache:cached
     environment:
@@ -45,16 +45,16 @@ services:
     networks:
       - default
 
-  apache:
+  server:
     build:
       context: server/
       dockerfile: docker/Dockerfile
-    image: radix_apache:latest
+    image: radix_server:latest
     ports:
       - "${RADIX_APP_PORT-8710}:80"
     volumes:
       - ./server:/var/www/html:cached
-      - ./server/vendor:/var/www/html/vendor:cached
+      - server_vendor:/var/www/html/vendor:cached
       - server_cache:/var/www/html/app/cache
     environment:
       APP: ${APP-acbm:fcp}
@@ -95,49 +95,47 @@ services:
         aliases:
           - "${RADIX_ELASTIC_HOST-elastic}"
 
-  # admin_install:
-  #   tty: true
-  #   image: danlynn/ember-cli:2.11.1-node_6.10
-  #   volumes:
-  #     - ./admin:/myapp
-  #     - node_modules:/myapp/node_modules
-  #     - bower_components:/myapp/bower_components
-  #     - tmp:/myapp/tmp
-  #   restart: on-failure
-  #   working_dir: /myapp
-  #   entrypoint: ./install.sh
+  admin_install:
+    tty: true
+    image: danlynn/ember-cli:3.1.2
+    volumes:
+      - ./admin:/myapp:cached
+      - ember_node_modules:/myapp/node_modules:cached
+      - ember_tmp:/myapp/tmp
+    restart: on-failure
+    working_dir: /myapp
+    entrypoint: yarn
 
-  # admin:
-  #   tty: true
-  #   image: danlynn/ember-cli:2.11.1-node_6.10
-  #   ports:
-  #     - "${EMBER_SERVE_PORT-8705}:${EMBER_SERVE_PORT-8705}"
-  #     - "${EMBER_LIVER_PORT-8706}:${EMBER_LIVER_PORT-8706}"
-  #     - "${EMBER_TESTS_PORT-8707}:${EMBER_TESTS_PORT-8707}"
-  #   depends_on:
-  #     - admin_install
-  #   networks:
-  #     - default
-  #   volumes:
-  #     - ./admin:/myapp:cached
-  #     - node_modules:/myapp/node_modules
-  #     - bower_components:/myapp/bower_components
-  #     - tmp:/myapp/tmp
-  #   restart: on-failure
-  #   entrypoint: "./node_modules/.bin/ember server --port ${EMBER_SERVE_PORT-8705} --live-reload-port ${EMBER_LIVER_PORT-8706} --proxy ${EMBER_PROXY-http://docker.for.mac.host.internal:8700}"
+  admin:
+    tty: true
+    image: danlynn/ember-cli:3.1.2
+    ports:
+      - "${EMBER_SERVE_PORT-8705}:${EMBER_SERVE_PORT-8705}"
+      - "${EMBER_LIVER_PORT-8706}:${EMBER_LIVER_PORT-8706}"
+      - "${EMBER_TESTS_PORT-8707}:${EMBER_TESTS_PORT-8707}"
+    depends_on:
+      - admin_install
+    networks:
+      - default
+    volumes:
+      - ./admin:/myapp:cached
+      - ember_node_modules:/myapp/node_modules:cached
+      - ember_tmp:/myapp/tmp
+    restart: on-failure
+    entrypoint: "./node_modules/.bin/ember server --port ${EMBER_SERVE_PORT-8705} --live-reload-port ${EMBER_LIVER_PORT-8706} --proxy ${EMBER_PROXY-http://docker.for.mac.host.internal:8700}"
 
 volumes:
   server_cache:
     driver_opts:
       type: tmpfs
       device: tmpfs
+  server_vendor: {}
   server_composer: {}
   mongo: {}
   elastic: {}
-  node_modules: {}
+  ember_node_modules: {}
   graph_node_modules: {}
-  bower_components: {}
-  tmp:
+  ember_tmp:
     driver_opts:
       type: tmpfs
       device: tmpfs

@@ -1,11 +1,10 @@
-import Ember from 'ember';
-
-const { Component, inject: { service } } = Ember;
+import Component from '@ember/component';
+import { inject } from '@ember/service';
 
 export default Component.extend({
   tagName: 'form',
 
-  notify: service(),
+  notify: inject(),
 
   submit(event) {
     event.preventDefault();

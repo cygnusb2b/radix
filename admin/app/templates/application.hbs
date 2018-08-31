@@ -1,4 +1,5 @@
 {{ partial 'application/-loading-overlay'}}
+{{ember-notify messageStyle="bootstrap"}}
 
 {{ confirm-modal-unsaved }}
 {{ confirm-modal-delete }}
@@ -18,6 +19,3 @@
     {{!-- User is not logged in: show the splash screen, without wrappers --}}
     {{login-splash}}
 {{/if}}
-
-
-

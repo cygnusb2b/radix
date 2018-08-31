@@ -1,16 +1,13 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
 import ActionMixin from 'radix/mixins/action-mixin';
-
-const { inject: { service }, Route, get } = Ember;
+import { get } from '@ember/object';
+import { inject } from '@ember/service';
 
 export default Route.extend(ApplicationRouteMixin, ActionMixin, {
-
-    userManager: service(),
-
-    loading: service(),
-
-    session: service('session'),
+    userManager: inject(),
+    loading: inject(),
+    session: inject(),
 
     beforeModel: function() {
         return this._loadCurrentUser();
@@ -36,44 +33,44 @@ export default Route.extend(ApplicationRouteMixin, ActionMixin, {
 
         showLoading() {
             this.showLoading();
-          },
+        },
 
-          hideLoading() {
+        hideLoading() {
             this.hideLoading();
-          },
+        },
 
-          transitionTo(name) {
+        transitionTo(name) {
             return this.transitionTo(name);
-          },
+        },
 
-          transitionWithModel(routeName, model) {
+        transitionWithModel(routeName, model) {
             return this.transitionTo(routeName, get(model, 'id'));
-          },
+        },
 
-          scrollToTop() {
+        scrollToTop() {
             window.scrollTo(0, 0);
-          },
+        },
 
-          /**
-           *
-           * @param {*} transition
-           */
-          loading(transition) {
+        /**
+         *
+         * @param {*} transition
+         */
+        loading(transition) {
             this.showLoading();
             transition.finally(() => this.hideLoading());
-          },
+        },
 
-          /**
-           *
-           * @param {Error} e
-           */
-          error(e) {
+        /**
+         *
+         * @param {Error} e
+         */
+        error(e) {
             if (this.get('graphErrors').isReady()) {
-              this.get('graphErrors').show(e);
+                this.get('graphErrors').show(e);
             } else {
-              this.intermediateTransitionTo('application_error', e);
+                this.intermediateTransitionTo('application_error', e);
             }
-          },
+        },
     },
 
     _loadCurrentUser: function() {

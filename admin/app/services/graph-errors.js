@@ -1,11 +1,10 @@
-import Ember from 'ember';
+import Service, { inject } from '@ember/service';
+import { isPresent } from '@ember/utils';
 import $ from 'jquery';
 
-const { Service, isPresent, inject: { service } } = Ember;
-
 export default Service.extend({
-  notify: service(),
-  user: service('user-manager'),
+  user: inject('user-manager'),
+  notify: inject(),
 
   isReady() {
     const element = $('.ember-notify-default');

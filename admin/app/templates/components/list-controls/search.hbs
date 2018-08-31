@@ -7,14 +7,12 @@
     disabled=disabled
     focusIn=(action "selectAll")
   }}
-  <span class="input-group-btn">
+  <div class="input-group-append">
     {{#list-controls/button class=buttonClass type="submit" disabled=disabled}}
       {{entypo-icon icon}}{{#if label}} {{label}}{{/if}}
     {{/list-controls/button}}
-  </span>
-  <span class="input-group-btn">
     {{#list-controls/button class=buttonClass disabled=disabled click=(action "clear")}}
       {{entypo-icon "cross"}}
     {{/list-controls/button}}
-  </span>
+  </div>
 </div>

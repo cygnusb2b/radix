@@ -1,7 +1,5 @@
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
 import LoadingMixin from 'radix/mixins/loading-mixin';
-
-const { Mixin } = Ember;
 
 export default Mixin.create(LoadingMixin, {
   isActionRunning: false,

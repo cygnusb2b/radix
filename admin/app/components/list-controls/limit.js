@@ -1,7 +1,6 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 import MenuMixin from 'radix/components/list-controls/menu-mixin';
-
-const { Component, computed } = Ember;
 
 export default Component.extend(MenuMixin, {
   classNames: ['btn-group'],

@@ -1,9 +1,8 @@
-import Ember from 'ember';
-
-const { Mixin, inject: { service } } = Ember;
+import Mixin from '@ember/object/mixin';
+import { inject } from '@ember/service';
 
 export default Mixin.create({
-  loadingDisplay: service(),
+  loadingDisplay: inject(),
 
   showLoading() {
     this.get('loadingDisplay').show();

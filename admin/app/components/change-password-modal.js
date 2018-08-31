@@ -1,9 +1,9 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 import ComponentQueryManager from 'ember-apollo-client/mixins/component-query-manager';
 import ActionMixin from 'radix/mixins/action-mixin';
-import changeUserPassword from 'radix/gql/mutations/change-user-password';
 
-const { computed, Component } = Ember;
+import changeUserPassword from 'radix/gql/mutations/change-user-password';
 
 export default Component.extend(ComponentQueryManager, ActionMixin, {
   model: null,
