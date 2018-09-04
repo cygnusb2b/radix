@@ -3,19 +3,13 @@
     {{#link-to 'index' class='navbar-brand'}}radix{{/link-to}}
 
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        {{#link-to "comments" class="nav-link" title="Manage Comments"}}
-          {{entypo-icon "chat"}} <span class="d-none d-md-inline">Comments</span>
-        {{/link-to}}
-      </li>
-
+      {{partial "navigation/comments"}}
       {{partial "navigation/identities"}}
       {{partial "navigation/demographics"}}
       {{partial "navigation/products"}}
       {{partial "navigation/forms"}}
       {{partial "navigation/integrations"}}
       {{partial "navigation/core"}}
-
     </ul>
 
     <ul class="navbar-nav ml-auto">
@@ -25,9 +19,10 @@
           </a>
       </li>
 
+      {{#if userManager.permissions}}
       {{select-application onAppChange="refreshApp"}}
-
       {{user-nav}}
+      {{/if}}
     </ul>
 
   </nav>
