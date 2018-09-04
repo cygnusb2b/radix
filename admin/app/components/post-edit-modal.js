@@ -10,19 +10,18 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
 
   title: computed.oneWay('model.title'),
   body: computed.oneWay('model.body'),
-  picture: computed.oneWay('model.picture'),
   displayName: computed.oneWay('model.displayName'),
 
   isOpen: false,
-  isSubmitDisabled: computed.not('isActionRunning'),
+  isSubmitDisabled: computed.bool('isActionRunning'),
 
   actions: {
     async updatePost() {
       this.startAction();
       const mutation = updatePost;
       const id = this.get('model.id');
-      const { title, body, picture, displayName } = this.getProperties('title,body,picture,displayName');
-      const input = { id, title, body, picture, displayName };
+      const payload = this.getProperties(['title','body','displayName']);
+      const input = { id, payload };
       const variables = { input };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'updatePost');

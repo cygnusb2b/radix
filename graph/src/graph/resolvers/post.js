@@ -54,5 +54,46 @@ module.exports = {
     /**
      *
      */
+    unapprovePost: async (root, { input: { id } }, { auth }) => {
+      const post = await Post.findById(id);
+      console.warn(post);
+      post.set('approved', false);
+      return post.save();
+    },
+    /**
+     *
+     */
+    approvePost: async (root, { input: { id } }, { auth }) => {
+      const post = await Post.findById(id);
+      console.warn(post);
+      post.set('approved', true);
+      return post.save();
+    },
+    /**
+     *
+     */
+    deletePost: async (root, { input: { id } }, { auth }) => {
+      const post = await Post.findById(id);
+      console.warn(post);
+      post.set('deleted', true);
+      return post.save();
+    },
+    /**
+     *
+     */
+    undeletePost: async (root, { input: { id } }, { auth }) => {
+      const post = await Post.findById(id);
+      console.warn(post);
+      post.set('deleted', false);
+      return post.save();
+    },
+    /**
+     *
+     */
+    updatePost: async (root, { input: { id, payload } }, { auth }) => {
+      const post = await Post.findById(id);
+      post.set(payload);
+      return post.save();
+    },
   },
 };

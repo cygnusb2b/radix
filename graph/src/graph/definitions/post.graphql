@@ -59,6 +59,7 @@ input UpdatePostInput {
 }
 
 input PostPayloadInput {
+  title: String
   body: String
   anonymize: Boolean
   displayName: String

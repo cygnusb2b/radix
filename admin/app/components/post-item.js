@@ -13,8 +13,11 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
   isModerateAccountOpen: false,
 
   displayName: computed('item.{displayName,account.displayName}', function() {
-    if (this.get('item.displayName')) return this.get('item.displayName');
-    if (this.get('item.account.displayName')) return this.get('item.account.displayName');
+    const actName = this.get('item.account.displayName');
+    const itmName = this.get('item.displayName');
+    if (actName && itmName && actName !== itmName) return `${actName} (as ${itmName})`;
+    if (itmName) return itmName;
+    if (actName) return actName;
     return `an anonymous user from ${this.get('item.ipAddress')}`;
   }),
 

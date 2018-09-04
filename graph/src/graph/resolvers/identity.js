@@ -57,5 +57,28 @@ module.exports = {
     /**
      *
      */
+    banIdentity: async (root, { input: { id } }, { auth }) => {
+      const identity = await Identity.findById(id);
+      console.warn(identity);
+      identity.set('settings.shadowbanned', true);
+      return identity.save();
+    },
+    /**
+     *
+     */
+    unbanIdentity: async (root, { input: { id } }, { auth }) => {
+      const identity = await Identity.findById(id);
+      console.warn(identity);
+      identity.set('settings.shadowbanned', false);
+      return identity.save();
+    },
+    /**
+     *
+     */
+    updateIdentity: async (root, { input: { id, payload } }, { auth }) => {
+      const identity = await Identity.findById(id);
+      identity.set(payload);
+      return identity.save();
+    },
   },
 };

@@ -10,8 +10,8 @@ export default JSONAPIAdapter.extend(DataAdapterMixin, {
   coalesceFindRequests: true,
   namespace: '/api/1.0',
   authorize(xhr) {
-    const { token } = this.get('session.data.authenticated');
-    const { key } = this.get('session.data.application');
+    const token = this.get('session.data.authenticated.token');
+    const key = this.get('session.data.application.key');
     if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     if (key) xhr.setRequestHeader('X-Radix-AppId', key);
   },

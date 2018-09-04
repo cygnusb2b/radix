@@ -24,8 +24,8 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       this.startAction();
       const mutation = updateIdentity;
       const id = this.get('model.id');
-      const { givenName, familyName, picture, displayName } = this.getProperties('givenName,familyName,picture,displayName');
-      const input = { id, givenName, familyName, picture, displayName };
+      const payload = this.getProperties(['picture','displayName']);
+      const input = { id, payload };
       const variables = { input };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'updateIdentity');

@@ -1,6 +1,6 @@
 #import 'radix/gql/fragments/post/list'
 
-mutation UpdatePost($input: ModelIdInput!) {
+mutation UpdatePost($input: UpdatePostInput!) {
   updatePost(input: $input) {
     ...PostListFragment
   }
