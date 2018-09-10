@@ -23,7 +23,7 @@ services:
     ports:
       - "${PORT-8700}:${PORT-8700}"
     environment:
-      APP: ${APP-acbm:fcp}
+      ACCOUNT_KEY: ${APP-cygnus:ofcr}
       PORT: ${PORT-8700}
       APP_HOST: "${APP_HOST-server}:80"
       MONGO_DSN: ${MONGO_DSN-mongodb://mongo/radix}
@@ -36,10 +36,10 @@ services:
     volumes:
       - ./server:/var/www/html:cached
       - server_vendor:/var/www/html/vendor:cached
-      - server_cache:/var/www/html/app/cache:cached
+      - server_cache:/var/www/html/var/cache:cached
       - server_composer:/var/www/.composer/cache:cached
     environment:
-      APP: ${APP-acbm:fcp}
+      APP: ${APP-cygnus:ofcr}
       COMPOSER_ALLOW_SUPERUSER: 1
       COMPOSER_NO_INTERACTION: 1
     networks:
@@ -55,9 +55,9 @@ services:
     volumes:
       - ./server:/var/www/html:cached
       - server_vendor:/var/www/html/vendor:cached
-      - server_cache:/var/www/html/app/cache
+      - server_cache:/var/www/html/var/cache:cached
     environment:
-      APP: ${APP-acbm:fcp}
+      APP: ${APP-cygnus:ofcr}
     depends_on:
       - server_install
       - redis

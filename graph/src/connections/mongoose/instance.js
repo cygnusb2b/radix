@@ -3,11 +3,11 @@ const bluebird = require('bluebird');
 const output = require('../../output');
 const env = require('../../env');
 
-const { MONGO_DSN, MONGOOSE_DEBUG, APP } = env;
+const { MONGO_DSN, MONGOOSE_DEBUG, ACCOUNT_KEY } = env;
 mongoose.set('debug', Boolean(MONGOOSE_DEBUG));
 mongoose.Promise = bluebird;
 
-const suffix = APP.replace(':', '-');
+const suffix = ACCOUNT_KEY.replace(':', '-');
 const instanceDSN = MONGO_DSN.replace('/radix', `/radix-${suffix}`);
 
 const connection = mongoose.createConnection(instanceDSN, {
