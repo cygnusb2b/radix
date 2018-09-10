@@ -1,9 +1,9 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
 import Rules from 'radix/objects/permission-rules';
 
 const { typeOf } = Ember;
 
-export default Ember.Object.extend({
+export default EmberObject.extend({
 
   allowAll: false,
 

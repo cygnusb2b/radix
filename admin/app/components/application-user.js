@@ -8,7 +8,7 @@ export default Component.extend({
   model: null,
   editing: false,
 
-  _roles: ['ROLE_SUPERADMIN', 'ROLE_USER'],
+  _roles: ['ROLE_SUPERADMIN', 'ROLE_ADMIN', 'ROLE_USER'],
   roles: computed('roles.[]', 'model.roles.[]', function() {
     return this.get('_roles').concat(this.get('model.roles').toArray()).uniq();
   }),

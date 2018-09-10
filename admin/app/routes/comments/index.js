@@ -21,9 +21,32 @@ export default Route.extend(RouteQueryManager, {
     sortBy: {
       refreshModel: true
     },
+    filterBy: {
+      refreshModel: true
+    },
     ascending: {
       refreshModel: true
     },
+  },
+
+  buildCriteria(filter) {
+    const criteria = {};
+    switch (filter) {
+      case 'deleted':
+        criteria.deleted = true;
+        break;
+      case 'active':
+        criteria.approved = true;
+        criteria.deleted = false;
+        break;
+      case 'hidden':
+        criteria.approved = false;
+        criteria.deleted = false;
+      case 'flagged':
+        criteria.flagged = true;
+        criteria.deleted = false;
+    }
+    return criteria;
   },
 
   search(phrase, pagination) {
@@ -39,15 +62,16 @@ export default Route.extend(RouteQueryManager, {
     ;
   },
 
-  model({ first, after, sortBy, ascending, phrase }) {
+  model({ first, after, sortBy, ascending, phrase, filterBy }) {
     const controller = this.controllerFor(this.get('routeName'));
     const pagination = { first, after };
+    const criteria = this.buildCriteria(filterBy);
 
     if (phrase) {
-      return this.search(phrase, pagination);
+      return this.search(phrase, pagination, criteria);
     }
     const sort = { field: sortBy, order: ascending ? 1 : -1 };
-    const variables = { pagination, sort };
+    const variables = { criteria, pagination, sort };
     if (!sortBy) delete variables.sort.field;
     const resultKey = 'allPosts';
     controller.set('resultKey', resultKey);

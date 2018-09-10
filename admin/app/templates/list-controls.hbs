@@ -7,6 +7,14 @@
       {{!-- Fix menu alignment, once https://github.com/twbs/bootstrap/pull/26255 is merged --}}
       <div class="col-12 col-md-6 mt-3 mt-md-0">
         <div class="btn-toolbar float-md-right" role="toolbar" aria-label="Filter Toolbar">
+          {{list-controls/filter
+            class="mr-2"
+            options=filterOptions
+            ascending=ascending
+            filterBy=filterBy
+            disabled=isFilterDisabled
+            alignment="right"
+          }}
           {{list-controls/sort
             class="mr-2"
             options=sortOptions

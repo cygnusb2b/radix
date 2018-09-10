@@ -17,5 +17,7 @@ module.exports = (app) => {
   app.use('/graph', graph);
   app.all('/*', proxy(APP_HOST, {
     preserveHostHdr: true,
+    parseReqBody: false,
+    // timeout: 2000,
   }));
 };

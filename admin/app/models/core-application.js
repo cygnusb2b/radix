@@ -9,6 +9,6 @@ export default Model.extend(Keyable, Timestampable, {
     publicKey      : attr('string'),
     allowedOrigins : array(),
     account        : belongsTo('core-account'),
-    users          : hasMany('core-application-user', { inverse: 'user' }),
+    users          : hasMany('core-application-user', { inverse: 'application' }),
     settings       : fragment('application-settings'),
 });

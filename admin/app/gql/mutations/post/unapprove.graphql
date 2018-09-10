@@ -1,7 +1,7 @@
-#import 'radix/gql/fragments/post/approval'
+#import 'radix/gql/fragments/post/list'
 
 mutation UnapprovePost($input: ModelIdInput!) {
   unapprovePost(input: $input) {
-    ...PostApprovalFragment
+    ...PostListFragment
   }
 }

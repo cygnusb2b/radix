@@ -31,18 +31,24 @@ module.exports = {
     /**
      *
      */
-    allPosts: (root, { pagination, sort }, { auth }) => {
+    allPosts: (root, { criteria, pagination, sort }, { auth }) => {
       // auth.check();
-      const criteria = { deleted: false };
-      return Post.paginate({ criteria, pagination, sort });
+      return Post.paginate({
+        criteria: {
+          stream: { '$exists' : true },
+          ...criteria
+        },
+        pagination,
+        sort,
+      });
     },
 
     /**
      *
      */
-    searchPosts: async (root, { pagination, phrase }, { auth }) => {
+    searchPosts: async (root, { criteria, pagination, phrase }, { auth }) => {
       // auth.check();
-      const filter = { term: { deleted: false } };
+      const filter = { term: criteria };
       return Post.search(phrase, { pagination, filter });
     },
   },
@@ -67,6 +73,24 @@ module.exports = {
       const post = await Post.findById(id);
       console.warn(post);
       post.set('approved', true);
+      return post.save();
+    },
+    /**
+     *
+     */
+    unflagPost: async (root, { input: { id } }, { auth }) => {
+      const post = await Post.findById(id);
+      console.warn(post);
+      post.set('flagged', false);
+      return post.save();
+    },
+    /**
+     *
+     */
+    flagPost: async (root, { input: { id } }, { auth }) => {
+      const post = await Post.findById(id);
+      console.warn(post);
+      post.set('flagged', true);
       return post.save();
     },
     /**

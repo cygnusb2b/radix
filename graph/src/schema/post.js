@@ -1,5 +1,6 @@
 const { Schema } = require('mongoose');
 const connection = require('../connections/mongoose/instance');
+const { applyElasticPlugin, setEntityFields } = require('../elastic/mongoose');
 const { paginablePlugin, searchablePlugin } = require('../plugins');
 
 const schema = new Schema({
@@ -12,6 +13,8 @@ const schema = new Schema({
   rating: Number,
   banned: Boolean,
   approved: Boolean,
+  deleted: Boolean,
+  flagged: Boolean,
   _type: String,
   createdDate: Date,
   stream: {
@@ -41,7 +44,10 @@ const schema = new Schema({
 
 }, { timestamps: true, collection: 'post' });
 
+setEntityFields(schema, 'body');
+applyElasticPlugin(schema, 'posts');
+
 schema.plugin(paginablePlugin);
-schema.plugin(searchablePlugin, ['body', 'ipAddress', 'displayName']);
+schema.plugin(searchablePlugin, { fieldNames: ['body', 'ipAddress', 'displayName'] });
 
 module.exports = schema;

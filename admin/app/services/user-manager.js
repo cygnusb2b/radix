@@ -38,11 +38,16 @@ export default Service.extend({
     const roles = this.get('session.data.authenticated.roles');
     const currentAppId = this.get('applicationId');
     const role = (roles && get(roles, 'firstObject')) ? get(roles, 'firstObject') : defaultRole;
-    const checkRole = `ROLE_${currentAppId}\\SUPERADMIN`.toUpperCase();
+    const superAdminRole = `ROLE_${currentAppId}\\SUPERADMIN`.toUpperCase();
+    const adminRole = `ROLE_${currentAppId}\\ADMIN`.toUpperCase();
 
-    if (-1 !== roles.indexOf(checkRole)){
+    if (-1 !== roles.indexOf(superAdminRole)) {
       permissions.fullAccess();
     } else {
+      if (-1 !== roles.indexOf(adminRole)) {
+        permissions.set('users', { all: true });
+        permissions.set('applications', { create: false, edit: true, list: false });
+      }
       permissions.set('comments', { create: true, edit: true, list: true });
     }
 

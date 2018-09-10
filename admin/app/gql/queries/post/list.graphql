@@ -1,7 +1,7 @@
 #import 'radix/gql/fragments/post/list'
 
-query ListPosts($pagination: PaginationInput, $sort: PostSortInput) {
-  allPosts(pagination: $pagination, sort: $sort) {
+query ListPosts($criteria: PostCriteriaInput, $pagination: PaginationInput, $sort: PostSortInput) {
+  allPosts(criteria: $criteria, pagination: $pagination, sort: $sort) {
     totalCount
     edges {
       node {

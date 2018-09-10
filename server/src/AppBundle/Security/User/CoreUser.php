@@ -186,6 +186,7 @@ class CoreUser implements UserInterface, Serializable
         $key = sprintf('%s:%s', $application->get('account')->get('key'), $application->get('key'));
 
         $this->applications[] = [
+            '_id'       => $application->getId(),
             'id'        => $key,
             'name'      => $application->get('name'),
             'fullName'  => sprintf('%s: %s', $application->get('account')->get('name'), $application->get('name')),
