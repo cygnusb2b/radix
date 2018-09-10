@@ -1,94 +1,21 @@
-<div class="d-flex flex-row justify-content-between">
-  <div class="d-flex flex-column flex-fill">
-    <div class="d-flex flex-row">
-      <div class="d-flex flex-column mr-3 flex-fill">
-        <h4 class="mb-3">
-          <img src="{{ avatar }}" style="width: 50px; height: 50px">
-          {{#if item.title}}
-            {{item.title}}
-          {{else}}
-            Untitled post
-          {{/if}}
-        </h4>
-        <p class="mb-3">{{item.body}}</p>
-        <div class="d-flex flex-fill flex-row">
-          <small class="flex-fill" title="{{moment item.createdDate}}">{{entypo-icon "clock"}}  <code>{{moment-from-now item.createdDate}}</code></small>
-          <small class="flex-fill">{{entypo-icon "user"}} <code>{{displayName}}</code></small>
-          <small class="flex-fill">{{entypo-icon "network"}} <code>{{item.ipAddress}}</code></small>
-        </div>
+<div class="media">
+  <img class="mr-3" src="{{ avatar }}" style="width: 50px; height: 50px" alt="User avatar">
+  <div class="media-body">
+    <h5 class="mt-0">{{ title }}</h5>
+    <p class="mb-3">{{item.body}}</p>
+    <hr>
+    <div class="d-flex flex-fill flex-row">
+      <small class="flex-fill" title="{{moment item.createdDate}}">{{entypo-icon "clock"}}  <code>{{moment-from-now item.createdDate}}</code></small>
+      <small class="flex-fill">{{entypo-icon "user"}} <code>{{displayName}}</code></small>
+      <small class="flex-fill">{{entypo-icon "network"}} <code>{{item.ipAddress}}</code></small>
+      <small class="flex-fill">{{entypo-icon "eye"}} <code>
+        {{ postVisibility }}: {{ postState}}
+      </code></small>
+      <div class="flex-fill text-center d-sm-inline">
+        {{partial "components/post-item-actions"}}
       </div>
     </div>
   </div>
-  <div class="d-none d-md-flex flex-column align-items-end text-right">
-    <div class="mt-auto">
-
-      <div class="btn-group-vertical">
-
-        {{#post-item-action
-          disabled=(not item.account)
-          context="success"
-          action="moderate"
-          title="Moderate User"
-        }}
-          Moderate user {{entypo-icon "user" class="ml-1"}}
-        {{/post-item-action}}
-
-        {{#unless item.deleted}}
-        <div class="btn-group" role="group">
-          <button class="btn btn-sm btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="d-none d-sm-inline">
-              Moderate post
-            </span>
-          </button>
-
-          <div class="dropdown-menu">
-            <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "edit"}}>
-              Edit post {{entypo-icon "pencil" class="ml-1"}}
-            </a>
-
-            {{#if item.flagged}}
-              <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "unflag"}}>
-                Unflag post {{entypo-icon "flag" class="ml-1"}}
-              </a>
-            {{else}}
-              <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "flag"}}>
-                Flag post {{entypo-icon "flag" class="ml-1"}}
-              </a>
-            {{/if}}
-
-            {{#if item.approved}}
-              <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "unapprove"}}>
-                Hide post {{entypo-icon "eye-with-line" class="ml-1"}}
-              </a>
-            {{else}}
-              <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "approve"}}>
-                Show post {{entypo-icon "eye" class="ml-1"}}
-              </a>
-            {{/if}}
-
-            <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "delete"}}>
-              Delete post {{entypo-icon "trash" class="ml-1"}}
-            </a>
-          </div>
-
-        </div>
-        {{else}}
-          <button class="btn btn-sm btn-outline-primary disabled" title="Post is deleted">
-            <span class="d-none d-sm-inline">
-              Moderate post {{entypo-icon "trash" class="ml-1"}}
-            </span>
-          </button>
-        {{/unless}}
-
-
-      </div>
-
-      <small class="mt-2 text-muted text-center small d-block">
-        Post is {{ postVisibility }}: {{ postState}}.
-      </small>
-    </div>
-  </div>
-
 </div>
 
 {{post-edit-modal isOpen=isEditPostOpen model=item}}

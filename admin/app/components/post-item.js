@@ -18,6 +18,12 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
   isDeletePostOpen: false,
   isModerateAccountOpen: false,
 
+  title: computed('item.{_type,stream.title}', function() {
+    const prefix = this.get('item._type') === 'post-comment' ? 'Comment on ' : 'Review of ';
+    const title = this.get('item.stream.title');
+    return `${prefix} "${title}"`;
+  }),
+
   displayName: computed('item.{displayName,account.displayName}', function() {
     const actName = this.get('item.account.displayName');
     const itmName = this.get('item.displayName');

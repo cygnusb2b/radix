@@ -74,4 +74,5 @@ input PostPayloadInput {
 input PostCriteriaInput {
   deleted: Boolean
   approved: Boolean
+  flagged: Boolean
 }

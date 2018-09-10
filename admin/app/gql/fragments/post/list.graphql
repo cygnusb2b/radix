@@ -9,6 +9,7 @@ fragment PostListFragment on Post {
   displayName
   ipAddress
   picture
+  _type
 
   ...PostApprovalFragment
   ...PostAccountFragment
