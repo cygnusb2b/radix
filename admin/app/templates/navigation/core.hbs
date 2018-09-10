@@ -1,7 +1,7 @@
 {{#if userManager.permissions.allowAll}}
   <li class="nav-item dropdown">
     <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="nav-link dropdown-toggle" aria-expanded="true">
-      {{entypo-icon "tools"}} <span class="d-none d-md-inline">Core</span>
+      {{entypo-icon "tools"}} <span class="d-none d-lg-inline">Core</span>
     </a>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-dropdown-manage">
       {{#link-to "core.accounts" class="dropdown-item d-flex justify-content-between" title="Manage Accounts"}}
@@ -15,4 +15,15 @@
       {{/link-to}}
     </div>
   </li>
+{{else if userManager.permissions.applications.edit}}
+<li class="nav-item">
+  {{#link-to "core.users" class="nav-item nav-link" title="Manage Users"}}
+    {{entypo-icon "users"}} <span class="d-none d-lg-inline">Users</span>
+  {{/link-to}}
+</li>
+<li class="nav-item">
+  {{#link-to "core.applications.edit" session.data.application._id class="nav-item nav-link" title="Manage Application Settings"}}
+    {{entypo-icon "tools"}} <span class="d-none d-lg-inline">Settings</span>
+  {{/link-to}}
+</li>
 {{/if}}

@@ -14,21 +14,21 @@
   <td>{{#link-to 'core.users.edit' model.user.id}}
     {{model.user.givenName}} {{model.user.familyName}}<br>
     <small>&lsaquo;{{ model.user.email }}&rsaquo;</small>{{/link-to}}</td>
-  <td>{{#each model.roles as |role|}} {{ role }} {{else}}<span class="text-muted">No roles assigned</span>{{/each}}</td>
+  <td>{{#each model.roles as |role|}} <code>{{ role }}</code> {{else}}<span class="text-muted">No roles assigned</span>{{/each}}</td>
 {{/if}}
 
   <td>
     <div class="btn-group">
       {{#if isEditing}}
       {{#if canSave}}
-      <button class="btn btn-sm btn-primary" title="Save" {{action 'save'}}>{{-ion "archive"}}</button>
+      <button class="btn btn-sm btn-primary" title="Save" {{action 'save'}}>{{entypo-icon "archive"}}</button>
       {{else}}
-      <button disabled class="btn btn-sm btn-disabled disabled" title="Save">{{-ion "archive"}}</button>
+      <button disabled class="btn btn-sm btn-disabled disabled" title="Save">{{entypo-icon "archive"}}</button>
       {{/if}}
-      <button class="btn btn-sm btn-warning" title="Cancel"{{action 'reset'}}>{{-ion "close"}}</button>
+      <button class="btn btn-sm btn-warning" title="Cancel"{{action 'reset'}}>{{entypo-icon "cross"}}</button>
       {{else}}
-      <button class="btn btn-sm btn-success" title="Edit" {{action 'toggleEdit'}}>{{-ion "edit"}}</button>
-      <button class="btn btn-sm btn-danger" title="Delete"{{action 'confirmDelete'}}>{{-ion "trash-a"}}</button>
+      <button class="btn btn-sm btn-success" title="Edit" {{action 'toggleEdit'}}>{{entypo-icon "edit"}}</button>
+      <button class="btn btn-sm btn-danger" title="Delete"{{action 'confirmDelete'}}>{{entypo-icon "trash"}}</button>
       {{/if}}
     </div>
   </td>

@@ -1,7 +1,7 @@
 {{#if session.isAuthenticated}}
   {{#if canSelect}}
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button">
-      {{entypo-icon "home"}} <span class="d-none d-md-inline">{{session.data.application.name}}</span>
+      {{entypo-icon "home"}} <span class="d-none d-lg-inline">{{session.data.application.name}}</span>
     </a>
 
     <div class="dropdown-menu dropdown-menu-left">
@@ -10,7 +10,7 @@
       {{/each}}
     </div>
   {{else}}
-    <span class="nav-link">
+    <span class="nav-link d-none d-lg-block">
       {{entypo-icon "home"}}
       <span class="d-none d-md-inline">{{session.data.application.name}}</span>
     </span>

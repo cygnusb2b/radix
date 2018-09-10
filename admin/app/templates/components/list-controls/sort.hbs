@@ -8,12 +8,14 @@
       aria-haspopup="true"
       aria-expanded="false"
     }}
-      <span class="d-none d-sm-inline">{{selected.label}}</span>
+      <span class="">{{selected.label}}</span>
     {{/list-controls/button}}
 
     <div class="dropdown-menu {{alignmentClass}}" aria-labelledby="dropdown-sort-type">
       {{#each filteredOptions as |option|}}
         <a class="dropdown-item" href="javascript:void(0)" {{action "sortBy" option.key}}>{{option.label}}</a>
+      {{else}}
+      <span class="dropdown-item disabled">No other sort methods available.</span>
       {{/each}}
     </div>
   </div>

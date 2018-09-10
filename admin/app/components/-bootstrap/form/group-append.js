@@ -4,6 +4,6 @@ const { Component } = Ember;
 
 export default Component.extend({
     tagName    : 'div',
-    classNames : ['input-group-addon'],
+    classNames : ['input-group-text input-group-append'],
     value      : null,
 });

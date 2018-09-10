@@ -6,6 +6,9 @@
     color: $success;
 }
 
+.btn.disabled {
+  cursor: not-allowed;
+}
 
 @import "ember-power-select/themes/bootstrap";
 @import "ember-power-select";

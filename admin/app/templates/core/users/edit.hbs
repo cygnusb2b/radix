@@ -1,6 +1,12 @@
 {{#nav-breadcrumbs as |crumbs|}}
-  {{#crumbs.item}}{{#link-to "core.users.index"}}{{entypo-icon "users"}} Core Users{{/link-to}}{{/crumbs.item}}
-  {{#crumbs.item active=true}}{{ model.name }}{{#if model.deleted}} (<span class="text-danger">Deleted</span>){{/if}}{{/crumbs.item}}
+  {{#crumbs.item}}
+    {{#if user-manager.permissions.users.list}}
+      {{#link-to "core.users.index"}}{{entypo-icon "users"}} Core Users{{/link-to}}
+    {{else}}
+      {{entypo-icon "users"}} Core Users
+    {{/if}}
+  {{/crumbs.item}}
+  {{#crumbs.item active=true}}{{ model.givenName }} {{ model.familyName }}{{#if model.deleted}} (<span class="text-danger">Deleted</span>){{/if}}{{/crumbs.item}}
 {{/nav-breadcrumbs}}
 
 {{edit-model model=model loadTabsFrom=(route-action 'loadTabs') routeName='core.users'}}
