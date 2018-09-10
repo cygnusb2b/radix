@@ -30,7 +30,7 @@ export default Service.extend({
 
   permissions: computed('user.id', 'user.roles.[]', 'applicationId', function() {
     const userId = this.get('user.id');
-    const permissions = Permissions.create();
+    const permissions = new Permissions();
     if (isEmpty(userId)) {
       return permissions;
     }

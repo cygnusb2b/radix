@@ -20,4 +20,12 @@ export default EmberObject.extend({
     const toSet = (true === this.get('allowAll')) ? { all: true } : { };
     return Rules.create(toSet);
   },
+
+  setUnknownProperty(key, value) {
+    const toSet = (true === this.get('allowAll')) ? { all: true } : value;
+    const rule = Rules.create(toSet);
+    Ember.defineProperty(this, key, null, rule);
+    return rule;
+  }
+
 });

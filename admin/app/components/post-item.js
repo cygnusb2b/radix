@@ -4,9 +4,15 @@ import ComponentQueryManager from 'ember-apollo-client/mixins/component-query-ma
 import ActionMixin from 'radix/mixins/action-mixin';
 import UnapprovePost from 'radix/gql/mutations/post/unapprove';
 import ApprovePost from 'radix/gql/mutations/post/approve';
+import UnflagPost from 'radix/gql/mutations/post/unflag';
+import FlagPost from 'radix/gql/mutations/post/flag';
 
 export default Component.extend(ComponentQueryManager, ActionMixin, {
   item: null,
+
+  tagName: 'li',
+  classNames: ['list-group-item'],
+  classNameBindings: [ 'visibilityClass' ],
 
   isEditPostOpen: false,
   isDeletePostOpen: false,
@@ -25,6 +31,29 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
     if (this.get('item.picture')) return this.get('item.picture');
     if (this.get('item.account.picture')) return this.get('item.account.picture');
     return 'https://s3.amazonaws.com/cygnusimages/base/anonymous.jpg';
+  }),
+
+  postState: computed('item.{approved,deleted,flagged}', function() {
+    if (this.get('item.deleted')) return 'deleted';
+    if (this.get('item.flagged')) return 'flagged';
+    return this.get('item.approved') ? 'approved' : 'unapproved';
+  }),
+
+  postVisibility: computed('postInactive', function() {
+    return this.get('postInactive') ? 'hidden' : 'shown';
+  }),
+
+  postInactive: computed('item.{deleted,approved}', function() {
+    return this.get('item.deleted') || this.get('item.approved') == false;
+  }),
+
+  visibilityClass: computed('postState,postInactive', function() {
+    if (this.get('postInactive')) return 'list-group-item-light text-muted';
+
+    let contextClass = 'default';
+    if (this.get('postState') == 'flagged') contextClass = 'warning';
+
+    return `list-group-item-${contextClass}`;
   }),
 
   actions: {
@@ -58,6 +87,36 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
         await this.get('apollo').mutate({ mutation, variables }, 'unapprovePost');
         this.set('isOpen', false);
         this.get('notify').info('Post unapproved.');
+      } catch (e) {
+        this.get('graphErrors').show(e)
+      } finally {
+        this.endAction();
+      }
+    },
+    async flag() {
+      this.startAction();
+      const mutation = FlagPost;
+      const id = this.get('item.id');
+      const variables = { input: { id } };
+      try {
+        await this.get('apollo').mutate({ mutation, variables }, 'flagPost');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('Post flagged.');
+      } catch (e) {
+        this.get('graphErrors').show(e)
+      } finally {
+        this.endAction();
+      }
+    },
+    async unflag() {
+      this.startAction();
+      const mutation = UnflagPost;
+      const id = this.get('item.id');
+      const variables = { input: { id } };
+      try {
+        await this.get('apollo').mutate({ mutation, variables }, 'unflagPost');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('Post unflagged.');
       } catch (e) {
         this.get('graphErrors').show(e)
       } finally {

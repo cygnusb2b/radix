@@ -6,12 +6,12 @@ export default Button.extend({
     model: null,
 
     label: 'Delete',
-    icon: 'ion-close-round',
+    icon: 'cross',
 
     confirmValue: null,
     transitionTo: null,
 
-    classNames: ['btn-danger'],
+    classNames: ['btn-default text-danger'],
 
     layoutName: 'components/form-button',
 
