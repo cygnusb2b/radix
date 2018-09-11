@@ -25,7 +25,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       const variables = { input };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'updatePost');
-        this.set('isOpen', false);
+        if (!this.isDestroyed) this.set('isOpen', false);
         this.get('notify').info('Password successfully changed.');
       } catch (e) {
         this.get('graphErrors').show(e)

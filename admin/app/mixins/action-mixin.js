@@ -6,23 +6,23 @@ export default Mixin.create(LoadingMixin, {
 
   startAction() {
     this.showLoading();
-    this.set('isActionRunning', true);
+    if (!this.isDestroyed) this.set('isActionRunning', true);
   },
 
   endAction() {
-    this.set('isActionRunning', false);
+    if (!this.isDestroyed) this.set('isActionRunning', false);
     this.hideLoading();
   },
 
   startRouteAction() {
     this.showLoading();
     const controller = this.controllerFor(this.get('routeName'));
-    controller.set('isActionRunning', true);
+    if (!controller.isDestroyed) controller.set('isActionRunning', true);
   },
 
   endRouteAction() {
     const controller = this.controllerFor(this.get('routeName'));
-    controller.set('isActionRunning', false);
+    if (!controller.isDestroyed) controller.set('isActionRunning', false);
     this.hideLoading();
   },
 });

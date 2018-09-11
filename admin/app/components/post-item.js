@@ -64,10 +64,10 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
 
   actions: {
     moderate() {
-      this.set('isModerateAccountOpen', true);
+      if (!this.isDestroyed) this.set('isModerateAccountOpen', true);
     },
     edit() {
-      this.set('isEditPostOpen', true);
+      if (!this.isDestroyed) this.set('isEditPostOpen', true);
     },
     async approve() {
       this.startAction();
@@ -76,7 +76,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       const variables = { input: { id } };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'approvePost');
-        this.set('isOpen', false);
+        if (!this.isDestroyed) this.set('isOpen', false);
         this.get('notify').info('Post approved.');
       } catch (e) {
         this.get('graphErrors').show(e)
@@ -91,7 +91,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       const variables = { input: { id } };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'unapprovePost');
-        this.set('isOpen', false);
+        if (!this.isDestroyed) this.set('isOpen', false);
         this.get('notify').info('Post unapproved.');
       } catch (e) {
         this.get('graphErrors').show(e)
@@ -130,7 +130,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       }
     },
     delete() {
-      this.set('isDeletePostOpen', true);
+      if (!this.isDestroyed) this.set('isDeletePostOpen', true);
     },
   },
 });

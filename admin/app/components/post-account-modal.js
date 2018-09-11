@@ -29,8 +29,8 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       const variables = { input };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'updateIdentity');
-        this.set('isOpen', false);
-        this.get('notify').info('Identity updated.');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('User updated.');
       } catch (e) {
         this.get('graphErrors').show(e)
       } finally {
@@ -45,8 +45,8 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       const variables = { input: { id } };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'banIdentity');
-        this.set('isOpen', false);
-        this.get('notify').info('Identity banned.');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('User banned.');
       } catch (e) {
         this.get('graphErrors').show(e)
       } finally {
@@ -61,8 +61,8 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       const variables = { input: { id } };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'unbanIdentity');
-        this.set('isOpen', false);
-        this.get('notify').info('Identity unbanned.');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('User unbanned.');
       } catch (e) {
         this.get('graphErrors').show(e)
       } finally {

@@ -18,7 +18,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
       const variables = { input: { id } };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'deletePost');
-        this.set('isOpen', false);
+        if (!this.isDestroyed) this.set('isOpen', false);
         this.get('notify').info('Post deleted.');
       } catch (e) {
         this.get('graphErrors').show(e)
