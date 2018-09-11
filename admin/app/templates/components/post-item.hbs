@@ -1,17 +1,33 @@
 <div class="media">
-  <img class="mr-3" src="{{ avatar }}" style="width: 50px; height: 50px" alt="User avatar">
+  <img class="mr-3 d-none d-sm-inline" src="{{ avatar }}" style="width: 50px; height: 50px" alt="User avatar">
   <div class="media-body">
     <h5 class="mt-0">{{ title }}</h5>
     <p class="mb-3">{{item.body}}</p>
     <hr>
-    <div class="d-flex flex-fill flex-row">
-      <small class="flex-fill" title="{{moment item.createdDate}}">{{entypo-icon "clock"}}  <code>{{moment-from-now item.createdDate}}</code></small>
-      <small class="flex-fill">{{entypo-icon "user"}} <code>{{displayName}}</code></small>
-      <small class="flex-fill">{{entypo-icon "network"}} <code>{{item.ipAddress}}</code></small>
-      <small class="flex-fill">{{entypo-icon "eye"}} <code>
-        {{ postVisibility }}: {{ postState}}
-      </code></small>
-      <div class="flex-fill text-center d-sm-inline">
+    <div class="row">
+      <div class="col-sm-6 col-md-6 col-lg-3" title="{{moment item.createdDate}}">
+        {{entypo-icon "clock"}}
+        <small class="ml-2">{{moment-from-now item.createdDate}}</small>
+        </div>
+      <div class="col-sm-6 col-md-6 col-lg-3">
+        {{entypo-icon "user"}}
+        <small class="ml-2">{{displayName}}</small>
+        </div>
+      <div class="col-sm-6 col-md-6 col-lg-3">
+        {{entypo-icon "network"}}
+        <small class="ml-2">{{item.ipAddress}}</small>
+        </div>
+      <div class="col-sm-6 col-md-6 col-lg-3">
+        {{entypo-icon "eye"}}
+        <small class="ml-2">
+          {{ postVisibility }}: {{ postState}}
+        </small>
+      </div>
+    </div>
+    <hr>
+
+    <div class="row">
+      <div class="col">
         {{partial "components/post-item-actions"}}
       </div>
     </div>

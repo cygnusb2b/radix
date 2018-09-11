@@ -3,7 +3,7 @@ import { computed } from '@ember/object';
 import MenuMixin from 'radix/components/list-controls/menu-mixin';
 
 export default Component.extend(MenuMixin, {
-  classNames: ['btn-group'],
+  classNames: ['btn-group', 'btn-block'],
   attributeBindings: ['role', 'aria-label'],
 
   role: 'group',
@@ -21,7 +21,7 @@ export default Component.extend(MenuMixin, {
    * @public
    * @type {string}
    */
-  label: 'Show:',
+  label: '',
 
   /**
    * Whether the limit dropdown control is completely disabled.
