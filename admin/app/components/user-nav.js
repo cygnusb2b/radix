@@ -9,7 +9,6 @@ export default Component.extend({
     userManager: service(),
 
     isChangePasswordOpen: false,
-    isUpdateProfileOpen: false,
 
     actions: {
         logout: function() {
@@ -17,9 +16,6 @@ export default Component.extend({
         },
         displayChangePassword() {
             this.set('isChangePasswordOpen', true);
-        },
-        displayUpdateProfile() {
-            this.set('isUpdateProfileOpen', true);
         },
     },
 

@@ -27,10 +27,10 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
   displayName: computed('item.{displayName,account.displayName}', function() {
     const actName = this.get('item.account.displayName');
     const itmName = this.get('item.displayName');
-    if (actName && itmName && actName !== itmName) return `${actName} (as ${itmName})`;
+    if (actName && itmName && actName !== itmName) return `${actName}<span class="d-block text-muted ml-4">as ${itmName}</span>`;
     if (itmName) return itmName;
     if (actName) return actName;
-    return `an anonymous user from ${this.get('item.ipAddress')}`;
+    return `an anonymous user`;
   }),
 
   avatar: computed('item.{picture,account.picture}', function() {

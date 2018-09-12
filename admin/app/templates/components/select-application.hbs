@@ -4,7 +4,7 @@
       {{entypo-icon "home"}} <span class="d-none d-lg-inline">{{session.data.application.name}}</span>
     </a>
 
-    <div class="dropdown-menu dropdown-menu-left">
+    <div class="dropdown-menu dropdown-menu-right">
       {{#each toSelect as |app|}}
         <a class="dropdown-item" {{action 'changeApp' app}}>{{app.name}}</a>
       {{/each}}
