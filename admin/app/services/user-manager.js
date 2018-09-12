@@ -6,20 +6,10 @@ const { inject: { service }, isEmpty, RSVP: { Promise }, Service, computed, get 
 export default Service.extend({
   session : service('session'),
   store   : service(),
-  user    : null,
+  user    : {},
 
   load() {
-    return new Promise((resolve, reject) => {
-      let userId = this.get('session.data.authenticated.id');
-      if (!isEmpty(userId)) {
-        this.get('store').find('core-user', userId).then((user) => {
-          this.set('user', user);
-          resolve();
-        }, reject);
-      } else {
-        resolve();
-      }
-    });
+    return Promise.resolve();
   },
 
   getSession() {

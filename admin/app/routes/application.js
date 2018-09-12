@@ -58,7 +58,7 @@ export default Route.extend(ApplicationRouteMixin, ActionMixin, {
         loading(transition) {
             this.showLoading();
             transition.finally(() => this.hideLoading());
-            return true;
+            // return true;
 
         },
 

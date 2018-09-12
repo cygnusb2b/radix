@@ -6,12 +6,23 @@ const schema = require('../graph/schema');
 
 const router = Router();
 
+const authenticate = (req, res, next) => {
+  req.auth = {
+    check() {
+      // @todo!
+      return true;
+    },
+  };
+  next();
+};
+
 router.use(
   helmet(),
-  // authenticate,
+  authenticate,
   bodyParser.json(),
-  graphqlExpress(() => {
-    const context = { };
+  graphqlExpress((req) => {
+    const { auth, db } = req;
+    const context = { auth, db };
     return { schema, context };
   }),
 );

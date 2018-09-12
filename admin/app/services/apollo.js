@@ -36,8 +36,10 @@ export default ApolloService.extend({
       return { headers };
     }
     return new Promise((resolve) => {
-      const { token } = this.get('session.data.authenticated');
+      const token = this.get('session.data.authenticated.token');
+      const key = this.get('session.data.application.key')
       headers['Authorization'] = `Bearer ${token}`;
+      headers['X-Radix-AppId'] = key;
       resolve({ headers })
     });
   }
