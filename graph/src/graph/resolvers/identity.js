@@ -1,13 +1,11 @@
 const { paginationResolvers } = require('@limit0/mongoose-graphql-pagination');
-const Identity = require('../../models/identity');
-const IdentityAccountEmail = require('../../models/identity-account-email');
 
 module.exports = {
 
   Identity: {
-    primaryEmail: async ({ _id }) => {
+    primaryEmail: async ({ _id }, input, { db }) => {
       const isPrimary = true;
-      const model = await IdentityAccountEmail.findOne({ _id, isPrimary });
+      const model = await db.model('identity-account-email').findOne({ _id, isPrimary });
       if (model) return model.value;
       return null;
     },
@@ -25,28 +23,28 @@ module.exports = {
     /**
      *
      */
-    identity: (root, { input }, { auth }) => {
-      // auth.check();
+    identity: (root, { input }, { auth, db }) => {
+      auth.check();
       const { id } = input;
-      return Identity.findById(id);
+      return db.model('identity').findById(id);
     },
 
     /**
      *
      */
-    allIdentities: (root, { pagination, sort }, { auth }) => {
-      // auth.check();
+    allIdentities: (root, { pagination, sort }, { auth, db }) => {
+      auth.check();
       const criteria = { deleted: false };
-      return Identity.paginate({ criteria, pagination, sort });
+      return db.model('identity').paginate({ criteria, pagination, sort });
     },
 
     /**
      *
      */
-    searchIdentities: async (root, { pagination, phrase }, { auth }) => {
-      // auth.check();
+    searchIdentities: async (root, { pagination, phrase }, { auth, db }) => {
+      auth.check();
       const filter = { term: { deleted: false } };
-      return Identity.search(phrase, { pagination, filter });
+      return db.model('identity').search(phrase, { pagination, filter });
     },
   },
 
@@ -57,26 +55,27 @@ module.exports = {
     /**
      *
      */
-    banIdentity: async (root, { input: { id } }, { auth }) => {
-      const identity = await Identity.findById(id);
-      console.warn(identity);
+    banIdentity: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const identity = await db.model('identity').findById(id);
       identity.set('settings.shadowbanned', true);
       return identity.save();
     },
     /**
      *
      */
-    unbanIdentity: async (root, { input: { id } }, { auth }) => {
-      const identity = await Identity.findById(id);
-      console.warn(identity);
+    unbanIdentity: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const identity = await db.model('identity').findById(id);
       identity.set('settings.shadowbanned', false);
       return identity.save();
     },
     /**
      *
      */
-    updateIdentity: async (root, { input: { id, payload } }, { auth }) => {
-      const identity = await Identity.findById(id);
+    updateIdentity: async (root, { input: { id, payload } }, { auth, db }) => {
+      auth.check();
+      const identity = await db.model('identity').findById(id);
       identity.set(payload);
       return identity.save();
     },

@@ -1,13 +1,10 @@
 const { paginationResolvers } = require('@limit0/mongoose-graphql-pagination');
-const Post = require('../../models/post');
-const PostStream = require('../../models/post-stream');
-const Identity = require('../../models/identity');
 
 module.exports = {
 
   Post: {
-    stream: ({ stream }) => PostStream.findById(stream),
-    account: ({ account }) => Identity.findById(account),
+    stream: ({ stream }, input, { db }) => db.model('post-stream').findById(stream),
+    account: ({ account }, input, { db }) => db.model('identity').findById(account),
   },
 
   /**
@@ -22,21 +19,21 @@ module.exports = {
     /**
      *
      */
-    post: (root, { input }, { auth }) => {
-      // auth.check();
+    post: (root, { input }, { auth, db }) => {
+      auth.check();
       const { id } = input;
-      return Post.findById(id);
+      return db.model('post').findById(id);
     },
 
     /**
      *
      */
-    allPosts: (root, { criteria, pagination, sort }, { auth }) => {
-      // auth.check();
-      return Post.paginate({
+    allPosts: (root, { criteria, pagination, sort }, { auth, db }) => {
+      auth.check();
+      return db.model('post').paginate({
         criteria: {
-          stream: { '$exists' : true },
-          ...criteria
+          stream: { $exists: true },
+          ...criteria,
         },
         pagination,
         sort,
@@ -46,10 +43,10 @@ module.exports = {
     /**
      *
      */
-    searchPosts: async (root, { criteria, pagination, phrase }, { auth }) => {
-      // auth.check();
+    searchPosts: async (root, { criteria, pagination, phrase }, { auth, db }) => {
+      auth.check();
       const filter = { term: criteria };
-      return Post.search(phrase, { pagination, filter });
+      return db.model('post').search(phrase, { pagination, filter });
     },
   },
 
@@ -60,62 +57,63 @@ module.exports = {
     /**
      *
      */
-    unapprovePost: async (root, { input: { id } }, { auth }) => {
-      const post = await Post.findById(id);
-      console.warn(post);
+    unapprovePost: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const post = await db.model('post').findById(id);
       post.set('approved', false);
       return post.save();
     },
     /**
      *
      */
-    approvePost: async (root, { input: { id } }, { auth }) => {
-      const post = await Post.findById(id);
-      console.warn(post);
+    approvePost: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const post = await db.model('post').findById(id);
       post.set('approved', true);
       return post.save();
     },
     /**
      *
      */
-    unflagPost: async (root, { input: { id } }, { auth }) => {
-      const post = await Post.findById(id);
-      console.warn(post);
+    unflagPost: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const post = await db.model('post').findById(id);
       post.set('flagged', false);
       return post.save();
     },
     /**
      *
      */
-    flagPost: async (root, { input: { id } }, { auth }) => {
-      const post = await Post.findById(id);
-      console.warn(post);
+    flagPost: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const post = await db.model('post').findById(id);
       post.set('flagged', true);
       return post.save();
     },
     /**
      *
      */
-    deletePost: async (root, { input: { id } }, { auth }) => {
-      const post = await Post.findById(id);
-      console.warn(post);
+    deletePost: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const post = await db.model('post').findById(id);
       post.set('deleted', true);
       return post.save();
     },
     /**
      *
      */
-    undeletePost: async (root, { input: { id } }, { auth }) => {
-      const post = await Post.findById(id);
-      console.warn(post);
+    undeletePost: async (root, { input: { id } }, { auth, db }) => {
+      auth.check();
+      const post = await db.model('post').findById(id);
       post.set('deleted', false);
       return post.save();
     },
     /**
      *
      */
-    updatePost: async (root, { input: { id, payload } }, { auth }) => {
-      const post = await Post.findById(id);
+    updatePost: async (root, { input: { id, payload } }, { auth, db }) => {
+      auth.check();
+      const post = await db.model('post').findById(id);
       post.set(payload);
       return post.save();
     },
