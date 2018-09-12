@@ -18,17 +18,14 @@ services:
     depends_on:
       - graph_install
       - mongo
-      - elastic
       - server
     ports:
       - "${PORT-8700}:${PORT-8700}"
     environment:
-      ACCOUNT_KEY: ${APP-cygnus:ofcr}
       PORT: ${PORT-8700}
       APP_HOST: "${APP_HOST-server}:80"
       MONGO_DSN: ${MONGO_DSN-mongodb://mongo/radix}
       MONGOOSE_DEBUG: ${MONGOOSE_DEBUG-false}
-      ELASTIC_HOST: ${ELASTIC_HOST-http://elastic}
 
   server_install:
     image: radix_server:latest
@@ -62,7 +59,6 @@ services:
       - server_install
       - redis
       - mongo
-      - elastic
     networks:
       - default
 
@@ -84,16 +80,6 @@ services:
       default:
         aliases:
           - "${RADIX_REDIS_HOST-redis}"
-  elastic:
-    image: elasticsearch:1.4.5
-    volumes:
-      - elastic:/usr/share/elasticsearch/data:cached
-    ports:
-      - "${RADIX_ES_PORT-8703}:9200"
-    networks:
-      default:
-        aliases:
-          - "${RADIX_ELASTIC_HOST-elastic}"
 
   admin_install:
     tty: true
@@ -132,7 +118,6 @@ volumes:
   server_vendor: {}
   server_composer: {}
   mongo: {}
-  elastic: {}
   ember_node_modules: {}
   graph_node_modules: {}
   ember_tmp:

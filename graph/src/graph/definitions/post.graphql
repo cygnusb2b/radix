@@ -1,6 +1,6 @@
 type Query {
   allPosts(criteria: PostCriteriaInput = {}, pagination: PaginationInput = {}, sort: PostSortInput = {}): PostConnection!
-  searchPosts(pagination: PaginationInput = {}, phrase: String!): PostConnection!
+  searchPosts(criteria: PostCriteriaInput = {}, pagination: PaginationInput = {}, phrase: String!): PostConnection!
   post(input: ModelIdInput!): Post!
 }
 

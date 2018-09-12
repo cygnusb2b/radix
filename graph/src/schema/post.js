@@ -1,6 +1,5 @@
 const { Schema } = require('mongoose');
 const connection = require('../connections/mongoose/instance');
-const { applyElasticPlugin, setEntityFields } = require('../elastic/mongoose');
 const { paginablePlugin, searchablePlugin } = require('../plugins');
 
 const schema = new Schema({
@@ -43,9 +42,6 @@ const schema = new Schema({
   },
 
 }, { timestamps: true, collection: 'post' });
-
-setEntityFields(schema, 'body');
-applyElasticPlugin(schema, 'posts');
 
 schema.plugin(paginablePlugin);
 schema.plugin(searchablePlugin, { fieldNames: ['body', 'ipAddress', 'displayName'] });

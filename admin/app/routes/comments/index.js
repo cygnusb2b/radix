@@ -49,9 +49,9 @@ export default Route.extend(RouteQueryManager, {
     return criteria;
   },
 
-  search(phrase, pagination) {
+  search(phrase, pagination, criteria) {
     const controller = this.controllerFor(this.get('routeName'));
-    const variables = { pagination, phrase };
+    const variables = { criteria, pagination, phrase };
     const resultKey = 'searchPosts';
     controller.set('resultKey', resultKey);
     return this.get('apollo').watchQuery({ query: search, variables, fetchPolicy: 'network-only' }, resultKey)

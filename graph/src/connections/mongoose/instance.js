@@ -19,7 +19,6 @@ connection.on('open', () => output.write(`🛢️ 🛢️ 🛢️ Successful INS
 connection.setDb = async (dbName) => {
   const db = await connection.useDb(dbName);
   const names = connection.modelNames();
-  console.warn(names);
   await names.forEach(async n => db.model(n, require(`../../schema/${n}`))); // eslint-disable-line
   return db;
 };

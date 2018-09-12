@@ -1,14 +1,5 @@
-const env = require('./env');
 const mongoose = require('./connections/mongoose');
 const app = require('./app');
-const output = require('./output');
-const elastic = require('./elastic');
-const initElastic = require('./elastic/init');
-
-const { ELASTIC_INDEX_RECREATE, ELASTIC_HOST } = env;
-
-initElastic(elastic, ELASTIC_INDEX_RECREATE)
-  .then(() => output.write(`🔍 🔍 🔍 ElasticSearch connection to '${ELASTIC_HOST}' is ready.`));
 
 /**
  * Export these so that can be exited.
@@ -18,5 +9,4 @@ initElastic(elastic, ELASTIC_INDEX_RECREATE)
 module.exports = {
   app,
   mongoose,
-  elastic,
 };

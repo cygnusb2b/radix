@@ -45,8 +45,14 @@ module.exports = {
      */
     searchPosts: async (root, { criteria, pagination, phrase }, { auth, db }) => {
       auth.check();
-      const filter = { term: criteria };
-      return db.model('post').search(phrase, { pagination, filter });
+      return db.model('post').search({
+        criteria: {
+          stream: { $exists: true },
+          ...criteria,
+        },
+        pagination,
+        phrase,
+      });
     },
   },
 

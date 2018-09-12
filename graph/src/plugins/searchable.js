@@ -1,53 +1,25 @@
-const {
-  buildEntityNameQuery,
-  buildEntityAutocomplete,
-  paginateSearch,
-} = require('../elastic/utils');
+const { Pagination } = require('@limit0/mongoose-graphql-pagination');
 
-module.exports = function searchablePlugin(schema, {
-  fieldNames = [],
-  beforeSearch,
-  beforeAutocomplete,
-} = {}) {
+module.exports = function searchablePlugin(schema, { fieldNames = [] } = {}) {
+  const buildMongoQuery = (phrase = 'search', criteria = {}, prefix = '') => {
+    const clean = phrase.replace(/[|&;$%@"<>()+,]/g, "");
+    const $or = fieldNames.map(f => ({ [f]: new RegExp(`${prefix}${clean}`, 'i') }));
+    return { ...criteria, $or };
+  };
+
   /**
    * The `search` static method.
    */
-  schema.static('search', function search(phrase, {
-    pagination,
-    postFilter,
-    filter,
-    must,
-    mustNot,
-    minMatch,
-  } = {}) {
-    const query = buildEntityNameQuery(phrase, fieldNames, {
-      filter,
-      must,
-      mustNot,
-      minMatch,
-    });
-    if (typeof beforeSearch === 'function') beforeSearch(query, phrase);
-    return paginateSearch(this, phrase, query, { pagination, postFilter });
+  schema.static('search', function search({ criteria = {}, pagination, phrase } = {}) {
+    const query = buildMongoQuery(phrase, criteria);
+    return new Pagination(this, { pagination, criteria: query });
   });
 
   /**
    * The `autocomplete` static method.
    */
-  schema.static('autocomplete', function autocomplete(phrase, {
-    pagination,
-    postFilter,
-    filter,
-    must,
-    mustNot,
-    minMatch,
-  } = {}) {
-    const query = buildEntityAutocomplete(phrase, fieldNames, {
-      filter,
-      must,
-      mustNot,
-      minMatch,
-    });
-    if (typeof beforeAutocomplete === 'function') beforeAutocomplete(query, phrase);
-    return paginateSearch(this, phrase, query, { pagination, postFilter });
+  schema.static('autocomplete', function search({ criteria = {}, pagination, phrase } = {}) {
+    const query = buildMongoQuery(phrase, criteria, '^');
+    return new Pagination(this, { pagination, criteria: query });
   });
 };

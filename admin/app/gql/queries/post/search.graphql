@@ -1,7 +1,7 @@
 #import 'radix/gql/fragments/post/list'
 
-query SearchPosts($pagination: PaginationInput, $phrase: String!) {
-  searchPosts(pagination: $pagination, phrase: $phrase) {
+query SearchPosts($criteria: PostCriteriaInput, $pagination: PaginationInput, $phrase: String!) {
+  searchPosts(criteria: $criteria, pagination: $pagination, phrase: $phrase) {
     totalCount
     edges {
       node {
