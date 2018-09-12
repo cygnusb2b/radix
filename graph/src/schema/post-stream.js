@@ -5,4 +5,4 @@ module.exports = new Schema({
   url: String,
   identifier: String,
   // ...
-}, { timestamps: true, collection: 'post-stream'  });
+}, { timestamps: true, collection: 'post-stream' });
