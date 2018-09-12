@@ -6,7 +6,7 @@ const { inject: { service }, isEmpty, RSVP: { Promise }, Service, computed, get 
 export default Service.extend({
   session : service('session'),
   store   : service(),
-  user    : {},
+  user    : computed.reads('session.data.authenticated'),
 
   load() {
     return Promise.resolve();
