@@ -2,7 +2,7 @@ const { Pagination } = require('@limit0/mongoose-graphql-pagination');
 
 module.exports = function searchablePlugin(schema, { fieldNames = [] } = {}) {
   const buildMongoQuery = (phrase = 'search', criteria = {}, prefix = '') => {
-    const clean = phrase.replace(/[|&;$%@"<>()+,]/g, "");
+    const clean = phrase.replace(/[|&;$%@"<>()+,]/g, '');
     const $or = fieldNames.map(f => ({ [f]: new RegExp(`${prefix}${clean}`, 'i') }));
     return { ...criteria, $or };
   };

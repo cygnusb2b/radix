@@ -15,15 +15,4 @@
       {{/link-to}}
     </div>
   </li>
-{{else if userManager.permissions.applications.edit}}
-<li class="nav-item">
-  {{#link-to "core.users" class="nav-item nav-link" title="Manage Users"}}
-    {{entypo-icon "users"}} <span class="d-none d-lg-inline">Users</span>
-  {{/link-to}}
-</li>
-<li class="nav-item">
-  {{#link-to "core.applications.edit" session.data.application._id class="nav-item nav-link" title="Manage Application Settings"}}
-    {{entypo-icon "tools"}} <span class="d-none d-lg-inline">Settings</span>
-  {{/link-to}}
-</li>
 {{/if}}

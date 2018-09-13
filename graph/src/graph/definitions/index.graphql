@@ -1,6 +1,8 @@
 # import * from 'identity.graphql'
 # import * from 'post.graphql'
 # import * from 'post-stream.graphql'
+# import * from 'application-user.graphql'
+# import * from 'core.graphql'
 
 scalar Date
 scalar Cursor
@@ -18,8 +20,6 @@ interface Timestampable {
 type PageInfo {
   hasNextPage: Boolean!
   endCursor: Cursor
-  # hasPreviousPage: Boolean!
-  # startCursor: Cursor
 }
 
 input PaginationInput {

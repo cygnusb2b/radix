@@ -44,7 +44,8 @@ router.use(
   bodyParser.json(),
   graphqlExpress((req) => {
     const { auth, db } = req;
-    const context = { auth, db };
+    const appId = req.get('x-radix-appid');
+    const context = { auth, db, appId };
     return { schema, context };
   }),
 );

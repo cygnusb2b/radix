@@ -5,3 +5,11 @@
   {{/link-to}}
 </li>
 {{/if}}
+
+{{#if userManager.permissions.applications.edit}}
+<li class="nav-item">
+  {{#link-to "app.users" session.data.application._id class="nav-item nav-link" title="Manage Users"}}
+    {{entypo-icon "users"}} <span class="d-none d-lg-inline">Users</span>
+  {{/link-to}}
+</li>
+{{/if}}

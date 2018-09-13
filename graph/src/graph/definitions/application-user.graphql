@@ -1,0 +1,51 @@
+type Query {
+  allCoreApplicationUsers(criteria: CoreApplicationUserCriteriaInput = {}, pagination: PaginationInput = {}, sort: CoreApplicationUserSortInput = {}): CoreApplicationUserConnection!
+  searchCoreApplicationUsers(criteria: CoreApplicationUserCriteriaInput = {}, pagination: PaginationInput = {}, phrase: String!): CoreApplicationUserConnection!
+  applicationUser(input: ModelIdInput!): CoreApplicationUser!
+}
+
+type Mutation {
+  addCoreApplicationUser(input: String!): CoreApplicationUser!
+  updateCoreApplicationUser(input: UpdateCoreApplicationUserInput!): CoreApplicationUser!
+  removeCoreApplicationUser(input: ModelIdInput!): String
+}
+
+enum CoreApplicationUserSortField {
+  updatedDate
+  createdDate
+}
+
+input CoreApplicationUserSortInput {
+  field: CoreApplicationUserSortField! = createdDate
+  order: Int! = -1
+}
+
+type CoreApplicationUserConnection {
+  totalCount: Int!
+  edges: [CoreApplicationUserEdge]!
+  pageInfo: PageInfo!
+}
+
+type CoreApplicationUserEdge {
+  node: CoreApplicationUser!
+  cursor: Cursor!
+}
+
+input CoreApplicationUserSortInput {
+  field: CoreApplicationUserSortField! = createdDate
+  order: Int! = -1
+}
+
+input UpdateCoreApplicationUserInput {
+  id: String!
+  payload: CoreApplicationUserPayloadInput!
+}
+
+input CoreApplicationUserPayloadInput {
+  roles: [CoreApplicationUserRole]
+}
+
+input CoreApplicationUserCriteriaInput {
+  application: String!
+  roles: [CoreApplicationUserRole]
+}

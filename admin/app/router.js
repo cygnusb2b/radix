@@ -15,6 +15,11 @@ Router.map(function() {
 
     this.route('comments', function() {
     });
+    this.route('app', { path: 'app/:id' }, function() {
+        this.route('users');
+        this.route('settings');
+    })
+
     this.route('identities', function() {
         this.route('edit', { path: '/edit/:id' });
     });
