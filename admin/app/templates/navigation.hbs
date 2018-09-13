@@ -4,12 +4,17 @@
 
     <ul class="navbar-nav mr-auto">
       {{partial "navigation/comments"}}
+      {{#if userManager.permissions.allowAll}}
+      <li class="nav-item">
+        <li class="nav-link disabled">|</li>
+      </li>
       {{partial "navigation/identities"}}
       {{partial "navigation/demographics"}}
       {{partial "navigation/products"}}
       {{partial "navigation/forms"}}
       {{partial "navigation/integrations"}}
       {{partial "navigation/core"}}
+      {{/if}}
     </ul>
 
     <ul class="navbar-nav ml-auto">

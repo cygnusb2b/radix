@@ -3,12 +3,14 @@
     {{edit-field/autocomplete value=model.user displayField='email' placeholder="Search by email" multiple=false modelType='core-user'}}
   </td>
   <td>
-      {{ember-selectize
-        multiple=true
-        selection=model.roles
-        content=roles
-        onSelect=(action (mut model.roles))
-      }}
+    {{#power-select-multiple
+      options=roles
+      selected=model.roles
+      onchange=(action (mut model.roles))
+      as |role|
+    }}
+      {{role}}
+    {{/power-select-multiple}}
   </td>
 {{else}}
   <td>{{#link-to 'core.users.edit' model.user.id}}

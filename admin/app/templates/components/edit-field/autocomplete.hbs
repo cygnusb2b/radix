@@ -1,4 +1,4 @@
-{{ember-selectize
+{{!-- {{ember-selectize
     content=_options
     selection=_selection
     optionValuePath='id'
@@ -15,4 +15,34 @@
     disabled=disabled
     placeholder=placeholder
     hideSelected=true
-}}
+}} --}}
+
+{{#if multiple}}
+  {{#power-select-multiple
+    options=_options
+    selected=_selection
+    onchange=(action (mut _selection))
+    disabled=disabled
+    placeholder=placeholder
+    loadingMessage=_loading
+    onblur="onBlur"
+    select="selectItem"
+    as |item|
+  }}
+    {{get item displayField}}
+  {{/power-select-multiple}}
+{{else}}
+  {{#power-select
+    options=_options
+    selected=_selection
+    onchange=(action (mut _selection))
+    disabled=disabled
+    placeholder=placeholder
+    loadingMessage=_loading
+    onblur="onBlur"
+    select="selectItem"
+    as |item|
+  }}
+    {{get item displayField}}
+  {{/power-select}}
+{{/if}}

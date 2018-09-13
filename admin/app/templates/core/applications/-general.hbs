@@ -26,14 +26,17 @@
     required=true
 }}
 
-<div class="input-group">
-    {{ember-selectize
-        multiple=true
-        selection=model.allowedOrigins
-        content=model.allowedOrigins
-        create-item=(route-action "addAllowedOrigin")
-    }}
-    {{-bootstrap/form/help  value="The allowed Origin URLs for the application."}}
+<div class="form-group">
+  {{#power-select-multiple
+    options=model.allowedOrigins
+    selected=model.allowedOrigins
+    onchange=(action (mut model.allowedOrigins))
+    as |origin|
+  }}
+    {{origin}}
+  {{/power-select-multiple}}
+  {{!-- create-item=(route-action "addAllowedOrigin") --}}
+  {{-bootstrap/form/help  value="The allowed Origin URLs for the application."}}
 </div>
 
 <hr>
