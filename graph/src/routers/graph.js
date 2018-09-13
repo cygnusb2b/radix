@@ -25,12 +25,13 @@ const setInstanceDatabase = async (req, res, next) => {
 
   const application = await CoreApplication.findOne({ publicKey });
   if (!application) return res.status(401).send({ error });
-  const applicationKey = application.get('key');
+  req.appId = application.get('id');
 
   const account = await CoreAccount.findById(application.account);
   if (!account) return res.status(500).send({ error: 'No account found for specified application.' });
-  const accountKey = account.get('key');
 
+  const accountKey = account.get('key');
+  const applicationKey = application.get('key');
   const dbName = `radix-${accountKey}-${applicationKey}`;
   req.db = await instance.setDb(dbName);
   next();
@@ -43,9 +44,9 @@ router.use(
   setInstanceDatabase,
   bodyParser.json(),
   graphqlExpress((req) => {
-    const { auth, db } = req;
-    const appId = req.get('x-radix-appid');
-    const context = { auth, db, appId };
+    const { auth, db, appId } = req;
+    const publicKey = req.get('x-radix-appid');
+    const context = { auth, db, appId, publicKey };
     return { schema, context };
   }),
 );

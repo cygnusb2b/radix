@@ -7,7 +7,7 @@ module.exports = {
 
   CoreApplicationUser: {
     user: ({ user }) => CoreUser.findById(user),
-    application: ({ application }) => CoreApplication.findById(application),
+    application: (model, input, { appId }) => CoreApplication.findById(appId),
     roles: ({ roles }) => (Array.isArray(roles) ? roles : [roles]),
   },
 
