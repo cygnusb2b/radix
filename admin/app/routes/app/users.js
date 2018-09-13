@@ -45,13 +45,15 @@ export default Route.extend(RouteQueryManager, {
     const controller = this.controllerFor(this.get('routeName'));
     const pagination = { first, after };
     const criteria = this.buildCriteria(filterBy);
-    criteria.application = params.app.id;
+    const appId = params.app.id;
+    criteria.application = appId;
 
     const sort = { field: sortBy, order: ascending ? 1 : -1 };
     const variables = { criteria, pagination, sort };
     if (!sortBy) delete variables.sort.field;
     const resultKey = 'allCoreApplicationUsers';
     controller.set('resultKey', resultKey);
+    controller.set('applicationId', appId);
     return this.get('apollo').watchQuery({ query, variables, fetchPolicy: 'network-only' }, resultKey)
       .then((result) => {
         controller.set('observable', getObservable(result));
@@ -63,7 +65,7 @@ export default Route.extend(RouteQueryManager, {
   actions: {
     refresh() {
       this.refresh();
-    }
+    },
   },
 });
 

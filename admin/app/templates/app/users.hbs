@@ -2,7 +2,7 @@
   {{#crumbs.item active=true}}{{entypo-icon "users"}} Application Users{{/crumbs.item}}
 {{/nav-breadcrumbs}}
 
-<div class="row">
+<div class="row mb-5">
   <div class="col">
     <div class="card list-index">
       <div class="card-header"></div>
@@ -39,3 +39,8 @@
     </div>
   </div>
 </div>
+
+<button class="btn btn-primary right fixed-bottom" type="button" {{action "addUser"}}>
+  {{entypo-icon "add-user"}} Add user
+</button>
+{{app-user-create-modal isOpen=isCreateModalOpen id=applicationId onComplete="refresh"}}

@@ -2,11 +2,14 @@ import ListController from '../abstract-list';
 
 export default ListController.extend({
   isSearchDisabled: true,
+  isCreateModalOpen: false,
 
   actions: {
     search() {
-
     },
+    addUser() {
+      this.set('isCreateModalOpen', true);
+    }
   },
 
   init() {

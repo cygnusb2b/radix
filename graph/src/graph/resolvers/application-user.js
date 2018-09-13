@@ -43,14 +43,17 @@ module.exports = {
     /**
      *
      */
-    addCoreApplicationUser: async(root, { id, payload }, { auth }) => {
+    addCoreApplicationUser: async(root, { input: { id, payload } }, { auth }) => {
       auth.check();
       const { email, givenName, familyName, roles } = payload;
-      const application = CoreApplication.findById(id);
+      const application = await CoreApplication.findById(id);
+      if (!application) throw new Error('Unable to retrieve application by requested id!');
       //... check for existing record?
       let user = await CoreUser.findOne({ email });
       if (!user) {
-        user = await CoreUser.create({ email, givenName, familyName });
+        const createdDate = new Date();
+        const updatedDate = createdDate;
+        user = await CoreUser.create({ email, givenName, familyName, createdDate, updatedDate });
         user.save();
         // email, pw reset, something?
       }

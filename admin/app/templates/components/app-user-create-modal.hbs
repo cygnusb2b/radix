@@ -1,0 +1,56 @@
+{{#bs-modal show=isOpen onHidden=(action "clear") as |modal|}}
+  <form {{action "submit" on="submit"}}>
+    {{#modal.header}}
+      <h5 class="modal-title">Add User</h5>
+      <button {{action modal.actions.hide}} type="button" class="close" aria-label="Close">
+        {{entypo-icon "cross"}}
+      </button>
+    {{/modal.header}}
+
+    {{#modal.body}}
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="name">Email Address</label>
+            {{input type="email" autocomplete="none email" class="form-control" value=email autofocus='autofocus'}}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="name">First Name</label>
+            {{input type="text" autocomplete="none first_name" class="form-control" value=givenName}}
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="name">Last Name</label>
+            {{input type="text" autocomplete="none last_name" class="form-control" value=familyName}}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="name">Role</label>
+            {{#power-select destination="select-destination" selected=role options=choices onchange=(action (mut role)) as |myRole|}}
+              {{ myRole }}
+            {{/power-select}}
+            <div id="select-destination"></div>
+          </div>
+        </div>
+      </div>
+
+    {{/modal.body}}
+
+    {{#modal.footer}}
+      <button class="btn btn-success" type="submit" disabled={{isSubmitDisabled}}>
+        {{entypo-icon "check"}} Add user
+      </button>
+    {{/modal.footer}}
+    {{progress-bar show=isActionRunning}}
+  </form>
+{{/bs-modal}}
