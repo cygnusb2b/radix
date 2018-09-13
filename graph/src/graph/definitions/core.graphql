@@ -7,6 +7,7 @@ type CoreAccount {
 type CoreUser {
   id: String!
   email: String!
+  picture: String
   givenName: String!
   familyName: String!
   createdDate: Date
@@ -32,4 +33,14 @@ enum CoreApplicationUserRole {
   ROLE_USER
   ROLE_ADMIN
   ROLE_SUPERADMIN
+}
+
+input ChangeUserPasswordInput {
+  id: String!
+  value: String!
+  confirm: String!
+}
+
+type Mutation {
+  changeUserPassword(input: ChangeUserPasswordInput!): CoreUser
 }

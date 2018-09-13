@@ -13,6 +13,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
   confirm: '',
 
   email: computed.reads('session.data.authenticated.username'),
+  id: computed.reads('session.data.authenticated.id'),
 
   showPassword: false,
   isOpen: false,
@@ -46,8 +47,10 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
     async changePassword() {
       this.startAction();
       const mutation = changeUserPassword;
-      const password = this.get('password');
-      const variables = { input: { password } };
+      const value = this.get('password');
+      const id = this.get('id');
+      const confirm = this.get('showPassword') ? value : this.get('confirm');
+      const variables = { input: { id, value, confirm } };
       try {
         await this.get('apollo').mutate({ mutation, variables }, 'changeUserPassword');
         this.set('isOpen', false);

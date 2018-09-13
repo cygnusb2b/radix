@@ -4,6 +4,7 @@ fragment CoreApplicationUserListFragment on CoreApplicationUser {
   user {
     id
     email
+    picture
     givenName
     familyName
     createdDate

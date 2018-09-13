@@ -8,9 +8,7 @@ module.exports = {
   CoreApplicationUser: {
     user: ({ user }) => CoreUser.findById(user),
     application: ({ application }) => CoreApplication.findById(application),
-    roles: ({ roles }) => {
-      return Array.isArray(roles) ? roles : [ roles ];
-    }
+    roles: ({ roles }) => (Array.isArray(roles) ? roles : [roles]),
   },
 
   /**
@@ -27,9 +25,9 @@ module.exports = {
      */
     allCoreApplicationUsers: async (root, { criteria, pagination, sort }, { auth, appId }) => {
       auth.check();
-      if (!criteria.application) throw new Error('Missing required field `application`.');
       const query = {
-        roles: {$ne: "ROLE_SUPERADMIN"},
+        roles: { $ne: 'ROLE_SUPERADMIN' },
+        application: appId,
         ...criteria,
       };
       return CoreApplicationUser.paginate({ criteria: query, pagination, sort });
@@ -43,17 +41,27 @@ module.exports = {
     /**
      *
      */
-    addCoreApplicationUser: async(root, { input: { id, payload } }, { auth }) => {
+    addCoreApplicationUser: async (root, { input: { payload } }, { auth, appId }) => {
       auth.check();
-      const { email, givenName, familyName, roles } = payload;
-      const application = await CoreApplication.findById(id);
+      const {
+        email,
+        givenName,
+        familyName,
+        roles,
+      } = payload;
+      const application = await CoreApplication.findById(appId);
       if (!application) throw new Error('Unable to retrieve application by requested id!');
-      //... check for existing record?
       let user = await CoreUser.findOne({ email });
       if (!user) {
         const createdDate = new Date();
         const updatedDate = createdDate;
-        user = await CoreUser.create({ email, givenName, familyName, createdDate, updatedDate });
+        user = await CoreUser.create({
+          email,
+          givenName,
+          familyName,
+          createdDate,
+          updatedDate,
+        });
         user.save();
         // email, pw reset, something?
       }
@@ -63,7 +71,7 @@ module.exports = {
     /**
      *
      */
-    updateCoreApplicationUser: async(root, { input: { id, payload } }, { auth }) => {
+    updateCoreApplicationUser: async (root, { input: { id, payload } }, { auth }) => {
       auth.check();
       const { roles } = payload;
       const updatedDate = new Date();
@@ -75,7 +83,7 @@ module.exports = {
     /**
      *
      */
-    removeCoreApplicationUser: async(root, { input: { id } }, { auth }) => {
+    removeCoreApplicationUser: async (root, { input: { id } }, { auth }) => {
       auth.check();
       const appUser = await CoreApplicationUser.findById(id);
       if (!appUser) throw new Error('Unable to retrieve application user by requested id!');

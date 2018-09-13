@@ -3,12 +3,14 @@ const { DateType, CursorType } = require('@limit0/graphql-custom-types');
 const GraphQLJSON = require('graphql-type-json');
 const MixedType = require('../types/mixed');
 
+const coreUser = require('./core-user');
 const applicationUser = require('./application-user');
 const identity = require('./identity');
 const post = require('./post');
 const postStream = require('./post-stream');
 
 module.exports = deepAssign(
+  coreUser,
   applicationUser,
   identity,
   post,
