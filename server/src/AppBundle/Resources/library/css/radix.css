@@ -839,6 +839,11 @@ ins {
         padding-right: 12px;
         clear: none;
     }
+
+    .platform-element .email-subscription-wrapper .database-form + p {
+        float: right;
+    }
+    
     .platform-element .email-subscription-wrapper .database-form {
         float: left;
         width: 40%;
