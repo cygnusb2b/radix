@@ -13,9 +13,8 @@ Router.map(function() {
         this.route('settings');
     });
 
-    this.route('comments', function() {
-    });
     this.route('app', { path: 'app/:id' }, function() {
+        this.route('comments');
         this.route('users');
         this.route('settings');
     })

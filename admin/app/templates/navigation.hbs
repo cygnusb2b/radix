@@ -17,6 +17,7 @@
       {{/if}}
     </ul>
 
+    {{#if userManager.permissions}}
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
           <a href="https://as3.gitbook.io/radix" title="Application Documentation" class="nav-link" target="_blank" rel="noopener noreferrer">
@@ -24,11 +25,10 @@
           </a>
       </li>
 
-      {{#if userManager.permissions}}
       {{select-application onAppChange="refreshApp"}}
       {{user-nav}}
-      {{/if}}
     </ul>
+    {{/if}}
 
   </nav>
 

@@ -9,6 +9,11 @@ export default Service.extend({
   user    : computed.reads('session.data.authenticated'),
 
   load() {
+    if (!this.get('applicationId') && this.get('session').isAuthenticated) {
+      this.get('session').invalidate();
+      return Promise.reject('No application ID found!');
+    }
+    const appId = this.get('session.data.application._id');
     return Promise.resolve();
   },
 
@@ -16,20 +21,28 @@ export default Service.extend({
     return this.get('session');
   },
 
-  applicationId: computed.reads('session.data.application.id'),
+  application: computed('session.data.{application,authenticated.applications.firstObject}', function() {
+    if (!this.get('session.data.application')) {
+      this.set('session.data.application', this.get('session.data.authenticated.applications.firstObject'));
+    }
+    return this.get('session.data.application');
+  }),
 
-  permissions: computed('user.id', 'user.roles.[]', 'applicationId', function() {
+  applicationId: computed.reads('application._id'),
+  applicationKey: computed.reads('application.id'),
+
+  permissions: computed('user.id', 'user.roles.[]', 'applicationKey', function() {
     const userId = this.get('user.id');
     const permissions = new Permissions();
     if (isEmpty(userId)) {
-      return permissions;
+      return;
     }
     const defaultRole = 'ROLE_CORE\\USER';
     const roles = this.get('session.data.authenticated.roles');
-    const currentAppId = this.get('applicationId');
+    const currentAppKey = this.get('applicationKey');
     const role = (roles && get(roles, 'firstObject')) ? get(roles, 'firstObject') : defaultRole;
-    const superAdminRole = `ROLE_${currentAppId}\\SUPERADMIN`.toUpperCase();
-    const adminRole = `ROLE_${currentAppId}\\ADMIN`.toUpperCase();
+    const superAdminRole = `ROLE_${currentAppKey}\\SUPERADMIN`.toUpperCase();
+    const adminRole = `ROLE_${currentAppKey}\\ADMIN`.toUpperCase();
 
     if (-1 !== roles.indexOf(superAdminRole)) {
       permissions.fullAccess();

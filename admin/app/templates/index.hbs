@@ -1,13 +1,41 @@
 <div class="row">
-    <div class="col">
-        <div class="jumbotron">
-            <h1 class="display-3">Welcome!</h1>
-            <p class="lead">To your fully-integrated &amp; scalable data management solution.</p>
-            <hr class="m-y-2">
-            <p>This product is in <code>alpha</code> state. There's much more to come...</p>
-        {{!--  <p class="lead">
-                <a class="btn btn-primary btn-lg btn-disabled" href="#" disabled="disabled" role="button">Learn more</a>
-            </p> --}}
-        </div>
+  <div class="col">
+    <div class="jumbotron">
+      <h1 class="display-4 text-center">Welcome to Radix!</h1>
     </div>
+
+      <ul class="list-group">
+
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          {{#if user-manager.permissions}}
+            <span class="">{{entypo-icon "chat" class="mr-3"}}Moderate Comments</span>
+            {{#link-to "app.comments" session.data.application._id class="btn btn-sm btn-primary"}}go{{/link-to}}
+          {{else}}
+            <span class="text-muted">{{entypo-icon "chat" class="mr-3"}}Moderate Comments</span>
+            <button type="button" class="btn btn-sm btn-disabled" title="No access -- contact your manager for permission.">go</button>
+          {{/if}}
+        </div>
+
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          {{#if user-manager.permissions.applications.edit}}
+            <span class="">{{entypo-icon "users" class="mr-3"}}Manage Users</span>
+            {{#link-to "app.users" session.data.application._id class="btn btn-sm btn-primary"}}go{{/link-to}}
+          {{else}}
+            <span class="text-muted">{{entypo-icon "users" class="mr-3"}}Manage Users</span>
+            <button type="button" class="btn btn-sm btn-disabled" title="No access -- contact your manager for permission.">go</button>
+          {{/if}}
+        </div>
+
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          {{#if user-manager.permissions.applications.edit}}
+            <span class="">{{entypo-icon "tools" class="mr-3"}}Manage Settings</span>
+            {{#link-to "app.settings" session.data.application._id class="btn btn-sm btn-primary"}}go{{/link-to}}
+          {{else}}
+            <span class="text-muted">{{entypo-icon "tools" class="mr-3"}}Manage Settings</span>
+            <button type="button" class="btn btn-sm btn-disabled" title="No access -- contact your manager for permission.">go</button>
+          {{/if}}
+        </div>
+
+      </ul>
+  </div>
 </div>
