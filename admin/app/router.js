@@ -8,6 +8,7 @@ const Router = EmberRouter.extend({
 
 Router.map(function() {
     this.route('login');
+    this.route('reset', { path: '/reset/:token' });
 
     this.route('user', function() {
         this.route('settings');

@@ -28,5 +28,8 @@ module.exports = cleanEnv(process.env, {
   MONGOOSE_DEBUG: bool({ desc: 'Whether to enable Mongoose debugging.', default: false }),
   MONGO_DSN: mongodsn({ desc: 'The MongoDB DSN to connect to.' }),
   PORT: port({ desc: 'The port that express will run on.', default: 8100 }),
+  SENDGRID_API_KEY: nonemptystr({ desc: 'The Sendgrid email API key' }),
+  SENDGRID_FROM: nonemptystr({ desc: 'The From: address for Sendgrid emails' }),
+  JWT_SECRET: nonemptystr({ desc: 'The secret key used to encode Json Web Tokens' }),
 });
 

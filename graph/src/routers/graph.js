@@ -21,7 +21,7 @@ const authenticate = (req, res, next) => {
 const setInstanceDatabase = async (req, res, next) => {
   const error = 'No valid application public key was presented with this request.';
   const publicKey = req.get('x-radix-appid');
-  if (!publicKey) return res.status(401).send({ error });
+  if (!publicKey) return next();
 
   const application = await CoreApplication.findOne({ publicKey });
   if (!application) return res.status(401).send({ error });
@@ -46,7 +46,14 @@ router.use(
   graphqlExpress((req) => {
     const { auth, db, appId } = req;
     const publicKey = req.get('x-radix-appid');
-    const context = { auth, db, appId, publicKey };
+    const domain = `${req.protocol}://${req.get('host')}`;
+    const context = {
+      auth,
+      db,
+      appId,
+      publicKey,
+      domain,
+    };
     return { schema, context };
   }),
 );

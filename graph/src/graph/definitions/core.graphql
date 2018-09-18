@@ -41,6 +41,18 @@ input ChangeUserPasswordInput {
   confirm: String!
 }
 
+input ResetUserPasswordInput {
+  token: String!
+  value: String!
+  confirm: String!
+}
+
+type Query {
+  coreUserReset(token: String!): CoreUser!
+}
+
 type Mutation {
   changeUserPassword(input: ChangeUserPasswordInput!): CoreUser
+  resetUserPassword(input: ResetUserPasswordInput!): CoreUser
+  sendPasswordResetEmail(email: String!): Boolean!
 }

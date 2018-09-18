@@ -1,14 +1,7 @@
 version: '3'
 services:
-  graph_install:
-    image: node:8
-    entrypoint: yarn
-    working_dir: /app
-    volumes:
-      - ./graph:/app:cached
-      - graph_node_modules:/app/node_modules:cached
-
   graph:
+    tty: true
     image: node:8
     entrypoint: yarn start
     working_dir: /app
@@ -16,7 +9,6 @@ services:
       - ./graph:/app:cached
       - graph_node_modules:/app/node_modules:cached
     depends_on:
-      - graph_install
       - mongo
       - server
     ports:
@@ -25,7 +17,6 @@ services:
       PORT: ${PORT-8700}
       APP_HOST: "${APP_HOST-server}:80"
       MONGO_DSN: ${MONGO_DSN-mongodb://mongo/radix}
-      MONGOOSE_DEBUG: ${MONGOOSE_DEBUG-false}
 
   server_install:
     image: radix_server:latest
@@ -43,6 +34,7 @@ services:
       - default
 
   server:
+    tty: true
     build:
       context: server/
       dockerfile: docker/Dockerfile
