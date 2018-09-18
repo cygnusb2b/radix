@@ -35,12 +35,11 @@
         </div>
 
       {{/fetch-more}}
-
     </div>
+    <button class="btn btn-primary btn-block mt-3" type="button" {{action "addUser"}}>
+      {{entypo-icon "add-user" class="ml-2"}} Invite user
+    </button>
   </div>
 </div>
 
-<button class="btn btn-primary right fixed-bottom" type="button" {{action "addUser"}}>
-  {{entypo-icon "add-user"}} Add user
-</button>
 {{app-user-create-modal isOpen=isCreateModalOpen id=applicationId onComplete="refresh"}}

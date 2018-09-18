@@ -2,6 +2,7 @@ const { paginationResolvers } = require('@limit0/mongoose-graphql-pagination');
 const CoreApplicationUser = require('../../models/core-application-user');
 const CoreUser = require('../../models/core-user');
 const CoreApplication = require('../../models/core-application');
+const mailer = require('../../services/mailer');
 
 module.exports = {
 
@@ -41,7 +42,7 @@ module.exports = {
     /**
      *
      */
-    addCoreApplicationUser: async (root, { input: { payload } }, { auth, appId }) => {
+    addCoreApplicationUser: async (root, { input: { payload } }, { auth, appId, domain }) => {
       auth.check();
       const {
         email,
@@ -63,10 +64,12 @@ module.exports = {
           updatedDate,
         });
         user.save();
-        // email, pw reset, something?
       }
       const appUser = new CoreApplicationUser({ user, roles, application });
-      return appUser.save();
+      await appUser.save();
+      const token = await mailer.createToken({ id: user.id }, 60 * 60);
+      await mailer.sendWelcomeEmail({ user, application, domain, token });
+      return appUser;
     },
     /**
      *
