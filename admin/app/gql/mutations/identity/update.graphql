@@ -1,0 +1,9 @@
+mutation UpdateIdentity($input: UpdateIdentityInput!) {
+  updateIdentity(input: $input) {
+    displayName
+    picture
+    givenName
+    familyName
+    primaryEmail
+  }
+}

@@ -1,0 +1,7 @@
+#import 'radix/gql/fragments/identity/settings'
+
+mutation BanIdentity($input: ModelIdInput!) {
+  banIdentity(input: $input) {
+    ...IdentitySettingsFragment
+  }
+}

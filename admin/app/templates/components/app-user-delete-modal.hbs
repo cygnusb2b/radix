@@ -1,0 +1,26 @@
+{{#bs-modal show=isOpen onHidden=(action "clear") as |modal|}}
+  <form {{action "delete" on="submit"}}>
+    {{#modal.header}}
+      <h5 class="modal-title">Delete Post</h5>
+      <button {{action modal.actions.hide}} type="button" class="close" aria-label="Close">
+        {{entypo-icon "cross"}}
+      </button>
+    {{/modal.header}}
+
+    {{#modal.body}}
+      <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Confirm deletion</h4>
+        <p>Once deleted, this user will no longer have access to this application.</p>
+        <hr>
+        <p class="mb-0">This action is not reversible. Are you sure you want to continue?</p>
+      </div>
+    {{/modal.body}}
+
+    {{#modal.footer}}
+      <button class="btn btn-danger" type="submit" disabled={{isSubmitDisabled}}>
+        {{entypo-icon "trash"}} Yup, delete this sucka
+      </button>
+    {{/modal.footer}}
+    {{progress-bar show=isActionRunning}}
+  </form>
+{{/bs-modal}}

@@ -1,0 +1,18 @@
+<div class="input-group">
+  {{input
+    type="search"
+    class="form-control"
+    placeholder=placeholder
+    value=value
+    disabled=disabled
+    focusIn=(action "selectAll")
+  }}
+  <div class="input-group-append">
+    {{#list-controls/button class=buttonClass type="submit" disabled=disabled}}
+      {{entypo-icon icon}}{{#if label}} {{label}}{{/if}}
+    {{/list-controls/button}}
+    {{#list-controls/button class=buttonClass disabled=disabled click=(action "clear")}}
+      {{entypo-icon "cross"}}
+    {{/list-controls/button}}
+  </div>
+</div>

@@ -1,0 +1,3 @@
+fragment TimestampableFragment on Timestampable {
+  createdDate
+}

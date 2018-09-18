@@ -1,1 +1,6 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item}}{{#link-to "identity.accounts.index"}}{{entypo-icon "users"}} Account Identities{{/link-to}}{{/crumbs.item}}
+  {{#crumbs.item active=true}}{{model.givenName}} {{model.familyName}}{{#if model.deleted}} (<span class="text-danger">Deleted</span>){{/if}}{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
 {{edit-model model=model loadTabsFrom=(route-action 'loadTabs') routeName='identity.accounts'}}

@@ -1,0 +1,12 @@
+fragment UserAttributionFragment on UserAttribution {
+  createdBy {
+    id
+    givenName
+    familyName
+  }
+  updatedBy {
+    id
+    givenName
+    familyName
+  }
+}

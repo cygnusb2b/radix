@@ -1,0 +1,75 @@
+<div class="row">
+<div class="btn-group col-4" role="group">
+  {{#if item.account}}
+    <button
+      type="button"
+      class="btn btn-block btn-sm btn-outline-primary"
+      title="Moderate User"
+      {{action "moderate"}}>
+      <span class="d-none d-md-inline">Moderate user</span>
+      {{entypo-icon "user" class="ml-1"}}
+    </button>
+  {{else}}
+    <button
+      type="button"
+      class="btn btn-block btn-sm btn-outline-disabled disabled btn-disabled"
+      title="No user present">
+      <span class="d-none d-md-inline">Moderate user</span>
+      {{entypo-icon "user" class="ml-1"}}
+    </button>
+  {{/if}}
+</div>
+
+<div class="btn-group col-4" role="group">
+{{#unless item.deleted}}
+  <button class="btn btn-block btn-sm btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="d-none d-md-inline">Moderate post</span>
+    <span class="d-inline d-md-none d-lg-none">{{entypo-icon "pencil" class="ml-1"}}</span>
+  </button>
+
+  <div class="dropdown-menu">
+    <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "edit"}}>
+      Edit post {{entypo-icon "pencil" class="ml-1"}}
+    </a>
+
+    {{#if item.flagged}}
+      <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "unflag"}}>
+        Unflag post {{entypo-icon "flag" class="ml-1"}}
+      </a>
+    {{else}}
+      <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "flag"}}>
+        Flag post {{entypo-icon "flag" class="ml-1"}}
+      </a>
+    {{/if}}
+
+    {{#if item.approved}}
+      <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "unapprove"}}>
+        Hide post {{entypo-icon "eye-with-line" class="ml-1"}}
+      </a>
+    {{else}}
+      <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "approve"}}>
+        Show post {{entypo-icon "eye" class="ml-1"}}
+      </a>
+    {{/if}}
+
+    <a href="javascript:void(0)" class="d-flex justify-content-between dropdown-item" {{action "delete"}}>
+      Delete post {{entypo-icon "trash" class="ml-1"}}
+    </a>
+  </div>
+
+{{else}}
+  <button class="btn btn-block btn-sm btn-outline-primary disabled" title="Post is deleted">
+    <span class="d-none d-sm-inline">
+      Moderate post {{entypo-icon "trash" class="ml-1"}}
+    </span>
+  </button>
+{{/unless}}
+</div>
+
+<div class="btn-group col-4" role="group">
+    <a href="{{ item.stream.url }}" class="btn btn-block btn-sm btn-outline-primary" target="_blank" title="View Thread">
+      {{entypo-icon "popup"}}
+      <span class="d-none d-md-inline">View Thread</span>
+    </a>
+</div>
+</div>

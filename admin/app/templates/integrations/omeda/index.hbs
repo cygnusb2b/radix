@@ -1,0 +1,12 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item active=true}}{{entypo-icon "power-plug"}} Omeda Integrations{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
+<div class="row">
+    <div class="col">
+        {{#-browse/list routeName='integrations.omeda' items=model as |item|}}
+        <h5 class="list-group-item-heading">{{item.model.name}}</h5>
+        <p class="list-group-item-text">{{item.model.clientKey}}: {{item.model.brandKey}}</p>
+        {{/-browse/list}}
+    </div>
+</div>

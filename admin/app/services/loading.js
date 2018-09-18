@@ -1,22 +1,23 @@
-import Ember from 'ember';
+import Service from '@ember/service';
+import $ from 'jquery';
 
-export default Ember.Service.extend({
-    selector: '.loading-overlay',
+export default Service.extend({
+  selector: '.loading-overlay',
 
-    show: function() {
-        this._getElement().show();
-    },
+  show: function () {
+    this._getElement().show();
+  },
 
-    hide: function() {
-        this._getElement().hide();
-    },
+  hide: function () {
+    this._getElement().hide();
+  },
 
-    toggle: function() {
-        this._getElement().toggle();
-    },
+  toggle: function () {
+    this._getElement().toggle();
+  },
 
-    _getElement: function() {
-        return Ember.$(this.get('selector'));
-    }
+  _getElement: function () {
+    return $(this.get('selector'));
+  }
 
 });

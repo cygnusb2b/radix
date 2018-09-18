@@ -1,0 +1,63 @@
+<fieldset class="form-group">
+    <small class="form-text text-muted">Is commenting enabled for this application?</small>
+    <div class="form-check">
+        {{edit-field/checkbox checked=model.settings.posts.enabled label='Yes'}}
+    </div>
+</fieldset>
+
+<div class="row">
+  <div class="col-xs-12 col-md-6">
+    <fieldset class="form-group">
+        <small class="form-text text-muted">Is anonymous posting allowed for this application?</small>
+        <div class="form-check">
+            {{edit-field/checkbox checked=model.settings.posts.allowAnonymous label='Yes'}}
+        </div>
+    </fieldset>
+  </div>
+  <div class="col-xs-12 col-md-6">
+    <fieldset class="form-group">
+        <small class="form-text text-muted">Is a full account required to post?</small>
+        <div class="form-check">
+            {{edit-field/checkbox checked=model.settings.posts.requireAccount label='Yes'}}
+        </div>
+    </fieldset>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-md-6">
+    <fieldset class="form-group">
+        <small class="form-text text-muted">Is Recaptcha required to post for this application?</small>
+        <div class="form-check">
+            {{edit-field/checkbox checked=model.settings.posts.requireCaptcha label='Yes'}}
+        </div>
+    </fieldset>
+  </div>
+  <div class="col-xs-12 col-md-6">
+    <fieldset class="form-group">
+        <small class="form-text text-muted">Is moderation of new comments forced?</small>
+        <div class="form-check">
+            {{edit-field/checkbox checked=model.settings.posts.requireModeration label='Yes'}}
+        </div>
+    </fieldset>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-md-4">
+    {{-bootstrap/form/input-group
+        key='settings.posts.pageSize'
+        value=model.settings.posts.pageSize
+        placeholder='25'
+        helpText='Number of comments displayed per page'
+        hideLabel=true
+    }}
+  </div>
+  <div class="col-xs-12 col-md-8">
+    {{-bootstrap/form/input-group
+        key='settings.posts.defaultPicture'
+        value=model.settings.posts.pageSize
+        placeholder='//some.url'
+        helpText='Default avatar URL'
+        hideLabel=true
+    }}
+  </div>
+</div>

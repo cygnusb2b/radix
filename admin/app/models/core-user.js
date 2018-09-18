@@ -8,6 +8,8 @@ export default Model.extend(Timestampable, {
     roles      : array('string', { defaultValue: ['ROLE_CORE\\USER'] }),
     givenName  : attr('string'),
     familyName : attr('string'),
+    password   : attr('string'),
+    salt       : attr('string'),
     email      : attr('string'),
     lastLogin  : attr('date'),
     lastSeen   : attr('date'),

@@ -1,0 +1,6 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item}}{{#link-to "identity.internal.index"}}{{entypo-icon "users"}} Internal Identities{{/link-to}}{{/crumbs.item}}
+  {{#crumbs.item active=true}}{{model.givenName}} {{model.familyName}}{{#if model.deleted}} (<span class="text-danger">Deleted</span>){{/if}}{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
+{{edit-model model=model loadTabsFrom=(route-action 'loadTabs') routeName='identity.internal'}}

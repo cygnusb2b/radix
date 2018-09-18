@@ -1,0 +1,16 @@
+#import 'radix/gql/fragments/identity/history'
+#import 'radix/gql/fragments/identity/settings'
+
+fragment PostAccountFragment on Post {
+  account {
+    id
+
+    primaryEmail
+    displayName
+    familyName
+    givenName
+
+    ...IdentityHistoryFragment
+    ...IdentitySettingsFragment
+  }
+}

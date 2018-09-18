@@ -1,0 +1,39 @@
+{{#bs-modal show=isOpen onHidden=(action "clear") as |modal|}}
+  <form {{action "updatePost" on="submit"}}>
+    {{#modal.header}}
+      <h5 class="modal-title">Update Post</h5>
+      <button {{action modal.actions.hide}} type="button" class="close" aria-label="Close">
+        {{entypo-icon "cross"}}
+      </button>
+    {{/modal.header}}
+
+    {{#modal.body}}
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="name">Title</label>
+            {{input type="text" autocomplete="off" class="form-control" value=title}}
+          </div>
+          <div class="form-group mb-0">
+            <label for="name">Display Name</label>
+            {{input type="text" required=true autocomplete="off" class="form-control" value=displayName}}
+          </div>
+          <div class="form-group">
+            <label for="name">Body</label>
+            <textarea class="form-control">{{ body }}</textarea>
+          </div>
+          {{#if (eq canChange false)}}
+            <small class="d-block text-info mt-3">In order to save, {{ reasonForPreventChange }}</small>
+          {{/if}}
+        </div>
+      </div>
+    {{/modal.body}}
+
+    {{#modal.footer}}
+      <button class="btn btn-success" type="submit" disabled={{isSubmitDisabled}}>
+        {{entypo-icon "check"}} Change
+      </button>
+    {{/modal.footer}}
+    {{progress-bar show=isActionRunning}}
+  </form>
+{{/bs-modal}}

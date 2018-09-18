@@ -1,0 +1,1 @@
+{"__schema":{"types":[{"kind":"INTERFACE","name":"Timestampable","possibleTypes":[{"name":"Identity"},{"name":"Post"},{"name":"PostStream"}]}]}}

@@ -1,0 +1,7 @@
+#import 'radix/gql/fragments/identity/settings'
+
+mutation UnbanIdentity($input: ModelIdInput!) {
+  unbanIdentity(input: $input) {
+    ...IdentitySettingsFragment
+  }
+}

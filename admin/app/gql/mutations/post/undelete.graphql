@@ -1,0 +1,7 @@
+#import 'radix/gql/fragments/post/list'
+
+mutation UndeletePost($input: ModelIdInput!) {
+  undeletePost(input: $input) {
+    ...PostListFragment
+  }
+}

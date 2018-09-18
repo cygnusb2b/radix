@@ -3,10 +3,9 @@
     <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <title>Radix</title>
+    <title>Radix</title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <script src="/admin-config.js"></script>
 
       <link rel="apple-touch-icon" sizes="180x180" href="{{rootURL}}apple-touch-icon.png">
       <link rel="icon" type="image/png" href="{{rootURL}}favicon-32x32.png" sizes="32x32">
@@ -23,16 +22,13 @@
       {{content-for "head-footer"}}
     </head>
     <body>
-        <div id="radix"></div>
 
-      {{content-for "body"}}
+    <div id="bootstrap-modals"></div>
+    {{content-for "body"}}
 
-      <script src="{{rootURL}}assets/vendor.js"></script>
-      <script src="{{rootURL}}assets/radix.js"></script>
+    <script src="{{rootURL}}assets/vendor.js"></script>
+    <script src="{{rootURL}}assets/radix.js"></script>
 
-      {{content-for "body-footer"}}
-
-      <script src="{{rootURL}}vendor/tether.1.2.0.min.js"></script>
-      <script src="{{rootURL}}vendor/bootstrap.4.0.0-alpha.3.min.js"></script>
-    </body>
+    {{content-for "body-footer"}}
+  </body>
 </html>

@@ -1,0 +1,21 @@
+{{#if options.length}}
+  <div class="btn-group btn-block" role="group">
+    {{#list-controls/button
+      id="dropdown-filter-type"
+      disabled=disabled
+      class=(concat "dropdown-toggle btn-block" " " buttonClass)
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    }}
+      {{entypo-icon "eye" class="mr-1 d-inline d-md-none d-lg-inline d-xl-none"}}
+      <span class="d-none d-md-inline d-lg-none d-xl-inline">{{selected.label}}</span>
+    {{/list-controls/button}}
+
+    <div class="dropdown-menu {{alignmentClass}}" aria-labelledby="dropdown-filter-type">
+      {{#each filteredOptions as |option|}}
+        <a class="dropdown-item" href="javascript:void(0)" {{action "filterBy" option.key}}>{{option.label}}</a>
+      {{/each}}
+    </div>
+  </div>
+{{/if}}

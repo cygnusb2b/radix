@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-12 col-lg-6">
+    {{list-controls/search phrase=phrase disabled=isSearchDisabled onSubmit=(action "search")}}
+  </div>
+  {{!-- Fix menu alignment, once https://github.com/twbs/bootstrap/pull/26255 is merged --}}
+  <div class="col-4 col-lg-2 mt-3 mt-lg-0">
+      {{list-controls/filter
+        class="mr-2 btn-block"
+        options=filterOptions
+        ascending=ascending
+        filterBy=filterBy
+        disabled=isFilterDisabled
+        alignment="right"
+      }}
+  </div>
+  <div class="col-4 col-lg-2 mt-3 mt-lg-0">
+    {{list-controls/sort
+      class="mr-2 btn-block"
+      options=sortOptions
+      ascending=ascending
+      sortBy=sortBy
+      disabled=isSortDisabled
+      alignment="right"
+    }}
+  </div>
+  <div class="col-4 col-lg-2 mt-3 mt-lg-0">
+    {{list-controls/limit options=limitOptions limit=first alignment="right"}}
+  </div>
+</div>

@@ -9,4 +9,13 @@ export default Route.extend({
     model: function() {
         return this.get('query').execute('identity-external');
     },
+
+    actions: {
+        loadTabs: function() {
+            return [
+                { key : 'general',  text : 'General',  icon : 'ion-document',            template : 'identity/-general', active : true },
+                { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'identity/-info'     },
+            ];
+        }
+    }
 });

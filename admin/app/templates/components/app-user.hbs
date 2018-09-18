@@ -1,0 +1,46 @@
+<div class="media">
+  <img class="mr-3 d-none d-sm-inline" src="{{ avatar }}" style="width: 50px; height: 50px" alt="User avatar">
+  <div class="media-body">
+    <h5 class="mt-0">{{ item.user.givenName }} {{ item.user.familyName }}</h5>
+    <hr>
+    <div class="row">
+      <div class="col-sm-6 col-md-6 col-lg-3" title="{{moment item.user.createdDate}}">
+        {{entypo-icon "clock"}}
+        <small class="ml-2">Created {{moment-from-now item.user.createdDate}}</small>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-3" title="{{moment item.user.updatedDate}}">
+        {{entypo-icon "clock"}}
+        <small class="ml-2">Updated {{moment-from-now item.user.updatedDate}}</small>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-3" title="{{moment item.user.lastLogin}}">
+        {{entypo-icon "email"}}
+        <small class="ml-2">{{ item.user.email }}</small>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-3" title="{{moment item.user.lastSeen}}">
+        {{entypo-icon "user"}}
+        <small class="ml-2"> {{ role }} </small>
+      </div>
+    </div>
+    <hr>
+
+    <div class="row">
+      <div class="col offset-md-4 offset-lg-6">
+        {{#power-select
+          options=roles
+          selected=primaryRole
+          onchange=(action "setRole")
+          as |role|
+        }}
+          {{ role }}
+        {{/power-select}}
+      </div>
+      <div class="col">
+        <button class="btn btn-outline-danger btn-block" type="button" {{action "delete"}}>
+          {{entypo-icon "trash"}} Remove user
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{app-user-delete-modal isOpen=isDeleteModalOpen model=item onComplete="refresh"}}

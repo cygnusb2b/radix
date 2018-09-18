@@ -1,0 +1,17 @@
+#import 'radix/gql/fragments/post/list'
+
+query ListPosts($criteria: PostCriteriaInput, $pagination: PaginationInput, $sort: PostSortInput) {
+  allPosts(criteria: $criteria, pagination: $pagination, sort: $sort) {
+    totalCount
+    edges {
+      node {
+        ...PostListFragment
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

@@ -1,0 +1,8 @@
+
+fragment IdentitySettingsFragment on Identity {
+  settings {
+    enabled
+    locked
+    shadowbanned
+  }
+}

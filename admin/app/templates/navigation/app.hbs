@@ -1,0 +1,20 @@
+{{#if userManager.permissions}}
+<li class="nav-item">
+  {{#link-to "app.comments" session.data.application._id class="nav-item nav-link" title="Manage Comments"}}
+    {{entypo-icon "chat"}} <span class="d-none d-lg-inline">Comments</span>
+  {{/link-to}}
+</li>
+{{/if}}
+
+{{#if userManager.permissions.applications.edit}}
+<li class="nav-item">
+  {{#link-to "app.users" session.data.application._id class="nav-item nav-link" title="Manage Users"}}
+    {{entypo-icon "users"}} <span class="d-none d-lg-inline">Users</span>
+  {{/link-to}}
+</li>
+<li class="nav-item">
+  {{#link-to "app.settings" session.data.application._id class="nav-item nav-link" title="Manage Application Settings"}}
+    {{entypo-icon "tools"}} <span class="d-none d-lg-inline">Settings</span>
+  {{/link-to}}
+</li>
+{{/if}}

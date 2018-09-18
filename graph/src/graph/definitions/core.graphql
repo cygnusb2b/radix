@@ -1,0 +1,58 @@
+type CoreAccount {
+  id: String!
+  name: String!
+  key: String!
+}
+
+type CoreUser {
+  id: String!
+  email: String!
+  picture: String
+  givenName: String!
+  familyName: String!
+  createdDate: Date
+  updatedDate: Date
+  lastSeen: Date
+}
+
+type CoreApplication {
+  id: String!
+  name: String!
+  key: String!
+  account: CoreAccount!
+}
+
+type CoreApplicationUser {
+  id: String!
+  application: CoreApplication!
+  roles: [CoreApplicationUserRole]
+  user: CoreUser!
+}
+
+enum CoreApplicationUserRole {
+  ROLE_USER
+  ROLE_ADMIN
+  ROLE_SUPERADMIN
+}
+
+input ChangeUserPasswordInput {
+  id: String!
+  value: String!
+  confirm: String!
+}
+
+input ResetUserPasswordInput {
+  token: String!
+  value: String!
+  confirm: String!
+}
+
+type Query {
+  coreUserReset(token: String!): CoreUser!
+}
+
+type Mutation {
+  changeUserPassword(input: ChangeUserPasswordInput!): CoreUser
+  resetUserPassword(input: ResetUserPasswordInput!): CoreUser
+  sendPasswordResetEmail(email: String!): Boolean!
+}

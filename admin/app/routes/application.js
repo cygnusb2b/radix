@@ -1,15 +1,13 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
+import ActionMixin from 'radix/mixins/action-mixin';
+import { get } from '@ember/object';
+import { inject } from '@ember/service';
 
-const { inject: { service }, Route } = Ember;
-
-export default Route.extend(ApplicationRouteMixin, {
-
-    userManager: service(),
-
-    loading: service(),
-
-    session: service('session'),
+export default Route.extend(ApplicationRouteMixin, ActionMixin, {
+    userManager: inject(),
+    loading: inject(),
+    session: inject(),
 
     beforeModel: function() {
         return this._loadCurrentUser();
@@ -31,7 +29,50 @@ export default Route.extend(ApplicationRouteMixin, {
             let loading = this.get('loading');
             loading.show();
             this.refresh().finally(() => loading.hide());
-        }
+        },
+
+        showLoading() {
+            this.showLoading();
+        },
+
+        hideLoading() {
+            this.hideLoading();
+        },
+
+        transitionTo(name) {
+            return this.transitionTo(name);
+        },
+
+        transitionWithModel(routeName, model) {
+            return this.transitionTo(routeName, get(model, 'id'));
+        },
+
+        scrollToTop() {
+            window.scrollTo(0, 0);
+        },
+
+        /**
+         *
+         * @param {*} transition
+         */
+        loading(transition) {
+            this.showLoading();
+            transition.finally(() => this.hideLoading());
+            // return true;
+
+        },
+
+        /**
+         *
+         * @param {Error} e
+         */
+        error(e) {
+            if (this.get('graphErrors').isReady()) {
+                this.get('graphErrors').show(e);
+            } else {
+                this.intermediateTransitionTo('application_error', e);
+            }
+        },
     },
 
     _loadCurrentUser: function() {

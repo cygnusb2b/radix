@@ -1,0 +1,14 @@
+fragment CoreApplicationUserListFragment on CoreApplicationUser {
+  id
+  roles
+  user {
+    id
+    email
+    picture
+    givenName
+    familyName
+    createdDate
+    updatedDate
+    lastSeen
+  }
+}

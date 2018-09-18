@@ -1,0 +1,7 @@
+#import 'radix/gql/fragments/post/list'
+
+mutation UnapprovePost($input: ModelIdInput!) {
+  unapprovePost(input: $input) {
+    ...PostListFragment
+  }
+}

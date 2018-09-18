@@ -1,0 +1,6 @@
+query CoreUserReset($token: String!) {
+  coreUserReset(token: $token) {
+    id
+    email
+  }
+}

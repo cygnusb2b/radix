@@ -1,0 +1,12 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item}}
+    {{#if user-manager.permissions.applications.list}}
+      {{#link-to "core.applications.index"}}{{entypo-icon "tools"}} Core Applications{{/link-to}}
+    {{else}}
+      {{entypo-icon "tools"}} Core Applications
+    {{/if}}
+  {{/crumbs.item}}
+  {{#crumbs.item active=true}}{{ model.name }}{{#if model.deleted}} (<span class="text-danger">Deleted</span>){{/if}}{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
+{{edit-model model=model loadTabsFrom=(route-action 'loadTabs') routeName='core.applications'}}

@@ -1,6 +1,0 @@
-{
-  "name": "radix",
-  "dependencies": {
-    "selectize": "miguelcobain/selectize.js#master"
-  }
-}

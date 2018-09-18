@@ -1,13 +1,14 @@
 {{ partial 'application/-loading-overlay'}}
+{{ember-notify messageStyle="bootstrap"}}
 
 {{ confirm-modal-unsaved }}
 {{ confirm-modal-delete }}
 
 {{#if session.isAuthenticated}}
     {{!-- User is logged in: display the application, with wrapping elements --}}
-    {{ partial 'application/-nav' }}
+    {{ partial 'navigation' }}
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-xl-12">
                 {{ outlet }}
@@ -16,8 +17,5 @@
     </div>
 {{else}}
     {{!-- User is not logged in: show the splash screen, without wrappers --}}
-    {{login-splash}}
+    {{ outlet }}
 {{/if}}
-
-
-

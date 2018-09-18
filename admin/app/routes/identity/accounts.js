@@ -13,8 +13,8 @@ export default Route.extend({
     actions: {
         loadTabs: function() {
             return [
-                { key : 'general',  text : 'General',  icon : 'ion-document',            template : 'identity/accounts/-general', active : true },
-                { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'identity/accounts/-info'     },
+                { key : 'general',  text : 'General',  icon : 'ion-document',            template : 'identity/-general', active : true },
+                { key : 'info',     text : 'Info',     icon : 'ion-information-circled', template : 'identity/-info'     },
             ];
         }
     }

@@ -1,0 +1,17 @@
+#import 'radix/gql/fragments/core-application-user/list'
+
+query ListCoreApplicationUsers($criteria: CoreApplicationUserCriteriaInput, $pagination: PaginationInput, $sort: CoreApplicationUserSortInput) {
+  allCoreApplicationUsers(criteria: $criteria, pagination: $pagination, sort: $sort) {
+    totalCount
+    edges {
+      node {
+        ...CoreApplicationUserListFragment
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

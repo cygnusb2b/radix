@@ -1,38 +1,56 @@
 version: '3'
 services:
+  graph:
+    tty: true
+    image: node:8
+    entrypoint: yarn start
+    working_dir: /app
+    volumes:
+      - ./graph:/app:cached
+      - graph_node_modules:/app/node_modules:cached
+    depends_on:
+      - mongo
+      - server
+    ports:
+      - "${PORT-8700}:${PORT-8700}"
+    environment:
+      PORT: ${PORT-8700}
+      APP_HOST: "${APP_HOST-server}:80"
+      MONGO_DSN: ${MONGO_DSN-mongodb://mongo/radix}
+
   server_install:
-    image: radix_apache:latest
+    image: radix_server:latest
     entrypoint: /app/entrypoint.sh
     volumes:
       - ./server:/var/www/html:cached
-      - ./server/vendor:/var/www/html/vendor:cached
-      - server_cache:/var/www/html/app/cache:cached
+      - server_vendor:/var/www/html/vendor:cached
+      - server_cache:/var/www/html/var/cache:cached
       - server_composer:/var/www/.composer/cache:cached
     environment:
-      APP: ${APP-acbm:fcp}
+      APP: ${APP-cygnus:ofcr}
       COMPOSER_ALLOW_SUPERUSER: 1
       COMPOSER_NO_INTERACTION: 1
     networks:
       - default
 
-  apache:
+  server:
+    tty: true
     build:
       context: server/
       dockerfile: docker/Dockerfile
-    image: radix_apache:latest
+    image: radix_server:latest
     ports:
-      - "${RADIX_APP_PORT-8700}:80"
+      - "${RADIX_APP_PORT-8710}:80"
     volumes:
       - ./server:/var/www/html:cached
-      - ./server/vendor:/var/www/html/vendor:cached
-      - server_cache:/var/www/html/app/cache
+      - server_vendor:/var/www/html/vendor:cached
+      - server_cache:/var/www/html/var/cache:cached
     environment:
-      APP: ${APP-acbm:fcp}
+      APP: ${APP-cygnus:ofcr}
     depends_on:
       - server_install
       - redis
       - mongo
-      - elastic
     networks:
       - default
 
@@ -54,32 +72,21 @@ services:
       default:
         aliases:
           - "${RADIX_REDIS_HOST-redis}"
-  elastic:
-    image: elasticsearch:1.4.5
-    volumes:
-      - elastic:/usr/share/elasticsearch/data:cached
-    ports:
-      - "${RADIX_ES_PORT-8703}:9200"
-    networks:
-      default:
-        aliases:
-          - "${RADIX_ELASTIC_HOST-elastic}"
 
   admin_install:
     tty: true
-    image: danlynn/ember-cli:2.11.1-node_6.10
+    image: danlynn/ember-cli:3.1.2
     volumes:
       - ./admin:/myapp:cached
-      - node_modules:/myapp/node_modules
-      - bower_components:/myapp/bower_components
-      - tmp:/myapp/tmp
+      - ember_node_modules:/myapp/node_modules:cached
+      - ember_tmp:/myapp/tmp
     restart: on-failure
     working_dir: /myapp
-    entrypoint: ./install.sh
+    entrypoint: yarn
 
   admin:
     tty: true
-    image: danlynn/ember-cli:2.11.1-node_6.10
+    image: danlynn/ember-cli:3.1.2
     ports:
       - "${EMBER_SERVE_PORT-8705}:${EMBER_SERVE_PORT-8705}"
       - "${EMBER_LIVER_PORT-8706}:${EMBER_LIVER_PORT-8706}"
@@ -90,9 +97,8 @@ services:
       - default
     volumes:
       - ./admin:/myapp:cached
-      - node_modules:/myapp/node_modules
-      - bower_components:/myapp/bower_components
-      - tmp:/myapp/tmp
+      - ember_node_modules:/myapp/node_modules:cached
+      - ember_tmp:/myapp/tmp
     restart: on-failure
     entrypoint: "./node_modules/.bin/ember server --port ${EMBER_SERVE_PORT-8705} --live-reload-port ${EMBER_LIVER_PORT-8706} --proxy ${EMBER_PROXY-http://docker.for.mac.host.internal:8700}"
 
@@ -101,12 +107,12 @@ volumes:
     driver_opts:
       type: tmpfs
       device: tmpfs
+  server_vendor: {}
   server_composer: {}
   mongo: {}
-  elastic: {}
-  node_modules: {}
-  bower_components: {}
-  tmp:
+  ember_node_modules: {}
+  graph_node_modules: {}
+  ember_tmp:
     driver_opts:
       type: tmpfs
       device: tmpfs

@@ -13,7 +13,6 @@ node {
     nodeBuilder.inside("-v ${env.WORKSPACE}/admin:/var/www/html -u 0:0 --entrypoint=''") {
       stage('Build App') {
         sh "cd /var/www/html && yarn install --silent"
-        sh "npm install -g bower && cd /var/www/html && bower install --quiet --allow-root"
       }
       stage('Test App') {
         sh "cd /var/www/html && ember build"

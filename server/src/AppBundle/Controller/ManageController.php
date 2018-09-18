@@ -17,6 +17,7 @@ class ManageController extends AbstractController
      */
     public function configAction(Request $request)
     {
+        $request->getSession()->start();
         $config = $this->getEmberConfiguration();
         $contents = rawurlencode(json_encode($config));
         return new Response(str_replace('__CONFIG__', $contents, "(function(document) {

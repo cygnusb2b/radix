@@ -1,0 +1,18 @@
+#import 'radix/gql/fragments/post/approval'
+#import 'radix/gql/fragments/post/account'
+#import 'radix/gql/fragments/post/stream'
+#import 'radix/gql/fragments/timestampable'
+
+fragment PostListFragment on Post {
+  id
+  body
+  displayName
+  ipAddress
+  picture
+  _type
+
+  ...PostApprovalFragment
+  ...PostAccountFragment
+  ...PostStreamFragment
+  ...TimestampableFragment
+}

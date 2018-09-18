@@ -1,0 +1,6 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item}}{{#link-to "core.accounts.index"}}{{entypo-icon "network"}} Core Accounts{{/link-to}}{{/crumbs.item}}
+  {{#crumbs.item active=true}}{{ model.name }}{{#if model.deleted}} (<span class="text-danger">Deleted</span>){{/if}}{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
+{{edit-model model=model loadTabsFrom=(route-action 'loadTabs') routeName='core.accounts'}}

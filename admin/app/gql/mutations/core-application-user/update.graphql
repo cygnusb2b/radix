@@ -1,0 +1,7 @@
+#import 'radix/gql/fragments/core-application-user/list'
+
+mutation UpdateCoreApplicationUser($input: UpdateCoreApplicationUserInput!) {
+  updateCoreApplicationUser(input: $input) {
+    ...CoreApplicationUserListFragment
+  }
+}

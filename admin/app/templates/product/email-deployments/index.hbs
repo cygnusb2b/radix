@@ -1,0 +1,13 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item active=true}}{{entypo-icon "browser"}} Email Deployment Products{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
+<div class="row">
+    <div class="col">
+        {{#-browse/list routeName='product.email-deployments' items=model as |item|}}
+          <small class="list-group-item-text">{{item.model.id}}</small>
+          <h5 class="list-group-item-heading">{{item.model.name}}</h5>
+          <small class="list-group-item-text">{{item.model.createdDate}}</small>
+        {{/-browse/list}}
+    </div>
+</div>

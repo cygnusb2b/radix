@@ -1,19 +1,42 @@
-import Ember from 'ember';
+import EmberRouter from '@ember/routing/router';
 import config from './config/environment';
 
-const Router = Ember.Router.extend({
+const Router = EmberRouter.extend({
   location: config.locationType,
   rootURL: config.rootURL
 });
 
 Router.map(function() {
     this.route('login');
+    this.route('reset', { path: '/reset/:token' });
 
     this.route('user', function() {
         this.route('settings');
     });
 
-    this.route('comments', function() {
+    this.route('app', { path: 'app/:id' }, function() {
+        this.route('comments');
+        this.route('users');
+        this.route('settings');
+    })
+
+    this.route('identities', function() {
+        this.route('edit', { path: '/edit/:id' });
+    });
+
+    this.route('core', function() {
+        this.route('accounts', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+        this.route('applications', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
+        this.route('users', function() {
+            this.route('create');
+            this.route('edit', { path: '/edit/:id' });
+        });
     });
 
     this.route('modeling', function() {

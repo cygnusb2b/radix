@@ -1,0 +1,36 @@
+<div class="sticky-top z-depth-1-half">
+  <nav class="navbar navbar-expand navbar-dark bg-primary">
+    {{#link-to 'index' class='navbar-brand'}}radix{{/link-to}}
+
+    <ul class="navbar-nav mr-auto">
+      {{partial "navigation/app"}}
+      {{#if userManager.permissions.allowAll}}
+      <li class="nav-item">
+        <li class="nav-link disabled">|</li>
+      </li>
+      {{partial "navigation/identities"}}
+      {{partial "navigation/demographics"}}
+      {{partial "navigation/products"}}
+      {{partial "navigation/forms"}}
+      {{partial "navigation/integrations"}}
+      {{partial "navigation/core"}}
+      {{/if}}
+    </ul>
+
+    {{#if userManager.permissions}}
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+          <a href="https://as3.gitbook.io/radix" title="Application Documentation" class="nav-link" target="_blank" rel="noopener noreferrer">
+            {{entypo-icon "text-document"}} <span class="d-none d-md-inline">Documentation</span>
+          </a>
+      </li>
+
+      {{select-application onAppChange="refreshApp"}}
+      {{user-nav}}
+    </ul>
+    {{/if}}
+
+  </nav>
+
+  {{loading-progress class="bg-primary"}}
+</div>

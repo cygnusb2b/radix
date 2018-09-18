@@ -28,6 +28,7 @@ export default Component.extend({
         changeApp: function(app) {
             this.get('session').set('data.application', app);
             this.sendAction('onAppChange');
+            this.$('.dropdown-menu').removeClass('show');
         }
     }
 });

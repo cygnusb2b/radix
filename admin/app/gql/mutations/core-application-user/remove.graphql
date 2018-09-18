@@ -1,0 +1,3 @@
+mutation RemoveCoreApplicationUser($input: ModelIdInput!) {
+  removeCoreApplicationUser(input: $input)
+}

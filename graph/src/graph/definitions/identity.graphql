@@ -1,0 +1,77 @@
+type Query {
+  allIdentities(pagination: PaginationInput = {}, sort: IdentitySortInput = {}): IdentityConnection!
+  searchIdentities(pagination: PaginationInput = {}, phrase: String!): IdentityConnection!
+  identity(input: ModelIdInput!): Identity!
+}
+
+type Mutation {
+  banIdentity(input: ModelIdInput!): Identity!
+  unbanIdentity(input: ModelIdInput!): Identity!
+  updateIdentity(input: UpdateIdentityInput!): Identity!
+}
+
+enum IdentitySortField {
+  displayName
+  primaryEmail
+  createdDate
+}
+
+enum IdentityType {
+  internal
+  external
+  account
+}
+
+type Identity implements Timestampable {
+  id: String!
+  displayName: String
+  type: IdentityType!
+  picture: String
+  deleted: Boolean
+  primaryEmail: String
+  givenName: String
+  familyName: String
+  history: IdentityHistory
+  settings: IdentitySettings
+
+  createdDate: Date
+}
+
+type IdentityHistory {
+  lastLogin: Date
+  lastSeen: Date
+  logins: Int!
+  remembers: Int!
+}
+
+type IdentitySettings {
+  enabled: Boolean
+  locked: Boolean
+  shadowbanned: Boolean
+}
+
+type IdentityConnection {
+  totalCount: Int!
+  edges: [IdentityEdge]!
+  pageInfo: PageInfo!
+}
+
+type IdentityEdge {
+  node: Identity!
+  cursor: Cursor!
+}
+
+input IdentitySortInput {
+  field: IdentitySortField! = createdDate
+  order: Int! = -1
+}
+
+input UpdateIdentityInput {
+  id: String!
+  payload: IdentityPayloadInput!
+}
+
+input IdentityPayloadInput {
+  displayName: String
+  picture: String
+}

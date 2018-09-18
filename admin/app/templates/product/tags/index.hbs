@@ -1,0 +1,12 @@
+{{#nav-breadcrumbs as |crumbs|}}
+  {{#crumbs.item active=true}}{{entypo-icon "browser"}} Product Tags{{/crumbs.item}}
+{{/nav-breadcrumbs}}
+
+<div class="row">
+    <div class="col">
+        {{#-browse/list routeName='product.tags' items=model as |item|}}
+          <small class="list-group-item-text">{{item.model.id}}</small>
+          <h5 class="list-group-item-heading">{{item.model.name}}</h5>
+        {{/-browse/list}}
+    </div>
+</div>

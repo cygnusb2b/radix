@@ -1,0 +1,32 @@
+# import * from 'identity.graphql'
+# import * from 'post.graphql'
+# import * from 'post-stream.graphql'
+# import * from 'application-user.graphql'
+# import * from 'core.graphql'
+
+scalar Date
+scalar Cursor
+scalar Mixed
+scalar JSON
+
+type Query {
+  ping: String!
+}
+
+interface Timestampable {
+  createdDate: Date
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  endCursor: Cursor
+}
+
+input PaginationInput {
+  first: Int! = 25
+  after: Cursor
+}
+
+input ModelIdInput {
+  id: String!
+}

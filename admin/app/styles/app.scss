@@ -1,0 +1,135 @@
+@import "node_modules/bootswatch/dist/flatly/variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootswatch/dist/flatly/bootswatch";
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: $success;
+}
+
+.btn.disabled {
+  cursor: not-allowed;
+}
+
+@import "ember-power-select/themes/bootstrap";
+@import "ember-power-select";
+.in-modal-dropdown {
+  z-index: 1100;
+}
+
+.ember-power-select-trigger {
+  padding: 2px;
+}
+
+@import "ember-power-calendar";
+.ember-power-calendar {
+  @include ember-power-calendar($cell-size: 30px);
+}
+
+@import "z-depth";
+
+// Fluid container that acts like fixed. Main wrapper.
+@include media-breakpoint-up(xl) {
+  .container-fluid .col.main {
+    padding-left: 6.0rem;
+    padding-right: 6.0rem;
+  }
+}
+.container-fluid .col.main {
+  padding-bottom: 1rem;
+}
+
+
+// Utility for removing underlines in links.
+a.no-underline {
+  text-decoration: none;
+}
+
+// Compensate for bottom progress bar. Ensures nav bar links are vertically centered.
+nav.navbar {
+  padding-top: 1.0em;
+}
+
+// Ember link actions, or explicitally clickable.
+a[data-ember-action]:not(:disabled),
+.clickable {
+    cursor: pointer;
+}
+
+// Form footer progress bars.
+form .progress {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+// Add styling to ember-notify alerts
+.ember-notify.alert {
+  box-shadow: $z-depth-2;
+  border: none !important;
+}
+
+// The primary loading progress bar, found below nav.
+.loading.progress {
+  border-radius: 0 !important;
+  height: 0.3rem;
+}
+
+// Add depth to dropdowns
+.dropdown-menu {
+  box-shadow: $z-depth-2;
+  border: none !important;
+}
+
+// Add depth to modals
+.modal-content {
+  border: 0;
+  box-shadow: $z-depth-3;
+}
+
+// Add depth to cards
+.card.list-index, .card.model-form, .card.error {
+  box-shadow: $z-depth-1;
+  border: none !important;
+}
+.card.error {
+  box-shadow: $z-depth-1-half;
+}
+
+// Force create button to bottom right; add depth
+.fixed-bottom {
+  box-shadow: $z-depth-2;
+}
+
+.fixed-bottom.right {
+  left: inherit;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.fixed-bottom.left {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+// Override the "green" success validation state with regular field colors
+.was-validated .form-control:valid, .form-control.is-valid, .was-validated .custom-select:valid, .custom-select.is-valid {
+  border-color: $input-border-color;
+}
+.was-validated .form-control:valid:focus, .form-control.is-valid:focus, .was-validated .custom-select:valid:focus, .custom-select.is-valid:focus {
+  border-color: $input-focus-border-color;
+  box-shadow: $input-focus-box-shadow;
+}
+
+// Add min-height utility
+.mnh-100 {
+  min-height: 100%;
+}
+
+// Fixes label issues with ember-toggle
+.x-toggle-component label {
+  margin-bottom: 0 !important;
+}
+.x-toggle-flip.medium {
+  width: 4.5em;
+}

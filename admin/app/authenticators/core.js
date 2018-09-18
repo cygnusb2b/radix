@@ -1,57 +1,30 @@
-import Ember from 'ember';
 import Base from 'ember-simple-auth/authenticators/base';
-
-const { $, RSVP, inject: { service } } = Ember;
+import { Promise } from 'rsvp';
+import $ from 'jquery';
 
 export default Base.extend({
 
-    session: service('session'),
-
-    restore: function(data) {
-        let _self = this;
-        return new RSVP.Promise(function(resolve, reject) {
-            $.get('/auth/user/retrieve').done(function(response) {
-                if (!response.data.id || (response.data.id !== data.id)) {
-                    // The backend either killed the user session, or there was an identifier mismatch.
-                    reject();
-                } else {
-                    resolve(response.data);
-                }
-            }).fail(function(jqXHR) {
-                reject(_self.formatError(jqXHR));
-            });
-        });
-    },
-
-    authenticate: function(username, password) {
-        let _self = this;
-        return new RSVP.Promise(function(resolve, reject) {
-            $.ajax('/auth/user/submit', {
-                method      : 'POST',
-                contentType : 'application/json',
-                data: JSON.stringify({ data: { username: username, password: password } })
-            }).done(function(response) {
-                resolve(response.data);
-            }).fail(function(jqXHR) {
-                reject(_self._formatError(jqXHR));
-            });
-        });
-    },
-
-    invalidate: function() {
-        return new RSVP.Promise(function(resolve) {
-            $.get('/auth/user/destroy').done(function() {
-                resolve({});
-            }).fail(function() {
-                resolve({}); // Always resolve.
-            });
-        });
-    },
-
-    _formatError: function(jqXHR) {
-        if (jqXHR.responseJSON && jqXHR.responseJSON.errors) {
-            return jqXHR.responseJSON.errors[0];
-        }
-        return 'An unknown, fatal error occurred. Please try again.';
+  restore: (data) => new Promise((resolve, reject) => {
+    if (data.token) {
+      resolve(data);
+    } else {
+      reject(new Error('No token present'));
     }
+  }),
+
+  authenticate: (username, password) => {
+    const credentials = { username, password };
+    const settings = {
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ data: credentials })
+    };
+    return new Promise((resolve, reject) => {
+      $.ajax('/auth/user/submit', settings)
+        .done(({ data }) => resolve(data))
+        .fail(e => reject(e));
+    });
+  },
+
+  invalidate: () => $.get('/auth/user/destroy'),
 });
