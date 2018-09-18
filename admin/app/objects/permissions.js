@@ -1,7 +1,7 @@
 import EmberObject from '@ember/object';
 import Rules from 'radix/objects/permission-rules';
-
-const { typeOf } = Ember;
+import { typeOf } from '@ember/utils';
+import { defineProperty } from '@ember/object';
 
 export default EmberObject.extend({
 
@@ -24,7 +24,7 @@ export default EmberObject.extend({
   setUnknownProperty(key, value) {
     const toSet = (true === this.get('allowAll')) ? { all: true } : value;
     const rule = Rules.create(toSet);
-    Ember.defineProperty(this, key, null, rule);
+    defineProperty(this, key, null, rule);
     return rule;
   }
 

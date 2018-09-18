@@ -1,8 +1,9 @@
 import Ember from 'ember';
 import JSONAPIAdapter from 'ember-data/adapters/json-api';
 import DataAdapterMixin from 'ember-simple-auth/mixins/data-adapter-mixin';
-import { inject } from '@ember/service';
 import Inflector from 'ember-inflector';
+import { inject } from '@ember/service';
+import { dasherize } from '@ember/string';
 
 export default JSONAPIAdapter.extend(DataAdapterMixin, {
   queryService: inject('model-query'),
@@ -17,7 +18,7 @@ export default JSONAPIAdapter.extend(DataAdapterMixin, {
   },
 
   pathForType: function (type) {
-    return Inflector.inflector.singularize(Ember.String.dasherize(type));
+    return Inflector.inflector.singularize(dasherize(type));
   },
 
   findMany: function (store, type, ids, snapshots) {

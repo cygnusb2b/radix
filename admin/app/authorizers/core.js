@@ -1,21 +1,16 @@
-import Ember from 'ember';
+import { isEmpty } from '@ember/utils';
+import { inject } from '@ember/service';
 import Base from 'ember-simple-auth/authorizers/base';
-
-const { isEmpty, inject: { service } } = Ember;
 
 export default Base.extend({
 
-    session: service('session'),
+  session: inject(),
 
-    authorize: function(sessionData, block) {
-        const token     = sessionData['token'];
-        const publicKey = this.get('session.data.application.key');
+  authorize: function (sessionData, block) {
+    const token = sessionData['token'];
+    const publicKey = this.get('session.data.application.key');
 
-        if (!isEmpty(token)) {
-            block('Authorization', `Bearer ${token}`);
-        }
-        if (!isEmpty(publicKey)) {
-            block('X-Radix-AppId', publicKey);
-        }
-    }
+    if (!isEmpty(token)) block('Authorization', `Bearer ${token}`);
+    if (!isEmpty(publicKey)) block('X-Radix-AppId', publicKey);
+  }
 });

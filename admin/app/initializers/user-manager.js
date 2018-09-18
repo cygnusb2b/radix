@@ -1,10 +1,12 @@
-export function initialize(appInstance) {
-  appInstance.inject('controller', 'user-manager', 'service:user-manager');
-  appInstance.inject('route', 'user-manager', 'service:user-manager');
-  appInstance.inject('component', 'user-manager', 'service:user-manager');
+const name = 'user-manager';
+
+export function initialize(application) {
+  application.inject('controller', name, `service:${name}`);
+  application.inject('route', name, `service:${name}`);
+  application.inject('component', name, `service:${name}`);
 }
 
 export default {
-  name: 'user-manager',
-  initialize: initialize
+  name,
+  initialize,
 };

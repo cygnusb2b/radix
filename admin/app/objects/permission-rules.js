@@ -1,14 +1,10 @@
-import Ember from 'ember';
+import Object from '@ember/object';
 
-export default Ember.Object.extend({
-
+export default Object.extend({
   all: null,
 
   unknownProperty() {
     const all = this.get('all');
-    if (true === all) {
-      return true;
-    }
-    return false;
+    return true === all;
   },
 });

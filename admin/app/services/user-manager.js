@@ -1,19 +1,20 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import { inject } from '@ember/service';
+import { isEmpty } from '@ember/utils';
+import { Promise } from 'rsvp';
+import Service from '@ember/service';
 import Permissions from 'radix/objects/permissions';
 
-const { inject: { service }, isEmpty, RSVP: { Promise }, Service, computed, get } = Ember;
-
 export default Service.extend({
-  session : service('session'),
-  store   : service(),
-  user    : computed.reads('session.data.authenticated'),
+  session: inject(),
+  store: inject(),
+  user: computed.reads('session.data.authenticated'),
 
   load() {
     if (!this.get('applicationId') && this.get('session').isAuthenticated) {
       this.get('session').invalidate();
       return Promise.reject('No application ID found!');
     }
-    const appId = this.get('session.data.application._id');
     return Promise.resolve();
   },
 
@@ -21,7 +22,7 @@ export default Service.extend({
     return this.get('session');
   },
 
-  application: computed('session.data.{application,authenticated.applications.firstObject}', function() {
+  application: computed('session.data.{application,authenticated.applications.firstObject}', function () {
     if (!this.get('session.data.application')) {
       this.set('session.data.application', this.get('session.data.authenticated.applications.firstObject'));
     }
@@ -31,16 +32,14 @@ export default Service.extend({
   applicationId: computed.reads('application._id'),
   applicationKey: computed.reads('application.id'),
 
-  permissions: computed('user.id', 'user.roles.[]', 'applicationKey', function() {
+  permissions: computed('user.{id,roles.[]}', 'applicationKey', function () {
     const userId = this.get('user.id');
     const permissions = new Permissions();
     if (isEmpty(userId)) {
       return;
     }
-    const defaultRole = 'ROLE_CORE\\USER';
     const roles = this.get('session.data.authenticated.roles');
     const currentAppKey = this.get('applicationKey');
-    const role = (roles && get(roles, 'firstObject')) ? get(roles, 'firstObject') : defaultRole;
     const superAdminRole = `ROLE_${currentAppKey}\\SUPERADMIN`.toUpperCase();
     const adminRole = `ROLE_${currentAppKey}\\ADMIN`.toUpperCase();
 

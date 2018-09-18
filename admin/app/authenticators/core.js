@@ -1,7 +1,6 @@
-import Ember from 'ember';
 import Base from 'ember-simple-auth/authenticators/base';
-
-const { $, RSVP: { Promise }, inject: { service } } = Ember;
+import { Promise } from 'rsvp';
+import $ from 'jquery';
 
 export default Base.extend({
 
