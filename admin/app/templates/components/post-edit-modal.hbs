@@ -1,7 +1,7 @@
 {{#bs-modal show=isOpen onHidden=(action "clear") as |modal|}}
   <form {{action "updatePost" on="submit"}}>
     {{#modal.header}}
-      <h5 class="modal-title">Update Post</h5>
+      <h5 class="modal-title">Modify Post</h5>
       <button {{action modal.actions.hide}} type="button" class="close" aria-label="Close">
         {{entypo-icon "cross"}}
       </button>

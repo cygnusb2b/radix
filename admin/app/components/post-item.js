@@ -6,6 +6,10 @@ import UnapprovePost from 'radix/gql/mutations/post/unapprove';
 import ApprovePost from 'radix/gql/mutations/post/approve';
 import UnflagPost from 'radix/gql/mutations/post/unflag';
 import FlagPost from 'radix/gql/mutations/post/flag';
+import BanIdentity from 'radix/gql/mutations/identity/ban';
+import UnbanIdentity from 'radix/gql/mutations/identity/unban';
+import DeletePost from 'radix/gql/mutations/post/delete';
+import UndeletePost from 'radix/gql/mutations/post/undelete';
 
 export default Component.extend(ComponentQueryManager, ActionMixin, {
   item: null,
@@ -15,7 +19,6 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
   classNameBindings: [ 'visibilityClass' ],
 
   isEditPostOpen: false,
-  isDeletePostOpen: false,
   isModerateAccountOpen: false,
 
   title: computed('item.{_type,stream.title}', function() {
@@ -69,6 +72,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
     edit() {
       if (!this.isDestroyed) this.set('isEditPostOpen', true);
     },
+
     async approve() {
       this.startAction();
       const mutation = ApprovePost;
@@ -99,6 +103,7 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
         this.endAction();
       }
     },
+
     async flag() {
       this.startAction();
       const mutation = FlagPost;
@@ -129,8 +134,69 @@ export default Component.extend(ComponentQueryManager, ActionMixin, {
         this.endAction();
       }
     },
-    delete() {
-      if (!this.isDestroyed) this.set('isDeletePostOpen', true);
+
+    async ban() {
+      this.startAction();
+      const mutation = BanIdentity;
+      const id = this.get('item.account.id');
+      const variables = { input: { id } };
+      try {
+        await this.get('apollo').mutate({ mutation, variables }, 'banIdentity');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('User banned.');
+      } catch (e) {
+        this.get('graphErrors').show(e)
+      } finally {
+        this.endAction();
+      }
+    },
+
+    async unban() {
+      this.startAction();
+      const mutation = UnbanIdentity;
+      const id = this.get('item.account.id');
+      const variables = { input: { id } };
+      try {
+        await this.get('apollo').mutate({ mutation, variables }, 'unbanIdentity');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('User unbanned.');
+      } catch (e) {
+        this.get('graphErrors').show(e)
+      } finally {
+        this.endAction();
+      }
+    },
+
+    async delete() {
+      this.startAction();
+      const mutation = DeletePost;
+      const id = this.get('item.id');
+      const variables = { input: { id } };
+      try {
+        await this.get('apollo').mutate({ mutation, variables }, 'deletePost');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('Post deleted.');
+      } catch (e) {
+        this.get('graphErrors').show(e)
+      } finally {
+        this.endAction();
+      }
+    },
+
+    async undelete() {
+      this.startAction();
+      const mutation = UndeletePost;
+      const id = this.get('item.id');
+      const variables = { input: { id } };
+      try {
+        await this.get('apollo').mutate({ mutation, variables }, 'undeletePost');
+        if (!this.isDestroyed) this.set('isOpen', false);
+        this.get('notify').info('Post undeleted.');
+      } catch (e) {
+        this.get('graphErrors').show(e)
+      } finally {
+        this.endAction();
+      }
     },
   },
 });

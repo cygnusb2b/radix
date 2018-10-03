@@ -1,6 +1,13 @@
 <div class="media">
   <img class="mr-3 d-none d-sm-inline" src="{{ avatar }}" style="width: 50px; height: 50px" alt="User avatar">
   <div class="media-body">
+    <div class="btn-group-vertical float-right ml-1" role="group">
+      <a href="{{ item.stream.url }}" class="btn btn-sm btn-outline-primary" target="_blank" title="View Thread">
+        {{entypo-icon "popup"}}
+        <span class="d-none d-md-inline">View Thread</span>
+      </a>
+      {{partial "components/post-item-actions"}}
+    </div>
     <h5 class="mt-0">{{ title }}</h5>
     <p class="mb-3">{{item.body}}</p>
     <hr>
@@ -11,7 +18,15 @@
         </div>
       <div class="col-sm-6 col-md-6 col-lg-3">
         {{entypo-icon "user"}}
-        <small class="ml-2">{{{ displayName }}}</small>
+        <small class="ml-2">
+          {{#if item.account}}
+            <button type="button" class="btn btn-link btn-sm" title="Moderate User" {{action "moderate"}}>
+              {{{displayName}}}
+            </button>
+          {{else}}
+            {{{displayName}}}
+          {{/if}}
+        </small>
         </div>
       <div class="col-sm-6 col-md-6 col-lg-3">
         {{entypo-icon "network"}}
@@ -24,16 +39,8 @@
         </small>
       </div>
     </div>
-    <hr>
-
-    <div class="row">
-      <div class="col">
-        {{partial "components/post-item-actions"}}
-      </div>
-    </div>
   </div>
 </div>
 
 {{post-edit-modal isOpen=isEditPostOpen model=item}}
-{{post-delete-modal isOpen=isDeletePostOpen model=item}}
 {{post-account-modal isOpen=isModerateAccountOpen model=item.account}}
