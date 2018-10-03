@@ -12,7 +12,7 @@
   "repository": "",
   "scripts": {
     "build": "ember build",
-    "start": "ember server",
+    "start": "ember serve --proxy http://dev.radix.as3.io:8700",
     "test": "ember test"
   },
   "devDependencies": {
