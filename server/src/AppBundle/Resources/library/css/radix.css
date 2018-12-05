@@ -52,6 +52,15 @@ ins {
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
 }
+
+@supports (-webkit-overflow-scrolling: touch) {
+    .platform-element[data-element=modal] {
+        position: absolute;
+        height: 100%;
+    }
+}
+
+
 .platform-element[data-element=modal]#guidrSubmitModal {
     z-index: 3000000;
 
