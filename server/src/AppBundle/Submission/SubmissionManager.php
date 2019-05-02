@@ -104,6 +104,13 @@ class SubmissionManager
             $result->throwException();
         }
 
+        // Send email notifications.
+        $this->notificationManager->sendNotificationFor($submission);
+        $this->notificationManager->notifySubmission($submission, $payload->getNotify());
+
+        // Return the response.
+        return $this->callHookFor($sourceKey, 'createResponseFor', [$submission]);
+
         // Send the can save hook to allow for additional save checks.
         $this->callHookFor($sourceKey, 'canSave', []);
 
@@ -120,13 +127,6 @@ class SubmissionManager
         if (null !== $identity) {
             $this->identityManager->setActiveIdentity($identity);
         }
-
-        // Send email notifications.
-        $this->notificationManager->sendNotificationFor($submission);
-        $this->notificationManager->notifySubmission($submission, $payload->getNotify());
-
-        // Return the response.
-        return $this->callHookFor($sourceKey, 'createResponseFor', [$submission]);
     }
 
     /**
