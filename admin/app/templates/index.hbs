@@ -9,7 +9,7 @@
         <div class="list-group-item d-flex justify-content-between align-items-center">
           {{#if user-manager.permissions}}
             <span class="">{{entypo-icon "chat" class="mr-3"}}Moderate Comments</span>
-            {{#link-to "app.comments" this.user-manager.applicationId class="btn btn-sm btn-primary"}}go{{/link-to}}
+            {{#link-to "app.comments" user-manager.applicationId class="btn btn-sm btn-primary"}}go{{/link-to}}
           {{else}}
             <span class="text-muted">{{entypo-icon "chat" class="mr-3"}}Moderate Comments</span>
             <button type="button" class="btn btn-sm btn-disabled" title="No access -- contact your manager for permission.">go</button>
@@ -19,7 +19,7 @@
         <div class="list-group-item d-flex justify-content-between align-items-center">
           {{#if user-manager.permissions.applications.edit}}
             <span class="">{{entypo-icon "users" class="mr-3"}}Manage Users</span>
-            {{#link-to "app.users" this.user-manager.applicationId class="btn btn-sm btn-primary"}}go{{/link-to}}
+            {{#link-to "app.users" user-manager.applicationId class="btn btn-sm btn-primary"}}go{{/link-to}}
           {{else}}
             <span class="text-muted">{{entypo-icon "users" class="mr-3"}}Manage Users</span>
             <button type="button" class="btn btn-sm btn-disabled" title="No access -- contact your manager for permission.">go</button>
@@ -29,7 +29,7 @@
         <div class="list-group-item d-flex justify-content-between align-items-center">
           {{#if user-manager.permissions.applications.edit}}
             <span class="">{{entypo-icon "tools" class="mr-3"}}Manage Settings</span>
-            {{#link-to "app.settings" this.user-manager.applicationId class="btn btn-sm btn-primary"}}go{{/link-to}}
+            {{#link-to "app.settings" user-manager.applicationId class="btn btn-sm btn-primary"}}go{{/link-to}}
           {{else}}
             <span class="text-muted">{{entypo-icon "tools" class="mr-3"}}Manage Settings</span>
             <button type="button" class="btn btn-sm btn-disabled" title="No access -- contact your manager for permission.">go</button>
