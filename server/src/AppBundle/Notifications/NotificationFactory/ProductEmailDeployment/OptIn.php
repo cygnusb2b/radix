@@ -27,7 +27,7 @@ class OptIn implements NotificationFactoryInterface
         }
         foreach ($submission->getStore()->findQuery('product', ['_id' => ['$in' => $ids]]) as $product) {
             $id = (string) $product->getId();
-            $modifiedSubscriptions[$id] = ['name' => $product->get('name'), 'status' => ($optIns[$id] && ($optIns[$id] !== false || $optIns[$id] !== "false")) ? 'Subscribed' : 'Unsubscribed'];
+            $modifiedSubscriptions[$id] = ['name' => $product->get('name'), 'status' => ($optIns[$id] && $optIns[$id] !== "false") ? 'Subscribed' : 'Unsubscribed'];
         }
 
         $args['modifiedSubscriptions'] = $modifiedSubscriptions;
