@@ -138,7 +138,7 @@ class SubmissionManager
         $submission = $this->getStore()->create('input-submission');
         $submission->set('source', $inputSource);
 
-        if (!empty($ipAddress) {
+        if (!empty($ipAddress)) {
             $submission->set('ipAddress', $ipAddress);
             // @todo Get IP address info.
         }

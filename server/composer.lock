@@ -255,8 +255,8 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/3aa432bc60ac41a9faa4af90ac80d03ddc77c808",
-                "reference": "3aa432bc60ac41a9faa4af90ac80d03ddc77c808",
+                "url": "https://api.github.com/repos/as3io/omeda-sdk/zipball/9e63dce42965013aed78fb40985262af35f3b8a4",
+                "reference": "9e63dce42965013aed78fb40985262af35f3b8a4",
                 "shasum": ""
             },
             "require": {
