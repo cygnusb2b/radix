@@ -27,6 +27,6 @@ class AccountIdentityTransformer extends AbstractTransformer
      */
     public function getTransformTypes()
     {
-        return ['customer-account', 'customer-identity']
+        return ['customer-account', 'customer-identity'];
     }
 }
