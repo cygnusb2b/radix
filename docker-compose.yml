@@ -51,6 +51,10 @@ services:
       - server_cache:/var/www/html/var/cache:cached
     environment:
       APP: ${APP-cygnus:ofcr}
+      SYMFONY_MAILER_PASSWORD: ${SYMFONY_MAILER_PASSWORD-not-set}
+      SYMFONY_SECRET: ${SYMFONY_SECRET-not-set}
+      MONGO_DSN: ${MONGO_DSN-mongodb://mongo/radix}
+      REDIS_DSN: ${REDIS_DSN-redis://redis}
     depends_on:
       - server_install
       - redis

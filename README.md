@@ -16,9 +16,10 @@ To change the `APP` or other run-time environment variables, add the values into
 # ./env
 APP=acbm:fcp
 
-# OPTIONAL LOCAL SERVICES ENTRIES
-RADIX_MONGO_HOST=mongo.platform.as3.io
-RADIX_REDIS_HOST=redis.platform.as3.io
+# EBM SHARED DEVELOPMENT SERVERS
+MONGO_DSN=mongodb://mongo.platform.as3.io/radix
+LEGACY_MONGO_DSN=mongodb://mongo.legacy.as3.io
+REDIS_DSN=redis://redis.platform.as3.io/8
 ```
 
 ### Advanced Usage

@@ -18,14 +18,14 @@ as3_modlr:
         default:
             type: mongodb
             parameters:
-                host: mongodb://mongo.platform.as3.io:27017
+                host: "%env(MONGO_DSN)%"
     search_clients: ~
 
 app:
     import:
         connections:
             legacy:
-                dsn: mongodb://mongo.legacy.as3.io:27017
+                dsn: "%env(LEGACY_MONGO_DSN)%"
                 options:
                     connectTimeoutMS: 200
 
@@ -39,7 +39,7 @@ assetic:
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }
-    secret:          "%secret%"
+    secret:          "%env(SYMFONY_SECRET)%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
@@ -96,7 +96,7 @@ snc_redis:
         default:
             type: phpredis
             alias: default
-            dsn: redis://redis.platform.as3.io/8
+            dsn: "%env(REDIS_DSN)%"
             options:
                 connection_persistent: true
     session:
@@ -109,6 +109,6 @@ swiftmailer:
     transport: "%mailer_transport%"
     host:      "%mailer_host%"
     username:  "%mailer_user%"
-    password:  "%mailer_password%"
+    password:  "%env(SYMFONY_MAILER_PASSWORD)%"
     port:      "%mailer_port%"
     spool:     { type: memory }

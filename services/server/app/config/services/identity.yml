@@ -21,7 +21,7 @@ services:
     app_bundle.identity.abstract_token_generator:
         abstract: true
         class: AppBundle\Identity\AbstractTokenGenerator
-        arguments: [ "%secret%" ]
+        arguments: [ "%env(SYMFONY_SECRET)%" ]
 
     app_bundle.identity.email_verify.token_generator:
         parent: app_bundle.identity.abstract_token_generator

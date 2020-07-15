@@ -9,7 +9,13 @@ parameters:
     mailer_host: smtp.sendgrid.net
     mailer_port: 587
     mailer_user: apikey
-    mailer_password: ThisKeyIsNotValidSoChangeIt
+    mailer_password: '%env(SYMFONY_MAILER_PASSWORD)%'
 
-    secret:            ThisTokenIsNotSecretSoChangeIt
+    secret: '%env(SYMFONY_MAILER_PASSWORD)%'
     framework_version: RDXAPP_BUILDNO
+
+    env(MONGO_DSN): mongodb://mongo/radix
+    env(LEGACY_MONGO_DSN): mongodb://mongo/legacy
+    env(REDIS_DSN): redis://redis
+    env(SYMFONY_SECRET): ThisTokenIsNotSecretSoChangeIt
+    env(SYMFONY_MAILER_PASSWORD): ThisKeyIsNotValidSoChangeIt
