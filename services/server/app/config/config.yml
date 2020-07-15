@@ -19,9 +19,7 @@ as3_modlr:
             type: mongodb
             parameters:
                 host: mongodb://mongo.platform.as3.io:27017
-    search_clients:
-        default:
-            type: elastic
+    search_clients: ~
 
 app:
     import:

@@ -23,7 +23,6 @@ RADIX_ES_PORT=8703
 # OPTIONAL LOCAL SERVICES ENTRIES
 RADIX_MONGO_HOST=mongo.platform.as3.io
 RADIX_REDIS_HOST=redis.platform.as3.io
-RADIX_ELASTIC_HOST=elastic.platform.as3.io
 ```
 
 ### Advanced Usage
