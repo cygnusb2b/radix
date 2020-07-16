@@ -40,20 +40,23 @@ stages:
 
 jobs:
   include:
-    - stage: test-admin
+    - stage: test
+      name: Test admin build
       node_js: 8
       env: [NODE_ENV=test]
       install: cd services/admin; yarn install --frozen-lockfile
       script: cd services/admin; yarn test
 
-    - stage: test-graph
+    - stage: test
+      name: Test graph build
       node_js: 8
       env: [NODE_ENV=test]
       install: cd services/graph; yarn install --frozen-lockfile
       script: cd services/graph; yarn test
 
     - <<: *php-job
-      stage: test-server
+      stage: test
+      name: Test server build
       env: [SYMFONY_ENV=test APP_ENV=test]
 
     - stage: production-started
