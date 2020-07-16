@@ -63,21 +63,30 @@ jobs:
 
     - stage: build
       name: Build admin
-      before_install: cd services/admin
-      before_script: ember build --environment=production
+      install:
+        - cd services/admin
+        - yarn install
+        - embed build --environment=production
+        - cd ../..
       script: scripts/build-image.sh admin $TRAVIS_COMMIT
 
     - stage: build
       name: Build graph
-      install: yarn install --production
+      install:
+        - cd services/graph
+        - yarn install --production
+        - cd ../..
       script: scripts/build-image.sh graph $TRAVIS_COMMIT
 
     - <<: *php-job
       stage: build
       name: Build server
       env: [SYMFONY_ENV=prod APP_ENV=prod]
-      before_install: cd services/server
-      install: bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
+      install:
+        - cd services/server
+        - bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
+        - bin/console assetic:dump --env=prod
+        - cd ../..
       script: scripts/build-image.sh server $TRAVIS_COMMIT
 
     # - stage: production-started
