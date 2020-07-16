@@ -1,0 +1,95 @@
+language: node_js
+node_js: 10.15
+
+env:
+  global:
+    - SYMFONY_ENV=test
+    - APP_ENV=test
+    - NODE_ENV=test
+
+cache:
+  yarn: true
+  directories:
+    - services/server/vendor
+
+_php-job: &php-job
+  language: php
+  php: "5.6"
+  services: [mongodb, redis]
+  addons: { hosts: [mongo, redis] }
+  before_install:
+    - phpenv global 5.6
+    - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - phpenv config-rm xdebug.ini
+  install:
+    - cd services/server; composer install --no-interaction --prefer-dist --no-dev
+  script:
+    - cd services/server; php app/console assetic:dump --env=test --no-debug
+    - cd services/server; bin/phpunit -c app
+
+stages:
+  - name: test
+
+  - name: production-started
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+  - name: production
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+  - name: production-finished
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+
+jobs:
+  include:
+    - stage: test-admin
+      node_js: 8
+      env: [NODE_ENV=test]
+      install: cd services/admin; yarn install --frozen-lockfile
+      script: cd services/admin; yarn test
+
+    - stage: test-graph
+      node_js: 8
+      env: [NODE_ENV=test]
+      install: cd services/graph; yarn install --frozen-lockfile
+      script: cd services/graph; yarn test
+
+    - <<: *php-job
+      stage: test-server
+      env: [SYMFONY_ENV=test APP_ENV=test]
+
+    - stage: production-started
+      name: Deployment Started
+      script: npx @base-cms/website-deployment-tool notify-started
+      install: skip
+      env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+
+    #############################
+    # vvv ADD SERVICES HERE vvv #
+    #############################
+
+    - stage: production
+      name: Graph Service
+      script: scripts/deploy.sh graph
+      install: skip
+      env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+
+    - stage: production
+      name: PHP Server Service
+      script: scripts/deploy.sh server
+      install: skip
+      env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+
+    - stage: production
+      name: Management Service
+      script: scripts/deploy.sh admin
+      install: skip
+      env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+
+    #############################
+    # ^^^ ADD SERVICES HERE ^^^ #
+    #############################
+
+    - stage: production-finished
+      name: Deployment Finished
+      script: npx @base-cms/website-deployment-tool notify-finished
+      install: skip
+      env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
