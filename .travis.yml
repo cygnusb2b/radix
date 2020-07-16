@@ -46,14 +46,22 @@ jobs:
     - stage: test
       name: Test admin build
       node_js: 8
-      install: (cd services/admin; yarn install --frozen-lockfile)
-      script: (cd services/admin; exit 0)
+      install:
+        - cd services/admin
+        - yarn install --frozen-lockfile
+      script:
+        - cd services/admin
+        - yarn test
 
     - stage: test
       name: Test graph build
       node_js: 8
-      install: (cd services/graph; yarn install --frozen-lockfile)
-      script: (cd services/graph; yarn test)
+      install:
+        - cd services/graph
+        - yarn install --frozen-lockfile
+      script:
+        - cd services/graph
+        - yarn test
 
     - <<: *php-job
       stage: test
