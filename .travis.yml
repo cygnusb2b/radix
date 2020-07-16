@@ -46,22 +46,16 @@ jobs:
     - stage: test
       name: Test admin build
       node_js: 8
-      install:
-        - cd services/admin
-        - yarn install --frozen-lockfile
-      script:
-        - cd services/admin
-        - yarn test
+      before_install: cd services/admin
+      # install: yarn install --frozen-lockfile
+      script: yarn test
 
     - stage: test
       name: Test graph build
       node_js: 8
-      install:
-        - cd services/graph
-        - yarn install --frozen-lockfile
-      script:
-        - cd services/graph
-        - yarn test
+      before_install: cd services/graph
+      # install: yarn install --frozen-lockfile
+      script: yarn test
 
     - <<: *php-job
       stage: test
@@ -69,9 +63,8 @@ jobs:
 
     - stage: build
       name: Build admin
-      before_script:
-        - cd services/admin
-        - ember build --environment=production
+      before_install: cd services/admin
+      before_script: ember build --environment=production
       script: scripts/build-image.sh admin $TRAVIS_COMMIT
 
     - stage: build
@@ -83,9 +76,8 @@ jobs:
       stage: build
       name: Build server
       env: [SYMFONY_ENV=prod APP_ENV=prod]
-      before_script:
-        - cd services/server
-        - bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
+      before_install: cd services/server
+      install: bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
       script: scripts/build-image.sh server $TRAVIS_COMMIT
 
     # - stage: production-started
