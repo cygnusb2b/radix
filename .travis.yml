@@ -32,7 +32,7 @@ stages:
   - name: test
 
   - name: build
-    # if: tag =~ /^v\d+\.\d+\.\d+$/
+    if: tag =~ /^v\d+\.\d+\.\d+$/
 
   - name: production-started
     if: tag =~ /^v\d+\.\d+\.\d+$/
@@ -47,14 +47,12 @@ jobs:
       name: Test admin build
       node_js: 8
       before_install: cd services/admin
-      # install: yarn install --frozen-lockfile
       script: yarn test
 
     - stage: test
       name: Test graph build
       node_js: 8
       before_install: cd services/graph
-      # install: yarn install --frozen-lockfile
       script: yarn test
 
     - <<: *php-job
@@ -69,7 +67,7 @@ jobs:
         - yarn install
         - ember build --environment=production
         - cd ../..
-      script: scripts/build-image.sh admin $TRAVIS_COMMIT
+      script: scripts/build-image.sh admin $TRAVIS_TAG
 
     - stage: build
       name: Build graph
@@ -78,7 +76,7 @@ jobs:
         - cd services/graph
         - yarn install --production
         - cd ../..
-      script: scripts/build-image.sh graph $TRAVIS_COMMIT
+      script: scripts/build-image.sh graph $TRAVIS_TAG
 
     - <<: *php-job
       stage: build
@@ -89,42 +87,34 @@ jobs:
         - bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
         - bin/console assetic:dump --env=prod
         - cd ../..
-      script: scripts/build-image.sh server $TRAVIS_COMMIT
+      script: scripts/build-image.sh server $TRAVIS_TAG
 
-    # - stage: production-started
-    #   name: Deployment Started
-    #   script: npx @base-cms/website-deployment-tool notify-started
-    #   install: skip
-    #   env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+    - stage: production-started
+      name: Deployment Started
+      script: npx @base-cms/website-deployment-tool notify-started
+      install: skip
+      env: [ENVIRONMENT=production]
 
-    # #############################
-    # # vvv ADD SERVICES HERE vvv #
-    # #############################
+    - stage: production
+      name: Graph Service
+      script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-graph endeavorb2b/radix-graph:$TRAVIS_TAG
+      install: skip
+      env: [ENVIRONMENT=production]
 
-    # - stage: production
-    #   name: Graph Service
-    #   script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-graph endeavorb2b/radix-graph:$TRAVIS_TAG
-    #   install: skip
-    #   env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+    - stage: production
+      name: PHP Server Service
+      script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-server endeavorb2b/radix-server:$TRAVIS_TAG
+      install: skip
+      env: [ENVIRONMENT=production]
 
-    # - stage: production
-    #   name: PHP Server Service
-    #   script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-server endeavorb2b/radix-server:$TRAVIS_TAG
-    #   install: skip
-    #   env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+    - stage: production
+      name: Management Service
+      script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-admin endeavorb2b/radix-admin:$TRAVIS_TAG
+      install: skip
+      env: [ENVIRONMENT=production]
 
-    # - stage: production
-    #   name: Management Service
-    #   script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-admin endeavorb2b/radix-admin:$TRAVIS_TAG
-    #   install: skip
-    #   env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
-
-    # #############################
-    # # ^^^ ADD SERVICES HERE ^^^ #
-    # #############################
-
-    # - stage: production-finished
-    #   name: Deployment Finished
-    #   script: npx @base-cms/website-deployment-tool notify-finished
-    #   install: skip
-    #   env: [ENVIRONMENT=production RANCHER_CLUSTERID=c-gxsr7]
+    - stage: production-finished
+      name: Deployment Finished
+      script: npx @base-cms/website-deployment-tool notify-finished
+      install: skip
+      env: [ENVIRONMENT=production]
