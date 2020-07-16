@@ -67,7 +67,7 @@ jobs:
       install:
         - cd services/admin
         - yarn install
-        - embed build --environment=production
+        - ember build --environment=production
         - cd ../..
       script: scripts/build-image.sh admin $TRAVIS_COMMIT
 
