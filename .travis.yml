@@ -63,6 +63,7 @@ jobs:
 
     - stage: build
       name: Build admin
+      node_js: 8
       install:
         - cd services/admin
         - yarn install
@@ -72,6 +73,7 @@ jobs:
 
     - stage: build
       name: Build graph
+      node_js: 8
       install:
         - cd services/graph
         - yarn install --production
