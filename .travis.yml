@@ -25,8 +25,8 @@ _php-job: &php-job
   install:
     - (cd services/server; composer install --no-interaction --prefer-dist)
   script:
-    - (cd services/server; php app/console assetic:dump --env=test --no-debug)
-    - (cd services/server; bin/phpunit -c app)
+    - (cd services/server; php bin/console assetic:dump --env=test --no-debug)
+    - (cd services/server; bin/phpunit)
 
 stages:
   - name: test
