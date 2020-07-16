@@ -53,7 +53,7 @@ jobs:
       name: Test graph build
       node_js: 8
       install: (cd services/graph; yarn install --frozen-lockfile)
-      script: (cd services/graph; exit 0)
+      script: (cd services/graph; yarn test)
 
     - <<: *php-job
       stage: test
@@ -61,17 +61,23 @@ jobs:
 
     - stage: build
       name: Build admin
-      install: skip
+      before_script:
+        - cd services/admin
+        - ember build --environment=production
       script: scripts/build-image.sh admin $TRAVIS_COMMIT
 
     - stage: build
       name: Build graph
-      install: skip
+      install: yarn install --production
       script: scripts/build-image.sh graph $TRAVIS_COMMIT
 
-    - stage: build
+    - <<: *php-job
+      stage: build
       name: Build server
-      install: skip
+      env: [SYMFONY_ENV=prod APP_ENV=prod]
+      before_script:
+        - cd services/server
+        - bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
       script: scripts/build-image.sh server $TRAVIS_COMMIT
 
     # - stage: production-started
