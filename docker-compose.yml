@@ -6,7 +6,7 @@ services:
     entrypoint: yarn start
     working_dir: /app
     volumes:
-      - ./services/graph:/app:cached
+      - ./graph:/app:cached
       - graph_node_modules:/app/node_modules:cached
     depends_on:
       - mongo
@@ -17,18 +17,21 @@ services:
       PORT: 8700
       APP_HOST: "${APP_HOST-server}:80"
       MONGO_DSN: ${MONGO_DSN-mongodb://mongo/radix}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY-not-set}
+      SENDGRID_FROM: ${SENDGRID_FROM-not-set}
+      JWT_SECRET: ${JWT_SECRET-not-set}
 
   server_install:
     image: radix_server:latest
     build:
-      context: services/server/
+      context: server/
       dockerfile: docker/Dockerfile
     entrypoint: /app/entrypoint.sh
     depends_on:
       - redis
       - mongo
     volumes:
-      - ./services/server:/var/www/html:cached
+      - ./server:/var/www/html:cached
       - server_vendor:/var/www/html/vendor:cached
       - server_cache:/var/www/html/var/cache:cached
       - server_composer:/var/www/.composer/cache:cached
@@ -41,12 +44,12 @@ services:
     tty: true
     image: radix_server:latest
     build:
-      context: services/server/
+      context: server/
       dockerfile: docker/Dockerfile
     ports:
       - "8710:80"
     volumes:
-      - ./services/server:/var/www/html:cached
+      - ./server:/var/www/html:cached
       - server_vendor:/var/www/html/vendor:cached
       - server_cache:/var/www/html/var/cache:cached
     environment:
@@ -76,7 +79,7 @@ services:
     tty: true
     image: danlynn/ember-cli:3.1.2
     volumes:
-      - ./services/admin:/myapp:cached
+      - ./admin:/myapp:cached
       - ember_node_modules:/myapp/node_modules:cached
       - ember_tmp:/myapp/tmp
     restart: on-failure
@@ -92,12 +95,14 @@ services:
       - "8707:8707"
     depends_on:
       - admin_install
+      - server
+      - graph
     volumes:
-      - ./services/admin:/myapp:cached
+      - ./admin:/myapp:cached
       - ember_node_modules:/myapp/node_modules:cached
       - ember_tmp:/myapp/tmp
     restart: on-failure
-    entrypoint: "./node_modules/.bin/ember server --port 8705 --live-reload-port 8706 --proxy ${EMBER_PROXY-http://docker.for.mac.host.internal:8700}"
+    entrypoint: "./node_modules/.bin/ember server --port 8705 --live-reload-port 8706 --proxy ${EMBER_PROXY-http://host.docker.internal:8700}"
 
 volumes:
   server_cache:
