@@ -66,7 +66,7 @@ jobs:
         - cd admin
         - yarn install
         - ember build --environment=production
-        - cd ../..
+        - cd ..
       script: scripts/build-image.sh admin $TRAVIS_TAG
 
     - stage: build
@@ -75,7 +75,7 @@ jobs:
       install:
         - cd graph
         - yarn install --production
-        - cd ../..
+        - cd ..
       script: scripts/build-image.sh graph $TRAVIS_TAG
 
     - <<: *php-job
@@ -86,7 +86,7 @@ jobs:
         - cd server
         - bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
         - bin/console assetic:dump --env=prod
-        - cd ../..
+        - cd ..
       script: scripts/build-image.sh server $TRAVIS_TAG
 
     - stage: production-started
