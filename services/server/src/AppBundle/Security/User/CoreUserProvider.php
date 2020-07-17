@@ -53,9 +53,10 @@ class CoreUserProvider implements UserProviderInterface
             }
 
             $user = new CoreUser($model);
-            $user->setOrigin($this->requestStack->getMasterRequest()->getSchemeAndHttpHost());
+            $origin = $this->requestStack->getMasterRequest()->getSchemeAndHttpHost();
+            $user->setOrigin($origin);
             if (empty($user->getApplications())) {
-                throw new InsufficientAuthenticationException('No applications are available for this user.');
+                throw new InsufficientAuthenticationException(sprintf('No applications are available for this user (%s)', $origin));
             }
             return $user;
 
