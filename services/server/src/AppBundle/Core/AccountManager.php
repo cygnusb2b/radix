@@ -22,6 +22,8 @@ class AccountManager
      */
     private static $globalOrigins = [
         'http://docker.for.mac.host.internal:*',
+        'http://localhost:*',
+        'http://host.docker.internal:*',
         'http://dev.radix.as3.io:*',
         'http://radix.as3.io',
         'http://*.radix.as3.io',
