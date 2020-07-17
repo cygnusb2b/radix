@@ -27,6 +27,7 @@ class AccountManager
         'http://*.radix.as3.io',
         'https://radix.as3.io',
         'https://*.radix.as3.io',
+        'https://radix.base.parameter1.com',
     ];
 
     /**
