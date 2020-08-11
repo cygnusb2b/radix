@@ -146,7 +146,6 @@ class AbstractHandler extends BaseAbstractHandler
             // check age and refresh if necesssary (> 24hr old)
             $refresh = time() - $cachedResponse['time'] > (24 * 60 * 60);
             if ($refresh) {
-                $this->logIt('refreshing cache');
                 $response = $this->parseApiResponse($this->getApiClient()->brand->lookup());
                 $criteria = ['_id' => $cachedResponse['_id']];
                 $update = ['$set' => ['time' => time(), 'resp' => json_encode($response)]];
