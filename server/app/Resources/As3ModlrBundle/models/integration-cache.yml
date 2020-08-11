@@ -1,0 +1,20 @@
+integration-cache:
+    entity:
+        persistence:
+            key: mongodb
+            db: radix
+            schemata:
+                - { keys: { service: 1, client: 1, brand: 1, action: 1 }, options: { unique: true } }
+    attributes:
+        service:
+            type: string
+        client:
+            type: string
+        brand:
+            type: string
+        action:
+            type: string
+        time:
+            type: string
+        resp:
+            type: string
