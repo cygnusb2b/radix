@@ -5,6 +5,7 @@ integration-cache:
             db: radix
             schemata:
                 - { keys: { service: 1, client: 1, brand: 1, action: 1 }, options: { unique: true } }
+                - { keys: { cacheDate: 1 }, options: { expireAfterSeconds: 86400 } }
     attributes:
         service:
             type: string

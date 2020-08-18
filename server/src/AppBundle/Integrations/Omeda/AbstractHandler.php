@@ -135,22 +135,10 @@ class AbstractHandler extends BaseAbstractHandler
                 'client'    => $client,
                 'brand'     => $brand,
                 'action'    => $action,
-                'time'      => time(),
+                'cacheDate' => new \MongoDate(time()),
                 'resp'      => json_encode($response),
             ];
             $this->service->store->getCollectionForModel('integration-cache')->insert($cache);
-        } else {
-            // found cached response start using it
-            $response = json_decode($cachedResponse['resp'], true);
-
-            // check age and refresh if necesssary (> 24hr old)
-            $refresh = time() - $cachedResponse['time'] > (24 * 60 * 60);
-            if ($refresh) {
-                $response = $this->parseApiResponse($this->getApiClient()->brand->lookup());
-                $criteria = ['_id' => $cachedResponse['_id']];
-                $update = ['$set' => ['time' => time(), 'resp' => json_encode($response)]];
-                $this->service->store->getCollectionForModel('integration-cache')->update($criteria, $update);
-            }
         }
         return $response;
     }
