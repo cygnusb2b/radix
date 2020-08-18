@@ -94,7 +94,7 @@ class AbstractHandler extends BaseAbstractHandler
     }
 
     /**
-     * Gets the brand data from Omeda, if not already loaded in memory.
+     * Gets the brand data from memory, cache, or Omeda
      *
      * @return  array
      */
@@ -105,9 +105,42 @@ class AbstractHandler extends BaseAbstractHandler
         $brand  = $config['brandKey'];
 
         if (!isset($this->brandData[$client][$brand])) {
-            $this->brandData[$client][$brand] = $this->parseApiResponse($this->getApiClient()->brand->lookup());
+            $this->brandData[$client][$brand] = $this->getIntegrationCache('omeda', $client, $brand, 'brandLookup');
         }
         return $this->brandData[$client][$brand];
+    }
+
+    /**
+     * Attempt to use cached integration response data from local mongo if possible, use service api & cache if not present or data too old
+     *
+     * @return  array
+     */
+    public function getIntegrationCache($serviceKey, $client, $brand, $action)
+    {
+        $criteria = [
+            'service'   => $serviceKey,
+            'client'    => $client,
+            'brand'     => $brand,
+            'action'    => $action
+        ];
+        $cachedResponse = $this->service->store->getCollectionForModel('integration-cache')->findOne($criteria);
+
+        if (empty($cachedResponse)) {
+            // query api for data
+            $response = $this->parseApiResponse($this->getApiClient()->brand->lookup());
+
+            // cache response in mongo for a period of time
+            $cache = [
+                'service'   => $serviceKey,
+                'client'    => $client,
+                'brand'     => $brand,
+                'action'    => $action,
+                'cacheDate' => new \MongoDate(time()),
+                'resp'      => json_encode($response),
+            ];
+            $this->service->store->getCollectionForModel('integration-cache')->insert($cache);
+        }
+        return $response;
     }
 
     /**

@@ -7,7 +7,7 @@ services:
 
     app_bundle.integration.service.omeda:
         class: AppBundle\Integrations\Omeda\OmedaService
-        arguments: [ "@app_bundle.omeda_sdk.api_client", "%kernel.environment%" ]
+        arguments: [ "@app_bundle.omeda_sdk.api_client", "%kernel.environment%", "@app_bundle.import.persister.as3_modlr" ]
 
     app_bundle.integration.event_subscriber.account_push:
         private: true

@@ -48,10 +48,11 @@ class OmedaService implements ServiceInterface
      * @param   ApiClient   $apiClient
      * @param   string      $env
      */
-    public function __construct(ApiClient $apiClient, $env)
+    public function __construct(ApiClient $apiClient, $env, $store)
     {
         $this->apiClient           = $apiClient;
         $this->env                 = $env;
+        $this->store               = $store;
         $this->accountPushHandler  = new AccountPushHandler();
         $this->identifyHandler     = new IdentifyHandler();
         $this->optInPushHandler    = new OptInPushHandler();
