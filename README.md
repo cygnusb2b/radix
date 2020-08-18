@@ -15,15 +15,11 @@ To change the `APP` or other run-time environment variables, add the values into
 ```sh
 # ./env
 APP=acbm:fcp
-RADIX_APP_PORT=8700
-RADIX_DB_PORT=8701
-RADIX_REDIS_PORT=8702
-RADIX_ES_PORT=8703
 
-# OPTIONAL LOCAL SERVICES ENTRIES
-RADIX_MONGO_HOST=mongo.platform.as3.io
-RADIX_REDIS_HOST=redis.platform.as3.io
-RADIX_ELASTIC_HOST=elastic.platform.as3.io
+# EBM SHARED DEVELOPMENT SERVERS
+MONGO_DSN=mongodb://mongo.platform.as3.io/radix
+LEGACY_MONGO_DSN=mongodb://mongo.legacy.as3.io
+REDIS_DSN=redis://redis.platform.as3.io/8
 ```
 
 ### Advanced Usage
@@ -79,4 +75,3 @@ db.copyDatabase('radix-cygnus-fhc', 'radix-cygnus-fhc', 'mongo.platform.baseplat
 A note on the documentation below: It assumes direct CLI entry on the host machine. Because the new Docker Compose environment uses a `.env` file which is passed to the underlying services, the recommended method of modifying the `APP` is to specify it in this file.
 
 If accessing the terminal directly (see interactive shell above), you can still specify the `APP` manually, though it is recommended to still use the `.env` file and restart the docker stack for consistency.
-

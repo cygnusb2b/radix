@@ -33,7 +33,7 @@ security:
                 authenticators:
                     - app_bundle.security.authenticator.account
             remember_me:
-                secret: "%secret%"
+                secret: "%env(SYMFONY_SECRET)%"
                 lifetime: 63072000
                 name: __radix-application
                 always_remember_me: true
@@ -57,7 +57,7 @@ security:
                 authenticators:
                     - app_bundle.security.authenticator.core_user
             remember_me:
-                secret: "%secret%"
+                secret: "%env(SYMFONY_SECRET)%"
                 lifetime: 432000
                 name: __radix-core
                 always_remember_me: true

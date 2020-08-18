@@ -63,12 +63,12 @@ services:
     app_bundle.security.jwt.generator.account:
         private: true
         class: AppBundle\Security\JWT\AccountGenerator
-        arguments: [ "%secret%" ]
+        arguments: [ "%env(SYMFONY_SECRET)%" ]
 
     app_bundle.security.jwt.generator.core_user:
         private: true
         class: AppBundle\Security\JWT\CoreUserGenerator
-        arguments: [ "%secret%" ]
+        arguments: [ "%env(SYMFONY_SECRET)%" ]
 
     app_bundle.security.login_listener:
         private: true

@@ -1,0 +1,120 @@
+language: node_js
+node_js: 10.15
+
+env:
+  global:
+    - SYMFONY_ENV=test
+    - APP_ENV=test
+    - NODE_ENV=test
+
+cache:
+  yarn: true
+  directories:
+    - server/vendor
+
+_php-job: &php-job
+  language: php
+  php: "5.6"
+  services: [mongodb, redis]
+  addons: { hosts: [mongo, redis] }
+  before_install:
+    - phpenv global 5.6
+    - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - phpenv config-rm xdebug.ini
+  install:
+    - (cd server; composer install --no-interaction --prefer-dist)
+  script:
+    - (cd server; php bin/console assetic:dump --env=test --no-debug)
+    - (cd server; bin/phpunit)
+
+stages:
+  - name: test
+
+  - name: build
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+
+  - name: production-started
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+  - name: production
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+  - name: production-finished
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+
+jobs:
+  include:
+    - stage: test
+      name: Test admin build
+      node_js: 8
+      before_install: cd admin
+      script: yarn test
+
+    - stage: test
+      name: Test graph build
+      node_js: 8
+      before_install: cd graph
+      script: yarn test
+
+    - <<: *php-job
+      stage: test
+      name: Test server build
+
+    - stage: build
+      name: Build admin
+      node_js: 8
+      install:
+        - cd admin
+        - yarn install
+        - ember build --environment=production
+        - cd ..
+      script: scripts/build-image.sh admin $TRAVIS_TAG
+
+    - stage: build
+      name: Build graph
+      node_js: 8
+      install:
+        - cd graph
+        - yarn install --production
+        - cd ..
+      script: scripts/build-image.sh graph $TRAVIS_TAG
+
+    - <<: *php-job
+      stage: build
+      name: Build server
+      env: [SYMFONY_ENV=prod APP_ENV=prod]
+      install:
+        - cd server
+        - bin/composer install --optimize-autoloader --no-interaction --prefer-dist --no-dev
+        - bin/console assetic:dump --env=prod
+        - cd ..
+      script: scripts/build-image.sh server $TRAVIS_TAG
+
+    - stage: production-started
+      name: Deployment Started
+      script: npx @base-cms/website-deployment-tool notify-started
+      install: skip
+      env: [ENVIRONMENT=production]
+
+    - stage: production
+      name: Graph Service
+      script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-graph ${DOCKER_ORG-endeavorb2b}/radix-graph:$TRAVIS_TAG
+      install: skip
+      env: [ENVIRONMENT=production]
+
+    - stage: production
+      name: PHP Server Service
+      script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-server ${DOCKER_ORG-endeavorb2b}/radix-server:$TRAVIS_TAG
+      install: skip
+      env: [ENVIRONMENT=production]
+
+    - stage: production
+      name: Management Service
+      script: npx @endeavorb2b/rancher2cli deploy baseplatform-service radix-admin ${DOCKER_ORG-endeavorb2b}/radix-admin:$TRAVIS_TAG
+      install: skip
+      env: [ENVIRONMENT=production]
+
+    - stage: production-finished
+      name: Deployment Finished
+      script: npx @base-cms/website-deployment-tool notify-finished
+      install: skip
+      env: [ENVIRONMENT=production]
